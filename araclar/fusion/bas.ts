@@ -123,5 +123,5 @@ export function basYerlestir(kare: Resim, isaret: Nokta, bas: BasKirpintisi, rHe
       for (let c = 0; c < 4; c++) kare.veri[di + c] = orijinal[di + c]!;
     } else if (kare.veri[di + 3]! < 128) kesik[y * kare.g + x] = 1;
   }
-  return cizgi ? boyunKoprusu(kare, basMaskesi, kesik, cizgi, rHedef) : undefined;
+  return cizgi ? boyunKoprusu(kare, basMaskesi, kesik, cizgi, rHedef, isaret) : undefined;
 }

@@ -4,7 +4,7 @@ Sahibi: `@nile`. Bu dosya nerede olduğumuzu söyler ve karar veren belgeye işa
 
 ## Durum (2026-11-01)
 
-**F0 prototipi oynanabilir** (dal `f0/arena-prototip`, commit yok): `npm run dev` → `?ekran=arena` iki Skaledman fusion'ı gerçek kare animasyonla dövüşüyor (klavye + fare, bot), `?ekran=lab` 29 birleştirilmiş fusion; typecheck temiz, 58 test yeşil. Özet ve ekran görüntüleri `docs/research/spikes/2026-11-01-f0-prototip.md`. Kalan kodlama ve birleştirme işleri sahibin isteğiyle **Opus 5.5 oturumuna** devredildi. Belgeler: `docs/design/oyun-konsepti.md`, `docs/tech/mimari.md`, `docs/art/fusion-animasyon.md`, `docs/research/pokerivals-inceleme.md`. Ajan rosteri kuruldu. Paca projesi açıldı (SA), Sprint 1 · F0.
+**F0 prototipi oynanabilir** (dal `f0/arena-prototip`, ilk commit 2026-11-01; eklenti yazısı `docs/tech/skaledman-eklenti.md`): `npm run dev` → `?ekran=arena` iki Skaledman fusion'ı gerçek kare animasyonla dövüşüyor (klavye + fare, bot), `?ekran=lab` 29 birleştirilmiş fusion; typecheck temiz, 58 test yeşil. Özet ve ekran görüntüleri `docs/research/spikes/2026-11-01-f0-prototip.md`. Kalan kodlama ve birleştirme işleri sahibin isteğiyle **Opus 5.5 oturumuna** devredildi. Belgeler: `docs/design/oyun-konsepti.md`, `docs/tech/mimari.md`, `docs/art/fusion-animasyon.md`, `docs/research/pokerivals-inceleme.md`. Ajan rosteri kuruldu. Paca projesi açıldı (SA), Sprint 1 · F0.
 
 **Sıradaki dilim:** F0 / Birleştirme Lab (`docs/art/fusion-animasyon.md` § 6) — proje iskeleti (`colyseus/vite` klonu) + PMD SpriteCollab'dan fusion birleştirme aracı + 20 fusion'un kart resmiyle yan yana, 8 yönde Idle/Walk/Attack/Hurt oynatılması; yanında 5 kart için PixelLab denemesi (sahip onayıyla).
 

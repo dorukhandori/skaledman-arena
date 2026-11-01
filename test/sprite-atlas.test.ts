@@ -214,6 +214,7 @@ describe("Baş kesme ve yerleştirme", () => {
 describe("Boyun köprüsü", () => {
   const CIZGI = [10, 10, 10] as const;
   const BOYA = [90, 160, 90, 255] as const;
+  const ISARET = { x: 10, y: 17 - 4 - 5 + 2 }; // sahne(4): başın ortası
   /** 20×30: altta gövde (y 20-29) + 2 px'lik boyun kütüğü (y 17-19), üstte `bosluk` px boşlukla 6×5 baş */
   function sahne(bosluk: number): { kare: Resim; bas: Uint8Array; kesik: Uint8Array } {
     const kare = bosResim(20, 30);
@@ -230,25 +231,25 @@ describe("Boyun köprüsü", () => {
   it("baş gövdeye değiyorsa dokunmaz", () => {
     const { kare, bas, kesik } = sahne(0);
     const once = kare.veri.slice();
-    expect(boyunKoprusu(kare, bas, kesik, CIZGI, 5)).toBe("bagli");
+    expect(boyunKoprusu(kare, bas, kesik, CIZGI, 5, ISARET)).toBe("bagli");
     expect(Array.from(kare.veri)).toEqual(Array.from(once));
   });
 
   it("kopuk başı boyun kütüğünden başa kısa bir şeritle bağlar, kenarı çizgi renginde", () => {
     const { kare, bas, kesik } = sahne(4);
-    expect(boyunKoprusu(kare, bas, kesik, CIZGI, 5)).toBe("koprulendi");
+    expect(boyunKoprusu(kare, bas, kesik, CIZGI, 5, ISARET)).toBe("koprulendi");
     for (let y = 13; y <= 16; y++) expect(boyuAlfa(kare, 10, y)).toBe(255); // boşluk dolu
     expect(piksel(kare, 10, 15)!.slice(0, 3)).toEqual([...BOYA.slice(0, 3)]); // dolgu gövde rengi
     const yan = [piksel(kare, 7, 15), piksel(kare, 12, 15), piksel(kare, 8, 15), piksel(kare, 11, 15)].filter((p) => p![3] === 255 && p![0] === 10);
     expect(yan.length).toBeGreaterThan(0); // en az bir kenar çizgi rengi
     // şeridin tamamı artık bağlı: yeniden çağrı "bagli" döner
-    expect(boyunKoprusu(kare, bas, kesik, CIZGI, 5)).toBe("bagli");
+    expect(boyunKoprusu(kare, bas, kesik, CIZGI, 5, ISARET)).toBe("bagli");
   });
 
   it("belirleyicidir: aynı girdi aynı pikselleri verir", () => {
     const a = sahne(4), b = sahne(4);
-    boyunKoprusu(a.kare, a.bas, a.kesik, CIZGI, 5);
-    boyunKoprusu(b.kare, b.bas, b.kesik, CIZGI, 5);
+    boyunKoprusu(a.kare, a.bas, a.kesik, CIZGI, 5, ISARET);
+    boyunKoprusu(b.kare, b.bas, b.kesik, CIZGI, 5, ISARET);
     expect(Array.from(a.kare.veri)).toEqual(Array.from(b.kare.veri));
   });
 
@@ -259,7 +260,7 @@ describe("Boyun köprüsü", () => {
     const bas = new Uint8Array(20 * 60);
     for (let y = 0; y < 3; y++) for (let x = 8; x < 12; x++) { pikselYaz(kare, x, y, [200, 60, 60, 255]); bas[y * 20 + x] = 1; }
     for (let x = 7; x < 13; x++) for (let y = 7; y < 12; y++) pikselYaz(kare, x, y, [0, 0, 0, 0]); // eski baş kalmasın
-    expect(boyunKoprusu(kare, bas, new Uint8Array(20 * 60), CIZGI, 3)).toBe("atlandi");
+    expect(boyunKoprusu(kare, bas, new Uint8Array(20 * 60), CIZGI, 3, { x: 10, y: 1 })).toBe("atlandi");
   });
 
   it("basYerlestir: boyundan kopuk gelen baş cizgi verilince köprülenir", () => {

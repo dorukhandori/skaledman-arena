@@ -15,7 +15,7 @@ export const EN_BUYUK_BOSLUK_ORANI = 2.2;
 const GOVDE_PARCA_ORANI = 0.3;
 const SERIT_EN_AZ = 2;
 const SERIT_EN_COK = 5;
-const RENK_YARICAPI = 3;
+const RENK_YARICAPI = 4;
 /** Bir gövde pikseli bu kadar (8-komşu) opak komşusu varsa "kalın" sayılır. */
 const KALIN_KOMSU = 4;
 /** Başın kalın gövdeyle bağlı sayılması için gereken 4-komşu temas çifti. */
@@ -54,9 +54,18 @@ function bilesenler(kare: Resim, bas: Uint8Array): { no: Int32Array; boyut: numb
   return { no, boyut };
 }
 
-/** (x,y) çevresinde yarıçap içindeki, çizgi renginden farklı en sık opak renk; yoksa null. */
+/** Dolgu, çizgiden en az bu kadar açık olmalı: gölge tonları (koyu lacivert vb.) şeridi koyu bir leke yapar. */
+const DOLGU_EN_AZ_ACIKLIK_FARKI = 60;
+
+/**
+ * (x,y) çevresinde yarıçap içindeki, çizgiden belirgin açık opak piksellerin en sık rengi (eşitlikte küçük anahtar);
+ * böyle piksel yoksa en sık çizgi-dışı renk; hiç yoksa null.
+ */
 function yakinRenk(kare: Resim, ortak: (p: number) => boolean, x: number, y: number, r: number, cizgi: Rgb): Rgb | null {
-  const say = new Map<number, number>();
+  const parl = (k: number): number => 0.299 * ((k >> 16) & 255) + 0.587 * ((k >> 8) & 255) + 0.114 * (k & 255);
+  const cizgiAnahtari = (cizgi[0] << 16) | (cizgi[1] << 8) | cizgi[2];
+  const esik = parl(cizgiAnahtari) + DOLGU_EN_AZ_ACIKLIK_FARKI;
+  const acik = new Map<number, number>(), hepsi = new Map<number, number>();
   for (let dy = -r; dy <= r; dy++) {
     for (let dx = -r; dx <= r; dx++) {
       const px = x + dx, py = y + dy;
@@ -64,10 +73,12 @@ function yakinRenk(kare: Resim, ortak: (p: number) => boolean, x: number, y: num
       if (!ortak(py * kare.g + px) || !opak(kare, px, py)) continue;
       const i = indeks(kare, px, py);
       const k = (kare.veri[i]! << 16) | (kare.veri[i + 1]! << 8) | kare.veri[i + 2]!;
-      if (k === ((cizgi[0] << 16) | (cizgi[1] << 8) | cizgi[2])) continue;
-      say.set(k, (say.get(k) ?? 0) + 1);
+      if (k === cizgiAnahtari) continue;
+      hepsi.set(k, (hepsi.get(k) ?? 0) + 1);
+      if (parl(k) >= esik) acik.set(k, (acik.get(k) ?? 0) + 1);
     }
   }
+  const say = acik.size ? acik : hepsi;
   let en = -1, enN = 0;
   for (const [k, n] of say) if (n > enN || (n === enN && k < en)) { en = k; enN = n; }
   return en < 0 ? null : [(en >> 16) & 255, (en >> 8) & 255, en & 255];
@@ -82,10 +93,10 @@ function boya(kare: Resim, p: number, c: Rgb): void {
  * `kare` içinde baş piksellerinin (`bas` maskesi, g×y) gövdeye değip değmediğine bakar; değmiyorsa köprü çizer.
  * `kesik`: başın yerleşmesi için silinen ve geri konmayan piksellerin maskesi; gövdenin boyun ucu bunlara komşu
  * piksellerdir (boş kalırsa gövdenin tamamı aday olur).
- * Köprü: gövde boyun ucundaki en yakın nokta → başın en yakın pikseli, şerit genişliği boyun ucunun genişliğinden
- * (2–5 px) başa doğru 1 px daralır; dolgu rengi boyun ucu çevresindeki gövde rengi, kenarları `cizgi` ile çevrilir.
+ * Köprü: baş işaretine (başın çekirdeği) en yakın kalın gövde pikselinden işarete doğru, ilk baş pikselinde biter;
+ * şerit genişliği boyun ucunun genişliğinden (2–5 px) başa doğru 1 px daralır; dolgu rengi boyun ucu çevresindeki gövde rengi, kenarları `cizgi` ile çevrilir.
  */
-export function boyunKoprusu(kare: Resim, bas: Uint8Array, kesik: Uint8Array, cizgi: Rgb, rHedef: number): BoyunDurumu {
+export function boyunKoprusu(kare: Resim, bas: Uint8Array, kesik: Uint8Array, cizgi: Rgb, rHedef: number, isaret: { x: number; y: number }): BoyunDurumu {
   const g = kare.g;
   const basPikselleri: number[] = [];
   for (let p = 0; p < bas.length; p++) if (bas[p] && opak(kare, p % g, Math.floor(p / g))) basPikselleri.push(p);
@@ -131,35 +142,48 @@ export function boyunKoprusu(kare: Resim, bas: Uint8Array, kesik: Uint8Array, ci
   }
   const hedefler = boyunUcu.length ? boyunUcu : adaylar;
 
-  let enM = Infinity, c = -1, h = -1;
+  // c: baş işaretine en yakın kalın gövde pikseli (boyun ucu varsa onlar arasından); T: c'ye en yakın baş ÇEKİRDEĞİ
+  // pikseli (işaret çevresi, yarıçap 0,9·rHedef). Çekirdekle sınırlamak şart: tümü içinde en yakın piksel çoğu kez
+  // bir pençe/kol ucu olur ve şerit başın gövdesi yerine ona bağlanır (363.439'da görüldü).
+  let enM = Infinity, c = -1;
   for (const a of hedefler) {
-    const ax = a % g, ay = Math.floor(a / g);
-    for (const b of basPikselleri) {
-      const m = (ax - (b % g)) ** 2 + (ay - Math.floor(b / g)) ** 2;
-      if (m < enM) { enM = m; c = a; h = b; }
-    }
+    const m = ((a % g) - isaret.x) ** 2 + (Math.floor(a / g) - isaret.y) ** 2;
+    if (m < enM) { enM = m; c = a; }
   }
-  const bosluk = Math.sqrt(enM);
-  if (c < 0 || bosluk > rHedef * EN_BUYUK_BOSLUK_ORANI + 2) return "atlandi";
+  if (c < 0) return "atlandi";
+  const cekirdek = basPikselleri.filter((b) => ((b % g) - isaret.x) ** 2 + (Math.floor(b / g) - isaret.y) ** 2 <= (rHedef * 0.9) ** 2);
+  const tAdaylari = cekirdek.length ? cekirdek : basPikselleri;
+  let tx = 0, ty = 0, enT = Infinity;
+  for (const b of tAdaylari) {
+    const m = ((b % g) - (c % g)) ** 2 + (Math.floor(b / g) - Math.floor(c / g)) ** 2;
+    if (m < enT) { enT = m; tx = b % g; ty = Math.floor(b / g); }
+  }
+  const cx = c % g, cy = Math.floor(c / g);
+  // c → T doğrusunda ilk baş pikselinin sırası = boşluk (şerit orada biter)
+  const adim = Math.max(Math.abs(tx - cx), Math.abs(ty - cy), 1);
+  const nokta = (i: number): [number, number] => [Math.round(cx + ((tx - cx) * i) / adim), Math.round(cy + ((ty - cy) * i) / adim)];
+  let bitis = adim + 1;
+  for (let i = 1; i <= adim; i++) {
+    const [x, y] = nokta(i);
+    if (bas[y * g + x]) { bitis = i; break; }
+  }
+  if (bitis > adim || bitis - 1 > rHedef * EN_BUYUK_BOSLUK_ORANI + 2) return "atlandi";
 
-  const cx = c % g, cy = Math.floor(c / g), hx = h % g, hy = Math.floor(h / g);
-  // boyun ucunun genişliği: c ile aynı kümedeki boyun ucu pikselleri (8-bağlı, c'den ≤ SERIT_EN_COK uzaklıkta)
+  // boyun ucunun genişliği: c çevresindeki boyun ucu pikselleri (c'den ≤ SERIT_EN_COK uzaklıkta)
   const boyunKumesi = new Set(boyunUcu);
   const genislik0 = Math.max(SERIT_EN_AZ, Math.min(SERIT_EN_COK, boyunKumesi.has(c)
     ? boyunUcu.filter((p) => Math.abs((p % g) - cx) <= SERIT_EN_COK && Math.abs(Math.floor(p / g) - cy) <= SERIT_EN_COK).length / 2
     : 3));
   const genislik1 = Math.max(SERIT_EN_AZ, genislik0 - 1);
   const dolgu = yakinRenk(kare, govdePikseli, cx, cy, RENK_YARICAPI, cizgi)
-    ?? yakinRenk(kare, (p) => bas[p] === 1, hx, hy, RENK_YARICAPI, cizgi) ?? cizgi;
+    ?? yakinRenk(kare, (p) => bas[p] === 1, tx, ty, RENK_YARICAPI, cizgi) ?? cizgi;
 
-  // şerit: c'den h'ye doğrusal; baskın eksene dik doğrultuda genişlik kadar piksel
-  const adim = Math.max(Math.abs(hx - cx), Math.abs(hy - cy), 1);
-  const dikeyMi = Math.abs(hy - cy) >= Math.abs(hx - cx); // baskın eksen y → şerit yatay genişler
+  // şerit: c'den ilk baş pikseline doğrusal; baskın eksene dik doğrultuda genişlik kadar piksel
+  const dikeyMi = Math.abs(ty - cy) >= Math.abs(tx - cx); // baskın eksen y → şerit yatay genişler
   const serit = new Set<number>();
-  for (let i = 0; i <= adim; i++) {
-    const t = i / adim;
-    const x = Math.round(cx + (hx - cx) * t), y = Math.round(cy + (hy - cy) * t);
-    const w = Math.round(genislik0 + (genislik1 - genislik0) * t);
+  for (let i = 0; i < bitis; i++) {
+    const [x, y] = nokta(i);
+    const w = Math.round(genislik0 + (genislik1 - genislik0) * (i / bitis));
     const bas0 = -Math.floor((w - 1) / 2);
     for (let k = 0; k < w; k++) {
       const px = dikeyMi ? x + bas0 + k : x, py = dikeyMi ? y : y + bas0 + k;
