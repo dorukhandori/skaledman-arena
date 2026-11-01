@@ -154,4 +154,4 @@ Değişken ve yardımcı adları (`history`, `girisGerekli`, `el`, `toast`, `kay
 2. `userId` gerçekten Kick `user_id` mi (bir OAuth girişiyle doğrulanır).
 3. Barındırma ve ters vekil (Node/Express çıkarımı); `arena.skaledman.com` için DNS kimde.
 4. Aynı fusion ikinci kez açılırsa yeni ULID mi; arena dövüşçüyü `id` ile anahtarlar, kuralları `fusionId` ile.
-5. Lisans: arena MIT'tir; Skaledman'ın lisansı A/B seçimini etkiler.
+5. Lisans: arenanın kod lisansı henüz seçilmedi (öneri MIT); Skaledman'ın lisansı A/B seçimini etkiler.

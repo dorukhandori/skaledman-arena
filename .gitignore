@@ -11,3 +11,8 @@ veri/spritecollab-tracker.json
 public/fusion/*/
 !public/fusion/.gitkeep
 public/fusion/liste.json
+
+# Claude Code / ajan dosyaları yerelde kalır, depoya girmez
+.claude/
+CLAUDE.md
+AGENTS.md
