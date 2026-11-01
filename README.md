@@ -84,7 +84,7 @@ src/sunucu/       Colyseus sunucu ve odalar
 araclar/          fusion birleştirme, veri çekimi, denge turnuvası
 veri/             Skaledman anlık görüntüleri, SpriteCollab kapsama
 test/             vitest
-docs/             tasarım, teknik, sanat, araştırma, üretim
+docs/             tasarım, teknik, sanat, üretim
 ```
 
 ## Katkı

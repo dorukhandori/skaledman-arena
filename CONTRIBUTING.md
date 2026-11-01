@@ -76,7 +76,6 @@ PR şablonu bunları sorar:
 | Sprite üretimi | `docs/art/fusion-animasyon.md` |
 | Skaledman entegrasyonu | `docs/tech/skaledman-eklenti.md` |
 | Nerede olduğumuz, kararlar (K-numaraları) | `docs/production/roadmap.md` |
-| Skaledman'ın dışarıdan görünen her şeyi | `docs/research/skaledman-sayfa-analizi.md` |
 
 Belgelerde karar hiyerarşisi: `docs/design/` oyunu, `docs/tech/` yapılabilirliği belirler; ikisi çakışırsa issue'da konuşulur, son söz depo sahibinde.
 
