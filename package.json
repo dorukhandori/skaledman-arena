@@ -1,0 +1,39 @@
+{
+  "name": "skaledman-arena",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1",
+  "description": "Skaledman fusion kartlarıyla gerçek zamanlı 1v1 arena (PokeRivals tarzı). Kâr amaçsız hayran projesi.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build --app",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "birlestir": "tsx araclar/fusion-birlestir.ts",
+    "veri:kapsama": "tsx araclar/spritecollab-kapsama.ts",
+    "lint": "eslint src/paylasilan",
+    "veri:cek": "tsx araclar/veri-cek.ts"
+  },
+  "dependencies": {
+    "@colyseus/monitor": "^0.18.7",
+    "@colyseus/playground": "^0.18.0",
+    "@colyseus/schema": "^5.0.43",
+    "@colyseus/sdk": "^0.18.9",
+    "colyseus": "^0.18.10",
+    "pixi.js": "^8.22.0",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "eslint": "^10.14.0",
+    "sharp": "^0.34.5",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.72.1",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
