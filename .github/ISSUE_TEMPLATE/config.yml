@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Katkı rehberi
+    url: https://github.com/dorukhandori/skaledman-arena/blob/main/CONTRIBUTING.md
+    about: Kurulum, dal/commit kuralları, test beklentileri, PR kontrol listesi
+  - name: Skaledman'a entegrasyon
+    url: https://github.com/dorukhandori/skaledman-arena/blob/main/docs/tech/skaledman-eklenti.md
+    about: Devir token'ı, uçlar ve deploy; Skaledman'ı geliştiren kişiyle buradan konuşuyoruz

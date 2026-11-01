@@ -1,0 +1,38 @@
+name: Hata bildirimi
+description: Oyunda, Lab'da ya da araçlarda bir şey yanlış çalışıyor
+labels: ["hata"]
+body:
+  - type: textarea
+    id: ne-oldu
+    attributes:
+      label: Ne oldu
+      description: Beklenen ve gerçekleşen davranış.
+    validations:
+      required: true
+  - type: textarea
+    id: adimlar
+    attributes:
+      label: Nasıl tekrarlanır
+      description: Adım adım. Varsa URL (`?ekran=arena&a=…&b=…&tohum=…`) tam hâliyle; tohum maçı birebir tekrarlar.
+      placeholder: |
+        1. `npm run dev`
+        2. `/?ekran=arena&a=251.443&b=76.538&tohum=7`
+        3. …
+    validations:
+      required: true
+  - type: input
+    id: kartlar
+    attributes:
+      label: Hangi kartlar / fusionId'ler
+      placeholder: "251.443 vs 76.538"
+  - type: input
+    id: ortam
+    attributes:
+      label: Ortam
+      description: Tarayıcı ve sürümü, işletim sistemi, Node sürümü; ağ hatasıysa gecikme/jitter/kayıp değerleri.
+      placeholder: "Chrome 142, macOS 26, Node 22.12"
+  - type: textarea
+    id: kanit
+    attributes:
+      label: Ekran görüntüsü, konsol çıktısı, video
+      description: Konsoldaki hata metnini olduğu gibi yapıştırın.

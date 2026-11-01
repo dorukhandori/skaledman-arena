@@ -4,7 +4,17 @@
 
 Albüm, kart açma ve kanal puanı Skaledman'da kalır. Bu depo yalnız **dövüş katmanıdır**: Skaledman'da "arenada savaş" seçildiği andan sonrası. Kâr amaçsız hayran projesi.
 
-**Durum (Kasım 2026):** F0 çevrimdışı prototip oynanabilir. Çevrimiçi maç (F1), Kick girişi ve kendi kartların (F2), yayın entegrasyonu (F3) sırada. Yol haritası: [docs/production/roadmap.md](docs/production/roadmap.md).
+**Durum (Kasım 2026):** F0 çevrimdışı prototip oynanabilir. Sıradaki aşamalar aşağıda; her madde bir [issue](https://github.com/dorukhandori/skaledman-arena/issues) olarak açık ve katkıya hazır. Kararlar ve ayrıntı: [docs/production/roadmap.md](docs/production/roadmap.md).
+
+## Planlanan özellikler
+
+| Aşama | Özellikler | Durum |
+|---|---|---|
+| **F0 · Çevrimdışı prototip** | Fusion sprite birleştirme hattı (226/226 kart), Birleştirme Lab, 60 Hz deterministik simülasyon, 6 hamle ailesi, tip etkinliği, dash, zıplama, yanık/felç, stat kademeleri, 3'lü takım, bot, İskeletler Diyarı arenası, arenada Skaledman kartı | **oynanabilir** |
+| **F1 · Çevrimiçi 1v1** | Yetkili Colyseus odası (`defineInput`, 60 Hz sabit adım), istemci tahmini + uzlaştırma, rakip için enterpolasyon, geri sarmalı vuruş testi, oda kodu ile lobi, yeniden bağlanma, ağ kalitesi göstergesi, kötü ağ testleri, VPS'e ilk deploy | sırada |
+| **F2 · Kimlik ve kartlar** | Kick OAuth girişi, saatlik Skaledman senkronu → SQLite, kendi kartlarınla takım seçimi, Skaledman'dan tek tıkla devir (imzalı token), 30 el yapımı hamle kuralı, 30 yetenek pasifi, dojo (antrenman), shiny `hue`, ses | sırada |
+| **F3 · Yayın** | İzleyici görünümü (`?izle=KOD`, OBS kaynağı), sohbette `!dövüş @kullanıcı` ve kanal puanı "Düello" (Kick webhook), yayıncının takımına karşı bot, günlük 8'li turnuva ve rozet, haftalık Elo, maç telemetrisi | sırada |
+| **Sürekli** | Bot turnuvasıyla denge, sprite kalitesi (boyun köprüsü, palet kontrastı), yeni arenalar, PixelLab ödül katmanı, sunucu-istemci bit eşitliği için trig polinomları, kredi ekranı | açık |
 
 ## Hızlı başlangıç
 
@@ -77,9 +87,11 @@ test/             vitest
 docs/             tasarım, teknik, sanat, araştırma, üretim
 ```
 
-## Katkı ve geri bildirim
+## Katkı
 
-Hata, "bu kart böyle görünmemeli", denge gözlemi: GitHub issue açın. Skaledman'ı geliştiren kişiyle devir sözleşmesini birlikte kapatmak istiyoruz; iletişim için issue yeterli.
+Herkes katkı verebilir; her değişiklik PR ile gelir, `main` korumalıdır (PR + yeşil CI + onay). Kurulum, dal ve commit kuralları, test beklentileri ve PR kontrol listesi: [CONTRIBUTING.md](CONTRIBUTING.md). Başlangıç için `iyi ilk görev` etiketli issue'lara bakın.
+
+Hata, "bu kart böyle görünmemeli", denge gözlemi: issue açın (şablonlar var). Skaledman'ı geliştiren kişiyle devir sözleşmesini birlikte kapatmak istiyoruz; iletişim için issue yeterli.
 
 ## Lisans ve krediler
 

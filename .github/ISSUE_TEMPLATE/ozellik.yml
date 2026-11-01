@@ -1,0 +1,42 @@
+name: Özellik önerisi
+description: Yeni bir mekanik, ekran, araç ya da iyileştirme
+labels: ["özellik"]
+body:
+  - type: dropdown
+    id: asama
+    attributes:
+      label: Aşama
+      description: Roadmap'teki hangi aşamaya ait (docs/production/roadmap.md)
+      options:
+        - F1 · Çevrimiçi 1v1
+        - F2 · Kick kimliği, kendi kartların, hamleler ve yetenekler
+        - F3 · Yayın entegrasyonu
+        - Sürekli · denge, sprite kalitesi, arenalar, araçlar
+        - Bilmiyorum
+    validations:
+      required: true
+  - type: textarea
+    id: sorun
+    attributes:
+      label: Hangi sorunu çözüyor
+      description: Oyuncu ya da izleyici için ne eksik, ne kötü.
+    validations:
+      required: true
+  - type: textarea
+    id: oneri
+    attributes:
+      label: Öneri
+      description: Nasıl çalışmalı. Mekanikse kuralı, sayıysa kaynağını (PokeRivals, ana seri, kendi ölçümün) yazın.
+    validations:
+      required: true
+  - type: textarea
+    id: alan
+    attributes:
+      label: Hangi alanlara dokunur
+      description: "`src/paylasilan` (sim/kurallar), `src/istemci`, `src/sunucu`, `araclar`, `docs`. Paylaşılan simülasyona dokunan iş determinizm testi gerektirir."
+  - type: checkboxes
+    id: tasarim
+    attributes:
+      label: Tasarım etkisi
+      options:
+        - label: Bu öneri `docs/design/oyun-konsepti.md` ya da bir ADR ile çelişiyor olabilir; önce tartışılmalı
