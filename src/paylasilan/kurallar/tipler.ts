@@ -83,7 +83,7 @@ export function etkinlik(saldiriTipi: Tip, savunanTipler: readonly Tip[]): 0 | 0
   return c as 0 | 0.25 | 0.5 | 1 | 2 | 4;
 }
 
-/** PokeRivals budaması `cr` (§ 11): > 1 → 1.5, 0 < x < 1 → 2/3, 0 → 0. */
+/** Tip çarpanı budaması (oyun-konsepti § 11): > 1 → 1.5, 0 < x < 1 → 2/3, 0 → 0. */
 export function budanmisEtkinlik(ham: number): number {
   if (ham > 1) return AYAR.superEtkili;
   if (ham > 0 && ham < 1) return AYAR.azEtkili;
@@ -91,7 +91,7 @@ export function budanmisEtkinlik(ham: number): number {
 }
 
 /**
- * Saldırı sınıfı: PokeRivals `clase` Skaledman'da yok; basit tip kuralı (oyun-konsepti § 12 adayı,
+ * Saldırı sınıfı (fiziksel/özel) Skaledman'da yok; basit tip kuralı (oyun-konsepti § 12 adayı,
  * karar game-designer'da). Fiziksel: Dövüş, Normal, Kaya, Toprak, Böcek, Çelik, Zehir, Uçan, Hayalet, Karanlık.
  */
 const FIZIKSEL: ReadonlySet<Tip> = new Set<Tip>([

@@ -1,7 +1,7 @@
 import { AYAR } from "../kurallar/ayar.ts";
 import type { Dovuscu, Dunya } from "./durum.ts";
 
-// Stat kademeleri (PokeRivals `z={duracion:8,max:6}`): ana seri çarpanının karekökü, her değişim 8 s sonra sıfırlanır.
+// Stat kademeleri (en çok ±6, 8 s): ana seri çarpanının karekökü, her değişim 8 s sonra sıfırlanır.
 // Math.sqrt IEEE 754'te doğru yuvarlanır; motorlar arası aynı sonucu verir.
 
 export const KADEME_STATLARI = ["atk", "def", "spa", "spd", "hiz"] as const;

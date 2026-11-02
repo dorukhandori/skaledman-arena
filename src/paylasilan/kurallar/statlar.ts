@@ -1,7 +1,7 @@
 import { AYAR } from "./ayar.ts";
 import { budanmisEtkinlik } from "./tipler.ts";
 
-// Ana seri stat formülü (IV 31, EV 0, nötr doğa) ve PokeRivals hasar formülü `lr` (§ 2.3, § 2.4).
+// Ana seri stat formülü (IV 31, EV 0, nötr doğa) ve referans hasar formülü (oyun-konsepti § 11).
 
 function temelStat(taban: number, seviye: number): number {
   return Math.floor(((2 * taban + AYAR.iv + Math.floor(AYAR.ev / 4)) * seviye) / 100);

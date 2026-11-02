@@ -4,13 +4,13 @@ Tarih: 2026-11-01 · Durum: kabul edildi (K-2, K-8, K-9, K-10) · Sahibi: `@axio
 
 ## Bağlam
 
-Skaledman kartlarıyla PokeRivals tarzı gerçek zamanlı 1v1 tarayıcı arenası. Tek kişilik ekip + ajanlar; netcode sonradan eklenemez, mimariyi belirler. Referans oyun PokeRivals: Vite + TS + PixiJS 8 istemci, Fly.io'da ham WebSocket sunucu, 60 Hz, yalnız kendi konumu tahmin (`docs/research/pokerivals-paket-analizi.md`).
+Skaledman kartlarıyla gerçek zamanlı 1v1 tarayıcı arenası. Tek kişilik ekip + ajanlar; netcode sonradan eklenemez, mimariyi belirler. Referans oyun: Vite + TS + PixiJS 8 istemci, ham WebSocket sunucu, 60 Hz, yalnız kendi konumu tahmin (yerel paket analizi notu).
 
 ## Seçenekler
 
 1. **Vite + TypeScript + PixiJS 8 istemci; Colyseus 0.18 yetkili sunucu, gömülü netcode; tek paket (`colyseus/vite` başlangıcı)** — seçildi.
-2. Aynı istemci + ham WebSocket ve elle yazılmış tahmin/uzlaştırma (PokeRivals'ın yolu): 1–2 hafta ek iş, hata yüzeyi bizde.
-3. Phaser + Colyseus (pokemonAutoChess, PokeMMO örnekleri): Phaser'ın sahne/fizik yükü gereksiz; Pixi 8 daha hafif ve PokeRivals'la aynı.
+2. Aynı istemci + ham WebSocket ve elle yazılmış tahmin/uzlaştırma (referans oyunun yolu): 1–2 hafta ek iş, hata yüzeyi bizde.
+3. Phaser + Colyseus (pokemonAutoChess, PokeMMO örnekleri): Phaser'ın sahne/fizik yükü gereksiz; Pixi 8 daha hafif ve referans oyunla aynı.
 4. Colyseus 0.17 + elle interpolasyon (tanks demosu): daha oturmuş sürüm, ama tahmin katmanı yok.
 
 ## Karar

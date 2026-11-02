@@ -4,7 +4,7 @@ Sahibi: `@nile`. Bu dosya nerede olduğumuzu söyler ve karar veren belgeye işa
 
 ## Durum (2026-11-01)
 
-**F0 prototipi oynanabilir** (dal `f0/arena-prototip`, ilk commit 2026-11-01; eklenti yazısı `docs/tech/skaledman-eklenti.md`): `npm run dev` → `?ekran=arena` iki Skaledman fusion'ı gerçek kare animasyonla dövüşüyor (klavye + fare, bot), `?ekran=lab` 29 birleştirilmiş fusion; typecheck temiz, 58 test yeşil. Özet ve ekran görüntüleri `docs/research/spikes/2026-11-01-f0-prototip.md`. Kalan kodlama ve birleştirme işleri sahibin isteğiyle **Opus 5.5 oturumuna** devredildi. Belgeler: `docs/design/oyun-konsepti.md`, `docs/tech/mimari.md`, `docs/art/fusion-animasyon.md`, `docs/research/pokerivals-inceleme.md`. Ajan rosteri kuruldu. Paca projesi açıldı (SA), Sprint 1 · F0.
+**F0 prototipi oynanabilir** (dal `f0/arena-prototip`, ilk commit 2026-11-01; eklenti yazısı `docs/tech/skaledman-eklenti.md`): `npm run dev` → `?ekran=arena` iki Skaledman fusion'ı gerçek kare animasyonla dövüşüyor (klavye + fare, bot), `?ekran=lab` 29 birleştirilmiş fusion; typecheck temiz, 58 test yeşil. Özet ve ekran görüntüleri `docs/research/spikes/2026-11-01-f0-prototip.md`. Kalan kodlama ve birleştirme işleri sahibin isteğiyle **Opus 5.5 oturumuna** devredildi. Belgeler: `docs/design/oyun-konsepti.md`, `docs/tech/mimari.md`, `docs/art/fusion-animasyon.md`. Ajan rosteri kuruldu. Paca projesi açıldı (SA), Sprint 1 · F0.
 
 **Sıradaki dilim:** F0 / Birleştirme Lab (`docs/art/fusion-animasyon.md` § 6) — proje iskeleti (`colyseus/vite` klonu) + PMD SpriteCollab'dan fusion birleştirme aracı + 20 fusion'un kart resmiyle yan yana, 8 yönde Idle/Walk/Attack/Hurt oynatılması; yanında 5 kart için PixelLab denemesi (sahip onayıyla).
 
@@ -19,14 +19,14 @@ Sahibi: `@nile`. Bu dosya nerede olduğumuzu söyler ve karar veren belgeye işa
 
 ## Kararlar
 
-- **K-1 (2026-11-01)** Fikir: Skaledman kartlarıyla PokeRivals tarzı gerçek zamanlı arena; yalnız dövüş katmanı. Sahip: "bu platformun sadece dövüş kısmına böyle bir şey yazmak istiyorum." Belge: `docs/design/oyun-konsepti.md`.
+- **K-1 (2026-11-01)** Fikir: Skaledman kartlarıyla gerçek zamanlı arena; yalnız dövüş katmanı. Sahip: "bu platformun sadece dövüş kısmına böyle bir şey yazmak istiyorum." Belge: `docs/design/oyun-konsepti.md`.
 - **K-2 (2026-11-01)** Yığın: Vite + TS + PixiJS 8, Colyseus 0.18 gömülü netcode, `colyseus/vite` tek paket, Kick OAuth, SQLite, VPS. Sahip: "önce tasarım ve github'dan hazır bizi yormayacak bir iskelet ve mimari çalışması yapalım" → `docs/tech/mimari.md`. ADR-001 yazılacak (`@axiom`).
 - **K-3 (2026-11-01)** Fusion'lar modellenmez, ölçülür; animasyon prosedürel + mesh deformasyonu + kodla çizilen efekt; üretken animasyon yalnız ödül katmanı. Belge: `docs/art/fusion-animasyon.md`.
 - **K-4 (2026-11-01)** Ekip: WyrmWar rosteri aynı nick'lerle taşındı; önce ajanlar kuruldu (sahip: "Önce ajanları kur").
-- **K-5 (2026-11-01)** Animasyon: prosedürel/mesh yöntemi temel olarak **reddedildi**. Sahip: "direkt arena içerisinde gerçek modellenmiş 2d karakterlerin dövüşünü istiyorum aynı gönderdiğim ilk örnekteki gibi." Hedef PokeRivals gibi 8 yönlü kare animasyonlu piksel karakter. Temel yöntem adayı Yol A (PMD SpriteCollab birleştirme, 224/226 kapsama), ödül/yedek Yol B (PixelLab). K-3'ün animasyon kısmı geçersiz; sprite ölçümü yalnız palet çıkarımı için kalır. Belge: `docs/art/fusion-animasyon.md`.
+- **K-5 (2026-11-01)** Animasyon: prosedürel/mesh yöntemi temel olarak **reddedildi**. Sahip: "direkt arena içerisinde gerçek modellenmiş 2d karakterlerin dövüşünü istiyorum aynı gönderdiğim ilk örnekteki gibi." Hedef 8 yönlü kare animasyonlu piksel karakter. Temel yöntem adayı Yol A (PMD SpriteCollab birleştirme, 224/226 kapsama), ödül/yedek Yol B (PixelLab). K-3'ün animasyon kısmı geçersiz; sprite ölçümü yalnız palet çıkarımı için kalır. Belge: `docs/art/fusion-animasyon.md`.
 
 - **K-6 (2026-11-01)** Tick hızı **60 Hz** (yama yayını 20 Hz). Sahip seçti; gerekçe `docs/tech/mimari.md` § 3b.
-- **K-7 (2026-11-01)** Kontrol şeması **PokeRivals'ınki**: WASD, 1–4 veya tekerlek hamle seçer, sağ tuş basılı nişan ve bırakınca atış, Shift dash, Space zıplama, Tab/Q/E takım. Konsept § 2'deki Q/E şeması iptal.
+- **K-7 (2026-11-01)** Kontrol şeması **referans oyununki**: WASD, 1–4 veya tekerlek hamle seçer, sağ tuş basılı nişan ve bırakınca atış, Shift dash, Space zıplama, Tab/Q/E takım. Konsept § 2'deki Q/E şeması iptal.
 - **K-8 (2026-11-01)** Colyseus **0.18** (gömülü netcode); geri dönüş 0.17 + elle interpolasyon, tetik `technical-director`'da.
 - **K-9 (2026-11-01)** **Tek paket** (`colyseus/vite` düzeni), **npm**.
 - **K-10 (2026-11-01)** Kod tanımlayıcıları **Türkçe**; kütüphane API'leri ve commit mesajları İngilizce.
@@ -64,4 +64,4 @@ Sayfadan **kesinleşenler**: dört public GET ucu, `cache-control: no-store`, CO
 
 ## Araştırma notu (2026-11-01)
 
-`docs/research/` altında üç inceleme var: `pokerivals-inceleme.md` (yığın, benzer repolar), `pokerivals-oynanis-gozlemi.md` (sahibin oynayışı izlenerek akış, HUD, ekonomi; ekran görüntüleri `pokerivals-ekranlar/`), `pokerivals-paket-analizi.md` (istemci paketinden netcode ve simülasyon sabitleri). Son ikisi başka bir oturumda üretildi; sayısal değerler `docs/design/oyun-konsepti.md` § 11'e aday olarak aktarıldı.
+`docs/research/` (yerel, depoda değil) altında referans oyun için üç inceleme var: yığın ve benzer repolar; sahibin oynayışı izlenerek akış, HUD, ekonomi; istemci paketinden netcode ve simülasyon sabitleri. Son ikisi başka bir oturumda üretildi; sayısal değerler `docs/design/oyun-konsepti.md` § 11'e aday olarak aktarıldı.

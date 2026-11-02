@@ -1,4 +1,4 @@
-// Bot profilleri (PokeRivals `entrenadores` facil/normal profillerinden esinli; kolay bot reaccion .7, esquiva .1).
+// Bot profilleri (kolay/normal; kolay bot tepki .7, kaçınma .1).
 // Bot yalnız istemcide çalışır (F0); paylaşılan simülasyona girmez, tablo burada durur.
 
 export interface BotProfili {

@@ -8,11 +8,11 @@ Dev bir yaratığın kemikleri üstünde kurulmuş, kuru toprak bir mezarlık d�
 
 ## 2. Boyut ve sınırlar
 
-PokeRivals `estadio` ölçüsü aynen: `yariGenislik 380`, `derinlik 480` (760×480), `govdeYaricap 14`. Gerekçe: spawn, hamle menzilleri (poke 58, mermi 300, ışın 250, dash 60) bu alana göre ölçülmüş; 90 s maçta (`mac.sure`) 760 genişlik iki yana kaçışa yeter, daha büyüğü temas süresini uzatır. Değiştirme gerekçesi yok.
+Referans arena ölçüsü aynen: `yariGenislik 380`, `derinlik 480` (760×480), `govdeYaricap 14`. Gerekçe: spawn, hamle menzilleri (poke 58, mermi 300, ışın 250, dash 60) bu alana göre ölçülmüş; 90 s maçta (`mac.sure`) 760 genişlik iki yana kaçışa yeter, daha büyüğü temas süresini uzatır. Değiştirme gerekçesi yok.
 
 ## 3. Doğum noktaları ve güvenlik kuralı
 
-`(-110,120) yon 2` ve `(110,120) yon 6` (PokeRivals değeri). Aralarında 220 birim var; ışın (250) ve mermi (300) menzili bundan uzun. Bu yüzden **güvenlik mesafeyle değil geometriyle** sağlanır: iki doğum noktasını birleştiren doğru büyük kafatasını keser.
+`(-110,120) yon 2` ve `(110,120) yon 6` (referans değer). Aralarında 220 birim var; ışın (250) ve mermi (300) menzili bundan uzun. Bu yüzden **güvenlik mesafeyle değil geometriyle** sağlanır: iki doğum noktasını birleştiren doğru büyük kafatasını keser.
 - Işın ince bir doğru parçasıdır (`parcaEngel` şişirmesiz); kafatası z aralığı 94..146. İki oyuncunun orta noktası bu aralığın dışına çıkınca hat açılır: tek taraflı 52 birim kayma (bir dash'ten az, 0,35 s yürüyüş) yeter.
 - Mermi yarıçap 10 kadar şişirilir; aralık 84..156; hattı açmak için toplam 72 birim kayma gerekir (iki oyuncu 36'şar, ~0,25 s).
 - Yani hat kalıcı kapalı değil, ama maçın ilk anında kimse atış yapamaz, açılış anı "yan adım" ile başlar. Doğum noktaları köşeden çok uzak (en yakın duvar 270, en yakın engel 86), köşe cebi yok.
@@ -112,7 +112,7 @@ saha: {
 
 ## 10. v2 adayları (v1'e girmez)
 
-Kemik çukuru (lava benzeri tehlike, ortada alt bölge), mezar sisi (`niebla` yüzeyi, PokeRivals `cementerio`), kemik çit (`mermiGecer` gerektirir), dönen kafatası (hareketli engel: ağ ve tick maliyeti, `network-programmer` görüşü şart).
+Kemik çukuru (lava benzeri tehlike, ortada alt bölge), mezar sisi (sis yüzeyi), kemik çit (`mermiGecer` gerektirir), dönen kafatası (hareketli engel: ağ ve tick maliyeti, `network-programmer` görüşü şart).
 
 ## 11. Sahibe açık sorular
 

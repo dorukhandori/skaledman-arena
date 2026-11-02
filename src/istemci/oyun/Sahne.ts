@@ -3,7 +3,7 @@ import type { Arena } from "../../paylasilan/sim/Arena.ts";
 import { SAHNE_RENK } from "./renkler.ts";
 import { ISKELET_RENK, gokCiz, iskeletEngeliCiz, zeminDokusu } from "./IskeletCizimi.ts";
 
-/** PokeRivals yerleşimi (paket analizi § 8): mantıksal 960×540, ufuk 184, zemin alt 516. */
+/** Sahne yerleşimi: mantıksal 960×540, ufuk 184, zemin alt 516. */
 export const SAHNE = {
   genislik: 960,
   yukseklik: 540,

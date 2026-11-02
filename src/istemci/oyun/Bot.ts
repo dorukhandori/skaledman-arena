@@ -7,7 +7,7 @@ import type { Dovuscu, Dunya } from "../../paylasilan/sim/durum.ts";
 import { type Girdi, bosGirdi } from "../../paylasilan/sim/Girdi.ts";
 import { rastgele } from "../../paylasilan/sim/rastgele.ts";
 
-// PokeRivals `facil/normal` profillerinden esinli bot: menzile yaklaş / geri çekil, yan adım, en iyi tip-etkinlikli
+// Kolay/normal profilli bot: menzile yaklaş / geri çekil, yan adım, en iyi tip-etkinlikli
 // hazır yuvayı at, telegrafı görünce dash ile kaç. Yalnız istemcide çalışır; paylaşılan sim'e girmez.
 
 const BOT = {
@@ -20,7 +20,7 @@ const BOT = {
   alanPayi: 14,
   menzilIcinPayi: 0.95,
   dashYanMesafeEsigi: 0.5,
-  /** PokeRivals normal bot `cambios:[vidaBaja]`: can bu oranın altına inince daha sağlıklı üyeye geç */
+  /** Normal bot: can bu oranın altına inince daha sağlıklı üyeye geç */
   dusukCan: 0.25,
   yedekCanEsigi: 0.5,
 } as const;

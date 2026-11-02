@@ -20,7 +20,7 @@ Her oturum işe başlamadan önce `git pull`, bu dosyayı oku, satırını ekle,
 - 2026-11-01 · @cove (alt ajan) · `docs/design/arenalar/iskeletler-diyari.md` · ilk arena özelliği
 
 - 2026-11-01 · @nile (Claude Code) · `docs/`, `.claude/agents/`, `CLAUDE.md`, `AGENTS.md` · proje kuruldu, roster ve belgeler yazıldı
-- 2026-11-01 · (başka oturum, satır açılmamıştı) · `docs/research/pokerivals-oynanis-gozlemi.md`, `pokerivals-paket-analizi.md`, `pokerivals-ekranlar/` · PokeRivals oynanış ve paket analizi
+- 2026-11-01 · (başka oturum, satır açılmamıştı) · `docs/research/` (yerel) · referans oyunun oynanış ve paket analizi
 - 2026-11-01 · @nile (Claude Code) · `docs/design/oyun-konsepti.md` § 11, `docs/tech/mimari.md` § 3b, `roadmap.md` · araştırma değerleri aday olarak aktarıldı, K-6 adayı açıldı
 - 2026-11-01 · @vault (Claude Code alt ajan, SA-8) · `docs/research/skaledman-sayfa-analizi.md` · Skaledman web sayfası dökümü bitti; açık noktalar roadmap'e taşındı
 - 2026-11-01 · @byte (alt ajanlar) · `araclar/`, `src/istemci/sprite/`, `BirlestirmeLab.ts`, `src/paylasilan/{kurallar,sim}`, `src/istemci/oyun/`, `Arena.ts` · birleştirme hattı + Lab ve çevrimdışı arena bitti; F0 oynanabilir

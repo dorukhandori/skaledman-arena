@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "version": "0.0.1",
-  "description": "Skaledman fusion kartlarıyla gerçek zamanlı 1v1 arena (PokeRivals tarzı). Kâr amaçsız hayran projesi.",
+  "description": "Skaledman fusion kartlarıyla gerçek zamanlı 1v1 arena. Kâr amaçsız hayran projesi.",
   "scripts": {
     "dev": "vite",
     "build": "vite build --app",

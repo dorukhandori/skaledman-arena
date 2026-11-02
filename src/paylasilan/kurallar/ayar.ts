@@ -1,4 +1,4 @@
-// Ayar tablosu (tuning). Kaynak: PokeRivals paket analizi § 2 ve oyun-konsepti § 11.
+// Ayar tablosu (tuning). Kaynak: oyun-konsepti § 11.
 // Sayılar yalnız burada ve hamleler.ts / botlar.ts tablolarında durur; kodda sihirli sayı yok.
 // Paylaşılan kod: DOM yok, Node yok.
 
@@ -45,7 +45,7 @@ export const AYAR = {
   hitKeser: true,
 
   /**
-   * Genel hasar çarpanı (PokeRivals formülündeki `factor`). 1 = formül aynen (bot-bot medyan maç 3,1 s);
+   * Genel hasar çarpanı. 1 = formül aynen (bot-bot medyan maç 3,1 s);
    * F0 varsayılanı 0,2: 80 bot-bot maçta medyan 13,9 s (p10 7,4 / p90 22,0), insan maçı daha uzun sürer.
    * Ölçüm 2026-11-01, normal bot. `?hasar=` ile geçersiz kılınır. Denge kararı economy-designer'ındır (SA-6).
    */
@@ -72,11 +72,11 @@ export const AYAR = {
 
   /**
    * Zıplama (analiz `curvas`): 0,5 s parabol, 22 birim tepe, enerji 1/3 (0..1, 0,4/s dolar).
-   * `bekleme` PokeRivals `cooldown:.5`; inişten sayılması ajan yorumu (tuning.md).
+   * `bekleme` 0,5 s referans değer; inişten sayılması ajan yorumu (tuning.md).
    */
   zipla: { sure: 0.5, yukseklik: 22, bekleme: 0.5, maliyet: 1 / 3, enerjiDolum: 0.4 },
   /**
-   * Z dinlenme. PokeRivals'ta PP/şarj dolumu; bizde şarj yok, karşılığı ajan önerisi (tuning.md, sahip onayı bekler):
+   * Z dinlenme. Referansta PP/şarj dolumu; bizde şarj yok, karşılığı ajan önerisi (tuning.md, sahip onayı bekler):
    * dinlenirken hareket yok, cooldown'lar `cooldownHizi` kat, enerji `enerjiHizi` kat hızlı dolar.
    */
   dinlen: { cooldownHizi: 2, enerjiHizi: 3 },

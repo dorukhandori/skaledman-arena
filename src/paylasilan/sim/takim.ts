@@ -7,7 +7,7 @@ import type { Dovuscu, Dunya, Takim, UyeDurumu } from "./durum.ts";
 import { hamleIptal } from "./hamle.ts";
 import { bosKademe } from "./kademe.ts";
 
-// Takım geçişi (PokeRivals `capas`: geri 0,4 + boşluk 0,5 + çıkış 0,25 s; sonra 2 s bekleme; KO sonrası 5 s seçim).
+// Takım geçişi (geri 0,4 + boşluk 0,5 + çıkış 0,25 s; sonra 2 s bekleme; KO sonrası 5 s seçim).
 // Aktif üyenin canlı değerleri Dovuscu'da durur; yedekler UyeDurumu'nda bekler.
 
 function uyeKur(p: DovuscuProfili): UyeDurumu {

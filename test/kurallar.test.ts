@@ -35,7 +35,7 @@ describe("tip tablosu", () => {
     expect(etkinlik("ICE", ["DRAGON", "FLYING"])).toBe(4);
   });
 
-  it("PokeRivals budaması", () => {
+  it("tip çarpanı budaması", () => {
     expect(budanmisEtkinlik(4)).toBe(1.5);
     expect(budanmisEtkinlik(2)).toBe(1.5);
     expect(budanmisEtkinlik(1)).toBe(1);

@@ -5,7 +5,7 @@ import type { AnimasyonAdi, Yon } from "../../paylasilan/atlas.ts";
  * Dövüşçü görselinin sözleşmesi. İki uygulama:
  *  - FusionAnimator (src/istemci/sprite/FusionAnimator.ts): public/fusion/<id>/ atlasından gerçek kare animasyonu (SA-3/SA-4)
  *  - KutuAnimator (bu dosya): renkli kutu; arena kodu atlas hazır olmadan da çalışsın diye
- * Ölçek: 1 atlas pikseli = OLCEK ekran pikseli (PokeRivals 3×).
+ * Ölçek: 1 atlas pikseli = OLCEK ekran pikseli (3×).
  */
 export const OLCEK = 3;
 

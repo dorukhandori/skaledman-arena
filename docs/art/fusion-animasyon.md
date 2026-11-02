@@ -1,16 +1,16 @@
 # Fusion Pokémon'ları arenada canlandırma
 
-Tarih: 2026-11-01 (ikinci sürüm; sahibin kararıyla yeniden yazıldı). Bağlam: [oyun-konsepti.md](../design/oyun-konsepti.md), [mimari.md](../tech/mimari.md), [pokerivals-inceleme.md](../research/pokerivals-inceleme.md).
+Tarih: 2026-11-01 (ikinci sürüm; sahibin kararıyla yeniden yazıldı). Bağlam: [oyun-konsepti.md](../design/oyun-konsepti.md), [mimari.md](../tech/mimari.md).
 
 ## 0. Karar (K-5)
 
 Sahip, 2026-11-01: *"'resmin kendisini zıplatarak, eğerek, esneterek' hareket edecek. bunu istemiyorum. direkt arena içerisinde gerçek modellenmiş 2d karakterlerin dövüşünü istiyorum aynı gönderdiğim ilk örnekteki gibi."*
 
-Hedef görünüm PokeRivals'ınkiyle aynı: **gerçek kare animasyonlu, 8 yönlü piksel karakterler**; yürüyen, saldıran, hasar alan, bayılan. Prosedürel zıplatma ve mesh deformasyonu **temel yöntem olmaktan çıktı**; yalnız kare animasyonun üstüne ikincil efekt (vuruş flaşı, geri itme kayması) olarak kalabilir.
+Hedef görünüm: **gerçek kare animasyonlu, 8 yönlü piksel karakterler**; yürüyen, saldıran, hasar alan, bayılan. Prosedürel zıplatma ve mesh deformasyonu **temel yöntem olmaktan çıktı**; yalnız kare animasyonun üstüne ikincil efekt (vuruş flaşı, geri itme kayması) olarak kalabilir.
 
-## 1. PokeRivals ne kullanıyor
+## 1. Kaynak sprite seti
 
-PMD **SpriteCollab** ([github.com/PMDCollab/SpriteCollab](https://github.com/PMDCollab/SpriteCollab), CC BY-NC 4.0) sprite'ları. Her Pokémon için klasörde animasyon başına üç sayfa var: `Walk-Anim.png` (kareler; satır = 8 yön, sütun = kare), `Walk-Offsets.png`, `Walk-Shadow.png`; süreler `AnimData.xml`'de (ör. Walk 32×32, Attack 64×64, `HitFrame`/`RushFrame` işaretli). Animasyon seti: Walk, Attack, Hurt, Idle, Charge, Shoot, Hop, Rotate, Swing, Double, Sleep, Strike… PokeRivals bunları Python betiğiyle web'e dışa aktarıyor, oyun içinde 3× büyütüp gösteriyor.
+PMD **SpriteCollab** ([github.com/PMDCollab/SpriteCollab](https://github.com/PMDCollab/SpriteCollab), CC BY-NC 4.0) sprite'ları. Her Pokémon için klasörde animasyon başına üç sayfa var: `Walk-Anim.png` (kareler; satır = 8 yön, sütun = kare), `Walk-Offsets.png`, `Walk-Shadow.png`; süreler `AnimData.xml`'de (ör. Walk 32×32, Attack 64×64, `HitFrame`/`RushFrame` işaretli). Animasyon seti: Walk, Attack, Hurt, Idle, Charge, Shoot, Hop, Rotate, Swing, Double, Sleep, Strike… Benzer tarayıcı oyunları bu sayfaları bir betikle web'e dışa aktarıp 3× büyütülmüş gösteriyor.
 
 Sorun: SpriteCollab'da **fusion yok**; yalnız gerçek Pokémon'lar var. Bu yüzden iki yol var.
 
@@ -29,11 +29,11 @@ Infinite Fusion'ın kendi otomatik üretecinin mantığı: **gövde Pokémon'unu
 3b. **Boyun köprüsü** (`araclar/fusion/boyun.ts`, 2026-11-01): yerleştirilen baş gövdenin kalın piksellerine değmiyorsa (ya da yalnız 1 px'lik tel/kalıntıyla bağlıysa) baş işaretine en yakın gövde pikselinden başın çekirdeğine kısa, daralan bir şerit çizilir; dolgu rengi gövdenin o bölgedeki açık tonu, kenarı fusion çizgi rengi. Belirleyici, rastgelelik yok. Çok büyük boşluk (> 2,2 × baş yarıçapı + 2 px) köprülenmez.
 3c. **Kontrast güvencesi** (`araclar/fusion/kontrast.ts`): birleşik sayfaların dolgu parlaklığı p5–p95 aralığı, sanatçının kart resmi aralığının %80'inin ([70,130]) altındaysa tek bir monoton eğri (çapa + katsayı ≤ 2,5) ile açılır; çizgi ve beyaz dokunulmaz, en koyu dolgu çizgiden ≥ 38 birim açık kalır. Atlasa `kontrast: {capa, katsayi}` yazılır.
 3d. **Shiny** (`araclar/fusion/parlak.ts`): Skaledman shiny'yi aynı PNG + CSS `hue-rotate(hue) saturate(1.3)` ile gösterir; shiny kartlar için tüm sayfalar aynı matrisle (feColorMatrix hueRotate sonra saturate, sRGB) `<ad>-Anim-shiny.png` olarak ayrıca üretilir, atlasta `shiny: {hue, doygunluk}`. İstemci `atlasYukle(id, shiny)` / `animatorYukle(id, renk, shiny)` ile seçer. `hue` kart başına değil açılış kaydı başınadır; aynı fusion başka bir hue ile açılırsa o hue için yeniden üretim gerekir.
-4. **Çıktı:** fusion başına tek atlas (`sprite/fusion/251.443.png` + `.json`: animasyonlar, yönler, süreler, `HitFrame`, gölge boyutu) PokeRivals'ın manifest biçimine yakın. Önbelleklenir; kart ilk kez kullanıldığında üretilir, sonsuza dek saklanır.
+4. **Çıktı:** fusion başına tek atlas (`sprite/fusion/251.443.png` + `.json`: animasyonlar, yönler, süreler, `HitFrame`, gölge boyutu). Önbelleklenir; kart ilk kez kullanıldığında üretilir, sonsuza dek saklanır.
 5. **Kredi:** `tracker.json`'daki `sprite_credit` (gövde ve baş sanatçıları) + Skaledman'daki `artists` (fusion resmi) kredi sayfasına girer. CC BY-NC: kâr yok, kredi var.
 
 ### Ne kadar "o kart" olur
-Gövde B'nin duruşu ve hareketi, A'nın başı, sanatçının renkleri. Sanatçının elle çizdiği yaratıcı dokunuşlar (kanat eklemesi, farklı poz) gelmez; kart resmi HUD'da ve seçim ekranında sanatçının çizimi olarak kalır, arenada PMD tarzı animasyonlu hâli dövüşür. PokeRivals'ta da kart/portre ile arena sprite'ı farklı kaynaklardan.
+Gövde B'nin duruşu ve hareketi, A'nın başı, sanatçının renkleri. Sanatçının elle çizdiği yaratıcı dokunuşlar (kanat eklemesi, farklı poz) gelmez; kart resmi HUD'da ve seçim ekranında sanatçının çizimi olarak kalır, arenada PMD tarzı animasyonlu hâli dövüşür. Benzer oyunlarda da kart/portre ile arena sprite'ı farklı kaynaklardan gelir.
 
 ### Riskler
 - Baş yapıştırma bazı çiftlerde kötü durur (kuş başı balık gövdeye, kocaman baş küçük gövdeye). Ölçütler: 20 rastgele fusion'ın en az 16'sı "bu o kart" dedirtmeli; kalanlar için Yol B.
@@ -58,12 +58,12 @@ Gövde B'nin duruşu ve hareketi, A'nın başı, sanatçının renkleri. Sanatç
 - **Elle çizim:** kart başına saatler; yalnız topluluk gönüllüsü getirirse, ödül olarak.
 
 ## 5. Oyun içi gösterim
-- Atlas kareleri nearest-neighbour ile 3× (Walk 32 → 96 px, Attack 64 → 192 px), PokeRivals ölçeği.
+- Atlas kareleri nearest-neighbour ile 3× (Walk 32 → 96 px, Attack 64 → 192 px).
 - 8 yön: hareket yönü yürüme animasyonunu, nişan açısı saldırı animasyonunun yönünü seçer.
 - Durum → animasyon: boşta Idle, hareket Walk, dash Hop, temas saldırısı Attack/Strike, menzilli Shoot, hazırlık Charge, hasar Hurt, bayılma Faint, zafer Pose.
 - `HitFrame`, hasarın uygulandığı sunucu anıyla hizalanır: hamle kuralındaki `aviso` süresi = kareler `RushFrame`'e kadar; `network-programmer` ile.
 - Gölge `*-Shadow.png`'den; sanatçı kredisi sonuç ekranında.
-- Hamle efektleri yine kodla çizilir (PokeRivals'taki gibi); karakter saldırı karesini oynarken alev/dalga/ışın efekt katmanından çıkar.
+- Hamle efektleri yine kodla çizilir; karakter saldırı karesini oynarken alev/dalga/ışın efekt katmanından çıkar.
 
 ## 6. Kanıt planı: Birleştirme Lab (F0'ın ilk işi)
 Tek sayfa: 20 rastgele fusion; solda sanatçının kart resmi, sağda Yol A ile üretilmiş karakter Idle/Walk/Attack/Hurt oynarken, 8 yön döndürülebilir. Ölçüt: sahip ve 3 izleyici "bu o kart" diyor mu (hedef 16/20); baş eklemi bozuk kare oranı < %10; 10 karakter ekranda 60 fps. Aynı sayfada 5 kart için Yol B çıktısı yan yana (ücretsiz kota ile, sahip onayı). Sonuç `docs/research/spikes/` altına.

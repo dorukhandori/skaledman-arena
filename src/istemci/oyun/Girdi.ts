@@ -3,7 +3,7 @@ import { YUVA_SAYISI } from "../../paylasilan/kurallar/hamleler.ts";
 import type { Sahne } from "./Sahne.ts";
 
 /**
- * Klavye + fare → paylaşılan `Girdi` (K-7, PokeRivals şeması):
+ * Klavye + fare → paylaşılan `Girdi` (K-7):
  * WASD/oklar hareket, 1-4 ve tekerlek yuva seçer, sağ tuş basılı nişan + bırakınca atış,
  * sol tık seçili yuvayı anında atar, Shift dash, Space zıplama, Z basılı dinlenme, Q/E takımda önceki/sonraki,
  * Tab basılıyken 1-3 üye seçer ve yeni üye fare noktasına düşer (Q/E de Tab ile düşüş noktası alır). Esc nişanı iptal eder.

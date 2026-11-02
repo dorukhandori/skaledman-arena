@@ -1,6 +1,6 @@
 # Skaledman Arena: iskelet seçimi ve mimari
 
-Tarih: 2026-11-01. Önceki belgeler: [pokerivals-inceleme.md](../research/pokerivals-inceleme.md), [oyun-konsepti.md](../design/oyun-konsepti.md). Bu belge "hangi hazır iskeletten başlıyoruz, kod nasıl bölünüyor, ağ nasıl çalışıyor, nasıl yayına çıkıyor" sorularını kapatır.
+Tarih: 2026-11-01. Önceki belge: [oyun-konsepti.md](../design/oyun-konsepti.md). Bu belge "hangi hazır iskeletten başlıyoruz, kod nasıl bölünüyor, ağ nasıl çalışıyor, nasıl yayına çıkıyor" sorularını kapatır.
 
 ## 1. Karar özeti
 
@@ -179,13 +179,13 @@ npm i pixi.js@8 @pixi/ui @pixi/sound zod better-sqlite3 && npm i -D vitest @type
 | Kod dili | Türkçe tanımlayıcılar, İngilizce kütüphane API'si | Tamamen İngilizce |
 | Paket yöneticisi | npm (başlangıç reposu npm) | pnpm |
 
-## 3b. PokeRivals netcode'u ile karşılaştırma (2026-11-01 paket analizi sonrası)
+## 3b. Referans netcode ile karşılaştırma (2026-11-01 paket analizi sonrası)
 
-Kaynak: [pokerivals-paket-analizi.md](../research/pokerivals-paket-analizi.md) § 1. PokeRivals: tek WebSocket, JSON + zod, protokol sürümü 35, **60 Hz tick**, tick başına 1 `intencion` mesajı (hareket vektörü + nişan noktası + ≤4 eylem), yalnız kendi konumu tahmin, uzlaştırma eşikleri 1,5 / 96 birim ve 10/s yumuşatma, uzak oyuncu için 2–4 tick uyarlamalı enterpolasyon gecikmesi + 15 tick'e kadar ekstrapolasyon, vuruşlar tamamen sunucuda, kendi HP'si olaylardan öne alınır, saniyede 1 ping, maç sonu ≤8 KB telemetri.
+Kaynak: yerel paket analizi notu § 1. Referans oyun: tek WebSocket, JSON + zod, **60 Hz tick**, tick başına 1 girdi mesajı (hareket vektörü + nişan noktası + ≤4 eylem), yalnız kendi konumu tahmin, uzlaştırma eşikleri 1,5 / 96 birim ve 10/s yumuşatma, uzak oyuncu için 2–4 tick uyarlamalı enterpolasyon gecikmesi + 15 tick'e kadar ekstrapolasyon, vuruşlar tamamen sunucuda, kendi HP'si olaylardan öne alınır, saniyede 1 ping, maç sonu ≤8 KB telemetri.
 
-Bizim seçimimiz Colyseus 0.18 aynı modeli hazır veriyor (`defineInput` = `intencion`, `Predict.reconciler` = `gn`, `attachAll lerp` = `sn/ln`, `allowRewindState` = PokeRivals'ta olmayan gecikme telafisi). İki açık nokta:
+Bizim seçimimiz Colyseus 0.18 aynı modeli hazır veriyor (`defineInput` = girdi mesajı, `Predict.reconciler` = uzlaştırma, `attachAll lerp` = enterpolasyon, `allowRewindState` = referansta olmayan gecikme telafisi). İki açık nokta:
 
-- **Tick hızı (K-6, karar: 60 Hz):** 30 Hz önermiştik; PokeRivals 60 Hz, sahip 60'ı seçti. 0,08 s'lik telegraf 30 Hz'de 2,4 tick'e sığar; vuruş zamanlaması ±17 ms oynar. Seçenekler: (a) 60 Hz tick + 20 Hz yama (sunucu CPU ×2, 1v1 odada önemsiz), (b) 30 Hz ve en kısa telegraf 0,1 s. F0'da ikisi ölçülür; `network-programmer` + `technical-director`.
-- **Girdi biçimi:** nişanı açı değil **dünya noktası** olarak göndermek (PokeRivals gibi) hedefli alan hamleleri ve düşüş noktası seçimi için gerekli; `Girdi` şemasına `nisanX/nisanZ` (float32, ±2000 kırpma) eklenir.
+- **Tick hızı (K-6, karar: 60 Hz):** 30 Hz önermiştik; referans 60 Hz, sahip 60'ı seçti. 0,08 s'lik telegraf 30 Hz'de 2,4 tick'e sığar; vuruş zamanlaması ±17 ms oynar. Seçenekler: (a) 60 Hz tick + 20 Hz yama (sunucu CPU ×2, 1v1 odada önemsiz), (b) 30 Hz ve en kısa telegraf 0,1 s. F0'da ikisi ölçülür; `network-programmer` + `technical-director`.
+- **Girdi biçimi:** nişanı açı değil **dünya noktası** olarak göndermek hedefli alan hamleleri ve düşüş noktası seçimi için gerekli; `Girdi` şemasına `nisanX/nisanZ` (float32, ±2000 kırpma) eklenir.
 
 Alınacak küçük şeyler: ağ kalitesi göstergesi eşikleri (RTT > 220 ms veya 400 ms snapshot yok → kötü; > 120 ms veya gecikme > 3 tick → orta), maç sonu telemetri alanları (ping medyan/p95, jitter, düzeltme sayıları, kare histogramı; DNT'ye uyum), hata kodu listesi (flood, orden, salaLlena, reanudacion…), yazılım rasterizer uyarısı.

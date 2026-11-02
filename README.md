@@ -1,6 +1,6 @@
 # Skaledman Arena
 
-[skaledman.com](https://skaledman.com) albümündeki Pokémon Infinite Fusion kartlarıyla tarayıcıda oynanan, **gerçek zamanlı 1v1 arena**. Kick yayıncısı swaggybark'ın izleyicileri açtıkları kartlarla PokeRivals tarzı dövüşür: klavye hareket, fare nişan; kartın iki saldırısı iki yetenek tuşu, tipi temel vuruş, yeteneği pasif; 3 kartlık takım maç ortasında değişir.
+[skaledman.com](https://skaledman.com) albümündeki Pokémon Infinite Fusion kartlarıyla tarayıcıda oynanan, **gerçek zamanlı 1v1 arena**. Kick yayıncısı swaggybark'ın izleyicileri açtıkları kartlarla dövüşür: klavye hareket, fare nişan; kartın iki saldırısı iki yetenek tuşu, tipi temel vuruş, yeteneği pasif; 3 kartlık takım maç ortasında değişir.
 
 Albüm, kart açma ve kanal puanı Skaledman'da kalır. Bu depo yalnız **dövüş katmanıdır**: Skaledman'da "arenada savaş" seçildiği andan sonrası. Kâr amaçsız hayran projesi.
 
@@ -98,5 +98,4 @@ Hata, "bu kart böyle görünmemeli", denge gözlemi: issue açın (şablonlar v
 - Kod lisansı henüz seçilmedi (öneri: MIT); proje iskeleti [colyseus/vite](https://github.com/colyseus/vite) MIT lisanslıdır ([docs/tech/LICENSE-colyseus-vite-starter.txt](docs/tech/LICENSE-colyseus-vite-starter.txt)).
 - Pokémon, Nintendo / Creatures Inc. / GAME FREAK inc. markasıdır. Fusion çizimleri [Pokémon Infinite Fusion](https://infinitefusion.fandom.com) topluluğu sanatçılarına aittir; sanatçı adları oyun içinde gösterilir.
 - Animasyon kareleri [PMD SpriteCollab](https://sprites.pmdcollab.org) projesinden, kendi lisans ve kredi koşullarıyla.
-- Oynanış ilhamı: PokeRivals.
 - Reklam yok, satış yok. Hak sahiplerinden gelen bir talep üzerine ilgili içerik kaldırılır.
