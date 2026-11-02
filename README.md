@@ -1,6 +1,6 @@
 # Skaledman Arena
 
-[skaledman.com](https://skaledman.com) albümündeki Pokémon Infinite Fusion kartlarıyla tarayıcıda oynanan, **gerçek zamanlı 1v1 arena**. Kick yayıncısı swaggybark'ın izleyicileri açtıkları kartlarla PokeRivals tarzı dövüşür: klavye hareket, fare nişan; kartın iki saldırısı iki yetenek tuşu, tipi temel vuruş, yeteneği pasif; 3 kartlık takım maç ortasında değişir.
+[skaledman.com](https://skaledman.com) albümündeki Pokémon Infinite Fusion kartlarıyla tarayıcıda oynanan, **gerçek zamanlı 1v1 arena**. Kick yayıncısı swaggybark'ın izleyicileri açtıkları kartlarla dövüşür: klavye hareket, fare nişan; kartın iki saldırısı iki yetenek tuşu, tipi temel vuruş, yeteneği pasif; 3 kartlık takım maç ortasında değişir.
 
 Albüm, kart açma ve kanal puanı Skaledman'da kalır. Bu depo yalnız **dövüş katmanıdır**: Skaledman'da "arenada savaş" seçildiği andan sonrası. Kâr amaçsız hayran projesi.
 
