@@ -1,0 +1,879 @@
+{
+ "surum": 1,
+ "basarimlar": [
+  {
+   "id": "ilk-devir",
+   "ad": "İlk Devir",
+   "kategori": "yol",
+   "sart": {
+    "olay": "antrenmanBitti",
+    "sayi": 1,
+    "kosul": {}
+   },
+   "odulAltin": 100,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [
+    "market",
+    "baslangic-rafi"
+   ],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "ilk-galibiyet",
+   "ad": "İlk Galibiyet",
+   "kategori": "yol",
+   "sart": {
+    "olay": "macKazanildi",
+    "sayi": 1,
+    "kosul": {
+     "mod": [
+      "hizli",
+      "dereceli"
+     ]
+    }
+   },
+   "odulAltin": 100,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "uclu",
+   "ad": "Üçlü",
+   "kategori": "yol",
+   "sart": {
+    "olay": "farkliCekirdekKazanma",
+    "sayi": 3,
+    "kosul": {}
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [
+    "takim-yuvasi-4"
+   ],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "parlayan",
+   "ad": "Parlayan",
+   "kategori": "yol",
+   "sart": {
+    "olay": "cekirdekSeviye",
+    "sayi": 1,
+    "kosul": {
+     "seviye": 3
+    }
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [
+    "parlak-disk"
+   ],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "on-galibiyet",
+   "ad": "On Galibiyet",
+   "kategori": "yol",
+   "sart": {
+    "olay": "macKazanildi",
+    "sayi": 10,
+    "kosul": {
+     "mod": [
+      "hizli",
+      "dereceli"
+     ]
+    }
+   },
+   "odulAltin": 200,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "elli-galibiyet",
+   "ad": "Elli Galibiyet",
+   "kategori": "yol",
+   "sart": {
+    "olay": "macKazanildi",
+    "sayi": 50,
+    "kosul": {
+     "mod": [
+      "hizli",
+      "dereceli"
+     ]
+    }
+   },
+   "odulAltin": 500,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "yuz-galibiyet",
+   "ad": "Yüz Galibiyet",
+   "kategori": "yol",
+   "sart": {
+    "olay": "macKazanildi",
+    "sayi": 100,
+    "kosul": {
+     "mod": [
+      "hizli",
+      "dereceli"
+     ]
+    }
+   },
+   "odulAltin": 800,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "yuz-mac",
+   "ad": "Yüz Maç",
+   "kategori": "yol",
+   "sart": {
+    "olay": "macOynandi",
+    "sayi": 100,
+    "kosul": {
+     "mod": [
+      "hizli",
+      "dereceli"
+     ]
+    }
+   },
+   "odulAltin": 500,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "dusurucu",
+   "ad": "Düşürücü",
+   "kategori": "bitis",
+   "sart": {
+    "olay": "bitisYap",
+    "sayi": 10,
+    "kosul": {
+     "tur": "ringOut",
+     "kazandi": true
+    }
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [
+    "dusurucu-govde"
+   ],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "kirici",
+   "ad": "Kırıcı",
+   "kategori": "bitis",
+   "sart": {
+    "olay": "bitisYap",
+    "sayi": 10,
+    "kosul": {
+     "tur": "parcalanma",
+     "kazandi": true
+    }
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [
+    "sivri-govde"
+   ],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "son-doren",
+   "ad": "Son Dönen",
+   "kategori": "bitis",
+   "sart": {
+    "olay": "bitisYap",
+    "sayi": 10,
+    "kosul": {
+     "tur": "durma",
+     "kazandi": true
+    }
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [
+    "alcak-disk"
+   ],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "uc-yonlu",
+   "ad": "Üç Yönlü",
+   "kategori": "bitis",
+   "sart": {
+    "olay": "tekMacBitisCesidi",
+    "sayi": 3,
+    "kosul": {}
+   },
+   "odulAltin": 500,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "seri",
+   "ad": "Seri",
+   "kategori": "bitis",
+   "sart": {
+    "olay": "galibiyetSerisi",
+    "sayi": 5,
+    "kosul": {}
+   },
+   "odulAltin": 500,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "hizli-bitis",
+   "ad": "Hızlı Bitiş",
+   "kategori": "bitis",
+   "sart": {
+    "olay": "macKazanildi",
+    "sayi": 1,
+    "kosul": {
+     "sureMaxSn": 40
+    }
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "temiz-galibiyet",
+   "ad": "Temiz Galibiyet",
+   "kategori": "bitis",
+   "sart": {
+    "olay": "macKazanildi",
+    "sayi": 10,
+    "kosul": {
+     "kalanStaminaMinOran": 0.5
+    }
+   },
+   "odulAltin": 500,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "kor-ustasi",
+   "ad": "Kor Ustası",
+   "kategori": "element",
+   "sart": {
+    "olay": "macKazanildi",
+    "sayi": 10,
+    "kosul": {
+     "cekirdekElementi": "kor"
+    }
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [],
+   "acilanGorunum": [
+    "arma-kor"
+   ],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "kasirga-ustasi",
+   "ad": "Kasırga Ustası",
+   "kategori": "element",
+   "sart": {
+    "olay": "macKazanildi",
+    "sayi": 10,
+    "kosul": {
+     "cekirdekElementi": "kasirga"
+    }
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [],
+   "acilanGorunum": [
+    "arma-kasirga"
+   ],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "simsek-ustasi",
+   "ad": "Şimşek Ustası",
+   "kategori": "element",
+   "sart": {
+    "olay": "macKazanildi",
+    "sayi": 10,
+    "kosul": {
+     "cekirdekElementi": "simsek"
+    }
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [
+    "simsek-goktasi"
+   ],
+   "acilanGorunum": [
+    "arma-simsek"
+   ],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "girdap-ustasi",
+   "ad": "Girdap Ustası",
+   "kategori": "element",
+   "sart": {
+    "olay": "macKazanildi",
+    "sayi": 10,
+    "kosul": {
+     "cekirdekElementi": "girdap"
+    }
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [],
+   "acilanGorunum": [
+    "arma-girdap"
+   ],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "kaya-ustasi",
+   "ad": "Kaya Ustası",
+   "kategori": "element",
+   "sart": {
+    "olay": "macKazanildi",
+    "sayi": 10,
+    "kosul": {
+     "cekirdekElementi": "kaya"
+    }
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [],
+   "acilanGorunum": [
+    "arma-kaya"
+   ],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "don-ustasi",
+   "ad": "Don Ustası",
+   "kategori": "element",
+   "sart": {
+    "olay": "macKazanildi",
+    "sayi": 10,
+    "kosul": {
+     "cekirdekElementi": "don"
+    }
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [
+    "ayaz-govde"
+   ],
+   "acilanGorunum": [
+    "arma-don"
+   ],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "cark-tamam",
+   "ad": "Çark Tamam",
+   "kategori": "element",
+   "sart": {
+    "olay": "altiElementKazanma",
+    "sayi": 6,
+    "kosul": {}
+   },
+   "odulAltin": 800,
+   "acilanParcalar": [],
+   "acilanGorunum": [
+    "arma-cark",
+    "takim-izi-cark"
+   ],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "zit-kutup",
+   "ad": "Zıt Kutup",
+   "kategori": "element",
+   "sart": {
+    "olay": "zitElementCarpisma",
+    "sayi": 25,
+    "kosul": {}
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "kriz-donusu",
+   "ad": "Kriz Dönüşü",
+   "kategori": "risk",
+   "sart": {
+    "olay": "macKazanildi",
+    "sayi": 1,
+    "kosul": {
+     "enAzStaminaOran": 0.1
+    }
+   },
+   "odulAltin": 800,
+   "acilanParcalar": [
+    "kor-kalbi"
+   ],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": true,
+   "ilkSurum": true
+  },
+  {
+   "id": "kenar-yuruyusu",
+   "ad": "Kenar Yürüyüşü",
+   "kategori": "risk",
+   "sart": {
+    "olay": "kusakSuresi",
+    "sayi": 20,
+    "kosul": {
+     "tekMac": true,
+     "kazandi": true
+    }
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [
+    "kusak-ucu"
+   ],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "sabir",
+   "ad": "Sabır",
+   "kategori": "risk",
+   "sart": {
+    "olay": "macKazanildi",
+    "sayi": 5,
+    "kosul": {
+     "ozelYetenekKullanilmadi": true
+    }
+   },
+   "odulAltin": 500,
+   "acilanParcalar": [
+    "sabir-tasi"
+   ],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "geri-gelis",
+   "ad": "Geri Geliş",
+   "kategori": "risk",
+   "sart": {
+    "olay": "macKazanildi",
+    "sayi": 1,
+    "kosul": {
+     "puanGeriden": 2
+    }
+   },
+   "odulAltin": 500,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "son-nefes",
+   "ad": "Son Nefes",
+   "kategori": "risk",
+   "sart": {
+    "olay": "macKazanildi",
+    "sayi": 1,
+    "kosul": {
+     "bitisStaminaMaxOran": 0.05
+    }
+   },
+   "odulAltin": 800,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": true,
+   "ilkSurum": true
+  },
+  {
+   "id": "takim-ultisi",
+   "ad": "Takım Ultisi",
+   "kategori": "gosteri",
+   "sart": {
+    "olay": "takimUltisi",
+    "sayi": 1,
+    "kosul": {}
+   },
+   "odulAltin": 800,
+   "acilanParcalar": [],
+   "acilanGorunum": [
+    "disk-gorunum-takim-ultisi"
+   ],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": false
+  },
+  {
+   "id": "alan-ustasi",
+   "ad": "Alan Ustası",
+   "kategori": "gosteri",
+   "sart": {
+    "olay": "alanYetenegiyleBitis",
+    "sayi": 3,
+    "kosul": {
+     "farkliYetenek": true
+    }
+   },
+   "odulAltin": 800,
+   "acilanParcalar": [
+    "izli-govde"
+   ],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "yetenek-ustasi",
+   "ad": "Yetenek Ustası",
+   "kategori": "gosteri",
+   "sart": {
+    "olay": "yetenegiyleBitis",
+    "sayi": 10,
+    "kosul": {
+     "yetenekSonrasiMaxSn": 3
+    }
+   },
+   "odulAltin": 500,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "dash-ustasi",
+   "ad": "Dash Ustası",
+   "kategori": "gosteri",
+   "sart": {
+    "olay": "dashCarpismasiylaBitis",
+    "sayi": 5,
+    "kosul": {}
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "zincir",
+   "ad": "Zincir",
+   "kategori": "gosteri",
+   "sart": {
+    "olay": "zincirCarpisma",
+    "sayi": 5,
+    "kosul": {
+     "pencereSn": 6,
+     "tekMac": true
+    }
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "mor-catlak",
+   "ad": "Mor Çatlak",
+   "kategori": "kararma",
+   "sart": {
+    "olay": "kararmaSayaciDoldu",
+    "sayi": 1,
+    "kosul": {}
+   },
+   "odulAltin": 500,
+   "acilanParcalar": [
+    "kul-cekirdegi"
+   ],
+   "acilanGorunum": [],
+   "acilanOzellik": [
+    "karanlik-pazari"
+   ],
+   "gizli": true,
+   "ilkSurum": false
+  },
+  {
+   "id": "aydinlanma",
+   "ad": "Aydınlanma",
+   "kategori": "kararma",
+   "sart": {
+    "olay": "karanlikModdanGeriDonus",
+    "sayi": 10,
+    "kosul": {}
+   },
+   "odulAltin": 1500,
+   "acilanParcalar": [
+    "karanlik-ucu"
+   ],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": true,
+   "ilkSurum": false
+  },
+  {
+   "id": "kara-galibiyet",
+   "ad": "Kara Galibiyet",
+   "kategori": "kararma",
+   "sart": {
+    "olay": "macKazanildi",
+    "sayi": 5,
+    "kosul": {
+     "cekirdekKoken": "karanlik"
+    }
+   },
+   "odulAltin": 500,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": true,
+   "ilkSurum": false
+  },
+  {
+   "id": "destek-kanali",
+   "ad": "Destek Kanalı",
+   "kategori": "sosyal",
+   "sart": {
+    "olay": "destekKanaliMaci",
+    "sayi": 5,
+    "kosul": {}
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [],
+   "acilanGorunum": [
+    "arma-kanal"
+   ],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "davetli",
+   "ad": "Davetli",
+   "kategori": "sosyal",
+   "sart": {
+    "olay": "odaMaci",
+    "sayi": 5,
+    "kosul": {
+     "enAzFarkliRakip": 3
+    }
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [],
+   "acilanGorunum": [
+    "disk-gorunum-konuk"
+   ],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "ev-sahibi",
+   "ad": "Ev Sahibi",
+   "kategori": "sosyal",
+   "sart": {
+    "olay": "odaAc",
+    "sayi": 10,
+    "kosul": {}
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "asinmis",
+   "ad": "Aşınmış",
+   "kategori": "yapay",
+   "sart": {
+    "olay": "yapayOmurBitti",
+    "sayi": 1,
+    "kosul": {}
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [
+    "yenileme-indirimi-50"
+   ],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "dokumhane-musterisi",
+   "ad": "Dökümhane Müşterisi",
+   "kategori": "yapay",
+   "sart": {
+    "olay": "yapayYenileme",
+    "sayi": 3,
+    "kosul": {}
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "yapay-ustasi",
+   "ad": "Yapay Usta",
+   "kategori": "yapay",
+   "sart": {
+    "olay": "macKazanildi",
+    "sayi": 20,
+    "kosul": {
+     "cekirdekKoken": "yapay"
+    }
+   },
+   "odulAltin": 500,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "sifir-darbe",
+   "ad": "Sıfır Darbe",
+   "kategori": "gizli",
+   "sart": {
+    "olay": "macKazanildi",
+    "sayi": 1,
+    "kosul": {
+     "alinanCarpisma": 0
+    }
+   },
+   "odulAltin": 800,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": true,
+   "ilkSurum": true
+  },
+  {
+   "id": "son-saniye",
+   "ad": "Son Saniye",
+   "kategori": "gizli",
+   "sart": {
+    "olay": "puanKazan",
+    "sayi": 1,
+    "kosul": {
+     "macSnAraligi": [
+      88,
+      90
+     ],
+     "macKazandiran": true
+    }
+   },
+   "odulAltin": 500,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": true,
+   "ilkSurum": true
+  },
+  {
+   "id": "ani-olum",
+   "ad": "Ani Ölüm",
+   "kategori": "gizli",
+   "sart": {
+    "olay": "aniOlumKazan",
+    "sayi": 3,
+    "kosul": {}
+   },
+   "odulAltin": 800,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": true,
+   "ilkSurum": true
+  },
+  {
+   "id": "koleksiyoncu",
+   "ad": "Koleksiyoncu",
+   "kategori": "gizli",
+   "sart": {
+    "olay": "parcaSahip",
+    "sayi": 27,
+    "kosul": {}
+   },
+   "odulAltin": 1500,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": true,
+   "ilkSurum": true
+  }
+ ]
+}

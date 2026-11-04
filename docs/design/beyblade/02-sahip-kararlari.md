@@ -1,0 +1,30 @@
+# Sahibin vermesi gereken kararlar (Devran lore + arena eşlemesi)
+
+**Tarih:** 2026-11-04 · **Yazar:** [@helix · Game Designer] · **Durum:** taslak, sahip onayı bekliyor.
+Bağlı belgeler: `00-lore-cercevesi.md`, `01-arena-eslemesi.md`. İlk üç karar blokajdır (sıra önemli); gerisi paralel gidebilir.
+
+| # | Karar | Seçenekler | Önerim | Tek satır gerekçe |
+|---|---|---|---|---|
+| **K-1** | Skaledman bağı: tamamen kopsun mu? | (a) tam bağımsız, kimlik yalnız Kick; (b) Skaledman kartları "Çekirdek" olarak içe aktarılır; (c) ikisi paralel | **(a)** | Yeni lore ve IP hijyeni Pokémon/füzyon sprite'larıyla bağdaşmaz; sprite boru hattı da iptal. |
+| **K-2** | Oyunun kod adı | Devran / Girdap Çağı / Eksen Savaşı | **Devran** | Türkçe, lore'a yakın; marka taraması yapılmadı. |
+| **K-3** | Kontrol modeli (C hibrit) | A doğrudan sürüş / B komut / C hibrit (sürüş + stamina barı + Enerji) | **C**, `Girdi` şeması aynı | Altyapının %80'i kalır, kanıtlı his (R05). |
+| **K-4** | Maç bitişi | İlk 3 / ilk 4 puan; 60-90 sn hedefine uyum | **İlk 3**, 90 sn üst sınır + ani ölüm | 60-90 sn hedefi için kısa; X'in 4'ü uzun. |
+| **K-5** | Merkez Kuyu bitişi (3 puan) | Yok / var | **İlk sürümde yok** | Ring Out + Parçalanma + Durma yeterli; Kuyu arena çeşitliliği için sonra. |
+| **K-6** | Takım değişimi | Serbest Tab / yalnız bitiş sonrası / düşük devirde geri çek | **Bitiş sonrası zorunlu + `stamina<%25` geri çek** | Topaç temasında maç ortası serbest geçiş anlamsız (R05). |
+| **K-7** | Lv.4 seviyesi ve Ulti ilk sürümde mi | Var / ikinci sezona | **İkinci sezona**; ilk sürümde Yetenek + Özel Yetenek | Ulti ve Ata görselleri en pahalı sanat; mekanik oturmadan eklenmesin. |
+| **K-8** | Eş Çekirdek (iki çekirdek birleşimi) | İlk sürüm / sonra / hiç | **Sonra (ikinci sezon)** | Eski füzyon çeşitliliğini geri getirir, dengeyi bozar; önce tekil çekirdek. |
+| **K-9** | Çekirdek staminası (Miras) ve ekonomi | Kapalı / yalnız ödül / oyuncular arası | **Kapalı; lore'da var** | Ekonomi sayıları ve sahtecilik riski `@ledger` + `@vault` işi; erken açma. |
+| **K-10** | Kara (Karanlık) kökeni ilk sürümde | Var / sonra | **Var, tek Karanlık yetenek ile** | Sol dönüş ve Kararma kimlik katar; ilk üç köken olsa da Karanlık zıt yön eşitleme mekaniğinin tek test yolu. |
+| **K-11** | Seyirci etkileşimi (Kick sohbeti arena olayı) | Yok / F2 sonrası | **F2 sonrası** | Webhook altyapısı hazır; ama önce çekirdek oyun. |
+| **K-12** | Terimler: "Oyuncu", "Topaç", "Enerji" kalıcı mı | Onay / değiştir | **Onay** | Sözlük (00 § 8.2) IP hijyeni için tutarlı kalmalı. |
+
+## Önce ilk üç (sahibe soru)
+1. **K-1:** Skaledman bağı tamamen kopuyor mu, yoksa kartlar bir şekilde (ör. kozmetik Çekirdek) taşınacak mı? Buna göre `docs/tech/` ve `veri/` yeniden planlanır.
+2. **K-3 + K-4:** Kontrol C hibrit ve "ilk 3 puan, 90 sn üst sınır" modelini onaylıyor musun? Sim ve HUD buna göre yeniden kurulur.
+3. **K-2 + K-12:** Devran kod adı ve Oyuncu/Topaç/Enerji sözlüğü kabul mü? Marka taraması (TÜRKPATENT) hangi aşamada yapılsın?
+
+## Not
+Sayılar ve eşikler `economy-designer` ile `tuning.md`'de kararlaştırılır. Bu karar listesi yalnız şekli sorar. Netcode açısından telegraf süreleri ve Takım Ultisi gibi özellikler `network-programmer` onayından geçmeden kesinleşmez.
+
+## Onaylanan referans görünümler (sahip, 2026-11-04)
+Dokuz ekranın referans görünümü (Gemini `gemini-3.1-flash-image` ile üretilmiş konsept, nihai sanat değil) sahip tarafından tek tek onaylandı: giriş/profil, ilk çekirdek, atölye, market, başarımlar, lobi, maç arenası, ulti anı, sonuç. Canvas: <https://claude.ai/artifact/8P44Vjnp72DtkoLXFut5Ks>. Yerel dosyalar: `docs/research/beyblade/gorunum/0[1-9]-*.jpg` (repo dışı). Pixel planı (`docs/art/topac-pixel-plani.md`) ve HUD tasarımı bu kompozisyonları hedef alır; sözlük `04-sozluk.md`.
