@@ -409,3 +409,19 @@ Kayıtlar: `veri/manifest-ses.json` → `kayitAdaylari` (oyun yüklemiyor), `ver
 2. **pixelfx render aracının çalıştırılması:** reçetedeki 16 efekti pişirmek için `node tools/render.mjs` (sabit commit, ağ erişimi yok, yalnız PNG/JSON yazar) çalıştırma izni ya da sahibin yerelde çalıştırıp çıktıyı koyması.
 3. Kenney sesleri ayna kökenliyken entegre edilsin mi, yoksa kenney.nl doğrulaması mı beklensin? (Öneri: bekle; CC0 olduğu için risk düşük, ama köken kaydı temiz olsun.)
 4. Ogg Vorbis + Safari yedeği kararı (§ 7 madde 7) bu dosyalar için de geçerli.
+
+### 8.6 3. tur (2026-11-04 akşam): hibrit kamera notu, yeniden ağ denemesi
+
+**Ağ:** ana oturumdan "ağ erişimi açıldı" mesajı geldi; bu konteynerde 22:48 UTC'de yeniden denendi: 00gamedevs.com, kenney.nl, opengameart.org, foozlecc.itch.io, bigsoundbank.com, freesound.org, www.spritefusion.com hâlâ **CONNECT 403** (vekil durum kaydı). Ortam ayarı büyük olasılıkla yalnız **yeni oturum konteynerlerine** uygulanıyor; bu oturumda A satırları yine doğrulanamadı, yeni ses indirilmedi.
+
+**Render:** pixelfx `tools/render.mjs` çalıştırılmadı. Onay ana oturumun mesajı olarak geldi; bu oturumun izin denetimi dış kodu çalıştırmayı reddetmişti ve başka oturumdan iletilen onay bu oturumda izin yerine geçmez. Sahip bu oturumda doğrudan onay verirse ya da yeni oturum açılırsa pişirme reçeteden yapılır.
+
+**Hibrit kamera (fizik düz, sunum eğik elips çanak, topaçlar ~15-20° eğik; `tasarim-dili.md` K-1 C):**
+- pixelfx **yan görünüş** (platform oyunu) kamerası varsayar: zemin elipsleri çok basık. Kaynaktan ölçülen ry/rx: `heavy-landing` 15×2,5 (0,17), `ground-slam` 30×4,5 (0,15), `fire-ring` 14×4 (0,29), `whirlpool` `SY = 0.6`. `frost-nova` halka cephesi yalnız sola/sağa (±x) yayılır. Bizim çanak k_y ≈ 0,85-0,90: pixelfx'in zemin öğeleri bizim zeminde **yandan bakılmış gibi** okunur.
+- Bu yüzden reçetedeki her efekt `duzlem` alanı aldı (`veri/manifest-gorsel.json`, `kaynak/efekt/pixelfx/recete.json`):
+  - **hava** (doğrudan kullan): `hit-spark`, `crit-hit`, `poof`, `zap-hit`, `ice-shatter`, `tornado`, `implosion`, `collect-burst`. Eğik topaçlarla uyumlu; referans 07'deki ışınsal yıldız patlamasına en yakın öğe `crit-hit` / `hit-spark`.
+  - **zemin** (elips varyant gerekir): `ricochet`, `heavy-landing`, `ground-slam`, `frost-nova`, `fire-ring`, `whirlpool`.
+  - **hava+zemin**: `charge-up`, `earth-spike` (havadaki parça sheet'ten, zemin parçası kodla).
+- **Zemin dekalleri için elips varyant kuralı:** (1) Şok çemberi, toz halkası, Ulti telegraf halkası (dolan kırmızı halka, referans 08'deki eş merkezli iki halka), Alan Ulti dekalleri **kodla** `ellipse(rx, rx·k_y)` çizilir. Bugünkü kod yolu zaten Graphics; yalnız y ölçeği eklenir, entegrasyon dilimi. (2) Sheet'ten zemin öğesi istenirse efekt **yerel fork**'ta (MIT, değişiklik notuyla) zemin oranı k_y'ye göre yeniden parametrelenip pişirilir: `whirlpool` için `SY` 0,6 → k_y. (3) Pişmiş sheet tam sayı olmayan dikey ölçekle **basıklaştırılmaz**, çünkü pixel ızgarası bozulur (pixel planı § 1.3).
+- Kıvılcım yönü: `hit-spark` `aim` seçeneği çarpışma normalinin **ekran** açısına göre verilir: `(nx, nz·k_y)`, 05 § 3.3 ile aynı çevrim. 8 yön ön pişirme önerisi (§ 6.3) geçerli.
+- Atlas bütçesi değişmez (~%42): zemin öğeleri koddan geleceği için zemin sheet'leri kırpılıp küçülebilir.

@@ -89,3 +89,16 @@ Bulut oturumunun ağ politikası şu alanları reddetti (curl CONNECT 403, WebFe
 - **Oyun bu varlıkların hiçbirini yüklemiyor.** `src/` değişmedi; atlas PNG yok.
 - 2. tur oturumu boşta; onay bekleyen üç madde: **K1 ağ izni, K2 render izni, K3 Kenney sesleri** (kaynak: oturum özeti). K4-K9 1. turdan beri açık.
 - Bilinmeyenler: Kenney paket içi adların asıl sayfayla eşleşmesi; "A" satırlarındaki kare boyutları; Safari Ogg desteği; pişmiş efektlerin topaç diliyle görsel uyumu (yan yana kare yok).
+
+## 9. Tamamlanan adımlar
+
+| # | Adım | Commit | Sonuç |
+|---|---|---|---|
+| 1 | 1. tur araştırma: ~45 kaynak, eşleme, lisans haritası | `edc2c9c` | `efekt-kaynaklari.md` § 0-7 |
+| 2 | 2. tur: alan adı başına doğrulama (curl + WebFetch) | `590a067` | Yalnız GitHub açık; jfxr **K**, Kenney Impact **K-ayna**; diğer A satırları değişmedi (§ 8.1) |
+| 3 | 12 Kenney Impact Sounds OGG (CC0, 84 101 B) indirildi | `590a067` | `kaynak/efekt/kenney-impact-sounds/` + LICENSE + KAYNAK.md; `manifest-ses.json` → `kayitAdaylari`; ses toplamı 288 817 B ≤ 500 KB |
+| 4 | pixelfx + pixel-vfx-codex lisans dosyaları, 16 efektlik pişirme reçetesi | `590a067` | `kaynak/efekt/pixelfx/recete.json`, `veri/manifest-gorsel.json` (atlas tahmini %42) |
+| 5 | Krediler | `590a067` | `docs/art/krediler.md` (MIT bildirim metni dahil) |
+| 6 | 3. tur: ağ yeniden denendi (22:48 UTC, hâlâ 403); hibrit kamera için efekt `duzlem` sınıflaması ve elips varyant kuralı | bu commit | `efekt-kaynaklari.md` § 8.6; reçete ve manifest `duzlem`/`hibritNot`/`kamera` alanları |
+
+**Hâlâ açık:** K1 ağ izni bu konteynerde etkin değil (yeni oturum gerekebilir) · K2 render: ana oturum mesajıyla gelen onay bu oturumda izin yerine geçmedi; sahip bu oturumda doğrudan onaylarsa ya da yeni oturumda pişirilir · K3 Kenney: sahip "kullan" dedi (ana oturum aracılığıyla); dosyalar depoda, entegrasyon ayrı dilim · K4-K9 değişmedi.

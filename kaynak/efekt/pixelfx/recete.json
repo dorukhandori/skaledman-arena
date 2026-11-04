@@ -23,7 +23,9 @@
    "paletAdi": "notr",
    "actor": false,
    "bg": "none",
-   "yazi": false
+   "yazi": false,
+   "duzlem": "hava",
+   "hibritNot": "Işınsal kıvılcım; temas noktasına konur, eğik sahnede yön sorunu yok. Uzun ışın aim=normal ekran açısı (nx, nz·k_y)."
   },
   {
    "id": "impacts/crit-hit",
@@ -38,7 +40,9 @@
    "paletAdi": "notr",
    "actor": false,
    "bg": "none",
-   "yazi": false
+   "yazi": false,
+   "duzlem": "hava",
+   "hibritNot": "Yıldız patlaması: referans 07 hedefiyle en yakın öğe. Kırılan halka kısmı yandan basık; kabul edilir (hava)."
   },
   {
    "id": "impacts/ricochet",
@@ -53,7 +57,9 @@
    "paletAdi": "notr",
    "actor": false,
    "bg": "none",
-   "yazi": false
+   "yazi": false,
+   "duzlem": "zemin",
+   "hibritNot": "pixelfx zemini çok basık (yandan kamera); zemin kayma izi kodla elips ölçekli çizilir, sheet yalnız kıvılcım kısmı için."
   },
   {
    "id": "impacts/heavy-landing",
@@ -68,7 +74,9 @@
    "paletAdi": "notr",
    "actor": false,
    "bg": "none",
-   "yazi": false
+   "yazi": false,
+   "duzlem": "zemin",
+   "hibritNot": "Toz halkaları pixelfx'te ry/rx≈0,17: bizim çanak k_y≈0,85-0,90 ile çatışır. Halka kodla (elips, k_y); sheet'ten yalnız yükselen toz kümeleri."
   },
   {
    "id": "impacts/ground-slam",
@@ -88,7 +96,9 @@
    "paletAdi": "kaya",
    "actor": false,
    "bg": "none",
-   "yazi": false
+   "yazi": false,
+   "duzlem": "zemin",
+   "hibritNot": "Zemin flaşı ve hilal şok dalgaları yandan basık (ry/rx≈0,15): elips varyant gerekir. Taşlar/toz bulutu hava katmanı olarak kullanılabilir."
   },
   {
    "id": "spawn/poof",
@@ -103,7 +113,9 @@
    "paletAdi": "notr",
    "actor": false,
    "bg": "none",
-   "yazi": false
+   "yazi": false,
+   "duzlem": "hava",
+   "hibritNot": "Toz bulutu; düzlemden bağımsız."
   },
   {
    "id": "lightning/zap-hit",
@@ -123,7 +135,9 @@
    "paletAdi": "simsek",
    "actor": false,
    "bg": "none",
-   "yazi": false
+   "yazi": false,
+   "duzlem": "hava",
+   "hibritNot": "Hava; düzlemden bağımsız."
   },
   {
    "id": "lightning/charge-up",
@@ -143,7 +157,9 @@
    "paletAdi": "simsek",
    "actor": false,
    "bg": "none",
-   "yazi": false
+   "yazi": false,
+   "duzlem": "hava+zemin",
+   "hibritNot": "Topaç üstü şarj çekirdeği hava (kullan); düşen halkalar zemin değil. Ulti telegraf halkası (dolan kırmızı halka) KODLA elips k_y ile çizilir."
   },
   {
    "id": "ice/ice-shatter",
@@ -163,7 +179,9 @@
    "paletAdi": "don",
    "actor": false,
    "bg": "none",
-   "yazi": false
+   "yazi": false,
+   "duzlem": "hava",
+   "hibritNot": "Kristal parçaları; hava."
   },
   {
    "id": "ice/frost-nova",
@@ -183,7 +201,9 @@
    "paletAdi": "don",
    "actor": false,
    "bg": "none",
-   "yazi": false
+   "yazi": false,
+   "duzlem": "zemin",
+   "hibritNot": "Nova halkası zemin düzleminde basık: elips varyant (k_y) ya da halka kodla + sheet'ten kristal sivrileri."
   },
   {
    "id": "fire/fire-ring",
@@ -204,7 +224,9 @@
    "paletAdi": "kor",
    "actor": false,
    "bg": "none",
-   "yazi": false
+   "yazi": false,
+   "duzlem": "zemin",
+   "hibritNot": "Ateş halkası zemine yapışık (ry 4 px): elips varyant ya da halka kodla + sheet'ten alev dilleri."
   },
   {
    "id": "nature/earth-spike",
@@ -224,7 +246,9 @@
    "paletAdi": "kaya",
    "actor": false,
    "bg": "none",
-   "yazi": false
+   "yazi": false,
+   "duzlem": "hava+zemin",
+   "hibritNot": "Kaya sivrileri yukarı (hava, eğik sahnede iyi okunur); zemin çatlağı kodla elips."
   },
   {
    "id": "nature/tornado",
@@ -244,7 +268,9 @@
    "paletAdi": "kasirga",
    "actor": false,
    "bg": "none",
-   "yazi": false
+   "yazi": false,
+   "duzlem": "hava",
+   "hibritNot": "Dikey kasırga: 15-20° eğik topaçlarla uyumlu."
   },
   {
    "id": "explosions/implosion",
@@ -265,7 +291,9 @@
    "paletAdi": "girdap",
    "actor": false,
    "bg": "none",
-   "yazi": false
+   "yazi": false,
+   "duzlem": "hava",
+   "hibritNot": "İçe çöken küre; hava."
   },
   {
    "id": "water/whirlpool",
@@ -286,7 +314,9 @@
    "paletAdi": "girdap",
    "actor": false,
    "bg": "none",
-   "yazi": false
+   "yazi": false,
+   "duzlem": "zemin",
+   "hibritNot": "Üstten girdap ama SY=0,6 sabit (kodda const). Bizim k_y≈0,85-0,90 için ya kaynakta SY değiştirilerek (yerel fork, MIT) pişirilir ya da dikey ×1,5 tam sayı olmayan ölçek YASAK → fork tercih."
   },
   {
    "id": "pickups/collect-burst",
@@ -301,7 +331,15 @@
    "paletAdi": "notr",
    "actor": false,
    "bg": "none",
-   "yazi": false
+   "yazi": false,
+   "duzlem": "hava",
+   "hibritNot": "Topaç üstünde; hava."
   }
- ]
+ ],
+ "kamera": {
+  "karar": "hibrit (fizik tam üstten, sunum eğik elips çanak, topaçlar ~15-20° eğik)",
+  "k_y": "≈0,85-0,90 (tasarim-dili K-1 C; kesin değer Sahne'de belirlenecek)",
+  "kural": "duzlem=hava olan sheet'ler doğrudan; duzlem=zemin olanlarda halka/dekal kodla elips (rx, rx·k_y) çizilir ya da sheet k_y'ye göre yeniden parametrelenerek (yerel fork) pişirilir. Pişmiş sheet asla tam sayı olmayan ölçekle basıklaştırılmaz (pixel ızgarası).",
+  "pixelfxKamerasi": "yan görünüş (platform oyunu): zemin elipsleri ry/rx ≈ 0,15-0,6; bizim çanaktan çok daha basık"
+ }
 }

@@ -45,7 +45,9 @@
    "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
    "tarih": "2026-11-04",
    "degistirildi": true,
-   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)",
+   "duzlem": "hava",
+   "hibritNot": "Işınsal kıvılcım; temas noktasına konur, eğik sahnede yön sorunu yok. Uzun ışın aim=normal ekran açısı (nx, nz·k_y)."
   },
   {
    "ad": "efekt.kritik",
@@ -80,7 +82,9 @@
    "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
    "tarih": "2026-11-04",
    "degistirildi": true,
-   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)",
+   "duzlem": "hava",
+   "hibritNot": "Yıldız patlaması: referans 07 hedefiyle en yakın öğe. Kırılan halka kısmı yandan basık; kabul edilir (hava)."
   },
   {
    "ad": "efekt.sekme-iz",
@@ -115,7 +119,9 @@
    "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
    "tarih": "2026-11-04",
    "degistirildi": true,
-   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)",
+   "duzlem": "zemin",
+   "hibritNot": "pixelfx zemini çok basık (yandan kamera); zemin kayma izi kodla elips ölçekli çizilir, sheet yalnız kıvılcım kısmı için."
   },
   {
    "ad": "efekt.toz-halka",
@@ -150,7 +156,9 @@
    "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
    "tarih": "2026-11-04",
    "degistirildi": true,
-   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)",
+   "duzlem": "zemin",
+   "hibritNot": "Toz halkaları pixelfx'te ry/rx≈0,17: bizim çanak k_y≈0,85-0,90 ile çatışır. Halka kodla (elips, k_y); sheet'ten yalnız yükselen toz kümeleri."
   },
   {
    "ad": "efekt.zemin-sok",
@@ -190,7 +198,9 @@
    "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
    "tarih": "2026-11-04",
    "degistirildi": true,
-   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)",
+   "duzlem": "zemin",
+   "hibritNot": "Zemin flaşı ve hilal şok dalgaları yandan basık (ry/rx≈0,15): elips varyant gerekir. Taşlar/toz bulutu hava katmanı olarak kullanılabilir."
   },
   {
    "ad": "efekt.toz-bulut",
@@ -225,7 +235,9 @@
    "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
    "tarih": "2026-11-04",
    "degistirildi": true,
-   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)",
+   "duzlem": "hava",
+   "hibritNot": "Toz bulutu; düzlemden bağımsız."
   },
   {
    "ad": "efekt.simsek-carpma",
@@ -265,7 +277,9 @@
    "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
    "tarih": "2026-11-04",
    "degistirildi": true,
-   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)",
+   "duzlem": "hava",
+   "hibritNot": "Hava; düzlemden bağımsız."
   },
   {
    "ad": "efekt.telegraf-sarj",
@@ -305,7 +319,9 @@
    "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
    "tarih": "2026-11-04",
    "degistirildi": true,
-   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)",
+   "duzlem": "hava+zemin",
+   "hibritNot": "Topaç üstü şarj çekirdeği hava (kullan); düşen halkalar zemin değil. Ulti telegraf halkası (dolan kırmızı halka) KODLA elips k_y ile çizilir."
   },
   {
    "ad": "efekt.don-kirilma",
@@ -345,7 +361,9 @@
    "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
    "tarih": "2026-11-04",
    "degistirildi": true,
-   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)",
+   "duzlem": "hava",
+   "hibritNot": "Kristal parçaları; hava."
   },
   {
    "ad": "efekt.ulti-don",
@@ -385,7 +403,9 @@
    "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
    "tarih": "2026-11-04",
    "degistirildi": true,
-   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)",
+   "duzlem": "zemin",
+   "hibritNot": "Nova halkası zemin düzleminde basık: elips varyant (k_y) ya da halka kodla + sheet'ten kristal sivrileri."
   },
   {
    "ad": "efekt.ulti-kor",
@@ -426,7 +446,9 @@
    "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
    "tarih": "2026-11-04",
    "degistirildi": true,
-   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)",
+   "duzlem": "zemin",
+   "hibritNot": "Ateş halkası zemine yapışık (ry 4 px): elips varyant ya da halka kodla + sheet'ten alev dilleri."
   },
   {
    "ad": "efekt.ulti-kaya",
@@ -466,7 +488,9 @@
    "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
    "tarih": "2026-11-04",
    "degistirildi": true,
-   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)",
+   "duzlem": "hava+zemin",
+   "hibritNot": "Kaya sivrileri yukarı (hava, eğik sahnede iyi okunur); zemin çatlağı kodla elips."
   },
   {
    "ad": "efekt.ulti-kasirga",
@@ -506,7 +530,9 @@
    "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
    "tarih": "2026-11-04",
    "degistirildi": true,
-   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)",
+   "duzlem": "hava",
+   "hibritNot": "Dikey kasırga: 15-20° eğik topaçlarla uyumlu."
   },
   {
    "ad": "efekt.ulti-girdap",
@@ -547,7 +573,9 @@
    "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
    "tarih": "2026-11-04",
    "degistirildi": true,
-   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)",
+   "duzlem": "hava",
+   "hibritNot": "İçe çöken küre; hava."
   },
   {
    "ad": "efekt.girdap-dekal",
@@ -588,7 +616,9 @@
    "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
    "tarih": "2026-11-04",
    "degistirildi": true,
-   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)",
+   "duzlem": "zemin",
+   "hibritNot": "Üstten girdap ama SY=0,6 sabit (kodda const). Bizim k_y≈0,85-0,90 için ya kaynakta SY değiştirilerek (yerel fork, MIT) pişirilir ya da dikey ×1,5 tam sayı olmayan ölçek YASAK → fork tercih."
   },
   {
    "ad": "efekt.enerji-doldu",
@@ -623,7 +653,15 @@
    "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
    "tarih": "2026-11-04",
    "degistirildi": true,
-   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)",
+   "duzlem": "hava",
+   "hibritNot": "Topaç üstünde; hava."
   }
- ]
+ ],
+ "kamera": {
+  "karar": "hibrit (fizik tam üstten, sunum eğik elips çanak, topaçlar ~15-20° eğik)",
+  "k_y": "≈0,85-0,90 (tasarim-dili K-1 C; kesin değer Sahne'de belirlenecek)",
+  "kural": "duzlem=hava olan sheet'ler doğrudan; duzlem=zemin olanlarda halka/dekal kodla elips (rx, rx·k_y) çizilir ya da sheet k_y'ye göre yeniden parametrelenerek (yerel fork) pişirilir. Pişmiş sheet asla tam sayı olmayan ölçekle basıklaştırılmaz (pixel ızgarası).",
+  "pixelfxKamerasi": "yan görünüş (platform oyunu): zemin elipsleri ry/rx ≈ 0,15-0,6; bizim çanaktan çok daha basık"
+ }
 }
