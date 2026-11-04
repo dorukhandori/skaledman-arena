@@ -9,7 +9,9 @@ import {
 } from "../../ag/protokol.ts";
 import type { Olay } from "../../paylasilan/sim/durum.ts";
 import { dunyaHash } from "../../paylasilan/sim/hash.ts";
-import { BASLANGIC_TAKIMLARI } from "../../paylasilan/veri/takimlar.ts";
+import { BASLANGIC_TAKIMLARI, takimKoduYaz } from "../../paylasilan/veri/takimlar.ts";
+import { BASLANGIC_SETLERI } from "../../paylasilan/veri/katalog.ts";
+import { botKabul } from "../../paylasilan/kurallar/kuyruk.ts";
 import { takimStaminaOrani } from "../../paylasilan/sim/mac.ts";
 import { staminaOrani } from "../../paylasilan/sim/topac.ts";
 import { ILERLEME } from "../../paylasilan/kurallar/ilerleme.ts";
@@ -17,7 +19,8 @@ import { type GirdiKaynagi, MacYonetimi } from "../mac/MacYonetimi.ts";
 import { kodAc, kodKapat, yeniKod } from "../odaKayit.ts";
 import { biletTuket, kokenIzinli } from "../kimlik.ts";
 import { type TakimYuvasi, depo } from "../db/depo.ts";
-import { macSonuYaz } from "../oyuncu/macSonu.ts";
+import { macSonuKaydet } from "../oyuncu/macSonu.ts";
+import { MacOzetSayaci } from "../oyuncu/ozetSayaci.ts";
 import { DonusSayaci } from "../oyuncu/defter.ts";
 import { sunucuTakimlari } from "../oyuncu/takim.ts";
 import { GirdiSema, OdaSema, type OdaS, OyuncuSema, type OyuncuS } from "./sema.ts";
@@ -27,13 +30,17 @@ import { olcumKaydet } from "../olcum.ts";
 // Yetkili 1v1 maç odası (D4, docs/tech/netcode.md). Colyseus 0.18: `defineInput` ile 60 Hz girdi, `setFixedTimestep`
 // ile 60 Hz sim adımı, elle 20 Hz yama (adım hizalı: her 3 adımda bir `broadcastPatch`), olaylar her adım sonunda
 // anında (`MESAJ.olaylar`). Kural mantığı MacYonetimi'nde (Colyseus'suz, test edilir); burası yalnız bağlantı.
-// Modlar: "oda" (kodla, özel), "hizli" (genel kuyruk yer tutucu; D7 bot dolgusu), "antrenman" (sunucu botu).
+// Modlar: "oda" (kodla, özel), "hizli" (D7 genel kuyruk: ilk gelen ikinciyle; 30 sn sonra istekle bot dolgusu, nile
+// B-19), "antrenman" (sunucu botu).
 // allowRewindState KULLANILMAZ: topaç çarpışması fizik etkileşimi, geri sarma anlamsız (05 § 4).
 
 interface KullaniciVerisi { i: number }
 /** Katılan: kayıtlı oyuncu (SQLite) ya da Antrenman misafiri (oyuncuId null). */
 interface OdaTakimi { id: string; kod: string; yuvalar: (TakimYuvasi | null)[] }
 interface Kimlik { oyuncuId: number | null; ad: string; takimlar: OdaTakimi[]; aktifTakim: string }
+
+/** Hızlı maç botunun takımı: üç başlangıç seti, Lv.2 (yeni oyuncu gibi; ödünç değil). */
+const BOT_TAKIMI = takimKoduYaz(BASLANGIC_SETLERI.map((b) => ({ cekirdek: b.cekirdek, govde: b.govde, disk: b.disk, uc: b.uc, seviye: 2, odunc: false, yon: "sag" as const })));
 
 const HATA = { surum: 4101, katalog: 4102, kimlik: 4103, koken: 4104, sema: 4105, takim: 4106, ayni: 4107 } as const;
 
@@ -92,6 +99,10 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
   private macBaslangic = 0;
   private macYuvalari: [(TakimYuvasi | null)[], (TakimYuvasi | null)[]] = [[], []];
   private donus = new DonusSayaci();
+  /** D7: maç özeti (başarım/Altın), hızlı maç bot dolgusu, kuyruk bekleme başlangıcı (sunucu saati) */
+  private ozet = new MacOzetSayaci();
+  private botMaci = false;
+  private beklemeBas = 0;
 
   onCreate(options: unknown): void {
     const o = KatilmaSema.safeParse(options);
@@ -121,6 +132,7 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
       [MESAJ.rovans, (c: Client) => this.rovans(c)],
       [MESAJ.hazir, (c: Client) => this.hazir(c)],
       [MESAJ.kayitIste, (c: Client) => this.kayitGonder(c)],
+      [MESAJ.botIste, (c: Client) => this.botIste(c)],
     ] as const) {
       this.onMessage(tur, (c: Client, m: unknown) => { if (BosMesajSema.safeParse(m).success) f(c); });
     }
@@ -172,8 +184,9 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
       for (let k = 0; k < 2; k++) this.bilgi(this.istemciler[k]!, { v: PROTOKOL_SURUMU, tur: "rakipBulundu", ad: this.oyuncu(1 - k).ad });
       this.secimBaslat();
     } else {
-      // rakip bekleniyor: 60 sn (flint #19)
+      // rakip bekleniyor: 60 sn (flint #19); hızlı maçta 30 sn'den sonra bot istenebilir (B-19)
       s.beklemeKalan = RAKIP_BEKLEME_SN;
+      this.beklemeBas = Date.now();
       this.bekleZamanlayici?.clear();
       this.bekleZamanlayici = this.clock.setTimeout(() => {
         if (this.state.faz === ODA_FAZI.bekliyor) this.kapat("rakipGelmedi");
@@ -277,6 +290,7 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
     this.yon = new MacYonetimi({ takimlar, tohum: randomInt(1, 0x7fffffff), bot: [this.oyuncu(0).bot, this.oyuncu(1).bot] });
     this.krizGordu = [false, false];
     this.donus = new DonusSayaci();
+    this.ozet = new MacOzetSayaci();
     this.macId = randomUUID();
     this.macBaslangic = Date.now();
     // XP için maç başındaki sahip olunan yuvalar (seçilen takımın)
@@ -311,6 +325,8 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
       const k: [GirdiKaynagi | null, GirdiKaynagi | null] = [this.kaynak(0), this.kaynak(1)];
       const r = y.adimla(k);
       if (r.adimAtti) this.donus.adim(y.dunya);
+      if (r.adimAtti) this.ozet.adim(y.dunya, r.olaylar);
+      else if (r.olaylar.length) this.ozet.olaylariIsle(y.dunya, r.olaylar);
       // krizden galibiyet (tuning § 14): sahadaki topaç stamina < %25 gördü mü
       for (let i = 0; i < 2; i++) {
         if (!this.krizGordu[i] && y.dunya.mac.faz === "tur" && staminaOrani(y.dunya.topaclar[i]!, y.dunya.profiller[i]!) < ILERLEME.krizEsik) this.krizGordu[i] = true;
@@ -361,24 +377,37 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
     this.bosSayaciKur();
   }
 
-  /** D5: maç satırı + Çekirdek XP/ömür (antrenman sayılmaz); her oyuncuya kendi Çekirdek kartı. */
+  /**
+   * D5-D7: maç satırı + Çekirdek XP/ömür + Altın defteri + başarım sayaçları, tek işlemde (antrenman sayılmaz; bot
+   * maçı yarı Altın, başarım yalnız Yol). Her oyuncuya kendi sonuç ekranı verisi (Çekirdek kartı, Altın, başarım).
+   */
   private macSonuIsle(): void {
     const y = this.yon!;
     const ms = y.dunya.mac.macSonucu;
     if (!ms || this.mod === "antrenman") return;
     try {
-      const odul = macSonuYaz(depo(), {
-        macId: this.macId, mod: this.mod, oyuncular: [this.oyuncuIdleri[0]!, this.oyuncuIdleri[1]!],
+      const kalan: [number, number] = [takimStaminaOrani(y.dunya, 0), takimStaminaOrani(y.dunya, 1)];
+      const odul = macSonuKaydet(depo(), {
+        macId: this.macId, mod: this.mod, oyuncular: [this.oyuncuIdleri[0]!, this.oyuncuIdleri[1] ?? null],
         takimKodlari: [this.oyuncu(0).takimId, this.oyuncu(1).takimId], yuvalar: this.macYuvalari, sonuc: ms,
         sureSn: y.dunya.mac.saat / SIM_HZ, krizGordu: this.krizGordu,
-        kalanStaminaOrani: [takimStaminaOrani(y.dunya, 0), takimStaminaOrani(y.dunya, 1)], katalogOzeti: KATALOG_OZETI, baslangic: this.macBaslangic,
+        kalanStaminaOrani: kalan, katalogOzeti: KATALOG_OZETI, baslangic: this.macBaslangic,
         enUzunDonusSn: this.donus.saniye(), kararma: [y.dunya.kararma[0], y.dunya.kararma[1]],
-      });
+        bot: this.botMaci, ozet: this.ozet.ozet(y.dunya, kalan),
+        sahayaCikan: [[...this.ozet.sahayaCikan[0]], [...this.ozet.sahayaCikan[1]]],
+        turlar: this.ozet.turlar, yetenekSayisi: [[...y.dunya.yetenekSayisi[0]], [...y.dunya.yetenekSayisi[1]]],
+      }, Date.now());
       for (let i = 0; i < 2; i++) {
         const c = this.istemciler[i];
-        if (c) this.bilgi(c, { v: PROTOKOL_SURUMU, tur: "odul", cekirdekler: odul[i]!.map(({ cekirdekId: _c, ...o }) => o), ...(ms.neden === "iptal" ? { sayilmadi: "iptal" } : {}) });
+        const o = odul[i];
+        if (!c || !o) continue;
+        this.bilgi(c, {
+          v: PROTOKOL_SURUMU, tur: "odul", cekirdekler: o.cekirdekler.map(({ cekirdekId: _c, ...x }) => x),
+          ...(ms.neden === "iptal" ? { sayilmadi: "iptal" } : {}),
+          altin: o.altin, basarimlar: o.basarimlar, basarimAltini: o.basarimAltini, basarimSayilmadi: o.sayilmadi, mod: o.mod,
+        });
       }
-      console.log(`[mac ${this.roomId}] kayıt ${this.macId}: ${odul.map((o) => o.map((x) => `${x.tanimId}+${x.kazanc}`).join(",")).join(" | ")}`);
+      console.log(`[mac ${this.roomId}] kayıt ${this.macId}: ${odul.map((o) => o ? `${o.cekirdekler.map((x) => `${x.tanimId}+${x.kazanc}`).join(",")} altın+${o.altin.toplam} başarım ${o.basarimlar.map((b) => `${b.id}:${b.ilerleme}/${b.sayi}${b.tamamlandi ? "✓" : ""}`).join(",")}` : "-").join(" | ")}`);
     } catch (e) {
       console.error(`[mac ${this.roomId}] maç sonu yazılamadı`, e);
     }
@@ -428,7 +457,7 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
     const s = this.state;
     if (i < 0 || s.faz !== ODA_FAZI.bitti) return;
     this.oyuncu(i).rovans = true;
-    if (s.oyuncular.length === 2 && s.oyuncular.every((p) => p.rovans) && this.istemciler.filter((x) => x).length === (this.mod === "antrenman" ? 1 : 2)) this.secimBaslat();
+    if (s.oyuncular.length === 2 && s.oyuncular.every((p) => p.rovans) && this.istemciler.filter((x) => x).length === (this.mod === "antrenman" || this.botMaci ? 1 : 2)) this.secimBaslat();
   }
 
   private hazir(c: Client): void {
@@ -441,6 +470,29 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
   private saniyelikHazirKontrol(): void {
     const s = this.state;
     if (s.oyuncular.length === 2 && s.oyuncular.every((p) => p.hazir && p.bagli)) this.macBaslat();
+  }
+
+  /**
+   * D7 hızlı maç: boş kuyrukta bot (nile B-19). Yalnız hızlı modda, rakip beklenirken ve sunucu saatine göre 30-60 sn
+   * arasında kabul edilir; bot paylaşılan koddan (MacYonetimi `bot`), takımı üç başlangıç seti Lv.2.
+   */
+  private botIste(c: Client): void {
+    const s = this.state;
+    if (this.mod !== "hizli" || s.faz !== ODA_FAZI.bekliyor || this.indeks(c) !== 0 || this.istemciler[1]) return;
+    if (!botKabul((Date.now() - this.beklemeBas) / 1000)) return;
+    this.botMaci = true;
+    void this.lock();
+    while (s.oyuncular.length < 2) s.oyuncular.push(new OyuncuSema());
+    const b = this.oyuncu(1);
+    b.ad = "Devran botu";
+    b.bot = true;
+    b.bagli = true;
+    b.takimId = BOT_TAKIMI;
+    b.takimNo = "";
+    this.oyuncuIdleri[1] = null;
+    console.log(`[mac ${this.roomId}] hızlı maç: bot dolgusu (${Math.round((Date.now() - this.beklemeBas) / 1000)} sn)`);
+    this.bilgi(c, { v: PROTOKOL_SURUMU, tur: "rakipBulundu", ad: b.ad });
+    this.secimBaslat();
   }
 
   private kayitGonder(c: Client): void {
@@ -464,6 +516,7 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
 
   private olaylariYay(o: Olay[]): void {
     if (!o.length || !this.yon) return;
+    this.ozet.olaylariIsle(this.yon.dunya, o);
     const paket: OlayPaketi = { v: PROTOKOL_SURUMU, t: this.yon.dunya.tick, ms: Date.now(), o };
     dunyayiYaz(this.state.dunya, this.yon.dunya);
     if (this.yon.bitti) {

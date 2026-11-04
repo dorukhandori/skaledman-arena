@@ -1,6 +1,6 @@
 # Devran backend: kimlik, oturum, oda bileti, SQLite, API
 
-**Tarih:** 2026-11-04 (D5; D6 Atölye eki) · **Şapka:** `@vault` · Kod: `src/sunucu/` · Testler: `test/kimlik.test.ts`, `test/db.test.ts`, `test/api.test.ts`.
+**Tarih:** 2026-11-04 (D5; D6 Atölye eki; D7 ekonomi eki § 8) · **Şapka:** `@vault` · Kod: `src/sunucu/` · Testler: `test/kimlik.test.ts`, `test/db.test.ts`, `test/api.test.ts`.
 Bağlı: axiom § 2 #19 (şema), #22 (kimlik), #24 (silme ucu D8); `netcode.md` (oda); tuning § 14, § 17 (XP, Yapay ömrü).
 
 > **Sahip kararı (2026-11-04):** Kick OAuth en sona bırakıldı (D8 sonrası ayrı dilim). D5'te kimlik **oyuncu adı + şifre**.
@@ -24,6 +24,13 @@ Bağlı: axiom § 2 #19 (şema), #22 (kimlik), #24 (silme ucu D8); `netcode.md` 
 | `src/sunucu/oyuncu/defter.ts` | D6: maç içi en uzun dönüş sayacı (Çekirdek Günlüğü) |
 | `src/paylasilan/kurallar/atolye.ts` | D6: saf takım kuralı (`takimDegerlendir`), parça takma/çakışma, envanter görünürlüğü |
 | `src/paylasilan/veri/cubuklar.ts` | D6: 6 Atölye çubuğu (tide C-1), katalog aralığına göre 0-100 |
+| `src/paylasilan/kurallar/ekonomi.ts` | D7: Altın kuralları (tuning § 15), gün 04:00, azalan getiri, stil, yenileme fiyatı, günün parçası (saf) |
+| `src/paylasilan/kurallar/market.ts` | D7: 4 raf + tezgâh, kilit durumu (Açık / Kilitli-görünür / Gizli), satın alma kuralı, B-9 Kül geçersiz kılma |
+| `src/paylasilan/kurallar/basarim.ts` | D7: `basarimIsle(girdi, mevcut)` (46 başarım, olay sözlüğü + koşul anahtarları, kapılar), şart metni |
+| `src/paylasilan/kurallar/kuyruk.ts` | D7: hızlı maç zamanlamaları (20/30/60 sn), Elo penceresi |
+| `src/sunucu/oyuncu/ozetSayaci.ts` | D7: sim olaylarından maç özeti (bitiş nedeni, kriz, kuşak, çarpışma, geri puan) |
+| `src/sunucu/oyuncu/basarimYaz.ts` | D7: başarım yazımı + ödül defteri, tamamlananlar, takım tavanı |
+| `src/sunucu/api/market.ts` | D7: Market / Başarımlar / defter uçları, `satinAl`, `yapayYenile` (tek işlem) |
 
 ## 2. Kimlik
 
@@ -110,6 +117,11 @@ Defter maç sonunda `macYaz` işleminde (aynı `mac.id` ikinci kez yazılmaz): s
 
 Doldurulan (D5): `oyuncu`, `oturum`, `cekirdek`, `parca`, `takim`, `basarim` (ilk-devir), `mac`, `cekirdek_xp`. `altin_defteri` D7.
 
+**Göç 3 (D7):** `altin_defteri` + `zaman` (+ indeks `altin_oyuncu`); `basarim` + `tamam_tarihi`; yeni tablo
+`basarim_kume(oyuncu_id, basarim_id, anahtar, PK üçü)` (farklı Çekirdek / element / rakip / alan yeteneği küme sayaçları);
+`mac` + `gun` (04:00 gün anahtarı, indeks), `bitis` (ms), `bot`, `bitis_turleri` (JSON tur sonuçları), `yetenek_a/b`
+(JSON kademe 1-3 sayısı), `altin_a/b` (B-40 telemetri). Bakiye = `SUM(altin_defteri.miktar)`; ayrı bakiye sütunu yok.
+
 ## 5. Takım, ödünç topaç, maç sonu
 
 - **İlk Çekirdek:** başlangıç seti → `cekirdek` (Lv.2, 150 XP; Yapay `omur = 30`) + Gövde/Disk/Uç `parca` + `takim_no 0`:
@@ -139,3 +151,37 @@ dış çıkışı da keser, Kick token ucu için gevşetilmeli.
 `KIMLIK_MODU` (`sifre`, varsayılan) · `OTURUM_SIRRI` (üretimde zorunlu, ≥ 32) · `IZINLI_KOKENLER` (üretimde zorunlu) ·
 `VERI_DIZINI` (üretimde zorunlu) · `GUVENILIR_VEKIL=1` (Tunnel arkasında). Eksikse sunucu açılmaz:
 `[devran] Sunucu başlatılamadı, ortam eksik/yanlış: OTURUM_SIRRI (≥ 32 karakter); IZINLI_KOKENLER; VERI_DIZINI`.
+
+
+## 8. D7 ekonomi: Altın defteri, başarımlar, Market, hızlı maç
+
+**Defter referansları (UNIQUE, idempotent):** `mac:<mac_id>:<oyuncu>` (maç Altını, yalnız maç sonunda sunucu) ·
+`basarim:<başarım>:<oyuncu>` (ödül bir kez) · `satin:<oyuncu>:<parça>` (−fiyat; aynı parça ikinci kez alınamaz) ·
+`yenile:<oyuncu>:<çekirdek>:<mac_sayisi>` (−fiyat; aynı ömür döneminde bir kez) · `gelistirme:<uuid>` (yalnız yerel).
+
+**Maç sonu (`macSonuKaydet`, TEK işlem, BEGIN IMMEDIATE):** günlük sayaçlar bu maçtan önce `mac` tablosundan okunur
+(oyuncunun bugünkü iptal dışı maçları → azalan getiri numarası; bugünkü galibiyeti → günün ilk galibiyeti; aynı iki
+hesap → çift sayısı) → `mac` satırı + telemetri → Çekirdek XP/defter (D5/D6) → `macAltini` → defter → başarım
+(`basarimIsle`: maç özeti + kalıcı durum) → tamamlanan başarımın Altını. Aynı `mac_id` ikinci kez hiçbir şey yazmaz.
+Gün: Türkiye saati 04:00 (UTC 01:00), sunucu duvar saatinden (`Date.now()`; testlerde enjekte), sim dışı.
+
+**Kapılar:** misafir / Antrenman Altın ve başarım yok · oda ×0,25, başarımda yalnız Sosyal · bot (hızlı kuyruk dolgusu)
+×0,5, yalnız Yol · teslim/hükmen: teslim eden 0; kazanan yarım Altın, stil yok, başarım sayacı işlemez (tide G-17) ·
+iptal sayılmaz · maç < 20 sn Altın 0 · aynı çift günde 3'ten sonra Altın ve başarım yok · durum başarımları (Çekirdek
+Lv.3, Yapay ömrü bitti, parça sayısı) moddan bağımsız. İstemci hiçbir sayaç/Altın göndermez.
+
+**Uçlar (`src/sunucu/api/market.ts`; hepsi çerez, yazımlar + Origin):**
+
+| Uç | Girdi | Çıktı / hata |
+|---|---|---|
+| `GET /api/market` | — | `{acik, bakiye, gun, gununParcasi, raflar[4]{tur, ad, tezgah, urunler[]}, yenileme[], referans}`; gizli ürünün kimliği/adı/fiyatı gitmez |
+| `POST /api/market/satin-al` | `{parca}` | 201 `{fiyat, bakiye, tur, id, market}` · 402 `yetersiz` (+`eksik`) · 403 `kilitli·marketKapali` · 409 `sahip` · 404 `yok` |
+| `POST /api/market/yenile` | `{cekirdekId}` | 200 `{omur:30, fiyat, bakiye, market}` · 402 `yetersiz` · 409 `tam·yapayDegil` · 404 |
+| `GET /api/basarimlar` | — | 46 başarım `{id, kategori, gorunur, ad, aciklama, sayi, ilerleme, tamam, tamamTarihi, odulAltin, zorluk, acilanParcalar}`; gizli + tamamlanmamış "???" |
+| `GET /api/defter` | — | `{bakiye, satirlar[50]}` |
+| `POST /api/egitim-bitti` | — | (D7) İlk Devir başarım yolundan: `{yeni, altin: 100 ilk seferde, bakiye}` |
+| `GET /api/ben`, `/api/atolye` | — | (D7) + `altin`; Atölye + `tamamlanan`, `yenileme[]`, `takimTavani` (Üçlü → 4) |
+| `POST /api/gelistirme/altin-ver`, `/basarim` | `{miktar}` · `{basarim, ilerleme}` | yalnız NODE_ENV≠production + geri döngü (uçtan uca ekran görüntüsü) |
+
+**Hızlı maç:** `mod:"hizli"` odası `joinOrCreate`; bekleme 60 sn; `botIste` 30-60 sn arası sunucu saatiyle kabul (bot
+takımı üç başlangıç seti Lv.2, `oyuncular[1] = null`, `mac.bot = 1`). Seçimde `aktif_takim` varsayılan (D6).

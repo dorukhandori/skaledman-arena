@@ -1,0 +1,683 @@
+{
+  "not": "Otomatik oynanış (A: paylaşılan bot ?oto=dolas; B: ?oto=kenar; C: ?oto=dolas vs sunucu botu). İnsan play pass değil.",
+  "hesap-goktasi": [
+    201,
+    200,
+    201
+  ],
+  "hesap-maden": [
+    201,
+    200,
+    201
+  ],
+  "bosDurum": "Henüz başarım yok. İlk maçını oyna.",
+  "ilkDevirA": {
+    "ok": true,
+    "yeni": true,
+    "basarim": "ilk-devir",
+    "altin": 100,
+    "bakiye": 100
+  },
+  "ilkDevirB": {
+    "ok": true,
+    "yeni": true,
+    "basarim": "ilk-devir",
+    "altin": 100,
+    "bakiye": 100
+  },
+  "xpHazirlik": {
+    "ok": true,
+    "seviye": 2,
+    "tecrube": 695
+  },
+  "marketIlk": {
+    "bakiye": 100,
+    "gununParcasi": {
+      "id": "denge-disk",
+      "ad": "Denge Disk",
+      "tur": "disk",
+      "element": null,
+      "fiyat": 100,
+      "satisFiyati": 70
+    },
+    "raflar": [
+      {
+        "raf": "Çekirdekler",
+        "tezgah": "Kraterci",
+        "urunler": [
+          "Kor Göktaşı:sahip:Sende",
+          "Kaya Maden:acik:100 Altın",
+          "Kasırga Döküm:acik:100 Altın",
+          "Şimşek Göktaşı:kilitli:Kilitli: Şimşek Ustası 0/10",
+          "Girdap Maden:acik:2000 Altın",
+          "Sabır Taşı:kilitli:Kilitli: Sabır 0/5",
+          "???:gizli:???",
+          "Kül Çekirdeği:kilitli:Kilitli: Elli Galibiyet 0/50"
+        ]
+      },
+      {
+        "raf": "Gövdeler",
+        "tezgah": "Ocak",
+        "urunler": [
+          "Ok Gövde:sahip:Sende",
+          "Kalkan Gövde:acik:100 Altın",
+          "Savrulan Gövde:acik:100 Altın",
+          "Halka Gövde:acik:500 Altın",
+          "Ayaz Gövde:kilitli:Kilitli: Don Ustası 0/10",
+          "Düşürücü Gövde:kilitli:Kilitli: Düşürücü 0/10",
+          "Sivri Gövde:kilitli:Kilitli: Kırıcı 0/10",
+          "İz Gövde:kilitli:Kilitli: Alan Ustası 0/3"
+        ]
+      },
+      {
+        "raf": "Diskler",
+        "tezgah": "Meydan Tezgâhı",
+        "urunler": [
+          "Hafif Disk:sahip:Sende",
+          "Ağır Disk:acik:100 Altın",
+          "Denge Disk:acik:70 Altın",
+          "Alçak Disk:kilitli:Kilitli: Son Dönen 0/10",
+          "Parlak Disk:kilitli:Kilitli: Parlayan 0/1"
+        ]
+      },
+      {
+        "raf": "Uçlar",
+        "tezgah": "Dökümhane",
+        "urunler": [
+          "Düz Uç:sahip:Sende",
+          "İğne Uç:acik:100 Altın",
+          "Dengeli Uç:acik:100 Altın",
+          "Top Uç:acik:500 Altın",
+          "Kuşak Ucu:kilitli:Kilitli: Kenar Yürüyüşü 0/20",
+          "???:gizli:???"
+        ]
+      }
+    ]
+  },
+  "odakMetni": [
+    "Şimşek Göktaşı. 500 Altın. Kilitli: Şimşek Ustası 0/10.",
+    "Şimşek GöktaşıÇekirdek · Şimşek · Göktaşı · Standart500 AltınKilitli: Şimşek Ustası 0/10"
+  ],
+  "gizliOdak": "Gizli parça. Gizli bir başarımla açılır.",
+  "okTusu": "kul-cekirdegi",
+  "eksik": "400 Altın eksik",
+  "onay": {
+    "baslik": "Satın al",
+    "dugmeler": [
+      "Satın al · 100 Altın",
+      "İptal"
+    ],
+    "cubuk": [
+      "=",
+      "=",
+      "=",
+      "▲ +4",
+      "▼ −92",
+      "▲ +25"
+    ]
+  },
+  "gizliSekme": [
+    "???:gizli",
+    "???:gizli",
+    "???:gizli",
+    "???:gizli"
+  ],
+  "dereceliGizli": true,
+  "arama": "Rakip aranıyor… 0:05",
+  "bulundu": "Rakip bulundu: Berk znu4",
+  "sonucA1": {
+    "baslik": "YENİLGİ",
+    "alt": "Bu sefer olmadı.",
+    "skor": "0 – 3",
+    "bitisler": [
+      "RING OUTrakip−2",
+      "DURMArakip−1"
+    ],
+    "altin": {
+      "toplam": 60,
+      "sayac": "+60",
+      "kalemler": [
+        "Maç+60",
+        "Başarım ödülü+600",
+        "Bakiye760"
+      ]
+    },
+    "cekirdek": [
+      "Kor Göktaşı  Lv.3 · +25 XP720 XP · tavanSeviye atladı! Yeni: Közyağmuru"
+    ],
+    "basarim": [
+      {
+        "id": "parlayan",
+        "ilerleme": "1/1",
+        "tamam": true,
+        "metin": "+1Parlayan 1/1Market'te açıldı: Parlak DiskMarkete git"
+      },
+      {
+        "id": "zincir",
+        "ilerleme": "5/5",
+        "tamam": true,
+        "metin": "+5Zincir 5/5Tamamlandı · +300 Altın"
+      },
+      {
+        "id": "yuz-mac",
+        "ilerleme": "1/100",
+        "tamam": false,
+        "metin": "+1Yüz Maç 1/100"
+      }
+    ],
+    "basarimNot": null,
+    "marketeGit": [
+      "parlak-disk"
+    ],
+    "dugmeler": [
+      "Tekrar",
+      "Atölye"
+    ]
+  },
+  "sonucB1": {
+    "baslik": "ZAFER",
+    "alt": "",
+    "skor": "3 – 0",
+    "bitisler": [
+      "RING OUTsen+2",
+      "DURMAsen+1"
+    ],
+    "altin": {
+      "toplam": 260,
+      "sayac": "+260",
+      "kalemler": [
+        "Galibiyet+100",
+        "Günün ilk galibiyeti+150",
+        "Stil: farklı bitişler+10",
+        "Başarım ödülü+1200",
+        "Bakiye1560"
+      ]
+    },
+    "cekirdek": [
+      "Kaya Maden  Lv.2 · +90 XP240 / 700 XP"
+    ],
+    "basarim": [
+      {
+        "id": "ilk-galibiyet",
+        "ilerleme": "1/1",
+        "tamam": true,
+        "metin": "+1İlk Galibiyet 1/1Tamamlandı · +100 Altın"
+      },
+      {
+        "id": "kriz-donusu",
+        "ilerleme": "1/1",
+        "tamam": true,
+        "metin": "+1Kriz Dönüşü 1/1Market'te açıldı: Kor KalbiMarkete git"
+      },
+      {
+        "id": "zincir",
+        "ilerleme": "5/5",
+        "tamam": true,
+        "metin": "+5Zincir 5/5Tamamlandı · +300 Altın"
+      }
+    ],
+    "basarimNot": null,
+    "marketeGit": [
+      "kor-kalbi"
+    ],
+    "dugmeler": [
+      "Tekrar",
+      "Atölye"
+    ]
+  },
+  "parlakEksik": {
+    "eksik": "1240 Altın eksik",
+    "bakiye": 760
+  },
+  "acildiKarti": "Parlak Disk. 2000 Altın. Parlayan ile açıldı. Market'te açıldı.",
+  "altinVer": {
+    "ok": true,
+    "bakiye": 2050
+  },
+  "satinAlma": {
+    "son": {
+      "tur": "satin",
+      "parca": "parlak-disk",
+      "durum": 201,
+      "veri": {
+        "ok": true,
+        "tur": "disk",
+        "id": 108,
+        "fiyat": 2000,
+        "bakiye": 50
+      }
+    },
+    "bakiye": 50,
+    "kart": "sahip"
+  },
+  "atolyeCubuk": {
+    "once": {
+      "saldiri": 76,
+      "savunma": 20,
+      "agirlik": 5,
+      "stamina": 22,
+      "hiz": 100,
+      "saglamlik": 25
+    },
+    "sonra": {
+      "saldiri": "76 ()",
+      "savunma": "20 ()",
+      "agirlik": "14 (+9)",
+      "stamina": "25 (+3)",
+      "hiz": "100 ()",
+      "saglamlik": "0 (−25)"
+    }
+  },
+  "kaydet": "Takım 1 kaydedildi.",
+  "dereceliAcik": true,
+  "dereceliMetin": "Dereceli çok yakında.",
+  "mac2TakimKodu": "kor-goktasi:ok-govde:parlak-disk:duz-uc:3:0:sag|kaya-maden:kalkan-govde:agir-disk:igne-uc:1:1:sag|kasirga-yapay:savrulan-govde:denge-disk:dengeli-uc:1:1:sag",
+  "sonucA2": {
+    "baslik": "YENİLGİ",
+    "alt": "Bu sefer olmadı.",
+    "skor": "1 – 4",
+    "bitisler": [
+      "RING OUTrakip−2",
+      "DURMAsen+1",
+      "RING OUTrakip−2"
+    ],
+    "altin": {
+      "toplam": 65,
+      "sayac": "+65",
+      "kalemler": [
+        "Maç+60",
+        "Stil: farklı bitişler+5",
+        "Bakiye115"
+      ]
+    },
+    "cekirdek": [
+      "Kor Göktaşı  Lv.3 · +25 XP745 XP · tavan"
+    ],
+    "basarim": [
+      {
+        "id": "uc-yonlu",
+        "ilerleme": "1/3",
+        "tamam": false,
+        "metin": "+1Üç Yönlü 1/3"
+      },
+      {
+        "id": "zit-kutup",
+        "ilerleme": "2/25",
+        "tamam": false,
+        "metin": "+2Zıt Kutup 2/25"
+      },
+      {
+        "id": "yuz-mac",
+        "ilerleme": "2/100",
+        "tamam": false,
+        "metin": "+1Yüz Maç 2/100"
+      }
+    ],
+    "basarimNot": null,
+    "marketeGit": [],
+    "dugmeler": [
+      "Tekrar",
+      "Atölye"
+    ]
+  },
+  "hesap-yapay": [
+    201,
+    200,
+    201
+  ],
+  "ilkDevirC": {
+    "ok": true,
+    "yeni": true,
+    "basarim": "ilk-devir",
+    "altin": 100,
+    "bakiye": 100
+  },
+  "bulunamadi": "Şu an rakip bulamadık. Tekrar deneyebilir ya da Antrenman yapabilirsin.Tekrar deneAntrenman",
+  "botTeklif": "Rakip bulunamadı. Bot ile oyna?Altın yarı · başarımda yalnız YolBot ile oyna",
+  "botRakip": "Rakip: Devran botu KorKayaKasırga · hazır",
+  "sonucBot": {
+    "baslik": "YENİLGİ",
+    "alt": "Bu sefer olmadı.",
+    "skor": "1 – 3",
+    "bitisler": [
+      "DURMAsen+1",
+      "RING OUTrakip−2",
+      "DURMArakip−1"
+    ],
+    "altin": {
+      "toplam": 33,
+      "sayac": "+33",
+      "kalemler": [
+        "Maç+60",
+        "Stil: farklı bitişler+5",
+        "Bot maçı×0,5",
+        "Bakiye133"
+      ]
+    },
+    "cekirdek": [
+      "Kasırga Döküm  Lv.2 · +38 XP188 / 700 XP · ömür 29 maç"
+    ],
+    "basarim": [
+      {
+        "id": "yuz-mac",
+        "ilerleme": "1/100",
+        "tamam": false,
+        "metin": "+1Yüz Maç 1/100"
+      }
+    ],
+    "basarimNot": "Bot maçı: başarımda yalnız Yol sayılır.",
+    "marketeGit": [],
+    "dugmeler": [
+      "Tekrar",
+      "Atölye"
+    ]
+  },
+  "kirmiziKart": [
+    "Yapay ömrü bitti: yenile ya da başka Çekirdek tak.",
+    "Yenile · 40 Altın"
+  ],
+  "yenileme": {
+    "son": {
+      "tur": "yenile",
+      "cekirdekId": 34,
+      "durum": 200,
+      "veri": {
+        "ok": true,
+        "omur": 30,
+        "fiyat": 40,
+        "bakiye": 93
+      }
+    },
+    "satir": "\n      \n      \n      Kasırga DökümÖmür 30/30 maçÖmür tam"
+  },
+  "sql": {
+    "user_version": 3,
+    "altin_defteri_A": [
+      {
+        "id": 42,
+        "miktar": 100,
+        "neden": "basarim",
+        "ref": "basarim:ilk-devir:29",
+        "zaman": 1793834916128
+      },
+      {
+        "id": 44,
+        "miktar": 60,
+        "neden": "mac",
+        "ref": "mac:26b6ab6c-fd74-452f-9c63-d674088a5090:29",
+        "zaman": 1793834988214
+      },
+      {
+        "id": 45,
+        "miktar": 300,
+        "neden": "basarim",
+        "ref": "basarim:parlayan:29",
+        "zaman": 1793834988214
+      },
+      {
+        "id": 46,
+        "miktar": 300,
+        "neden": "basarim",
+        "ref": "basarim:zincir:29",
+        "zaman": 1793834988214
+      },
+      {
+        "id": 51,
+        "miktar": 1290,
+        "neden": "gelistirme",
+        "ref": "gelistirme:0c19a180-a76b-453f-aeed-c53f282ba429",
+        "zaman": 1793835025514
+      },
+      {
+        "id": 52,
+        "miktar": -2000,
+        "neden": "satin",
+        "ref": "satin:29:parlak-disk",
+        "zaman": 1793835027668
+      },
+      {
+        "id": 53,
+        "miktar": 65,
+        "neden": "mac",
+        "ref": "mac:99cdcf50-c554-43da-9593-620a5056a21e:29",
+        "zaman": 1793835098599
+      }
+    ],
+    "bakiye": {
+      "A": {
+        "t": 115
+      },
+      "B": {
+        "t": 1665
+      },
+      "C": {
+        "t": 93
+      }
+    },
+    "altin_defteri_C": [
+      {
+        "miktar": 100,
+        "neden": "basarim",
+        "ref": "basarim:ilk-devir:31"
+      },
+      {
+        "miktar": 33,
+        "neden": "mac",
+        "ref": "mac:bdd022ee-7350-4e81-a3ea-2023151f2c60:31"
+      },
+      {
+        "miktar": -40,
+        "neden": "yenile",
+        "ref": "yenile:31:34:1"
+      }
+    ],
+    "basarim_A": [
+      {
+        "basarim_id": "ilk-devir",
+        "ilerleme": 1,
+        "tamam": 1,
+        "tamam_tarihi": 1793834916128
+      },
+      {
+        "basarim_id": "koleksiyoncu",
+        "ilerleme": 5,
+        "tamam": 0,
+        "tamam_tarihi": null
+      },
+      {
+        "basarim_id": "parlayan",
+        "ilerleme": 1,
+        "tamam": 1,
+        "tamam_tarihi": 1793834988214
+      },
+      {
+        "basarim_id": "uc-yonlu",
+        "ilerleme": 1,
+        "tamam": 0,
+        "tamam_tarihi": null
+      },
+      {
+        "basarim_id": "yuz-mac",
+        "ilerleme": 2,
+        "tamam": 0,
+        "tamam_tarihi": null
+      },
+      {
+        "basarim_id": "zincir",
+        "ilerleme": 5,
+        "tamam": 1,
+        "tamam_tarihi": 1793834988214
+      },
+      {
+        "basarim_id": "zit-kutup",
+        "ilerleme": 2,
+        "tamam": 0,
+        "tamam_tarihi": null
+      }
+    ],
+    "basarim_C": [
+      {
+        "basarim_id": "dokumhane-musterisi",
+        "ilerleme": 1,
+        "tamam": 0
+      },
+      {
+        "basarim_id": "ilk-devir",
+        "ilerleme": 1,
+        "tamam": 1
+      },
+      {
+        "basarim_id": "koleksiyoncu",
+        "ilerleme": 4,
+        "tamam": 0
+      },
+      {
+        "basarim_id": "yuz-mac",
+        "ilerleme": 1,
+        "tamam": 0
+      }
+    ],
+    "basarim_kume_A": [],
+    "parca_A": [
+      {
+        "id": 102,
+        "tanim_id": "ok-govde",
+        "edinme": 1793834912816
+      },
+      {
+        "id": 103,
+        "tanim_id": "hafif-disk",
+        "edinme": 1793834912816
+      },
+      {
+        "id": 104,
+        "tanim_id": "duz-uc",
+        "edinme": 1793834912816
+      },
+      {
+        "id": 108,
+        "tanim_id": "parlak-disk",
+        "edinme": 1793835027668
+      }
+    ],
+    "cekirdek_A": [
+      {
+        "id": 32,
+        "tanim_id": "kor-goktasi",
+        "seviye": 3,
+        "tecrube": 745,
+        "mac_sayisi": 2,
+        "galibiyet": 0
+      }
+    ],
+    "cekirdek_C": [
+      {
+        "id": 34,
+        "tanim_id": "kasirga-yapay",
+        "omur": 30,
+        "mac_sayisi": 1
+      }
+    ],
+    "mac": [
+      {
+        "id": "26b6ab6c-fd74-452f-9c63-d674088a5090",
+        "mod": "hizli",
+        "a": 29,
+        "b": 30,
+        "kazanan": 30,
+        "puan": "0-3",
+        "sure": 45,
+        "bitis_nedeni": "puan",
+        "gun": 20761,
+        "bot": 0,
+        "bitis_turleri": "[{\"tur\":\"ringOut\",\"kazanan\":1,\"sn\":2},{\"tur\":\"durma\",\"kazanan\":1,\"sn\":44.7}]",
+        "yetenek_a": "[0,0,0]",
+        "yetenek_b": "[0,0,0]",
+        "altin_a": 60,
+        "altin_b": 260,
+        "katalog_ozeti": "a8fe860d333fcb81",
+        "takim_a": "kor-goktasi:ok-govde:hafif-disk:duz-uc:2:0:sag|kaya-maden:kalkan-govde:agir-disk:igne-uc:1:1:sag|kasirga-yapay:savrulan-govde:denge-disk:dengeli-uc:1:1:sag"
+      },
+      {
+        "id": "99cdcf50-c554-43da-9593-620a5056a21e",
+        "mod": "hizli",
+        "a": 29,
+        "b": 30,
+        "kazanan": 30,
+        "puan": "1-4",
+        "sure": 54,
+        "bitis_nedeni": "puan",
+        "gun": 20761,
+        "bot": 0,
+        "bitis_turleri": "[{\"tur\":\"ringOut\",\"kazanan\":1,\"sn\":2.5},{\"tur\":\"durma\",\"kazanan\":0,\"sn\":49},{\"tur\":\"ringOut\",\"kazanan\":1,\"sn\":53.9}]",
+        "yetenek_a": "[0,0,0]",
+        "yetenek_b": "[0,0,0]",
+        "altin_a": 65,
+        "altin_b": 105,
+        "katalog_ozeti": "a8fe860d333fcb81",
+        "takim_a": "kor-goktasi:ok-govde:parlak-disk:duz-uc:3:0:sag|kaya-maden:kalkan-govde:agir-disk:igne-uc:1:1:sag|kasirga-yapay:savrulan-govde:denge-disk:dengeli-uc:1:1:sag"
+      },
+      {
+        "id": "bdd022ee-7350-4e81-a3ea-2023151f2c60",
+        "mod": "hizli",
+        "a": 31,
+        "b": null,
+        "kazanan": null,
+        "puan": "1-3",
+        "sure": 60,
+        "bitis_nedeni": "puan",
+        "gun": 20761,
+        "bot": 1,
+        "bitis_turleri": "[{\"tur\":\"durma\",\"kazanan\":0,\"sn\":25.1},{\"tur\":\"ringOut\",\"kazanan\":1,\"sn\":27.9},{\"tur\":\"durma\",\"kazanan\":1,\"sn\":60.4}]",
+        "yetenek_a": "[0,0,0]",
+        "yetenek_b": "[1,0,0]",
+        "altin_a": 33,
+        "altin_b": null,
+        "katalog_ozeti": "a8fe860d333fcb81",
+        "takim_a": "kasirga-yapay:savrulan-govde:denge-disk:dengeli-uc:2:0:sag|kor-goktasi:ok-govde:hafif-disk:duz-uc:1:1:sag|kaya-maden:kalkan-govde:agir-disk:igne-uc:1:1:sag"
+      }
+    ]
+  },
+  "konsol": {
+    "A": [],
+    "B": [],
+    "C": [],
+    "hamA": 0,
+    "hamB": 0
+  },
+  "ekranlar": [
+    "docs/production/raporlar/ekran/D7-basarimlar-bos.png",
+    "docs/production/raporlar/ekran/D7-market-genel.png",
+    "docs/production/raporlar/ekran/D7-market-kilitli-odak.png",
+    "docs/production/raporlar/ekran/D7-market-raflar-alt.png",
+    "docs/production/raporlar/ekran/D7-market-altin-eksik.png",
+    "docs/production/raporlar/ekran/D7-market-satin-onay.png",
+    "docs/production/raporlar/ekran/D7-market-gunun-parcasi.png",
+    "docs/production/raporlar/ekran/D7-basarimlar-yol.png",
+    "docs/production/raporlar/ekran/D7-basarimlar-gizli.png",
+    "docs/production/raporlar/ekran/D7-lobi-hizli.png",
+    "docs/production/raporlar/ekran/D7-hizli-araniyor.png",
+    "docs/production/raporlar/ekran/D7-hizli-bulundu.png",
+    "docs/production/raporlar/ekran/D7-mac1-hud.png",
+    "docs/production/raporlar/ekran/D7-sonuc-yenilgi-sayma.png",
+    "docs/production/raporlar/ekran/D7-sonuc-yenilgi.png",
+    "docs/production/raporlar/ekran/D7-sonuc-zafer.png",
+    "docs/production/raporlar/ekran/D7-market-acildi-eksik.png",
+    "docs/production/raporlar/ekran/D7-market-acildi.png",
+    "docs/production/raporlar/ekran/D7-market-parlak-onay.png",
+    "docs/production/raporlar/ekran/D7-market-satin-alindi.png",
+    "docs/production/raporlar/ekran/D7-atolye-yeni-parca.png",
+    "docs/production/raporlar/ekran/D7-lobi-dereceli-acik.png",
+    "docs/production/raporlar/ekran/D7-mac2-hud-parlak-disk.png",
+    "docs/production/raporlar/ekran/D7-sonuc-mac2.png",
+    "docs/production/raporlar/ekran/D7-hizli-bulunamadi.png",
+    "docs/production/raporlar/ekran/D7-hizli-antrenman-oneri.png",
+    "docs/production/raporlar/ekran/D7-hizli-bot-teklif.png",
+    "docs/production/raporlar/ekran/D7-sonuc-bot.png",
+    "docs/production/raporlar/ekran/D7-atolye-yapay-kirmizi.png",
+    "docs/production/raporlar/ekran/D7-yapay-yenileme-onay.png",
+    "docs/production/raporlar/ekran/D7-yapay-yenilendi.png",
+    "docs/production/raporlar/ekran/D7-market-dokumhane.png"
+  ],
+  "sureSn": 389
+}

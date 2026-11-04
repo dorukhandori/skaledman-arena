@@ -9,19 +9,23 @@ import { adAnahtari, adDegisimKalanGun, adDogrula, takimAdDogrula } from "../oyu
 import { envanterOku, sunucuTakimlari } from "../oyuncu/takim.ts";
 import { type Istek, type Uygulama, type Yanit, oturumdakiOyuncu, yaz, yazimGirisi } from "./ortak.ts";
 import { depo } from "../db/depo.ts";
+import { ilerlemeler, takimTavani, tamamlananlar } from "../oyuncu/basarimYaz.ts";
+import { yenilemeFiyati } from "../../paylasilan/kurallar/ekonomi.ts";
 
 // Atölye uçları (D6, US-2.1/2.2; docs/tech/backend.md § 3). İstemci yalnız örnek kimliği gönderir; sahiplik, tür,
 // 3 farklı Çekirdek, parça tek topaçta, ödünç kotası sunucuda (`takimDegerlendir`, paylaşılan saf kural); çubuk
 // sayıları sunucuda `topacProfiliKur` ile hesaplanıp yanıtta döner. Geliştirme uçları yalnız NODE_ENV != production
 // ve yerel adresten (D7'de Market ve gerçek XP bunların yerini alır).
 
+/** Kayıtlı takım tavanı: 3; başarımla 4 ("Üçlü": takim-yuvasi-4) ve 5 (takim-yuvasi-5) (D7). */
 export const TAKIM_TAVANI = 3;
+export const TAKIM_TAVANI_EN_COK = 5;
 const id = z.number().int().positive().nullable();
 const TopacSema = z.object({ cekirdek: id, govde: id, disk: id, uc: id });
 const TakimSema = z.object({ ad: z.string().max(64).optional(), yuvalar: z.array(TopacSema).length(3) });
 const AdSema = z.object({ ad: z.string().max(64) });
 const YeniTakimSema = z.object({ ad: z.string().max(64).optional() });
-const AktifSema = z.object({ takimNo: z.number().int().min(0).max(TAKIM_TAVANI - 1) });
+const AktifSema = z.object({ takimNo: z.number().int().min(0).max(TAKIM_TAVANI_EN_COK - 1) });
 const YonSema = z.object({ yon: z.enum(["sag", "sol"]) });
 const ParcaVerSema = z.object({ tanim: z.string().max(40) });
 const XpVerSema = z.object({ cekirdekId: z.number().int().positive(), xp: z.number().int().min(-5000).max(5000) });
@@ -62,8 +66,8 @@ export function atolyeGorunumu(d: Depo, oyuncuId: number) {
       cubuklar: t.yuvalar.map((y) => topacCubuklari(d, oyuncuId, y)),
     };
   });
-  const ilerleme: Record<string, number> = {};
-  for (const b of d.basarimlar(oyuncuId)) ilerleme[b.basarim_id] = b.ilerleme;
+  const ilerleme = ilerlemeler(d, oyuncuId);
+  const tamam = tamamlananlar(d, oyuncuId);
   const kalanGun = adDegisimKalanGun(o, Date.now());
   return {
     oyuncu: { id: o.id, ad: o.ad, arma: o.arma, renk: o.renk, destekKanali: o.destek_kanali, adKalanGun: kalanGun },
@@ -72,14 +76,18 @@ export function atolyeGorunumu(d: Depo, oyuncuId: number) {
     parcalar: d.parcalar(oyuncuId).map((p) => ({ id: p.id, tanimId: p.tanim_id, tur: parcaBul(p.tanim_id).tur })),
     takimlar,
     basarimIlerleme: ilerleme,
-    takimTavani: TAKIM_TAVANI,
+    /** D7: tamamlanan başarımlar (kilitli parça "Market'te"ye döner), bakiye, Yapay yenileme fiyatı */
+    tamamlanan: [...tamam],
+    altin: d.bakiye(oyuncuId),
+    yenileme: d.cekirdekler(oyuncuId).filter((c) => c.omur !== null).map((c) => ({ cekirdekId: c.id, omur: c.omur, fiyat: yenilemeFiyati(cekirdekBul(c.tanim_id).fiyat, tamam.has("asinmis")) })),
+    takimTavani: takimTavani(tamam),
     gelistirme: process.env.NODE_ENV !== "production",
   };
 }
 
 function siraOku(q: Istek, r: Yanit): number | null {
   const n = Number(q.params["sira"]);
-  if (!Number.isInteger(n) || n < 0 || n >= TAKIM_TAVANI) { yaz(r, 400, { hata: "sira" }); return null; }
+  if (!Number.isInteger(n) || n < 0 || n >= TAKIM_TAVANI_EN_COK) { yaz(r, 400, { hata: "sira" }); return null; }
   return n;
 }
 
@@ -125,8 +133,9 @@ export function atolyeRotalariKur(app: Uygulama): void {
     const g = await yazimGirisi(q, r, YeniTakimSema);
     if (!g) return;
     const var_ = new Set(g.d.takimTaslaklari(g.id).map((t) => t.takimNo));
+    const tavan = takimTavani(tamamlananlar(g.d, g.id));
     let no = -1;
-    for (let k = 0; k < TAKIM_TAVANI; k++) if (!var_.has(k)) { no = k; break; }
+    for (let k = 0; k < tavan; k++) if (!var_.has(k)) { no = k; break; }
     if (no < 0) { yaz(r, 409, { hata: "dolu" }); return; }
     let ad = `Takım ${no + 1}`;
     if (g.b.ad) {

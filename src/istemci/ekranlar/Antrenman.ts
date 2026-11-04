@@ -252,9 +252,12 @@ class AntrenmanEgitimi {
     dg.className = "dg";
     if (this.girisli) {
       let yazildi = false;
-      try { yazildi = (await apiPost("/api/egitim-bitti")).durum === 200; } catch { /* bakım: Atölye'de tekrar */ }
+      let altin = 0;
+      try { const r = await apiPost<{ ok: boolean; altin?: number }>("/api/egitim-bitti"); yazildi = r.durum === 200; altin = r.veri.altin ?? 0; } catch { /* bakım: Atölye'de tekrar */ }
       const p = el("p", "", k);
       p.innerHTML = yazildi ? kalin(EGITIM_KAPANIS[1]) : "Başarım kaydedilemedi. Bağlantını kontrol et.";
+      // D7: İlk Devir ödülü (Kolay, 100 Altın; yalnız ilk tamamlanışta)
+      if (yazildi && altin > 0) el("p", "", k, `+${altin} Altın · Başlangıç rafı açıldı.`).dataset["altin"] = String(altin);
       this.sonuc = yazildi ? "ilkDevir" : "";
       const d = el("button", "bir", dg, "Atölye");
       d.dataset["eylem"] = "atolye";
@@ -264,7 +267,7 @@ class AntrenmanEgitimi {
     } else {
       sakla(MISAFIR_EGITIM, "1");
       this.sonuc = "misafir";
-      el("p", "", k, "İlerlemeni kaydetmek için kayıt ol.");
+      el("p", "", k, "Hesapsız Antrenman: Altın ve başarım kaydedilmez. İlerlemeni kaydetmek için kayıt ol.");
       const d = el("button", "bir", dg, "Kayıt ol");
       d.dataset["eylem"] = "kayit";
       d.addEventListener("click", () => git("kayit"));

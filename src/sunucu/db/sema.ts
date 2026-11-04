@@ -107,6 +107,29 @@ export const GOCLER: readonly string[] = [
   ALTER TABLE oyuncu ADD COLUMN aktif_takim INTEGER NOT NULL DEFAULT 0;
   ALTER TABLE oyuncu ADD COLUMN ad_degisim INTEGER NOT NULL DEFAULT 0;
   `,
+  // 3: D7 ekonomi: Altın defteri zamanı (günlük sayaç ve rapor), başarım tamamlanma zamanı + küme sayaçları (farklı
+  // Çekirdek / element / rakip / alan yeteneği), maç telemetrisi (B-40) ve gün anahtarı (04:00 sıfırlama, azalan getiri,
+  // aynı çift günde 3 sınırı mac tablosundan sayılır)
+  `
+  ALTER TABLE altin_defteri ADD COLUMN zaman INTEGER NOT NULL DEFAULT 0;
+  CREATE INDEX altin_oyuncu ON altin_defteri(oyuncu_id);
+  ALTER TABLE basarim ADD COLUMN tamam_tarihi INTEGER;
+  CREATE TABLE basarim_kume (
+    oyuncu_id INTEGER NOT NULL REFERENCES oyuncu(id) ON DELETE CASCADE,
+    basarim_id TEXT NOT NULL,
+    anahtar TEXT NOT NULL,
+    PRIMARY KEY (oyuncu_id, basarim_id, anahtar)
+  );
+  ALTER TABLE mac ADD COLUMN gun INTEGER;
+  ALTER TABLE mac ADD COLUMN bitis INTEGER;
+  ALTER TABLE mac ADD COLUMN bot INTEGER NOT NULL DEFAULT 0;
+  ALTER TABLE mac ADD COLUMN bitis_turleri TEXT;
+  ALTER TABLE mac ADD COLUMN yetenek_a TEXT;
+  ALTER TABLE mac ADD COLUMN yetenek_b TEXT;
+  ALTER TABLE mac ADD COLUMN altin_a INTEGER;
+  ALTER TABLE mac ADD COLUMN altin_b INTEGER;
+  CREATE INDEX mac_gun ON mac(gun);
+  `,
 ];
 
 /** Göçleri uygula; dönen: uygulanan göç sayısı. */

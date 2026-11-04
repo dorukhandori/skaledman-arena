@@ -1,4 +1,5 @@
-import { BASARIMLAR, parcaBul } from "../veri/katalog.ts";
+import { parcaBul } from "../veri/katalog.ts";
+import { marketDurumu } from "./market.ts";
 import type { Parca } from "../veri/semalar.ts";
 
 // Atölye kuralları (US-2.1, saf; istemci anında gösterir, sunucu aynı fonksiyonla yetkili doğrular):
@@ -148,15 +149,14 @@ export interface ParcaGorunumu {
   okunan: string;
 }
 
-/** Başarım ilerlemesi (D7'de sunucu sayar; şimdilik 0/N). */
-export function parcaGorunumu(p: Parca, sahipAdet: number, ilerleme: Readonly<Record<string, number>> = {}): ParcaGorunumu {
+/** Envanter kartı durumu; D7: kilit Market kuralıyla (tamamlanan başarım kilidi açar, nile B-9 Kül Çekirdeği geçersiz kılma). */
+export function parcaGorunumu(p: Parca, sahipAdet: number, ilerleme: Readonly<Record<string, number>> = {}, tamamlanan: ReadonlySet<string> = new Set()): ParcaGorunumu {
   if (sahipAdet > 0) {
     const e = sahipAdet > 1 ? `Sende ×${sahipAdet}` : "Sende";
     return { durum: "sahip", ad: p.ad, etiket: e, okunan: `${p.ad}. ${e}.` };
   }
-  const b = BASARIMLAR.find((x) => x.id === p.kilit);
-  const kilitMetni = b ? `Kilitli: ${b.ad} ${Math.min(b.sart.sayi, ilerleme[b.id] ?? 0)}/${b.sart.sayi}` : "Kilitli";
-  if (p.gorunum === "gizli") return { durum: "gizli", ad: "???", etiket: "Gizli parça", okunan: "Gizli parça. Bir başarımla açılır." };
-  if (p.gorunum === "kilitli-gorunur" || p.kilit !== "acik") return { durum: "kilitli", ad: p.ad, etiket: kilitMetni, okunan: `${p.ad}. ${p.fiyat} Altın. ${kilitMetni}.` };
+  const m = marketDurumu(p, { sahipAdet, tamamlanan, ilerleme });
+  if (m.durum === "gizli") return { durum: "gizli", ad: "???", etiket: "Gizli parça", okunan: "Gizli parça. Bir başarımla açılır." };
+  if (m.durum === "kilitli") return { durum: "kilitli", ad: p.ad, etiket: m.etiket, okunan: m.okunan };
   return { durum: "market", ad: p.ad, etiket: `Market'te · ${p.fiyat} Altın`, okunan: `${p.ad}. Market'te, ${p.fiyat} Altın.` };
 }

@@ -30,7 +30,12 @@ export interface KayitliTakim { takimNo: number; ad: string; yuvalar: (TakimYuva
 export interface MacSatiri {
   id: string; mod: string; a: number | null; b: number | null; kazanan: number | null; puan: string; sure: number;
   bitis_nedeni: string; katalog_ozeti: string; baslangic: number; takim_a: string | null; takim_b: string | null;
+  /** D7 (göç 3): gün anahtarı (04:00), bitiş ms, bot maçı, telemetri (B-40), oyuncu başı Altın */
+  gun?: number | null; bitis?: number | null; bot?: number; bitis_turleri?: string | null; yetenek_a?: string | null; yetenek_b?: string | null;
+  altin_a?: number | null; altin_b?: number | null;
 }
+export interface DefterSatiri { id: number; oyuncu_id: number; miktar: number; neden: string; ref: string; zaman: number }
+export interface BasarimSatiri { basarim_id: string; ilerleme: number; tamam: number; tamam_tarihi: number | null }
 export interface XpYazimi {
   cekirdekId: number; kazanc: number; tecrube: number; seviye: number; omur: number | null;
   /** D6 defter artışları (maç sayıldıysa 1) */
@@ -127,7 +132,7 @@ export class Depo {
   }
 
   /**
-   * Geliştirme (NODE_ENV != production; D7'de Market yerini alır): envantere katalog parçası ver. Çekirdek ise
+   * Envantere katalog parçası ver (D7: Market satın alımı bu yolu kullanır; geliştirme ucu da). Çekirdek ise
    * `cekirdek` satırı (Lv.1, 0 XP; Yapay ömür 30; yön katalogdan, çift yönlüde sağ), değilse `parca` satırı.
    */
   parcaVer(oyuncuId: number, tanimId: string, simdi: number): { tur: string; id: number } {
@@ -254,8 +259,11 @@ export class Depo {
   /** Maç satırı + Çekirdek XP/ömür tek işlemde; aynı maç kimliği ikinci kez yazılmaz (idempotent). Dönen: yazıldı mı. */
   macYaz(m: MacSatiri, xp: readonly XpYazimi[]): boolean {
     return this.db.transaction((): boolean => {
-      const r = this.db.prepare(`INSERT OR IGNORE INTO mac (id, mod, a, b, kazanan, puan, sure, bitis_nedeni, katalog_ozeti, baslangic, takim_a, takim_b)
-        VALUES (@id, @mod, @a, @b, @kazanan, @puan, @sure, @bitis_nedeni, @katalog_ozeti, @baslangic, @takim_a, @takim_b)`).run(m);
+      const satir = { gun: null, bitis: null, bot: 0, bitis_turleri: null, yetenek_a: null, yetenek_b: null, altin_a: null, altin_b: null, ...m };
+      const r = this.db.prepare(`INSERT OR IGNORE INTO mac (id, mod, a, b, kazanan, puan, sure, bitis_nedeni, katalog_ozeti, baslangic, takim_a, takim_b,
+          gun, bitis, bot, bitis_turleri, yetenek_a, yetenek_b, altin_a, altin_b)
+        VALUES (@id, @mod, @a, @b, @kazanan, @puan, @sure, @bitis_nedeni, @katalog_ozeti, @baslangic, @takim_a, @takim_b,
+          @gun, @bitis, @bot, @bitis_turleri, @yetenek_a, @yetenek_b, @altin_a, @altin_b)`).run(satir);
       if (r.changes === 0) return false;
       const guncelle = this.db.prepare(`UPDATE cekirdek SET tecrube = ?, seviye = ?, omur = ?, mac_sayisi = mac_sayisi + ?, galibiyet = galibiyet + ?,
         kriz_galibiyet = kriz_galibiyet + ?, en_uzun_donus_sn = MAX(en_uzun_donus_sn, ?), kararma = kararma + ? WHERE id = ?`);
@@ -270,6 +278,85 @@ export class Depo {
 
   mac(id: string): MacSatiri | null {
     return (this.db.prepare("SELECT * FROM mac WHERE id = ?").get(id) as MacSatiri | undefined) ?? null;
+  }
+
+  /** D7: maç satırına oyuncu başı Altın (telemetri; defter ayrıca `mac:<id>:<oyuncu>`). */
+  macAltinYaz(id: string, a: number | null, b: number | null): void {
+    this.db.prepare("UPDATE mac SET altin_a = ?, altin_b = ? WHERE id = ?").run(a, b, id);
+  }
+
+  // ---- D7: işlem, Altın defteri, başarım, günlük sayaç ----
+  /** Tek SQLite işlemi (BEGIN IMMEDIATE: yazım kilidi baştan; iç içe çağrı savepoint olur). */
+  islem<T>(f: () => T): T {
+    return this.db.inTransaction ? this.db.transaction(f)() : this.db.transaction(f).immediate();
+  }
+
+  /** Bakiye = defter toplamı (axiom § 2 #20). */
+  bakiye(oyuncuId: number): number {
+    return (this.db.prepare("SELECT COALESCE(SUM(miktar), 0) t FROM altin_defteri WHERE oyuncu_id = ?").get(oyuncuId) as { t: number }).t;
+  }
+
+  /** Defter satırı; `ref` UNIQUE (idempotent). Dönen: yazıldı mı (aynı ref ikinci kez yazılmaz). */
+  altinYaz(oyuncuId: number, miktar: number, neden: string, ref: string, zaman: number): boolean {
+    return this.db.prepare("INSERT OR IGNORE INTO altin_defteri (oyuncu_id, miktar, neden, ref, zaman) VALUES (?, ?, ?, ?, ?)")
+      .run(oyuncuId, Math.round(miktar), neden, ref, zaman).changes > 0;
+  }
+
+  defter(oyuncuId: number, limit = 50): DefterSatiri[] {
+    return this.db.prepare("SELECT * FROM altin_defteri WHERE oyuncu_id = ? ORDER BY id DESC LIMIT ?").all(oyuncuId, limit) as DefterSatiri[];
+  }
+
+  defterRef(ref: string): DefterSatiri | null {
+    return (this.db.prepare("SELECT * FROM altin_defteri WHERE ref = ?").get(ref) as DefterSatiri | undefined) ?? null;
+  }
+
+  basarimSatirlari(oyuncuId: number): BasarimSatiri[] {
+    return this.db.prepare("SELECT basarim_id, ilerleme, tamam, tamam_tarihi FROM basarim WHERE oyuncu_id = ? ORDER BY basarim_id").all(oyuncuId) as BasarimSatiri[];
+  }
+
+  /** Başarım kayıtları + küme anahtarları (saf değerlendiricinin `mevcut` girdisi). */
+  basarimKayitlari(oyuncuId: number): Record<string, { ilerleme: number; tamam: boolean; kume: string[] }> {
+    const r: Record<string, { ilerleme: number; tamam: boolean; kume: string[] }> = {};
+    for (const b of this.basarimSatirlari(oyuncuId)) r[b.basarim_id] = { ilerleme: b.ilerleme, tamam: b.tamam === 1, kume: [] };
+    const kume = this.db.prepare("SELECT basarim_id, anahtar FROM basarim_kume WHERE oyuncu_id = ? ORDER BY basarim_id, anahtar").all(oyuncuId) as { basarim_id: string; anahtar: string }[];
+    for (const k of kume) (r[k.basarim_id] ??= { ilerleme: 0, tamam: false, kume: [] }).kume.push(k.anahtar);
+    return r;
+  }
+
+  /** Başarım ilerlemesi yaz (tamamlanan geri dönmez; tamam_tarihi ilk tamamlanışta). Dönen: bu çağrıda tamamlandı mı. */
+  basarimYaz(oyuncuId: number, basarimId: string, ilerleme: number, tamam: boolean, zaman: number, kume: readonly string[] = []): boolean {
+    const once = this.db.prepare("SELECT tamam FROM basarim WHERE oyuncu_id = ? AND basarim_id = ?").get(oyuncuId, basarimId) as { tamam: number } | undefined;
+    if (once?.tamam === 1) return false;
+    this.db.prepare(`INSERT INTO basarim (oyuncu_id, basarim_id, ilerleme, tamam, tamam_tarihi) VALUES (?, ?, ?, ?, ?)
+      ON CONFLICT (oyuncu_id, basarim_id) DO UPDATE SET ilerleme = excluded.ilerleme, tamam = excluded.tamam, tamam_tarihi = excluded.tamam_tarihi`)
+      .run(oyuncuId, basarimId, ilerleme, tamam ? 1 : 0, tamam ? zaman : null);
+    const ekle = this.db.prepare("INSERT OR IGNORE INTO basarim_kume (oyuncu_id, basarim_id, anahtar) VALUES (?, ?, ?)");
+    for (const k of kume) ekle.run(oyuncuId, basarimId, k);
+    return tamam;
+  }
+
+  /** Bugün (gün anahtarı) oyuncunun sayılan maç sayısı (iptal hariç). */
+  gunlukMacSayisi(oyuncuId: number, gun: number): number {
+    return (this.db.prepare("SELECT COUNT(*) n FROM mac WHERE gun = ? AND (a = ? OR b = ?) AND bitis_nedeni <> 'iptal'").get(gun, oyuncuId, oyuncuId) as { n: number }).n;
+  }
+
+  gunlukGalibiyet(oyuncuId: number, gun: number): number {
+    return (this.db.prepare("SELECT COUNT(*) n FROM mac WHERE gun = ? AND kazanan = ?").get(gun, oyuncuId) as { n: number }).n;
+  }
+
+  /** Bugün aynı iki hesap arasındaki maç sayısı (iptal hariç; flint § 5). */
+  ciftGunluk(a: number, b: number, gun: number): number {
+    return (this.db.prepare("SELECT COUNT(*) n FROM mac WHERE gun = ? AND ((a = ? AND b = ?) OR (a = ? AND b = ?)) AND bitis_nedeni <> 'iptal'").get(gun, a, b, b, a) as { n: number }).n;
+  }
+
+  /** Satın alınan parça/Çekirdek tek işlemde: bakiye denetimi çağıranda (aynı işlem içinde). */
+  yapayYenile(oyuncuId: number, cekirdekId: number, omur: number): boolean {
+    return this.db.prepare("UPDATE cekirdek SET omur = ? WHERE id = ? AND oyuncu_id = ? AND omur IS NOT NULL").run(omur, cekirdekId, oyuncuId).changes > 0;
+  }
+
+  /** Sahip olunan farklı katalog tanımı sayısı (Çekirdek + parça; Koleksiyoncu). */
+  parcaCesidi(oyuncuId: number): number {
+    return (this.db.prepare("SELECT COUNT(*) n FROM (SELECT tanim_id FROM cekirdek WHERE oyuncu_id = ? UNION SELECT tanim_id FROM parca WHERE oyuncu_id = ?)").get(oyuncuId, oyuncuId) as { n: number }).n;
   }
 }
 

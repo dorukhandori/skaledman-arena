@@ -18,6 +18,8 @@ export type Ben =
     cekirdekler: CekirdekGorunumu[]; takimlar: TakimGorunumu[]; basarimlar: string[]; marketAcik: boolean;
     /** D6: Atölye'de seçilen aktif takım numarası */
     aktifTakim?: string;
+    /** D7: Altın bakiyesi */
+    altin?: number;
   };
 export type Girisli = Extract<Ben, { girisli: true }>;
 
@@ -43,6 +45,31 @@ export interface AtolyeGorunumu {
   basarimIlerleme: Record<string, number>;
   takimTavani: number;
   gelistirme: boolean;
+  /** D7 */
+  tamamlanan: string[];
+  altin: number;
+  yenileme: { cekirdekId: number; omur: number | null; fiyat: number }[];
+}
+
+// ---- D7: Market, Başarımlar ----
+export interface MarketUrunu {
+  id: string; durum: "sahip" | "acik" | "kilitli" | "gizli"; ad: string; tur: "cekirdek" | "govde" | "disk" | "uc";
+  element?: string | null; koken?: string | null; tipEgilimi?: string; katman?: string; katmanAd?: string; fiyat?: number; satisFiyati?: number;
+  gununParcasi?: boolean; etiket: string; okunan: string; basarim?: { id: string; ad: string; ilerleme: number; sayi: number } | null;
+  basarimlaAcildi?: boolean; sahip?: number; aciklama?: string;
+}
+export interface MarketRafi { tur: "cekirdek" | "govde" | "disk" | "uc"; ad: string; tezgah: string; tezgahNotu: string; urunler: MarketUrunu[] }
+export interface YenilemeSatiri { cekirdekId: number; tanimId: string; ad: string; omur: number; tavan: number; fiyat: number; tamFiyat: number; asinmisIndirimi: boolean; yenilenebilir: boolean }
+export interface MarketGorunumu {
+  acik: boolean; bakiye: number; gun: number;
+  gununParcasi: { id: string; ad: string; tur: string; element: string | null; fiyat: number; satisFiyati: number } | null;
+  raflar: MarketRafi[]; yenileme: YenilemeSatiri[];
+  referans: { cekirdek: string; govde: string; disk: string; uc: string; yon: "sag" | "sol" } | null;
+}
+export interface BasarimGorunumu {
+  id: string; kategori: string; gizli: boolean; gorunur: boolean; ilkSurum: boolean; ad: string; aciklama: string; sayi: number; ilerleme: number;
+  tamam: boolean; tamamTarihi: number | null; odulAltin: number; zorluk: "kolay" | "orta" | "zor" | "efsane";
+  acilanParcalar: { id: string; ad: string }[]; acilanGorunum: string[]; acilanOzellik: string[];
 }
 
 export async function atolyeGetir(): Promise<AtolyeGorunumu> {
@@ -83,7 +110,13 @@ export const HESAP_HATA: Record<string, string> = {
   "ad-uzunluk": "Takım adı 1-20 karakter olmalı.",
   "ad-karakter": "Takım adında yalnız harf, rakam, boşluk, nokta ve tire olabilir.",
   "ad-uygunsuz": "Bu takım adı uygun değil.",
-  dolu: "En çok 3 takım kaydedebilirsin.",
+  dolu: "Takım yuvaların dolu. Üçlü başarımı 4. yuvayı açar.",
+  yetersiz: "Altının yetmiyor.",
+  kilitli: "Bu parça henüz kilitli. Başarımı tamamla.",
+  sahip: "Bu parça zaten sende.",
+  marketKapali: "Market kilitli. Antrenman eğitimini bitir.",
+  tam: "Bu Çekirdeğin ömrü zaten tam.",
+  yapayDegil: "Yalnız Yapay Çekirdek yenilenir.",
   yonSabit: "Bu Çekirdeğin yönü sabit.",
 };
 

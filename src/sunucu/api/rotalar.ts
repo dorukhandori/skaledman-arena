@@ -7,6 +7,8 @@ import { cekirdekBul } from "../../paylasilan/veri/katalog.ts";
 import { type Depo, depo } from "../db/depo.ts";
 import { type Istek, type Uygulama, type Yanit, govdeOku, ip, kokenTamam, oturumId, oturumdakiOyuncu, yaz } from "./ortak.ts";
 import { atolyeRotalariKur } from "./atolye.ts";
+import { marketRotalariKur } from "./market.ts";
+import { basarimOlayiIsle } from "../oyuncu/basarimYaz.ts";
 
 export type { Istek, Uygulama, Yanit };
 export { oturumdakiOyuncu };
@@ -61,6 +63,8 @@ export function benGorunumu(d: Depo, oyuncuId: number) {
     aktifTakim: String(o.aktif_takim),
     basarimlar,
     marketAcik: basarimlar.includes(ILK_DEVIR),
+    /** D7: Altın bakiyesi (defter toplamı) */
+    altin: d.bakiye(oyuncuId),
   };
 }
 
@@ -159,8 +163,10 @@ export function rotalariKur(app: Uygulama): void {
     const d = depo();
     const id = oturumdakiOyuncu(q, d);
     if (id === null) { yaz(r, 401, { hata: "oturum" }); return; }
-    const yeni = d.basarimTamamla(id, ILK_DEVIR);
-    yaz(r, 200, { ok: true, yeni, basarim: ILK_DEVIR });
+    // D7: İlk Devir başarım yolundan (Altın ödülü 100, defter `basarim:ilk-devir:<oyuncu>`; idempotent)
+    const s = basarimOlayiIsle(d, id, { olay: { antrenmanBitti: true } }, Date.now());
+    const yeni = s.degisimler.some((x) => x.id === ILK_DEVIR && x.tamamlandi);
+    yaz(r, 200, { ok: true, yeni, basarim: ILK_DEVIR, altin: s.odul, bakiye: d.bakiye(id) });
   });
 
   /** Oda bileti: 60 s, tek kullanımlık; Colyseus katılımında `onAuth` doğrular. */
@@ -173,4 +179,5 @@ export function rotalariKur(app: Uygulama): void {
   });
 
   atolyeRotalariKur(app);
+  marketRotalariKur(app);
 }

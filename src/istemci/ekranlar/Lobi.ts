@@ -7,9 +7,12 @@ import { AgMaci } from "../ag/AgMaci.ts";
 import { Baglanti, BaglantiHatasiE, HATA_METNI } from "../ag/Baglanti.ts";
 import { elementSvg } from "../oyun/elementSimge.ts";
 import { type MacEkrani, cevrimiciBaslat } from "./Mac.ts";
+import { dereceliAcik, kuyrukAsamasi, sureBicimle } from "../../paylasilan/kurallar/kuyruk.ts";
 
 // Lobi (D4, ux § 3.3, basit DOM): Oda aç (kod + Kodu kopyala + Bağlantıyı kopyala `#oda=ABCDEFGH`, QR yer tutucu),
-// Odaya katıl (tek alan; yapıştır çalışır; bağlantıyla gelince dolu), Hızlı maç (yer tutucu: kuyruk D7),
+// Odaya katıl (tek alan; yapıştır çalışır; bağlantıyla gelince dolu), Hızlı maç (D7: kuyruk, "Rakip aranıyor… 0:12" +
+// İptal; 20 sn "Beklerken Antrenman yap"; 30 sn "Bot ile oyna" (Altın yarı, başarım yalnız Yol); 60 sn "Şu an rakip
+// bulamadık"; Tekrar = yeni eşleşme `?ekran=lobi&hizli=1`; referans 06 sol mod sütunu),
 // Antrenman (sunucu botu). Eşleşince "Rakip bulundu: <ad>" 3 sn, takım seçimi 20 sn (süre dolunca son takım).
 // D5: kimlik oturumdan (ad + şifre); her katılımda `/api/bilet` (60 s, tek kullanımlık). Takımlar SQLite'tan:
 // takım seçiminde oyuncunun kayıtlı takımları (ödünç yuvalar gri), süre dolunca son takım (nile B-21).
@@ -43,6 +46,23 @@ const STIL = `
 .lobi .rakip { display:flex; align-items:center; gap:8px; justify-content:flex-end; color:#a3b2b6; font-size:12px; }
 .lobi .duyuru { text-align:center; font:900 22px/1.2 system-ui; color:#f4cf47; min-height:28px; }
 .lobi .sayac { font:800 14px/1 system-ui; color:#a3b2b6; text-align:right; }
+.lobi .kart.genis { width:min(900px, calc(100% - 32px)); background:#1b2131; border:none; border-radius:0; box-shadow:inset 0 0 0 2px #a99e92, inset 0 0 0 3px #07080f, 0 10px 30px rgba(0,0,0,.6); }
+.lobi .ustb { display:grid; grid-template-columns:48px 1fr 48px; align-items:center; margin:-4px 0 12px; }
+.lobi .ustb h2 { text-align:center; margin:0; text-transform:uppercase; letter-spacing:4px; }
+.lobi .geriK { width:44px; height:38px; padding:0; background:#9a3d38; box-shadow:inset 0 0 0 2px #d8b9a0, inset 0 0 0 3px #3a1210; border:none; border-radius:0; font:900 18px/1 system-ui; }
+.lobi .modlar { display:grid; grid-template-columns:230px 1fr; gap:14px; }
+.lobi .modc { display:flex; flex-direction:column; gap:10px; padding:12px; background:#151a2a; box-shadow:inset 0 0 0 2px #59607a; }
+.lobi .mod { padding:16px 10px; background:#292d39; border:none; border-radius:0; box-shadow:inset 0 0 0 2px #c08e52, inset 0 0 0 3px #07080f; font:900 17px/1 "Trebuchet MS",system-ui; letter-spacing:2px; text-transform:uppercase; }
+.lobi .mod[aria-pressed=true] { background:linear-gradient(#7c4a2a,#5a3018); box-shadow:inset 0 0 0 2px #fcd35a, inset 0 0 0 3px #07080f; }
+.lobi .mod small { display:block; margin-top:4px; font:700 10px/1 system-ui; letter-spacing:0; text-transform:none; color:#c9b48e; }
+.lobi .icerik { padding:14px; background:#151a2a; box-shadow:inset 0 0 0 2px #59607a; display:flex; flex-direction:column; gap:10px; min-height:260px; }
+.lobi .icerik h3 { margin:0; font:900 16px/1.2 "Trebuchet MS",system-ui; letter-spacing:2px; text-transform:uppercase; }
+.lobi .icerik p { margin:0; font-size:13px; color:#c2c6d6; }
+.lobi .arama { text-align:center; font:900 22px/1.2 "Trebuchet MS",system-ui; color:#fcd35a; margin-top:6px; }
+.lobi .arama .zm { font-family:ui-monospace,monospace; color:#fff; }
+.lobi .oneri { padding:10px 12px; background:#2a1814; box-shadow:inset 0 0 0 2px #e8762f; display:flex; flex-direction:column; gap:8px; align-items:center; text-align:center; }
+.lobi .oneri b { color:#ffb070; }
+.lobi .bot-kart { box-shadow:inset 0 0 0 2px #fcd35a; }
 `;
 
 function el<K extends keyof HTMLElementTagNameMap>(etiket: K, sinif = "", ust?: HTMLElement, metin = ""): HTMLElementTagNameMap[K] {
@@ -90,24 +110,53 @@ class LobiEkrani {
     if (!takimlar.some((t) => t.id === this.secilenTakim)) this.secilenTakim = takimlar[0]?.id ?? "0";
     this.giris();
     (window as unknown as { __lobi: LobiEkrani }).__lobi = this;
+    if (new URLSearchParams(location.search).get("hizli") === "1") void this.hizliBasla();
+    if (location.hash.startsWith("#oda=")) { this.modSecimi = "oda"; this.giris(); }
     this.zamanlayici = window.setInterval(() => this.tik(), 200);
   }
 
   get macEkrani(): MacEkrani | null { return this.mac; }
   get agMaci(): AgMaci | null { return this.ag; }
 
-  private giris(hata = ""): void {
+  /** sol sütun seçimi (referans 06): hızlı maç varsayılan */
+  modSecimi: "hizli" | "oda" = "hizli";
+  /** D7: kuyrukta bekleme başlangıcı (istemci saati; sunucu bot isteğini kendi saatiyle denetler) */
+  private kuyrukBas = 0;
+  private botIstendi = false;
+
+  private giris(hata = "", hizliHata = false): void {
     this.asama = "giris";
     this.hata = hata;
     const k = this.kart;
+    k.className = "kart genis";
     k.innerHTML = "";
-    const geri = el("button", "", k, "◄ Atölye");
-    geri.style.float = "right";
+    const ub = el("div", "ustb", k);
+    const geri = el("button", "geriK", ub, "◄");
     geri.setAttribute("aria-label", "Geri: Atölye");
     geri.addEventListener("click", () => git("atolye"));
-    el("h2", "", k, "Oyna");
-    el("div", "alt", k, `1v1 · ilk 3 puan · 90 sn · Oyuncu: ${this.ben.oyuncu.ad}. Takımını eşleşince seçersin.`);
-    const iz = el("div", "izgara", k);
+    el("h2", "", ub, "Lobi");
+    el("div", "alt", k, "1v1 · ilk 3 puan · 90 sn");
+    const md = el("div", "modlar", k);
+    const sol = el("div", "modc", md);
+    const sag = el("div", "icerik", md);
+    const hz = el("button", "mod", sol);
+    hz.textContent = "Hızlı maç";
+    hz.dataset["mod"] = "hizli";
+    const od = el("button", "mod", sol);
+    od.textContent = "Oda kodu";
+    od.dataset["mod"] = "oda";
+    // Dereceli: yeni oyuncuya hiç görünmez; bir Çekirdek Lv.3 olunca belirir (sahip kararı S4). Mod D7'de yok.
+    if (dereceliAcik(this.ben.cekirdekler.map((c) => c.seviye))) {
+      const dr = el("button", "mod", sol, "Dereceli");
+      dr.dataset["mod"] = "dereceli";
+      dr.addEventListener("click", () => { const h = this.kart.querySelector<HTMLElement>(".icerik .hata"); if (h) h.textContent = "Dereceli çok yakında."; });
+    }
+    for (const [d, m] of [[hz, "hizli"], [od, "oda"]] as const) {
+      d.setAttribute("aria-pressed", String(this.modSecimi === m));
+      d.addEventListener("click", () => { this.modSecimi = m; this.giris(); });
+    }
+    if (this.modSecimi === "hizli") { this.hizliPaneli(sag, hata, hizliHata); return; }
+    const iz = el("div", "izgara", sag);
     const ac = el("div", "blok", iz);
     el("h3", "", ac, "Oda kodu");
     el("p", "", ac, "Oda aç, kodu ya da bağlantıyı arkadaşına gönder.");
@@ -124,14 +173,11 @@ class LobiEkrani {
     const katB = el("button", hash ? "bir" : "", ac, "Odaya katıl");
     katB.dataset["eylem"] = "katil";
     const diger = el("div", "blok", iz);
-    el("h3", "", diger, "Diğer");
-    const hizli = el("button", "", diger, "Hızlı maç · kuyruk D7");
-    hizli.disabled = true;
-    hizli.title = "Eşleştirme kuyruğu ve bot dolgusu D7'de gelir.";
+    el("h3", "", diger, "Antrenman");
     const ant = el("button", "", diger, "Antrenman (sunucu botu)");
     ant.dataset["eylem"] = "antrenman";
-    el("p", "", diger, "Antrenman sunucuda oynanır; rakip paylaşılan bot.");
-    const h = el("div", "hata", k, hata);
+    el("p", "", diger, "Altın ve başarım yok.");
+    const h = el("div", "hata", sag, hata);
     h.setAttribute("role", "alert");
     acB.addEventListener("click", () => void this.bagla(() => this.yeniBaglanti().odaAc(this.secilenTakim)));
     ant.addEventListener("click", () => void this.bagla(() => this.yeniBaglanti().antrenman(this.secilenTakim)));
@@ -144,6 +190,42 @@ class LobiEkrani {
     alan.addEventListener("keydown", (e) => { if (e.key === "Enter") katil(); });
     queueMicrotask(() => (hash ? katB : acB).focus());
   }
+
+  /** Hızlı maç paneli (giriş hâli; 60 sn bulunamadıysa ux § 7 metni + Tekrar dene · Antrenman). */
+  private hizliPaneli(k: HTMLElement, hata: string, bulunamadi: boolean): void {
+    el("h3", "", k, "Hızlı maç");
+    const t = this.ben.takimlar.find((x) => x.id === this.secilenTakim);
+    el("p", "", k, `Takım: ${t?.ad ?? "aktif takım"}`);
+    if (bulunamadi) {
+      const o = el("div", "oneri", k);
+      o.dataset["bulunamadi"] = "1";
+      el("b", "", o, "Şu an rakip bulamadık. Tekrar deneyebilir ya da Antrenman yapabilirsin.");
+      const s = el("div", "satir", o);
+      const td = el("button", "bir", s, "Tekrar dene");
+      td.dataset["eylem"] = "hizli";
+      td.addEventListener("click", () => void this.hizliBasla());
+      const an = el("button", "", s, "Antrenman");
+      an.addEventListener("click", () => git("antrenman"));
+      queueMicrotask(() => td.focus());
+    } else {
+      const ara = el("button", "bir", k, "Rakip ara");
+      ara.dataset["eylem"] = "hizli";
+      ara.addEventListener("click", () => void this.hizliBasla());
+      queueMicrotask(() => ara.focus());
+    }
+    const h = el("div", "hata", k, hata && !bulunamadi ? hata : "");
+    h.setAttribute("role", "alert");
+  }
+
+  private async hizliBasla(): Promise<void> {
+    this.modSecimi = "hizli";
+    this.kuyrukBas = performance.now();
+    this.botIstendi = false;
+    await this.bagla(() => this.yeniBaglanti().hizli(this.secilenTakim));
+  }
+
+  /** test: kuyrukta geçen süre (sn) */
+  get kuyrukSn(): number { return this.kuyrukBas ? (performance.now() - this.kuyrukBas) / 1000 : 0; }
 
   private yeniBaglanti(): Baglanti {
     this.baglanti = new Baglanti();
@@ -170,11 +252,13 @@ class LobiEkrani {
   private bilgi(b: { tur: string; ad?: string; neden?: string }): void {
     if (b.tur === "rakipBulundu") this.rakipBulunduBitis = performance.now() + 3000;
     if (b.tur === "kapandi" && this.asama !== "mac") {
+      const hizli = this.ag?.durum.mod === "hizli";
       const metin = b.neden === "rakipGelmedi" || b.neden === "sureDoldu" ? HATA_METNI.suresiDoldu : b.neden === "rakipAyrildi" ? "Rakip maçtan ayrıldı." : HATA_METNI.bilinmiyor;
       void this.baglanti?.ayril();
       this.ag = null;
       this.kok.classList.remove("ust");
       this.kok.style.display = "";
+      if (hizli && b.neden === "rakipGelmedi") { this.modSecimi = "hizli"; this.giris("", true); return; }
       this.giris(metin);
     }
   }
@@ -191,6 +275,7 @@ class LobiEkrani {
 
   private bekleme(s: OdaGorunumu): void {
     this.asama = "bekliyor";
+    if (s.mod === "hizli") { this.kuyrukEkrani(); return; }
     if (s.kod) history.replaceState(null, "", `${location.pathname}${location.search}#oda=${s.kod}`);
     const k = this.kart;
     k.innerHTML = "";
@@ -217,7 +302,63 @@ class LobiEkrani {
     iptal.addEventListener("click", () => { void this.baglanti?.ayril(); this.ag = null; this.giris(); });
   }
 
+  /** "Rakip aranıyor… 0:12" + İptal; 20 sn Antrenman önerisi; 30 sn bot teklifi (nile B-19, ux § 7). */
+  private kuyrukEkrani(): void {
+    const k = this.kart;
+    k.className = "kart genis";
+    k.innerHTML = "";
+    const ub = el("div", "ustb", k);
+    el("span", "", ub);
+    el("h2", "", ub, "Hızlı maç");
+    const ic = el("div", "icerik", k);
+    const ar = el("div", "arama", ic);
+    ar.dataset["arama"] = "1";
+    ar.setAttribute("role", "status");
+    ar.setAttribute("aria-live", "polite");
+    const oneri = el("div", "", ic);
+    oneri.dataset["oneri"] = "1";
+    const s = el("div", "satir", ic);
+    const iptal = el("button", "", s, "İptal");
+    iptal.dataset["eylem"] = "iptal";
+    iptal.addEventListener("click", () => { void this.baglanti?.ayril(); this.ag = null; this.giris(); });
+    this.kuyrukAsamasi = "";
+    this.kuyrukGuncelle();
+    queueMicrotask(() => iptal.focus());
+  }
+
+  private kuyrukAsamasi = "";
+  private kuyrukGuncelle(): void {
+    const ar = this.kart.querySelector<HTMLElement>("[data-arama]");
+    if (!ar) return;
+    const sn = this.kuyrukSn;
+    const metin = `Rakip aranıyor… <span class="zm">${sureBicimle(sn)}</span>`;
+    if (ar.innerHTML !== metin) ar.innerHTML = metin;
+    const a = this.botIstendi ? "bot" : kuyrukAsamasi(sn);
+    if (a === this.kuyrukAsamasi) return;
+    this.kuyrukAsamasi = a;
+    const o = this.kart.querySelector<HTMLElement>("[data-oneri]")!;
+    o.innerHTML = "";
+    o.className = "";
+    if (a === "antrenmanOner") {
+      o.className = "oneri";
+      o.dataset["asama"] = a;
+      el("b", "", o, "Beklerken Antrenman yap");
+      const d = el("button", "", o, "Antrenman");
+      d.addEventListener("click", () => { void this.baglanti?.ayril(); git("antrenman"); });
+    } else if (a === "botTeklif") {
+      o.className = "oneri bot-kart";
+      o.dataset["asama"] = a;
+      el("b", "", o, "Rakip bulunamadı. Bot ile oyna?");
+      el("span", "", o, "Altın yarı · başarımda yalnız Yol");
+      const d = el("button", "bir", o, "Bot ile oyna");
+      d.dataset["eylem"] = "bot";
+      d.addEventListener("click", () => { this.botIstendi = true; this.ag?.gonder(MESAJ.botIste); d.disabled = true; d.textContent = "Bot hazırlanıyor…"; });
+      queueMicrotask(() => d.focus());
+    }
+  }
+
   private beklemeGuncelle(s: OdaGorunumu): void {
+    if (s.mod === "hizli") { this.kuyrukGuncelle(); return; }
     const e = this.kart.querySelector<HTMLElement>("[data-sayac]");
     if (e) e.textContent = `Oda ${s.beklemeKalan} sn açık kalır.`;
   }
@@ -288,6 +429,13 @@ class LobiEkrani {
         secim: () => {},
         cikis: (neden) => { this.giris(neden); },
         ben: this.ben,
+        // D7: hızlı maçta Tekrar = yeni eşleşme (sayfa temiz başlar, kuyruk kendiliğinden)
+        tekrar: () => {
+          const q = new URLSearchParams(location.search);
+          q.set("ekran", "lobi");
+          q.set("hizli", "1");
+          void this.baglanti?.ayril().finally(() => { location.href = `${location.pathname}?${q.toString()}`; });
+        },
       });
     }
   }
@@ -297,6 +445,7 @@ class LobiEkrani {
     if (!s || !s.oyuncular) return;
     if (this.asama === "secim") this.secimGuncelle();
     if (this.asama === "bekliyor") this.beklemeGuncelle(s);
+    if (this.asama === "bekliyor" && s.mod === "hizli") this.kuyrukGuncelle();
     // faz değişimini kaçırmamak için (onStateChange zaten çağırır; yedek)
     if (s.faz !== this.sonFaz) this.durumDegisti(s);
   }

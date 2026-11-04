@@ -1,7 +1,11 @@
 import { ILERLEME, type MacSonuTuru, macXp, seviyeAraligi, seviyeBul, yapayOmurSonrasi } from "../../paylasilan/kurallar/ilerleme.ts";
+import { type AltinModu, type MacAltini, gunNo, macAltini } from "../../paylasilan/kurallar/ekonomi.ts";
+import type { MacOzeti, OzetModu } from "../../paylasilan/kurallar/basarim.ts";
 import type { MacSonucu } from "../../paylasilan/sim/durum.ts";
 import { RUHLAR, YETENEKLER, cekirdekBul } from "../../paylasilan/veri/katalog.ts";
 import type { Depo, TakimYuvasi, XpYazimi } from "../db/depo.ts";
+import { type BasarimBildirimi, basarimOlayiIsle, bildirim } from "./basarimYaz.ts";
+import type { OzetHam } from "./ozetSayaci.ts";
 
 // Maç sonu (D5): `mac` satırı + Çekirdek XP (tuning § 14) + Yapay ömrü (§ 17), tek işlemde ve maç kimliğiyle
 // idempotent. Yalnız sunucu hesaplar; istemci yalnız sonucu (OdulSatiri) gösterir. Ödünç topaç XP almaz.
@@ -40,6 +44,28 @@ export interface MacSonuGirdisi {
   enUzunDonusSn?: readonly [readonly number[], readonly number[]];
   /** D6 defter: oyuncu başına maçtaki Kararma artışı (Karanlık Kara yetenekleri; sim `d.kararma`) */
   kararma?: readonly [number, number];
+  // ---- D7 ----
+  /** hızlı maç kuyruğunda bot dolgusu (nile B-19): oyuncu 1 sunucu botu (oyuncular[1] null) */
+  bot?: boolean;
+  /** sim'den türeyen maç özeti (MacOzetSayaci) */
+  ozet?: readonly [OzetHam, OzetHam];
+  /** sahaya çıkan takım yuvaları (sahip olunan Çekirdekler başarımda "kazanan Çekirdek" sayılır) */
+  sahayaCikan?: readonly [readonly number[], readonly number[]];
+  /** telemetri (B-40): tur sonuçları ve yetenek kullanımı (kademe 1-3) */
+  turlar?: readonly { tur: string; kazanan: number; sn: number }[];
+  yetenekSayisi?: readonly [readonly number[], readonly number[]];
+}
+
+/** Oyuncu başına maç sonu (sonuç ekranı): Çekirdek kartı + Altın + başarım ilerlemesi. */
+export interface OyuncuOdulu {
+  cekirdekler: OdulSatiri[];
+  altin: MacAltini & { bakiye: number };
+  basarimlar: BasarimBildirimi[];
+  /** tamamlanan başarımların ödediği Altın (maç Altınından ayrı defter satırı) */
+  basarimAltini: number;
+  /** sayılmadıysa neden (başarım sayacı işlemez): teslim · hukmen · iptal · ciftTavani */
+  sayilmadi: string | null;
+  mod: OzetModu;
 }
 
 export function sonucTuru(s: MacSonucu, i: number): MacSonuTuru {
@@ -87,18 +113,101 @@ export function oduller(g: MacSonuGirdisi, i: number): { satirlar: OdulSatiri[];
   return { satirlar, yazim };
 }
 
-/** Maçı yaz; dönen: oyuncu başına ödül satırları (zaten yazılmışsa boş). */
-export function macSonuYaz(depo: Depo, g: MacSonuGirdisi): [OdulSatiri[], OdulSatiri[]] {
-  const a = g.oyuncular[0] !== null ? oduller(g, 0) : { satirlar: [], yazim: [] };
-  const b = g.oyuncular[1] !== null ? oduller(g, 1) : { satirlar: [], yazim: [] };
+/** Maçı yaz (D5/D6 imzası): oyuncu başına Çekirdek kartı satırları (zaten yazılmışsa boş). */
+export function macSonuYaz(depo: Depo, g: MacSonuGirdisi, simdi = Date.now()): [OdulSatiri[], OdulSatiri[]] {
+  const r = macSonuKaydet(depo, g, simdi);
+  return [r[0]?.cekirdekler ?? [], r[1]?.cekirdekler ?? []];
+}
+
+const ozetModu = (g: MacSonuGirdisi): OzetModu => (g.bot ? "bot" : g.mod === "oda" ? "oda" : "hizli");
+
+/**
+ * D7 maç sonu, TEK SQLite işlemi (flint § 5, axiom § 2 #20-#21): `mac` satırı (+ telemetri) + Çekirdek XP/ömür/defter +
+ * Altın defteri (`ref = mac:<mac_id>:<oyuncu>`) + başarım sayaçları (+ tamamlananın Altını `basarim:<id>:<oyuncu>`).
+ * Aynı `mac_id` ikinci kez hiçbir şey yazmaz (iki bitiş sinyali tek ödeme). `simdi`: sunucu duvar saati (gün 04:00).
+ */
+export function macSonuKaydet(depo: Depo, g: MacSonuGirdisi, simdi = Date.now()): [OyuncuOdulu | null, OyuncuOdulu | null] {
+  const gun = gunNo(simdi);
   const s = g.sonuc;
-  const yazildi = depo.macYaz({
-    id: g.macId, mod: g.mod, a: g.oyuncular[0], b: g.oyuncular[1],
-    kazanan: s.kazanan >= 0 ? g.oyuncular[s.kazanan] ?? null : null,
-    puan: `${s.puan[0]}-${s.puan[1]}`, sure: Math.round(g.sureSn), bitis_nedeni: s.neden, katalog_ozeti: g.katalogOzeti,
-    baslangic: g.baslangic, takim_a: g.takimKodlari[0], takim_b: g.takimKodlari[1],
-  }, [...a.yazim, ...b.yazim]);
-  return yazildi ? [a.satirlar, b.satirlar] : [[], []];
+  return depo.islem((): [OyuncuOdulu | null, OyuncuOdulu | null] => {
+    if (depo.mac(g.macId)) return [null, null];
+    const [ia, ib] = g.oyuncular;
+    // günlük sayaçlar bu maçtan ÖNCE okunur (bu maç dahil numara = önceki + 1)
+    const once = [0, 1].map((i) => {
+      const id = g.oyuncular[i];
+      if (id === null || id === undefined) return null;
+      const rakip = g.oyuncular[1 - i] ?? null;
+      return {
+        gunlukMacNo: depo.gunlukMacSayisi(id, gun) + 1,
+        gununIlkGalibiyeti: depo.gunlukGalibiyet(id, gun) === 0,
+        ciftGunlukMacNo: rakip !== null && !g.bot ? depo.ciftGunluk(id, rakip, gun) + 1 : 1,
+      };
+    });
+    const a = ia !== null ? oduller(g, 0) : { satirlar: [], yazim: [] };
+    const b = ib !== null ? oduller(g, 1) : { satirlar: [], yazim: [] };
+    const yazildi = depo.macYaz({
+      id: g.macId, mod: g.mod, a: ia, b: ib,
+      kazanan: s.kazanan >= 0 ? g.oyuncular[s.kazanan] ?? null : null,
+      puan: `${s.puan[0]}-${s.puan[1]}`, sure: Math.round(g.sureSn), bitis_nedeni: s.neden, katalog_ozeti: g.katalogOzeti,
+      baslangic: g.baslangic, takim_a: g.takimKodlari[0], takim_b: g.takimKodlari[1],
+      gun, bitis: simdi, bot: g.bot ? 1 : 0,
+      bitis_turleri: g.turlar ? JSON.stringify(g.turlar) : null,
+      yetenek_a: g.yetenekSayisi ? JSON.stringify(g.yetenekSayisi[0]) : null,
+      yetenek_b: g.yetenekSayisi ? JSON.stringify(g.yetenekSayisi[1]) : null,
+    }, [...a.yazim, ...b.yazim]);
+    if (!yazildi) return [null, null];
+    const sonuc: [OyuncuOdulu | null, OyuncuOdulu | null] = [null, null];
+    const altinlar: [number | null, number | null] = [null, null];
+    for (let i = 0; i < 2; i++) {
+      const id = g.oyuncular[i];
+      const o = once[i];
+      if (id === null || id === undefined || !o) continue;
+      const tur = sonucTuru(s, i);
+      const rakipTerk = tur === "galibiyet" && (s.neden === "teslim" || s.neden === "hukmen");
+      const mod = ozetModu(g);
+      const ham = g.ozet?.[i];
+      const xp = i === 0 ? a : b;
+      const altinModu: AltinModu = mod === "bot" ? "bot" : g.mod === "oda" ? "oda" : "hizli";
+      const bitisler = ham?.bitisler ?? [];
+      const altin = macAltini({
+        mod: altinModu, misafir: false, sonuc: tur, rakipTerk, sureSn: g.sureSn,
+        gunlukMacNo: o.gunlukMacNo, gununIlkGalibiyeti: o.gununIlkGalibiyeti, ciftGunlukMacNo: o.ciftGunlukMacNo,
+        stil: {
+          yetenekleBitis: bitisler.filter((x) => x.alanNo !== null || (x.yetenekGecenSn !== null && x.yetenekGecenSn <= 3)).length,
+          farkliBitisTuru: new Set(bitisler.map((x) => x.tur)).size,
+          takimUltisi: ham?.takimUltisi ?? false,
+        },
+      });
+      if (altin.toplam > 0) depo.altinYaz(id, altin.toplam, "mac", `mac:${g.macId}:${id}`, simdi);
+      altinlar[i] = altin.toplam;
+      // başarım: sayılmayan maç (teslim/hükmen/iptal, aynı çift günde 3'ten sonra) maç sayacı işletmez
+      const sayilmadi = s.neden === "iptal" ? "iptal" : s.neden === "teslim" ? "teslim" : s.neden === "hukmen" ? "hukmen"
+        : o.ciftGunlukMacNo > 3 ? "ciftTavani" : null;
+      const yuvalar = g.yuvalar[i] ?? [];
+      const cikan = new Set(g.sahayaCikan?.[i] ?? [0, 1, 2]);
+      const cekirdekler = yuvalar.flatMap((y, k) => (y && !y.devreDisi && cikan.has(k) ? [{ tanimId: y.cekirdek, element: cekirdekBul(y.cekirdek).element, koken: cekirdekBul(y.cekirdek).koken }] : []));
+      const ozet: MacOzeti | undefined = ham ? {
+        ...ham, mod, sayildi: sayilmadi === null, cekirdekler,
+        rakipId: g.bot ? null : g.oyuncular[1 - i] ?? null, evSahibi: g.mod === "oda" && i === 0, destekKanaliCanli: false,
+      } : undefined;
+      const seviyeler = depo.cekirdekler(id).map((c) => c.seviye);
+      const omurBitti = xp.yazim.filter((x) => x.omur === 0 && (yuvalar.find((y) => y?.cekirdekId === x.cekirdekId)?.omur ?? 0) > 0).length;
+      const ba = basarimOlayiIsle(depo, id, {
+        ...(ozet ? { mac: ozet } : {}),
+        durum: { enYuksekSeviye: Math.max(0, ...seviyeler), yapayOmurBitti: omurBitti, parcaCesidi: depo.parcaCesidi(id) },
+      }, simdi);
+      sonuc[i] = {
+        cekirdekler: xp.satirlar,
+        altin: { ...altin, bakiye: depo.bakiye(id) },
+        basarimlar: ba.degisimler.map(bildirim).filter((x): x is BasarimBildirimi => x !== null),
+        basarimAltini: ba.odul,
+        sayilmadi,
+        mod,
+      };
+    }
+    depo.macAltinYaz(g.macId, altinlar[0], altinlar[1]);
+    return sonuc;
+  });
 }
 
 export { ILERLEME };

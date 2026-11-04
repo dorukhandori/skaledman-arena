@@ -13,12 +13,20 @@ Sürümler `package.json`'da tam sabit (caret yok): colyseus 0.18.10, @colyseus/
 @colyseus/monitor 0.18.7, @colyseus/playground 0.18.6. Yükseltme ayrı commit + ağ matrisi.
 
 ## 2. Oda ve akış
-Oda adı `mac`, `filterBy(["mod"])`. Modlar: `oda` (özel, roomId = 8 harfli kod), `hizli` (genel kuyruk yer tutucu;
-bot dolgusu D7), `antrenman` (tek kişi, rakip sunucuda paylaşılan bot). `maxClients = 2`; üçüncü bağlantı reddedilir.
+Oda adı `mac`, `filterBy(["mod"])`. Modlar: `oda` (özel, roomId = 8 harfli kod), `hizli` (D7: genel kuyruk,
+`joinOrCreate`; ilk gelen ikinciyle eşleşir, Elo D7'de 1000 sabit, pencere ±100 yer tutucu `kuyruk.ts`; 30-60 sn arası
+istemci `botIste` gönderirse sunucu kendi saatiyle denetleyip paylaşılan botu ikinci koltuğa koyar (nile B-19); 60 sn'de
+`kapandi{rakipGelmedi}` → "Şu an rakip bulamadık"), `antrenman` (tek kişi, rakip sunucuda paylaşılan bot). `maxClients = 2`; üçüncü bağlantı reddedilir.
 Oda fazı (`OdaSema.faz`): `bekliyor` (rakip 60 sn içinde gelmezse kapanır) → `secim` (20 sn; ikisi Hazır ya da süre
 dolunca seçili takım) → `mac` → `bitti` (iki taraf `rovans` → `secim`) ; maç oynanmayan oda 10 dk'da kapanır.
 Kod biçimi ABCD-EFGH (0/O/1/I yok, büyük-küçük duyarsız, tire isteğe bağlı; `#oda=ABCDEFGH` bağlantısı lobiye açar).
 HTTP: `/api/oda/:kod` → `acik|dolu|suresiDoldu|yok` (lobi hata metinleri), `/api/saglik`, `/api/olcum` (yalnız geliştirme).
+
+**Protokol v5 (D7):** `PROTOKOL_SURUMU = 5`. Yeni istemci → sunucu mesajı `botIste {v}` (yalnız hızlı, bekliyor
+fazında, oda kurucusu). `bilgi{tur:"odul"}` genişledi: `altin {kalemler[{neden, miktar}], carpanlar[{ad, deger}], toplam,
+sifirNedeni, bakiye}`, `basarimlar[{id, ad, gizli, onceki, ilerleme, sayi, tamamlandi, odulAltin, acilanParcalar[{id, ad}],
+acilanOzellik}]`, `basarimAltini`, `basarimSayilmadi` (teslim/hukmen/iptal/ciftTavani), `mod` (hizli/oda/bot). Sim, şema
+ve hash değişmedi (altın hash'ler aynı); maç özeti sunucuda sim olaylarından (`MacOzetSayaci`, hash dışı).
 
 ## 3. Katılma ve kimlik
 `KatilmaSema { v: 3, takimId, mod, ad, katalog }`. Parça listesi istemciden alınmaz: `takimId` başlangıç takımıdır

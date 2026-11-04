@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { AYAR } from "../paylasilan/kurallar/ayar.ts";
 import type { Olay } from "../paylasilan/sim/durum.ts";
+import type { AltinKalemi, AltinSifirNedeni } from "../paylasilan/kurallar/ekonomi.ts";
 
 // Ağ katmanı: istemci ve sunucunun ORTAK sözleşmesi (docs/tech/netcode.md). Simülasyon değil: src/paylasilan
 // Colyseus'a bağımlı olamaz (eslint kapısı), şemalar ve mesajlar bu klasörde durur. Colyseus import ETMEZ
@@ -9,8 +10,9 @@ import type { Olay } from "../paylasilan/sim/durum.ts";
 /**
  * Her mesaj ve katılma seçeneği bu sürümü taşır; uyuşmazsa sunucu reddeder, istemci "yenile" bandı gösterir.
  * v3: maç durumu şeması. v4 (D5): katılmada oda bileti (ad yok), kayıtlı takım kodu, maç sonu ödül bilgisi.
+ * v5 (D7): maç sonu ödülüne Altın (kalemler, çarpanlar, bakiye) + başarım ilerlemesi; hızlı maçta `botIste`.
  */
-export const PROTOKOL_SURUMU = 4;
+export const PROTOKOL_SURUMU = 5;
 
 export const ODA_ADI = "mac";
 /** Sabit adım (K-6) ve yama yayını (ADR-002). Yama elle, her `YAMA_ADIMI` sim adımında bir (adım hizalı). */
@@ -104,6 +106,8 @@ export const MESAJ = {
   kayitIste: "kayitIste",
   /** sunucu → istemci: maç kaydı */
   kayit: "kayit",
+  /** D7 istemci → sunucu: hızlı maç kuyruğunda 30 sn doldu, bot ile oyna (nile B-19; sunucu süreyi kendisi denetler) */
+  botIste: "botIste",
 } as const;
 
 export const MOD = ["oda", "hizli", "antrenman"] as const;
@@ -144,8 +148,30 @@ export type BilgiMesaji =
   | { v: number; tur: "afkUyari"; kalanSn: number }
   | { v: number; tur: "kapandi"; neden: KapanisNedeni }
   | { v: number; tur: "katalogUyusmuyor" }
-  /** D5: maç sonu Çekirdek kartı (yalnız o oyuncuya; sunucu hesaplar) */
-  | { v: number; tur: "odul"; cekirdekler: OdulBilgisi[]; sayilmadi?: string };
+  /** D5: maç sonu Çekirdek kartı (yalnız o oyuncuya; sunucu hesaplar). D7: + Altın + başarım ilerlemesi */
+  | {
+    v: number; tur: "odul"; cekirdekler: OdulBilgisi[]; sayilmadi?: string;
+    altin?: AltinBilgisi; basarimlar?: BasarimBilgisi[]; basarimAltini?: number;
+    /** başarım sayacı işlemedi: teslim · hukmen · iptal · ciftTavani */
+    basarimSayilmadi?: string | null;
+    /** hizli · oda · bot */
+    mod?: string;
+  };
+
+/** D7 sonuç ekranı Altın satırı (sunucu `macAltini`). */
+export interface AltinBilgisi {
+  kalemler: AltinKalemi[];
+  carpanlar: { ad: string; deger: number }[];
+  toplam: number;
+  sifirNedeni: AltinSifirNedeni | null;
+  bakiye: number;
+}
+
+/** D7 sonuç ekranı başarım satırı ("+1 Kor Ustası 4/10"; tamamlanınca "Market'te açıldı: <parça>"). */
+export interface BasarimBilgisi {
+  id: string; ad: string; gizli: boolean; onceki: number; ilerleme: number; sayi: number; tamamlandi: boolean; odulAltin: number;
+  acilanParcalar: { id: string; ad: string }[]; acilanOzellik: string[];
+}
 
 /** Sonuç ekranı Çekirdek kartı satırı (sunucunun OdulSatiri'nin ağ biçimi). */
 export interface OdulBilgisi {

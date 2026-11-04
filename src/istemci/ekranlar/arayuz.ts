@@ -45,6 +45,7 @@ export const ARAYUZ_STIL = `
 body > header nav { display:flex; gap:4px; align-items:center; }
 body > header nav a[aria-disabled=true] { opacity:.5; }
 body > header .kim { margin-left:auto; display:flex; gap:10px; align-items:center; color:#a3b2b6; font:700 13px/1 system-ui; }
+body > header .kim .altinB { color:#fcd35a; text-decoration:none; font:900 13px/1 system-ui; padding:5px 9px; box-shadow:inset 0 0 0 2px #c9a33b; background:#3b2c0c; }
 body > header .kim button { padding:4px 10px; background:transparent; color:#a3b2b6; border:1px solid #24414b; border-radius:6px; font:700 12px system-ui; cursor:pointer; }
 `;
 
@@ -108,7 +109,7 @@ export function ustGezinti(ekran: string, ben: Ben | null): void {
   stilEkle();
   const nav = document.getElementById("menu");
   const rozet = document.querySelector("body > header h1 span");
-  if (rozet) rozet.textContent = "D6";
+  if (rozet) rozet.textContent = "D7";
   if (!nav) return;
   nav.innerHTML = "";
   nav.setAttribute("aria-label", "Ana gezinti");
@@ -130,6 +131,13 @@ export function ustGezinti(ekran: string, ben: Ben | null): void {
   }
   const kim = el("div", "kim", document.querySelector("body > header") as HTMLElement);
   if (girisli) {
+    // D7: Altın bakiyesi üst bantta (defter toplamı; sunucudan)
+    if (typeof ben.altin === "number") {
+      const a = el("a", "altinB", kim, `${ben.altin} Altın`);
+      a.href = "?ekran=market";
+      a.dataset["bakiye"] = String(ben.altin);
+      a.setAttribute("aria-label", `Bakiye ${ben.altin} Altın: Market`);
+    }
     el("span", "", kim, ben.oyuncu.ad);
     const c = el("button", "", kim, "Çıkış");
     c.dataset["eylem"] = "cikis";

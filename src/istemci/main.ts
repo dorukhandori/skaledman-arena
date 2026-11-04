@@ -5,7 +5,8 @@ import { bakimKatmani, darEkranDenetle, metinOlcegiUygula, surumDenetle, ustGezi
 // İstemci girişi. Ekran URL'den: ?ekran=<ad>. Varsayılan Karşılama (girişliyse profil → ilk çekirdek → Atölye;
 // ux § 3.1). `#oda=` bağlantısı lobiye açılır (girişsizse Karşılama). Her ekran modülü `baslat(baglam)` verir.
 // D5: karsilama, kayit, giris, profil, ilk-cekirdek, antrenman (misafire açık), atolye (ana ekran), market,
-// basarimlar, ayarlar, lobi; D6: dene (Atölye'den 30 sn Antrenman), gunluk (Çekirdek Günlüğü); geliştirici: mac, topac-lab.
+// basarimlar, ayarlar, lobi; D6: dene (Atölye'den 30 sn Antrenman), gunluk (Çekirdek Günlüğü); D7: market (Market.ts),
+// basarimlar (Basarimlar.ts); geliştirici: mac, topac-lab.
 
 export type EkranAdi =
   | "karsilama" | "kayit" | "giris" | "profil" | "ilk-cekirdek" | "antrenman" | "atolye" | "market" | "basarimlar" | "ayarlar"
@@ -28,8 +29,8 @@ const EKRANLAR: Record<EkranAdi, () => Promise<Modul>> = {
   "ilk-cekirdek": () => import("./ekranlar/IlkCekirdek.ts"),
   antrenman: () => import("./ekranlar/Antrenman.ts"),
   atolye: () => import("./ekranlar/Atolye.ts"),
-  market: () => import("./ekranlar/Diger.ts").then((m) => ({ baslat: m.market })),
-  basarimlar: () => import("./ekranlar/Diger.ts").then((m) => ({ baslat: m.basarimlar })),
+  market: () => import("./ekranlar/Market.ts"),
+  basarimlar: () => import("./ekranlar/Basarimlar.ts"),
   ayarlar: () => import("./ekranlar/Diger.ts").then((m) => ({ baslat: m.ayarlar })),
   lobi: () => import("./ekranlar/Lobi.ts"),
   mac: () => import("./ekranlar/Mac.ts"),

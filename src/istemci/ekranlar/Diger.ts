@@ -1,46 +1,10 @@
-import { BASARIMLAR } from "../../paylasilan/veri/katalog.ts";
 import type { EkranBaglami } from "../main.ts";
 import { git } from "../hesap.ts";
 import { AYAR_SECENEKLERI, type OyunAyarlari, ayarlariOku, ayarlariYaz } from "../oyun/Ayarlar.ts";
 import { OLCEKLER, METIN_OLCEGI, ekranKok, el, geriDugmesi, metinOlcegiOku, metinOlcegiUygula } from "./arayuz.ts";
 
-// Market (yer tutucu, D7; "İlk Devir" ile açılır, nile B-23), Başarımlar (D5'te yalnız İlk Devir işlenir; liste
-// veri/basarimlar.json), Ayarlar (metin ölçeği ux § 6.3 + maç ayarları ux § 6.2). Hepsinde ◄ geri → Atölye.
-
-export function market(b: EkranBaglami): void {
-  const ben = b.ben;
-  if (!ben?.girisli) { git("karsilama"); return; }
-  const { kart } = ekranKok(b.ustYazi, "Market");
-  geriDugmesi(kart);
-  el("h2", "", kart, "Market");
-  if (!ben.marketAcik) {
-    el("p", "", kart, "Market kilitli. Antrenman eğitimini bitir: İlk Devir başarımı Market'i açar.");
-    const d = el("button", "bir", kart, "Antrenmana git");
-    d.addEventListener("click", () => git("antrenman"));
-    queueMicrotask(() => d.focus());
-    return;
-  }
-  el("p", "", kart, "Market açık. Raflar, Altın ve fiyatlar yakında gelecek.");
-  el("p", "yt", kart, "Başlangıç rafı: seçmediğin iki başlangıç seti burada 100 Altın'a duracak.");
-}
-
-export function basarimlar(b: EkranBaglami): void {
-  const ben = b.ben;
-  if (!ben?.girisli) { git("karsilama"); return; }
-  const { kart } = ekranKok(b.ustYazi, "Başarımlar");
-  geriDugmesi(kart);
-  el("h2", "", kart, "Başarımlar");
-  if (!ben.basarimlar.length) el("p", "", kart, "Henüz başarım yok. İlk maçını oyna.");
-  const liste = el("ul", "", kart);
-  liste.setAttribute("aria-label", "Başarım listesi");
-  for (const x of BASARIMLAR.filter((y) => y.ilkSurum && !y.gizli).slice(0, 12)) {
-    const li = el("li", "", liste);
-    const tamam = ben.basarimlar.includes(x.id);
-    li.textContent = `${tamam ? "✔" : "○"} ${x.ad}${tamam ? "" : " · kilitli"}`;
-    li.dataset["basarim"] = x.id;
-  }
-  el("p", "yt", kart, "İlerleme sayaçları yakında (sunucuda sayılır).");
-}
+// Ayarlar (metin ölçeği ux § 6.3 + maç ayarları ux § 6.2); ◄ geri → Atölye. D7: Market ve Başarımlar kendi
+// dosyalarında (Market.ts, Basarimlar.ts).
 
 export function ayarlar(b: EkranBaglami): void {
   const { kart } = ekranKok(b.ustYazi, "Ayarlar");

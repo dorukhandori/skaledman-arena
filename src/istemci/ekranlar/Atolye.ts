@@ -86,6 +86,7 @@ const STIL = `
 .at .tkart.odunc { border-style:dashed; border-color:#5b666b; filter:grayscale(.8); }
 .at .tkart.bos { border-style:dashed; border-color:#ffcf9a; }
 .at .tkart.devreDisi { border-color:#ff6b4a; }
+.at .yenileB { display:block; margin-top:4px; padding:3px 8px; font-size:.72rem; background:#3b2c0c; color:#fcd35a; border:1px solid #c9a33b; border-radius:4px; cursor:pointer; }
 .at .tkart.surukle { opacity:.5; }
 .at .tkart.hedef { box-shadow:0 0 0 3px #7fd3ff; }
 .at .tkart b { font-size:.85rem; }
@@ -148,6 +149,8 @@ export function baslat(b: EkranBaglami): void {
 
 class AtolyeEkrani {
   private v: AtolyeGorunumu;
+  /** D7: tamamlanan başarımlar (kilit açılımı) */
+  private get tamamSet(): ReadonlySet<string> { return new Set(this.v.tamamlanan ?? []); }
   private takimNo: number;
   private taslak!: Taslak;
   private takimAdi = "";
@@ -194,8 +197,13 @@ class AtolyeEkrani {
         sessionStorage.removeItem(TASLAK_ANAHTAR);
       }
     } catch { /* depolama kapalı */ }
+    // D7: Market'ten "Atölye'de tak" (?parca=<tanım>): o türün sekmesi açılır, parça odaklanır
+    const qp = new URLSearchParams(location.search).get("parca");
+    let odakParca: string | null = null;
+    if (qp) { try { this.sekme = parcaBul(qp).tur; odakParca = qp; } catch { /* bilinmeyen */ } }
     this.iskelet();
     this.ciz();
+    if (odakParca) (this.kart.querySelector(`[data-parca="${odakParca}"]`) as HTMLElement | null)?.focus();
     (window as unknown as { __atolye: AtolyeEkrani }).__atolye = this;
   }
 
@@ -349,7 +357,7 @@ class AtolyeEkrani {
     }
     const dugmeler: HTMLButtonElement[] = [];
     ogeler.forEach((o, k) => {
-      const g = parcaGorunumu(o.parca, o.sahipIdler.length, this.v.basarimIlerleme);
+      const g = parcaGorunumu(o.parca, o.sahipIdler.length, this.v.basarimIlerleme, this.tamamSet);
       const d = el("button", `pc ${g.durum}${o.takili ? " takili" : ""}`, liste);
       d.setAttribute("role", "option");
       d.dataset["parca"] = o.parca.id;
@@ -366,7 +374,12 @@ class AtolyeEkrani {
       const takilabilir = g.durum === "sahip";
       d.setAttribute("aria-label", `${g.okunan}${o.takili ? ` ${o.takili}. topaçta takılı.` : ""}${takilabilir ? ` Enter: ${this.secili + 1}. topaca tak.` : ""}`);
       if (!takilabilir) d.setAttribute("aria-disabled", "true");
-      d.addEventListener("click", () => { if (takilabilir) this.tak(o.parca, o.sahipIdler); });
+      // D7: "Market'te" ve kilitli kart Market'te o ürüne bağlanır (gizli değil)
+      if (g.durum === "market" || g.durum === "kilitli") d.dataset["marketBag"] = o.parca.id;
+      d.addEventListener("click", () => {
+        if (takilabilir) this.tak(o.parca, o.sahipIdler);
+        else if (g.durum === "market" || g.durum === "kilitli") git("market", `&parca=${o.parca.id}`);
+      });
       d.addEventListener("keydown", (e) => {
         const adim = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : e.key === "ArrowDown" ? 2 : e.key === "ArrowUp" ? -2 : 0;
         if (!adim) return;
@@ -388,7 +401,7 @@ class AtolyeEkrani {
     for (const p of PARCALAR.parcalar) {
       if (p.tur !== this.sekme) continue;
       const sahipIdler = p.tur === "cekirdek" ? this.v.cekirdekler.filter((c) => c.tanimId === p.id).map((c) => c.id) : this.v.parcalar.filter((x) => x.tanimId === p.id).map((x) => x.id);
-      const durum = parcaGorunumu(p, sahipIdler.length).durum;
+      const durum = parcaGorunumu(p, sahipIdler.length, this.v.basarimIlerleme, this.tamamSet).durum;
       if (f.sahiplik === "sahip" && durum !== "sahip") continue;
       if (f.sahiplik === "kilitli" && durum !== "kilitli" && durum !== "gizli") continue;
       if (f.element && !("element" in p && p.element === f.element)) continue;
@@ -645,6 +658,14 @@ class AtolyeEkrani {
       const alt = y.durum === "odunc" ? "Ödünç · Lv.1" : y.durum === "devreDisi" ? "Ömrü bitti · maçta ödünç" : y.durum === "bos" ? "Yuva boş" : y.durum === "eksik" ? "Parça eksik" : `Lv.${y.seviye}${y.cekirdek?.omur !== null && y.cekirdek?.omur !== undefined ? ` · ömür ${y.cekirdek.omur}` : ""}`;
       el("small", "", yazi, alt);
       if (y.durum === "devreDisi") { const u = el("small", "", yazi, "Yapay ömrü bitti: yenile ya da başka Çekirdek tak."); u.style.color = "#ff9a7a"; u.dataset["omurBitti"] = "1"; }
+      // D7: Dökümhane yenilemesi (kırmızı kart ya da azalan ömür): Market'te onayla
+      const yn = y.cekirdek ? this.v.yenileme?.find((x) => x.cekirdekId === y.cekirdek!.id && x.omur !== null && x.omur < 30) : undefined;
+      if (yn && (y.durum === "devreDisi" || (yn.omur ?? 30) <= 10)) {
+        const yd = el("button", "yenileB", yazi, `Yenile · ${yn.fiyat} Altın`);
+        yd.dataset["yenile"] = String(yn.cekirdekId);
+        yd.setAttribute("aria-label", `Yapay Çekirdeği Dökümhane'de yenile, ${yn.fiyat} Altın`);
+        yd.addEventListener("click", (e) => { e.stopPropagation(); git("market", `&yenile=${yn.cekirdekId}`); });
+      }
       kart.setAttribute("aria-label", `${k + 1}. yuva: ${cTanim ? cekirdekBul(cTanim).ad : "boş"}, ${alt}. Seçmek için tıkla; Alt+yukarı/aşağı ile taşı.`);
       const ok = el("span", "ok", kart);
       const yuk = el("button", "", ok, "▲");
