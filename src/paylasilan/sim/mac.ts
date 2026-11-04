@@ -6,6 +6,7 @@ import {
 import type { Girdi } from "./Girdi.ts";
 import { rastgele } from "./rastgele.ts";
 import { aktifMi, staminaOrani, topacKur } from "./topac.ts";
+import { sahipEtkileriniSil } from "./yetenek.ts";
 import { TABLO_BOYU } from "../kurallar/sinTablo.ts";
 
 // Maç / tur kararı (flint § 1 ortak ilke): bir adımda olan bitişler toplanır, adım SONUNDA tek geçişte karar.
@@ -58,7 +59,7 @@ export function macKur(mod: MacDurumu["mod"] = "tekTur"): MacDurumu {
 export function takimKur(profiller: readonly [TopacProfili, TopacProfili, TopacProfili]): Takim {
   const ids = profiller.map((p) => p.parcalar.cekirdek);
   if (ids[0] === ids[1] || ids[0] === ids[2] || ids[1] === ids[2]) throw new Error(`Takımda 3 farklı Çekirdek olmalı: ${ids.join(", ")}`);
-  const uye = (p: TopacProfili): TakimUyesi => ({ profil: p, stamina: p.maxStamina, tik: 0, enerji: 0, elendi: 0 });
+  const uye = (p: TopacProfili): TakimUyesi => ({ profil: p, stamina: p.maxStamina, tik: 0, enerji: 0, elendi: 0, bekleme1: 0, bekleme2: 0, yapayIndirim: p.koken === "yapay" ? 1 : 0 });
   return { uyeler: [uye(profiller[0]), uye(profiller[1]), uye(profiller[2])], aktif: 0, geriCekHedef: -1, geriCekBekleme: 0, secim: -1, elenen: 0 };
 }
 
@@ -179,6 +180,9 @@ function aktifiSakla(d: Dunya, i: number): void {
   u.stamina = t.stamina;
   u.tik = t.tik;
   u.enerji = t.enerji;
+  u.bekleme1 = t.bekleme1;
+  u.bekleme2 = t.bekleme2;
+  u.yapayIndirim = t.yapayIndirim;
 }
 
 /** Takımın `uye` üyesini sahaya koyar: giriş koruması, komşu devralma Enerjisi, desen fazı tohumdan. */
@@ -192,6 +196,11 @@ export function uyeSahayaKoy(d: Dunya, i: number, uye: number, x: number, z: num
   Object.assign(t, topacKur(u.profil, x, z, faz));
   t.stamina = u.stamina;
   t.tik = u.tik;
+  t.bekleme1 = u.bekleme1;
+  t.bekleme2 = u.bekleme2;
+  t.yapayIndirim = u.yapayIndirim;
+  // sahadan çıkan topacın alanı ve engelleri söner (VARSAYIM)
+  if (uye !== tk.aktif) sahipEtkileriniSil(d, i);
   const devir = uye !== tk.aktif && komsuElementMi(onceki.element, u.profil.element) ? M.enerjiKomsuDevir : 0;
   t.enerji = Math.min(M.enerjiTavan, u.enerji + devir);
   t.koruma = MAC_ADIM.koruma;

@@ -7,6 +7,8 @@ import { rastgele } from "../sim/rastgele.ts";
 import { aktifMi, staminaOrani } from "../sim/topac.ts";
 import { geriCekAcik } from "../sim/mac.ts";
 import type { Tip } from "../veri/semalar.ts";
+import { YETENEK_SIM } from "../veri/yetenekSablon.ts";
+import { ULTI_YUVA, yuvaDurumu } from "../sim/yetenek.ts";
 
 // Paylaşılan bot (axiom § 2 #12): yalnız `Girdi` üretir, durumu yalnız okur; tohumlu ve saf:
 // aynı (dünya, tohum) → aynı girdi. Sunucu botu, Antrenman, Topaç Lab ve bot turnuvası aynı kodu koşar.
@@ -33,7 +35,14 @@ export const BOT_AYAR = {
 } as const;
 
 export function botGirdisi(d: Dunya, i: number, kip: BotKipi, tohum: number): Girdi {
-  if (kip === "dolas" || kip === "kenar" || kip === "dayaniklilik" || kip === "kukla") return kademeGirdisi(d, i, kip, tohum);
+  if (kip === "dolas" || kip === "kenar" || kip === "dayaniklilik" || kip === "kukla") {
+    const g = kademeGirdisi(d, i, kip, tohum);
+    if (kip !== "kukla" && d.mac.faz === "tur" && aktifMi(d.topaclar[i]!)) {
+      telegraftanKac(d, i, g, tohum);
+      yetenekKarari(d, i, g, kip, tohum);
+    }
+    return g;
+  }
   const g = bosGirdi();
   const ben = d.topaclar[i]!;
   const rakip = d.topaclar[1 - i]!;
@@ -270,4 +279,111 @@ function kademeGirdisi(d: Dunya, i: number, kip: "dolas" | "kenar" | "dayaniklil
   if (rm < 80) { yonVer(g, rx, rz, 0.8); return g; }
   g.dinlen = hiz < 30;
   return g;
+}
+
+// ---------------------------------------------------------------------------------------------
+// D3: yetenek kullanımı ve telegraftan kaçış (bot hile yapmaz: yalnız görünen durumu okur, telegraf rakibe de görünür)
+
+/** Bot yetenek sayıları (davranış; tuning değil). */
+export const BOT_YETENEK = {
+  /** uygun anda adım başına kullanma olasılığı */
+  olasilik: 0.08,
+  /** hedef kademe olasılıkları (birikimli): < hedefYetenek → Yetenek, < hedefOzel → Özel, yoksa Ulti */
+  hedefYetenek: 0.4,
+  hedefOzel: 0.75,
+  kararBlok: 90,
+  /** atılış menzili (br) */
+  atilisMenzil: 230,
+  /** telegraf son bu kadar adımında içerideysek Sekme dene */
+  sekmeAdim: 14,
+  sekmeOlasilik: 0.5,
+} as const;
+
+/** Rakibin telegrafının tehlike bölgesinde miyim (ux § 2.2 şekilleri). */
+export function telegrafTehlikesi(d: Dunya, i: number): { icinde: boolean; kacX: number; kacZ: number } {
+  const ben = d.topaclar[i]!;
+  const rk = d.topaclar[1 - i]!;
+  const yok = { icinde: false, kacX: 0, kacZ: 0 };
+  if (rk.yetenekFaz !== 1 || rk.etkinNo < 0) return yok;
+  const y = YETENEK_SIM[rk.etkinNo]!;
+  if (!y.kacilabilir) return yok;
+  const r = AYAR.topacYaricap;
+  if (y.sekil === "serit") {
+    const bx = ben.x - rk.x;
+    const bz = ben.z - rk.z;
+    const boy = bx * rk.yetenekDx + bz * rk.yetenekDz;
+    const yan = -bx * rk.yetenekDz + bz * rk.yetenekDx;
+    const L = y.sablon === "dalga" ? y.dalgaMenzil : 260;
+    const gen = y.sablon === "dalga" ? y.yaricap / 2 : r;
+    if (boy < -r || boy > L + r || (yan < 0 ? -yan : yan) > gen + r) return yok;
+    const s = yan >= 0 ? 1 : -1;
+    return { icinde: true, kacX: -rk.yetenekDz * s, kacZ: rk.yetenekDx * s };
+  }
+  const cx = y.sekil === "daire" ? rk.yetenekHx : rk.x;
+  const cz = y.sekil === "daire" ? rk.yetenekHz : rk.z;
+  const R = y.sekil === "daire" ? y.yaricap + r : y.yaricap + 2 * r;
+  const dx = ben.x - cx;
+  const dz = ben.z - cz;
+  const m = kok2(dx, dz);
+  if (m > R) return yok;
+  if (m < 1e-6) return { icinde: true, kacX: -ben.x || 1, kacZ: -ben.z };
+  return { icinde: true, kacX: dx / m, kacZ: dz / m };
+}
+
+function telegraftanKac(d: Dunya, i: number, g: Girdi, tohum: number): void {
+  const t = telegrafTehlikesi(d, i);
+  if (!t.icinde) return;
+  const ben = d.topaclar[i]!;
+  // kaçış yönü, ama çanağın dışına değil: merkeze doğru eğilim
+  const dm = kok2(ben.x, ben.z);
+  let kx = t.kacX;
+  let kz = t.kacZ;
+  if (dm > 0.6 * d.arenaYaricap) { kx -= (ben.x / dm) * 0.8; kz -= (ben.z / dm) * 0.8; }
+  yonVer(g, kx, kz);
+  g.dinlen = false;
+  const rk = d.topaclar[1 - i]!;
+  if (rk.yetenekKalan <= BOT_YETENEK.sekmeAdim && ben.sekmeBekleme === 0 && rastgele(tohum, d.tick * 8 + i * 4 + 5000) < BOT_YETENEK.sekmeOlasilik) g.zipla = true;
+}
+
+function yetenekKarari(d: Dunya, i: number, g: Girdi, kip: BotKipi, tohum: number): void {
+  const ben = d.topaclar[i]!;
+  const rk = d.topaclar[1 - i]!;
+  const p = d.profiller[i]!;
+  if (ben.yetenekFaz !== 0 || !aktifMi(rk) || rk.koruma > 0) return;
+  const B = BOT_YETENEK;
+  const blok = Math.floor(d.tick / B.kararBlok);
+  if (rastgele(tohum, d.tick * 8 + i * 4 + 7000) >= B.olasilik) return;
+  const rx = rk.x - ben.x;
+  const rz = rk.z - ben.z;
+  const rm = kok2(rx, rz) || 1;
+  const yaklasma = -((rk.vx - ben.vx) * rx + (rk.vz - ben.vz) * rz) / rm;
+  const r = AYAR.topacYaricap;
+  // hedef kademe (tur ve sahadaki üye başına sabit, tohumlu): Yetenek / Özel / Ulti için Enerji biriktir
+  const tk = d.takimlar?.[i];
+  const zar = rastgele(tohum, d.mac.turNo * 16 + (tk ? tk.aktif : 0) * 4 + i + 9000);
+  let hedef = zar < B.hedefYetenek ? 0 : zar < B.hedefOzel ? 1 : ULTI_YUVA;
+  while (hedef > 0 && (yuvaDurumu(d, i, hedef) === "kilitli" || yuvaDurumu(d, i, hedef) === "yok" || yuvaDurumu(d, i, hedef) === "ultiKullanildi")) hedef--;
+  void blok;
+  for (let yuva = hedef; yuva >= 0; yuva--) {
+    if (yuvaDurumu(d, i, yuva) !== null) { if (yuva === hedef && yuvaDurumu(d, i, yuva) === "enerji") return; continue; }
+    const y = YETENEK_SIM[p.yetenekler[yuva]!]!;
+    const e = y.sablon === "taklit" && d.sonYetenek[1 - i]! >= 0 ? YETENEK_SIM[d.sonYetenek[1 - i]!]! : y;
+    let uygun = false;
+    switch (e.sablon) {
+      case "atilis": case "kavis": case "taklit": uygun = rm > 60 && rm < B.atilisMenzil; break;
+      case "dalga": uygun = rm < e.dalgaMenzil + r; break;
+      case "zincir": uygun = rm < e.yaricap + 3 * r; break;
+      case "sok": case "cekim": case "emis": uygun = rm < e.yaricap + r + 15; break;
+      case "alan": case "takim": uygun = e.yaricap >= AYAR.yetenek.tumCanakYaricap || rm < AYAR.yetenek.alanMenzil + 30; break;
+      case "engel": uygun = rm < AYAR.yetenek.alanMenzil; break;
+      case "zirh": uygun = rm < 150 && (yaklasma > 120 || rk.dashKalan > 0 || kip === "dayaniklilik" && rm < 90); break;
+      case "kontra": uygun = rm < 130 && (yaklasma > 140 || rk.dashKalan > 0); break;
+    }
+    if (!uygun) continue;
+    g.atesle = true;
+    g.secilenYuva = yuva;
+    g.nisanX = rk.x;
+    g.nisanZ = rk.z;
+    return;
+  }
 }

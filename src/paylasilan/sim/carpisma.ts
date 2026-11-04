@@ -3,6 +3,7 @@ import type { TopacProfili } from "../veri/profil.ts";
 import type { CarpismaTarafi, Dunya, Topac } from "./durum.ts";
 import { kok2 } from "./fizik.ts";
 import { aktifMi, staminaOrani } from "./topac.ts";
+import { carpismaCarpanlari, temasSonrasi } from "./yetenek.ts";
 
 // Topaç-topaç çarpışması (tuning § 5, 05 § 2.3-2.4). Daire-daire elastik olmayan darbe:
 //   vn = (v1 − v2)·n, m_i = kutle_i·kCakilma_i(·Kaya), μ = m1m2/(m1+m2), Ş = μ·vn, J = (1+e)·Ş.
@@ -122,16 +123,25 @@ export function topacCarpismasi(d: Dunya): void {
   const S = mu * vn;
   const e = (p1.sim.esneklik + p2.sim.esneklik) / 2;
   const J = (1 + e) * S;
-  const f1 = yonCarpani(t1, p1, nx, nz);
-  const f2 = yonCarpani(t2, p2, -nx, -nz);
-  const kb1 = kbCarpani(t1, p1) * p2.sim.vurusItmeCarpani;
-  const kb2 = kbCarpani(t2, p2) * p1.sim.vurusItmeCarpani;
+  // D3: yetenek çarpanları (atılış penceresinde f × hasarKatsayisi, zırhta alınan itme/hasar); 1 ise uygulanmaz
+  const c1 = carpismaCarpanlari(d, 0);
+  const c2 = carpismaCarpanlari(d, 1);
+  let f1 = yonCarpani(t1, p1, nx, nz);
+  let f2 = yonCarpani(t2, p2, -nx, -nz);
+  if (c1.f !== 1) f1 *= c1.f;
+  if (c2.f !== 1) f2 *= c2.f;
+  let kb1 = kbCarpani(t1, p1) * p2.sim.vurusItmeCarpani;
+  let kb2 = kbCarpani(t2, p2) * p1.sim.vurusItmeCarpani;
+  if (c1.kb !== 1) kb1 *= c1.kb;
+  if (c2.kb !== 1) kb2 *= c2.kb;
   const yeniV1x = t1.vx - (J / m1) * nx * kb1;
   const yeniV1z = t1.vz - (J / m1) * nz * kb1;
   const yeniV2x = t2.vx + (J / m2) * nx * kb2;
   const yeniV2z = t2.vz + (J / m2) * nz * kb2;
-  const H1 = hasarHesapla(S, p1, f1, p2, f2);
-  const H2 = hasarHesapla(S, p2, f2, p1, f1);
+  let H1 = hasarHesapla(S, p1, f1, p2, f2);
+  let H2 = hasarHesapla(S, p2, f2, p1, f1);
+  if (c1.hasar !== 1) H1 *= c1.hasar;
+  if (c2.hasar !== 1) H2 *= c2.hasar;
   const dTik1 = tikHesapla(S, p1, p2, f2);
   const dTik2 = tikHesapla(S, p2, p1, f1);
 
@@ -170,10 +180,12 @@ export function topacCarpismasi(d: Dunya): void {
   const taraf = (t: Topac, p: TopacProfili, f: number, h: number, dt: number): CarpismaTarafi => ({
     f, element: p.element, dash: t.dashKalan > 0, hasar: h, dTik: dt, tikSonrasi: t.tik, staminaSonrasi: t.stamina,
   });
-  d.olaylar.push({
-    tur: "carpisma", tick: d.tick, s: S, vn,
+  const olay = {
+    tur: "carpisma" as const, tick: d.tick, s: S, vn,
     x: ax1 + nx * AYAR.topacYaricap, z: az1 + nz * AYAR.topacYaricap, nx, nz,
-    taraflar: [taraf(t1, p1, f1, H1, dTik1), taraf(t2, p2, f2, H2, dTik2)],
+    taraflar: [taraf(t1, p1, f1, H1, dTik1), taraf(t2, p2, f2, H2, dTik2)] as [CarpismaTarafi, CarpismaTarafi],
     zitElement: zitElementMi(p1.element, p2.element), zitYon, esitleme,
-  });
+  };
+  d.olaylar.push(olay);
+  if (t1.yetenekFaz === 2 || t2.yetenekFaz === 2) temasSonrasi(d, olay);
 }

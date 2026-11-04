@@ -102,6 +102,34 @@ export const RuhlarDosyaSema = z.object({ surum: z.literal(1), ruhlar: z.array(R
 /** Yetenek elementi: altı element + köken yetenekleri (karanlik, yapay) + Takım Ultisi (uc-element). */
 export const YetenekElementSema = z.union([ElementSema, z.enum(["karanlik", "yapay", "uc-element"])]);
 
+const negatifOlmayan = sayi.nonnegative();
+
+/** tuning § 21 etki sözlüğü. `itme` negatif olabilir (çekme). Çarpanlar 0..5 aralığında. */
+export const EtkiSema = z.object({
+  hizCarpani: sayi.min(0).max(5),
+  itme: sayi.min(-1000).max(1000),
+  hasarKatsayisi: sayi.min(0).max(5),
+  yaricap: sayi.min(0).max(400),
+  cekim: negatifOlmayan.max(2000).optional(),
+  atilisHizi: negatifOlmayan.max(1000).optional(),
+  kbCarpani: sayi.min(0).max(5).optional(),
+  hasarAlmaCarpani: sayi.min(0).max(5).optional(),
+  surtunmeCarpani: sayi.min(0).max(5).optional(),
+  ivmeCarpani: sayi.min(0).max(5).optional(),
+  yanKaymaItme: negatifOlmayan.max(2000).optional(),
+  alanHasarYuzdeSn: negatifOlmayan.max(20).optional(),
+  staminaEmisYuzdeSn: negatifOlmayan.max(20).optional(),
+  emisYuzde: negatifOlmayan.max(30).optional(),
+  zincirSayisi: z.number().int().min(0).max(10).optional(),
+  zincirStaminaYuzde: negatifOlmayan.max(30).optional(),
+  engelSayisi: z.number().int().min(0).max(8).optional(),
+  engelYaricap: negatifOlmayan.max(120).optional(),
+  engelDayanikliligi: z.number().int().min(1).max(20).optional(),
+  karsiPencereSn: negatifOlmayan.max(3).optional(),
+  kavisYaricap: negatifOlmayan.max(600).optional(),
+  kendineDeEtki: sayi.min(0).max(1).optional(),
+}).catchall(z.union([sayi, z.boolean()]));
+
 export const YetenekSema = z.object({
   id: z.string(),
   ad: z.string(),
@@ -113,8 +141,8 @@ export const YetenekSema = z.object({
   sureSn: sayi.nonnegative(),
   beklemeSn: sayi.nonnegative(),
   enerjiDilimi: z.number().int().min(0),
-  /** Etki parametre sözlüğü tuning § 21; yeteneğe özel anahtarlar serbest (sayı ya da bayrak). */
-  etki: z.object({ hizCarpani: sayi, itme: sayi, hasarKatsayisi: sayi, yaricap: sayi }).catchall(z.union([sayi, z.boolean()])),
+  /** Etki parametre sözlüğü tuning § 21 (bilinen anahtarlar aralıklı); yeteneğe özel anahtarlar serbest (sayı ya da bayrak). */
+  etki: EtkiSema,
   bedel: z.object({ staminaYuzde: sayi, kilitSn: sayi, kendiHizCarpani: sayi, ek: z.string().nullable() }),
   kaynak: z.string(),
   eksikTamamlama: z.boolean(),

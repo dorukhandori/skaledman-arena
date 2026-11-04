@@ -4,7 +4,7 @@ import { ELEMENT_RENK, renkCss } from "./renkler.ts";
 // Element silüetleri (ux § 6.1, onaylı görsel 01): Kor alev · Kasırga hortum · Şimşek yıldırım · Girdap sarmal ·
 // Kaya küme · Don kristal. Renk tek kanal değil: şekil gri tonda da ayrılır. Basit SVG (16×16 viewBox).
 
-const YOL: Record<ElementAdi, { d: string; dolgu: boolean }> = {
+export const YOL: Record<ElementAdi, { d: string; dolgu: boolean }> = {
   kor: { d: "M8 1C10.5 4 13 6.2 12.4 10.2 12 13 10 15 8 15 5.4 15 3.6 13 3.8 10.4 4 8.4 5.4 7.4 5.9 5.8 7 7.4 7.1 8.6 8 9.2 8.6 7 9.2 4.4 8 1Z", dolgu: true },
   kasirga: { d: "M1.5 3h13M3 6.2h10M4.6 9.2h6.8M6 12h4M7.2 14.6h1.6", dolgu: false },
   simsek: { d: "M9.6 1 3 9.2h4.6L6 15l7-8.6H8.4L10.4 1Z", dolgu: true },

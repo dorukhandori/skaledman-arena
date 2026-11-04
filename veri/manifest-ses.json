@@ -1,0 +1,155 @@
+{
+ "surum": 1,
+ "aciklama": "Devran ses efektleri: araclar/ses-uret.ts ile sentezlendi (osilatör + gürültü zarfları). Dış kaynak yok.",
+ "kaynak": "sentez",
+ "lisans": "CC0-1.0",
+ "ornekleme": 22050,
+ "bicim": "WAV PCM 16-bit mono",
+ "dosyalar": [
+  {
+   "ad": "carpisma-hafif",
+   "dosya": "ses/carpisma-hafif.wav",
+   "olay": "çarpışma hafif: metal tık",
+   "sureSn": 0.072,
+   "bayt": 3222,
+   "kaynak": "sentez (araclar/ses-uret.ts)",
+   "lisans": "CC0-1.0"
+  },
+  {
+   "ad": "carpisma-agir",
+   "dosya": "ses/carpisma-agir.wav",
+   "olay": "çarpışma ağır: metal çın + alt vuruş",
+   "sureSn": 0.182,
+   "bayt": 8074,
+   "kaynak": "sentez (araclar/ses-uret.ts)",
+   "lisans": "CC0-1.0"
+  },
+  {
+   "ad": "carpisma-kritik",
+   "dosya": "ses/carpisma-kritik.wav",
+   "olay": "çarpışma kritik: çın + bas thud",
+   "sureSn": 0.282,
+   "bayt": 12484,
+   "kaynak": "sentez (araclar/ses-uret.ts)",
+   "lisans": "CC0-1.0"
+  },
+  {
+   "ad": "duvar",
+   "dosya": "ses/duvar.wav",
+   "olay": "duvar/kenar: alçak metal tonk",
+   "sureSn": 0.142,
+   "bayt": 6310,
+   "kaynak": "sentez (araclar/ses-uret.ts)",
+   "lisans": "CC0-1.0"
+  },
+  {
+   "ad": "dash",
+   "dosya": "ses/dash.wav",
+   "olay": "dash: swoosh",
+   "sureSn": 0.18,
+   "bayt": 7984,
+   "kaynak": "sentez (araclar/ses-uret.ts)",
+   "lisans": "CC0-1.0"
+  },
+  {
+   "ad": "sekme",
+   "dosya": "ses/sekme.wav",
+   "olay": "sekme: kısa sıçrama",
+   "sureSn": 0.125,
+   "bayt": 5560,
+   "kaynak": "sentez (araclar/ses-uret.ts)",
+   "lisans": "CC0-1.0"
+  },
+  {
+   "ad": "ring-out",
+   "dosya": "ses/ring-out.wav",
+   "olay": "Ring Out: swoosh + düşen ıslık",
+   "sureSn": 0.65,
+   "bayt": 28712,
+   "kaynak": "sentez (araclar/ses-uret.ts)",
+   "lisans": "CC0-1.0"
+  },
+  {
+   "ad": "parcalanma",
+   "dosya": "ses/parcalanma.wav",
+   "olay": "Parçalanma: kırılma + bas patlama",
+   "sureSn": 0.433,
+   "bayt": 19142,
+   "kaynak": "sentez (araclar/ses-uret.ts)",
+   "lisans": "CC0-1.0"
+  },
+  {
+   "ad": "durma",
+   "dosya": "ses/durma.wav",
+   "olay": "Durma: vızıltı düşer + tıkırtı",
+   "sureSn": 0.61,
+   "bayt": 26948,
+   "kaynak": "sentez (araclar/ses-uret.ts)",
+   "lisans": "CC0-1.0"
+  },
+  {
+   "ad": "telegraf",
+   "dosya": "ses/telegraf.wav",
+   "olay": "yetenek telegrafı: yükselen ton",
+   "sureSn": 0.28,
+   "bayt": 12394,
+   "kaynak": "sentez (araclar/ses-uret.ts)",
+   "lisans": "CC0-1.0"
+  },
+  {
+   "ad": "ulti",
+   "dosya": "ses/ulti.wav",
+   "olay": "Ulti vuruşu: katmanlı patlama",
+   "sureSn": 0.505,
+   "bayt": 22318,
+   "kaynak": "sentez (araclar/ses-uret.ts)",
+   "lisans": "CC0-1.0"
+  },
+  {
+   "ad": "geri-sayim",
+   "dosya": "ses/geri-sayim.wav",
+   "olay": "geri sayım / süre tık",
+   "sureSn": 0.102,
+   "bayt": 4546,
+   "kaynak": "sentez (araclar/ses-uret.ts)",
+   "lisans": "CC0-1.0"
+  },
+  {
+   "ad": "mac-sonu",
+   "dosya": "ses/mac-sonu.wav",
+   "olay": "maç sonu: üç notalı fanfar",
+   "sureSn": 0.755,
+   "bayt": 33342,
+   "kaynak": "sentez (araclar/ses-uret.ts)",
+   "lisans": "CC0-1.0"
+  },
+  {
+   "ad": "ui-tik",
+   "dosya": "ses/ui-tik.wav",
+   "olay": "arayüz tıkı",
+   "sureSn": 0.036,
+   "bayt": 1634,
+   "kaynak": "sentez (araclar/ses-uret.ts)",
+   "lisans": "CC0-1.0"
+  },
+  {
+   "ad": "enerji-doldu",
+   "dosya": "ses/enerji-doldu.wav",
+   "olay": "Enerji dilimi doldu: kısa ding",
+   "sureSn": 0.242,
+   "bayt": 10720,
+   "kaynak": "sentez (araclar/ses-uret.ts)",
+   "lisans": "CC0-1.0"
+  },
+  {
+   "ad": "kenar-uyari",
+   "dosya": "ses/kenar-uyari.wav",
+   "olay": "kenar uyarısı tık (≤ 2 Hz)",
+   "sureSn": 0.029,
+   "bayt": 1326,
+   "kaynak": "sentez (araclar/ses-uret.ts)",
+   "lisans": "CC0-1.0"
+  }
+ ],
+ "toplamBayt": 204716
+}

@@ -8,6 +8,7 @@ export interface Page {
   on(olay: "console", f: (m: PwKonsol) => void): void;
   on(olay: "pageerror", f: (e: Error) => void): void;
   on(olay: "requestfailed", f: (r: PwIstek) => void): void;
+  on(olay: "response", f: (r: { url(): string; status(): number }) => void): void;
   goto(url: string): Promise<unknown>;
   setContent(html: string): Promise<void>;
   addScriptTag(o: { content: string }): Promise<unknown>;
@@ -18,7 +19,7 @@ export interface Page {
   selectOption(sel: string, v: string): Promise<unknown>;
   getByRole(rol: "button", o: { name: string }): { click(): Promise<void> };
   keyboard: { down(k: string): Promise<void>; up(k: string): Promise<void>; press(k: string): Promise<void> };
-  mouse: { move(x: number, y: number): Promise<void> };
+  mouse: { move(x: number, y: number): Promise<void>; down(o?: { button?: "left" | "right" }): Promise<void>; up(o?: { button?: "left" | "right" }): Promise<void> };
 }
 export interface Browser {
   version(): string;

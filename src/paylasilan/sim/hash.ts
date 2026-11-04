@@ -16,6 +16,10 @@ const NEDEN_KODU = { puan: 0, tukenme: 1, aniOlum: 2, surePuan: 3, sureStamina: 
 export const TOPAC_ALANLARI = [
   "x", "z", "vx", "vz", "stamina", "tik", "durum", "dashKalan", "dashBekleme",
   "sekmeKalan", "sekmeBekleme", "sikiDonus", "sonumKalan", "desenFaz", "koruma", "geriCekKalan", "enerji",
+  // D3
+  "sahadaTick", "bekleme1", "bekleme2", "yapayIndirim", "yetenekNo", "yetenekYuva", "etkinNo", "etkiOlcek", "yetenekFaz",
+  "yetenekKalan", "yetenekDx", "yetenekDz", "yetenekHx", "yetenekHz", "telegrafToplam", "kilitKalan", "sersemKalan", "vurdu",
+  "kavisIsaret", "zincirKalan", "zincirBekleme", "emisBekleme",
 ] as const satisfies readonly (keyof Topac)[];
 
 /** Durumun sayısal özeti (sabit sıra). */
@@ -34,9 +38,17 @@ export function durumSayilari(d: Dunya): number[] {
   if (d.takimlar) {
     for (const tk of d.takimlar) {
       s.push(tk.aktif, tk.geriCekHedef, tk.geriCekBekleme, tk.secim, tk.elenen);
-      for (const u of tk.uyeler) s.push(u.stamina, u.tik, u.enerji, u.elendi);
+      for (const u of tk.uyeler) s.push(u.stamina, u.tik, u.enerji, u.elendi, u.bekleme1, u.bekleme2, u.yapayIndirim);
     }
   }
+  // D3: alanlar, engeller, ulti, Enerji kilitleri, Kararma, seviye, Taklit kaynağı
+  for (const a of d.alanlar) {
+    if (a) s.push(1, a.no, a.olcek, a.sahip, a.x, a.z, a.yaricap, a.kalan, a.toplam, a.isaret);
+    else s.push(0);
+  }
+  s.push(d.engeller.length);
+  for (const e of d.engeller) s.push(e.x, e.z, e.r, e.can, e.sahip, e.kalan);
+  s.push(d.ultiKullanildi[0], d.ultiKullanildi[1], d.ultiKilit, d.yakinGecisBekleme, d.kararma[0], d.kararma[1], d.seviye[0], d.seviye[1], d.sonYetenek[0], d.sonYetenek[1]);
   return s;
 }
 

@@ -32,8 +32,44 @@ export interface Topac {
   koruma: number;
   /** Geri çek: kalan savunmasız adım (2,0 s, kb × 1,5); 0 = yok. */
   geriCekKalan: number;
-  /** Enerji puanı 0..300 (D2: yalnız komşu devralma +40; sistem D3'te açılır). */
+  /** Enerji puanı 0..300 (tuning § 8; 3 dilim × 100). */
   enerji: number;
+  // ---- D3: yetenek durumu (tüm süreler adım) ----
+  /** Sahadaki süre, adım (Göktaşı giriş başına ilk 12 s dolum × 0,8). */
+  sahadaTick: number;
+  /** Yuva 1 / 2 bekleme, kalan adım. */
+  bekleme1: number;
+  bekleme2: number;
+  /** Yapay Uyum: ilk yetenek indirimi kullanılmadıysa 1. */
+  yapayIndirim: number;
+  /** Etkin yetenek: kullanılan yuvanın yetenek numarası (−1 = yok), yuva (0..2), kademe. */
+  yetenekNo: number;
+  yetenekYuva: number;
+  /** Davranışı çalışan yetenek (Taklit'te kopyalanan), etki ölçeği (Taklit 0,6). */
+  etkinNo: number;
+  etkiOlcek: number;
+  /** 0 yok · 1 telegraf · 2 etki. */
+  yetenekFaz: number;
+  yetenekKalan: number;
+  /** Bırakma anında kilitlenen yön (birim) ve hedef nokta. */
+  yetenekDx: number;
+  yetenekDz: number;
+  yetenekHx: number;
+  yetenekHz: number;
+  /** Telegraf süresi (adım; HUD dolan halkası için). */
+  telegrafToplam: number;
+  /** Hareket kilidi (sürüş, dash, sekme yok), kalan adım. */
+  kilitKalan: number;
+  /** Kontra kaçırıldı: sersem, kalan adım (hareket kilidi gibi). */
+  sersemKalan: number;
+  /** Atılış/kavis: temas itmesi uygulandıysa 1 (yetenek başına bir kez). */
+  vurdu: number;
+  /** Kavis yönü (+1 / −1). */
+  kavisIsaret: number;
+  /** Zincir: kalan sıçrama, sıçrama arası bekleme; emiş yakınlık beklemesi. */
+  zincirKalan: number;
+  zincirBekleme: number;
+  emisBekleme: number;
 }
 
 export type BitisTuru = "durma" | "ringOut" | "parcalanma";
@@ -96,6 +132,10 @@ export interface TakimUyesi {
   enerji: number;
   /** 1 = elendi (bu maçta geri dönmez). */
   elendi: number;
+  /** D3: yetenek beklemeleri ve Yapay indirimi sahadan çıkınca saklanır. */
+  bekleme1: number;
+  bekleme2: number;
+  yapayIndirim: number;
 }
 
 export interface Takim {
@@ -121,6 +161,33 @@ export interface CarpismaTarafi {
   tikSonrasi: number;
   staminaSonrasi: number;
 }
+
+/** Zemin alanı (00 § 4.5; bir oyuncunun bir seferde tek alanı). */
+export interface Alan {
+  /** Davranışı çalışan yetenek numarası. */
+  no: number;
+  olcek: number;
+  sahip: number;
+  x: number;
+  z: number;
+  yaricap: number;
+  kalan: number;
+  toplam: number;
+  /** Yan kayma yönü (+1 / −1: sahibin dönüş yönü). */
+  isaret: number;
+}
+
+/** Geçici engel (Yontu Siperi, Ata Dağı): duvar gibi sektirir, dayanıklılığı darbeyle düşer. */
+export interface Engel {
+  x: number;
+  z: number;
+  r: number;
+  can: number;
+  sahip: number;
+  kalan: number;
+}
+
+export type YetenekReddi = "faz" | "mesgul" | "yok" | "kilitli" | "bekleme" | "enerji" | "stamina" | "ultiKullanildi" | "rakipUlti";
 
 export type Olay =
   | {
@@ -156,6 +223,20 @@ export type Olay =
   /** tur arası seçim yapıldı (otomatik ya da girdiyle) */
   | { tur: "secim"; tick: number; i: number; uye: number; otomatik: boolean }
   | { tur: "aniOlum"; tick: number }
+  // ---- D3 ----
+  /** yetenek bırakıldı: telegraf başladı (hedef nokta, yön, telegraf adımı) */
+  | { tur: "yetenekBasladi"; tick: number; i: number; no: number; etkinNo: number; yuva: number; kademe: number; x: number; z: number; dx: number; dz: number; telegraf: number }
+  /** telegraf bitti, etki başladı */
+  | { tur: "yetenekEtki"; tick: number; i: number; no: number; etkinNo: number; yuva: number; kademe: number; x: number; z: number }
+  | { tur: "yetenekBitti"; tick: number; i: number; no: number; kesildi: boolean }
+  | { tur: "yetenekReddi"; tick: number; i: number; yuva: number; neden: YetenekReddi }
+  /** yetenek isabeti (sanal darbe, alan hasarı değil): hasar ve itme */
+  | { tur: "yetenekVurus"; tick: number; i: number; hedef: number; no: number; hasar: number; x: number; z: number; nx: number; nz: number }
+  | { tur: "zincir"; tick: number; i: number; hedef: number; x1: number; z1: number; x2: number; z2: number; hasar: number }
+  | { tur: "kontra"; tick: number; i: number; hedef: number; x: number; z: number }
+  | { tur: "engelCarpma"; tick: number; i: number; x: number; z: number; kirildi: boolean }
+  /** Enerji yeni bir dilime ulaştı (1..3) */
+  | { tur: "enerjiDoldu"; tick: number; i: number; dilim: number }
   | { tur: "macBitti"; tick: number; sonuc: MacSonucu };
 
 export interface Dunya {
@@ -172,4 +253,22 @@ export interface Dunya {
   takimlar: [Takim, Takim] | null;
   /** Son `adim`'ın olayları (her adımda sıfırlanır). */
   olaylar: Olay[];
+  // ---- D3 ----
+  /** Oyuncu başına tek zemin alanı (yeni gelen eskiyi siler). */
+  alanlar: [Alan | null, Alan | null];
+  engeller: Engel[];
+  /** Ulti maç başına bir kez (oyuncu başına). */
+  ultiKullanildi: [number, number];
+  /** Ulti süresince ve +1 s hiçbir topaçta Enerji dolmaz (flint #14), kalan adım. */
+  ultiKilit: number;
+  /** Yakın geçiş Enerjisi beklemesi (çift için), kalan adım. */
+  yakinGecisBekleme: number;
+  /** Kararma sayacı (Karanlık Kara yetenek +25; maç sonu raporu, Çekirdek sönmesi D7). */
+  kararma: [number, number];
+  /** Çekirdek seviyesi (oyuncu başına; yuva kapıları). */
+  seviye: [number, number];
+  /** Oyuncunun son kullandığı kademe 1-2 yetenek (Taklit Sıçrayış kopyası), −1 = yok. */
+  sonYetenek: [number, number];
+  /** İstatistik (hash dışı değil, ama davranışa etkisi yok): oyuncu × kademe kullanım sayısı. */
+  yetenekSayisi: [[number, number, number], [number, number, number]];
 }

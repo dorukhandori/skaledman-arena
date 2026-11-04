@@ -4,6 +4,9 @@ import type { TopacProfili } from "../veri/profil.ts";
 import type { Girdi } from "./Girdi.ts";
 import type { Olay, Topac } from "./durum.ts";
 
+/** Yetenek/alan hareket çarpanları (sim/yetenek.ts üretir). Hepsi nötrse D2 ifadeleri aynen çalışır. */
+export interface HareketCarpanlari { ivme: number; tavan: number; surtunme: number; ax: number; az: number }
+
 // Hareket (tuning § 3, 05 § 2.2): sürüş ivmesi + Uç deseni (girdi üstüne biner) + kenar eğimi + sürtünme,
 // tavan, entegrasyon; stamina erimesi (§ 6); duvar / Ring Out (§ 2). Yalnız + - * / ve Math.sqrt.
 
@@ -25,11 +28,12 @@ export function kusakta(t: Topac, R: number = R0): boolean {
 }
 
 /** Sürüş + desen ivmesi; tavanı (vSurus · yorgunluk · kuşak) aşan bileşen uygulanmaz, dış hız bozulmaz. */
-function kendiIvmesi(t: Topac, p: TopacProfili, g: Girdi, tick: number, yorgunluk: number, R: number): void {
+function kendiIvmesi(t: Topac, p: TopacProfili, g: Girdi, tick: number, yorgunluk: number, R: number, m: HareketCarpanlari | null): void {
   if (t.sikiDonus) return; // Sıkı Dönüş: hareket 0 (sürüş ve desen yok)
   const s = p.sim;
   let ax = s.ivme * yorgunluk * g.yonX;
   let az = s.ivme * yorgunluk * g.yonZ;
+  if (m && m.ivme !== 1) { ax *= m.ivme; az *= m.ivme; }
   if (s.desenAd > 0) {
     // φ = ωd · t + faz (tablo biriminde)
     const phi = s.desenOmega * tick * dt * RADYAN_BASINA_BIRIM + t.desenFaz;
@@ -40,7 +44,8 @@ function kendiIvmesi(t: Topac, p: TopacProfili, g: Girdi, tick: number, yorgunlu
     ax -= s.desenKMerkez * t.x;
     az -= s.desenKMerkez * t.z;
   }
-  const tavan = s.vSurus * yorgunluk * (kusakta(t, R) ? s.kusakHizCarpani : 1);
+  let tavan = s.vSurus * yorgunluk * (kusakta(t, R) ? s.kusakHizCarpani : 1);
+  if (m && m.tavan !== 1) tavan *= m.tavan;
   const v0 = kok2(t.vx, t.vz);
   let nvx = t.vx + ax * dt;
   let nvz = t.vz + az * dt;
@@ -65,8 +70,10 @@ function kendiIvmesi(t: Topac, p: TopacProfili, g: Girdi, tick: number, yorgunlu
 }
 
 /** Bir topacın hareket adımı (çarpışma ve duvar hariç). */
-export function hareketAdimla(t: Topac, p: TopacProfili, g: Girdi, tick: number, yorgunluk: number, R: number = R0): void {
-  kendiIvmesi(t, p, g, tick, yorgunluk, R);
+export function hareketAdimla(t: Topac, p: TopacProfili, g: Girdi, tick: number, yorgunluk: number, R: number = R0, m: HareketCarpanlari | null = null): void {
+  kendiIvmesi(t, p, g, tick, yorgunluk, R, m);
+  // alan çekimi / yan kayma (dış ivme; tavana bağlı değil)
+  if (m && (m.ax !== 0 || m.az !== 0)) { t.vx += m.ax * dt; t.vz += m.az * dt; }
   // kenar eğimi: d > 0,7R'den merkeze, kEgim · ((d − 0,7R)/(0,3R))²
   const d = kok2(t.x, t.z);
   const egimD = AYAR.egimBaslangic * R;
@@ -77,7 +84,7 @@ export function hareketAdimla(t: Topac, p: TopacProfili, g: Girdi, tick: number,
     t.vz -= (t.z / d) * a * dt;
   }
   // doğrusal sürtünme + Coulomb
-  const sur = 1 - p.sim.surtunme * dt;
+  const sur = 1 - (m && m.surtunme !== 1 ? p.sim.surtunme * m.surtunme : p.sim.surtunme) * dt;
   t.vx *= sur > 0 ? sur : 0;
   t.vz *= sur > 0 ? sur : 0;
   const v = kok2(t.vx, t.vz);
@@ -101,9 +108,10 @@ const KOK_ERIME = KOKEN_PASIF.maden.kokErimeCarpani;
  * Stamina erimesi/s = erime · (sıkı dönüş ? Uç çarpanı : 1) · (Kök ? 0,8 : 1) · aniOlum + kHiz · |v|²/vRef².
  * `aniOlum`: ani ölüm erime çarpanı (1 + 0,05·t); 1 iken çarpma yapılmaz.
  */
-export function erimeUygula(t: Topac, p: TopacProfili, aniOlum = 1): void {
+export function erimeUygula(t: Topac, p: TopacProfili, aniOlum = 1, alanCarpani = 1): void {
   let e = p.sim.erime;
   if (aniOlum !== 1) e *= aniOlum;
+  if (alanCarpani !== 1) e *= alanCarpani;
   if (t.sikiDonus) e *= p.sim.sikiDonusCarpani;
   const v2 = t.vx * t.vx + t.vz * t.vz;
   if (p.sim.kok && t.x * t.x + t.z * t.z < MERKEZ * MERKEZ && v2 < KOK_HIZ2) e *= KOK_ERIME;

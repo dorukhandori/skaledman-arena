@@ -14,13 +14,16 @@
     "test:tarayici": "tsx araclar/altin-tarayici.ts",
     "lab:ekran": "tsx araclar/lab-ekran.ts",
     "mac:ekran": "tsx araclar/mac-ekran.ts",
-    "denge:turnuva": "tsx test/denge/botTurnuvasi.ts"
+    "denge:turnuva": "tsx test/denge/botTurnuvasi.ts",
+    "ses:uret": "tsx araclar/ses-uret.ts",
+    "yetenek:ekran": "tsx araclar/yetenek-ekran.ts"
   },
   "dependencies": {
     "@colyseus/monitor": "^0.18.7",
     "@colyseus/playground": "^0.18.0",
     "@colyseus/schema": "^5.0.43",
     "@colyseus/sdk": "^0.18.9",
+    "@pixi/sound": "6.0.2",
     "colyseus": "^0.18.10",
     "pixi.js": "^8.22.0",
     "zod": "^4.1.12"

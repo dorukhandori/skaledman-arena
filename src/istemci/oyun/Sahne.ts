@@ -43,6 +43,8 @@ export class Sahne {
   private rng = new SusRastgele(0x5a5a);
   private son = { w: 0, h: 0, b: -1 };
   private sarsintiCarpani = 1;
+  /** Sürekli asgari trauma (Ulti telegrafı: 0,5 px). Her kare yeniden yazılır. */
+  sarsintiTaban = 0;
 
   constructor(private app: Application) {
     const maske = new Graphics().rect(0, 0, SAHNE.genislik, SAHNE.yukseklik).fill(0xffffff);
@@ -103,6 +105,7 @@ export class Sahne {
     // sarsıntı
     let sx = 0;
     let sy = 0;
+    if (this.sarsintiTaban > this.trauma) this.trauma = this.sarsintiTaban;
     if (this.trauma > 0) {
       const genlik = this.trauma * this.trauma * SAHNE.sarsintiTavan * this.sarsintiCarpani;
       if (this.yonluKare > 0) {

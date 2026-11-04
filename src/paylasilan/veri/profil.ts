@@ -1,7 +1,8 @@
-import { AYAR, ELEMENT_EGILIM, KOKEN_PASIF, type ElementAdi, type KokenAdi } from "../kurallar/ayar.ts";
+import { AYAR, ELEMENT_CARKI, ELEMENT_EGILIM, KOKEN_PASIF, type ElementAdi, type KokenAdi } from "../kurallar/ayar.ts";
 import { DERECE_BASINA_BIRIM, cosT } from "../kurallar/sinTablo.ts";
 import { cekirdekBul, diskBul, govdeBul, ucBul } from "./katalog.ts";
 import type { Cekirdek, Desen, Disk, Govde, Tip, Uc } from "./semalar.ts";
+import { ruhYuvalari } from "./yetenekSablon.ts";
 
 // Parçalardan topaç profili (tuning.md § 13). Saf fonksiyon: aynı dört parça → aynı profil, her ortamda.
 
@@ -62,6 +63,15 @@ export interface TopacProfili {
   kanat: number;
   maxStamina: number;
   sim: SimParametreleri;
+  /** Çekirdek ruhunun yuvaları (yetenek numarası, −1 = yok): Yetenek, Özel Yetenek, Ulti (D3). */
+  yetenekler: [number, number, number];
+  /** Enerji dolum çarpanı (tuning § 8 uyum + § 11): Gövde elementi Çekirdeğinkine aynı 1,10 / komşu 1,00 / diğer 0,80; Yapay'da ceza yok. */
+  uyumCarpani: number;
+  /** Göktaşı Kriz Alevi (stamina < %30): Enerji ve telegraf çarpanı (Kor Kalbi 1,75 / 0,80). 1 = yok. */
+  krizEnerji: number;
+  krizTelegraf: number;
+  /** Göktaşı: giriş başına ilk 12 s Enerji dolumu × 0,8 (Kor Kalbi'nde yok). */
+  girisYavas: boolean;
 }
 
 export interface ProfilSecenekleri {
@@ -145,6 +155,15 @@ export function topacProfiliKurParcalarla(c: Cekirdek, g: Govde, d: Disk, u: Uc,
     emis: koken === "karanlik",
   };
   const donus = yon === "cift" ? (sec.yon ?? "sag") : yon;
+  const Y = AYAR.yetenek;
+  const E = AYAR.enerji;
+  const ci = ELEMENT_CARKI.indexOf(c.element);
+  const gi = ELEMENT_CARKI.indexOf(g.element);
+  const fark = (gi - ci + 6) % 6;
+  let uyum = fark === 0 ? E.uyumAyni : fark === 1 || fark === 5 ? E.uyumKomsu : E.uyumDiger;
+  if (koken === "yapay" && uyum < 1) uyum = 1;
+  const goktasi = koken === "goktasi";
+  const korKalbi = c.gimmick?.krizEnerjiCarpani !== undefined;
   return {
     id: `${c.id}+${g.id}+${d.id}+${u.id}`,
     parcalar: { cekirdek: c.id, govde: g.id, disk: d.id, uc: u.id },
@@ -157,6 +176,11 @@ export function topacProfiliKurParcalarla(c: Cekirdek, g: Govde, d: Disk, u: Uc,
     kanat: g.kanat,
     maxStamina: parametreler.staminaHavuzu,
     sim,
+    yetenekler: ruhYuvalari(c.ruh),
+    uyumCarpani: uyum,
+    krizEnerji: goktasi ? (c.gimmick?.krizEnerjiCarpani ?? Y.krizEnerji) : 1,
+    krizTelegraf: goktasi ? (korKalbi ? Y.korKalbiTelegraf : Y.krizTelegraf) : 1,
+    girisYavas: goktasi && c.gimmick?.baslangicYavasligi !== false,
   };
 }
 

@@ -1,7 +1,7 @@
 // Altın senaryo üretici: test/altin/<ad>.json (girdi akışı) + <ad>.hash (FNV-1a 64).
 // Bilinçli sim değişikliğinde yeniden üret ve PR'da gerekçeyi yaz (flint § 2 test 2).
 // Çalıştır: npm run altin:uret
-import { writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { botGirdisi } from "../src/paylasilan/bot/bot.ts";
 import { type Girdi, bosGirdi } from "../src/paylasilan/sim/Girdi.ts";
 import { adim } from "../src/paylasilan/sim/Dunya.ts";
@@ -13,6 +13,9 @@ const MADEN: AltinParca = { cekirdek: "kaya-maden", govde: "kalkan-govde", disk:
 const YAPAY_SOL: AltinParca = { cekirdek: "kasirga-yapay", govde: "savrulan-govde", disk: "denge-disk", uc: "dengeli-uc", yon: "sol" };
 const DAYANIKLI: AltinParca = { cekirdek: "girdap-maden", govde: "halka-govde", disk: "parlak-disk", uc: "top-uc" };
 const DENGE: AltinParca = { cekirdek: "kasirga-yapay", govde: "savrulan-govde", disk: "denge-disk", uc: "dengeli-uc" };
+const KARANLIK: AltinParca = { cekirdek: "kul-cekirdegi", govde: "ok-govde", disk: "hafif-disk", uc: "duz-uc" };
+const SIMSEK: AltinParca = { cekirdek: "simsek-goktasi", govde: "ok-govde", disk: "alcak-disk", uc: "kusak-ucu" };
+const DON: AltinParca = { cekirdek: "sabir-tasi", govde: "ayaz-govde", disk: "denge-disk", uc: "duz-uc" };
 const TAKIM_1: AltinParca[] = [GOKTASI, MADEN, DAYANIKLI];
 const TAKIM_2: AltinParca[] = [DENGE, DAYANIKLI, GOKTASI];
 /** Tur fazından başla (geri sayım atlanmış). */
@@ -27,8 +30,16 @@ function sikistir(g: Girdi): SikiGirdi {
 
 const esit = (a: SikiGirdi, b: SikiGirdi): boolean => JSON.stringify(a) === JSON.stringify(b);
 
+/** `--yeniden` verilmezse var olan senaryonun girdi akışı korunur (bot kodu değişse de kayıt aynı kalır; D3). */
+const YENIDEN = process.argv.includes("--yeniden");
+
 /** Girdi üreticisiyle akış kaydı (RLE). */
 function kaydet(s: Omit<AltinSenaryo, "girdiler"> & Partial<Pick<AltinSenaryo, "takimlar" | "mac">>, uret: (tick: number, d: ReturnType<typeof senaryoDunyasi>) => [Girdi, Girdi]): AltinSenaryo {
+  const yol = `test/altin/${s.senaryo}.json`;
+  if (!YENIDEN && existsSync(yol)) {
+    const eski = JSON.parse(readFileSync(yol, "utf8")) as AltinSenaryo;
+    return { ...s, girdiler: eski.girdiler };
+  }
   const d = senaryoDunyasi({ ...s, girdiler: [] });
   const akis: [number, SikiGirdi, SikiGirdi][] = [];
   for (let t = 0; t < s.adim; t++) {
@@ -105,6 +116,61 @@ const senaryolar: AltinSenaryo[] = [
   kaydet({ surum: 1, senaryo: "tam-bot-maci", aciklama: "Tam maç: geri sayım dahil, kademe botları (kenar / dayaniklilik), tur arası seçimleri ve bitti fazı, 7800 adım.", tohum: 15,
     profiller: [GOKTASI, DENGE], takimlar: [TAKIM_1, TAKIM_2], adim: 7800, baslangic: null },
     (_t, d) => [botGirdisi(d, 0, "kenar", 51), botGirdisi(d, 1, "dayaniklilik", 52)]),
+  // ---- D3: her kademeden yetenek, alan yetenekleri, Ulti (aynı adımda iki Ulti + ikinci Ulti reddi) ----
+  kaydet({ surum: 1, senaryo: "yetenek-kademeler", aciklama: "Tek tur, iki taraf 300 Enerji: Karanlık (Kor Atılışı → Karanlık Yağmuru, Kararma) ve Şimşek (Zincir Kıvılcım, Çatırtı Kırması kontra, Ata Çakımı); reddedilen istekler (bekleme, Enerji).", tohum: 31,
+    profiller: [KARANLIK, SIMSEK], adim: 900, baslangic: [{ enerji: 300, x: -110 }, { enerji: 300, x: 110 }] },
+    (t, d) => {
+      const a = bosGirdi();
+      const b = bosGirdi();
+      const [ta, tb] = d.topaclar;
+      a.nisanX = tb.x; a.nisanZ = tb.z; b.nisanX = ta.x; b.nisanZ = ta.z;
+      const ux = ta.x - tb.x;
+      const uz = ta.z - tb.z;
+      const u = Math.hypot(ux, uz) || 1;
+      b.yonX = yuvarla((ux / u) * 0.7); b.yonZ = yuvarla((uz / u) * 0.7);
+      a.yonX = yuvarla((-ux / u) * 0.4); a.yonZ = yuvarla((-uz / u) * 0.4);
+      if (t === 203) { a.dash = true; } // kontra penceresine dash: Çatırtı Kırması tutar
+      if (t === 20) { a.atesle = true; a.secilenYuva = 0; }
+      if (t === 40) { a.atesle = true; a.secilenYuva = 0; } // bekleme: ret
+      if (t === 60) { b.atesle = true; b.secilenYuva = 0; }
+      if (t === 200) { b.atesle = true; b.secilenYuva = 1; }
+      if (t === 120) { a.atesle = true; a.secilenYuva = 1; } // Karanlık Yağmuru (Kara: Kararma +25)
+      if (t === 500) { b.atesle = true; b.secilenYuva = 2; } // Enerji yetmez: ret
+      if (t === 520) { a.atesle = true; a.secilenYuva = 1; } // Enerji yetmez: ret
+      return [a, b];
+    }),
+  kaydet({ surum: 1, senaryo: "alan-yetenegi", aciklama: "Tek tur, alan ve engel: Dip Girdabı (çekim + emiş), Yontu Siperi (engel), Kırağı Çemberi (kaygan zemin), Kor Çukuru; sürüş alanların içinden geçer.", tohum: 32,
+    profiller: [DAYANIKLI, MADEN], adim: 1100, baslangic: [{ enerji: 300, x: -120 }, { enerji: 300, x: 120 }] },
+    (t, d) => {
+      const a = bosGirdi();
+      const b = bosGirdi();
+      const [ta, tb] = d.topaclar;
+      a.nisanX = tb.x; a.nisanZ = tb.z; b.nisanX = ta.x - 40; b.nisanZ = ta.z;
+      const blok = Math.floor(t / 90);
+      a.yonX = yuvarla(rastgele(71, blok * 2) * 2 - 1); a.yonZ = yuvarla(rastgele(71, blok * 2 + 1) * 2 - 1);
+      b.yonX = yuvarla(rastgele(72, blok * 2) * 2 - 1); b.yonZ = yuvarla(rastgele(72, blok * 2 + 1) * 2 - 1);
+      if (t === 30) { a.atesle = true; a.secilenYuva = 1; }
+      if (t === 50) { b.atesle = true; b.secilenYuva = 1; }
+      if (t === 400) { b.atesle = true; b.secilenYuva = 0; }
+      if (t === 700) { a.atesle = true; a.secilenYuva = 0; }
+      return [a, b];
+    }),
+  kaydet({ surum: 1, senaryo: "ulti", aciklama: "Tam maç kipi: iki taraf aynı adımda Ulti (Ata Közü + Ata Girdabı, ikisi de çalışır), ulti süresince Enerji dolmaz, ikinci Ulti reddedilir; alan hasarı ve çekim.", tohum: 33,
+    profiller: [GOKTASI, DAYANIKLI], takimlar: [TAKIM_1, [DAYANIKLI, MADEN, GOKTASI]], mac: TURDAN, adim: 900, baslangic: [{ enerji: 300, x: -100 }, { enerji: 300, x: 100 }] },
+    (t, d) => {
+      const a = bosGirdi();
+      const b = bosGirdi();
+      const [ta, tb] = d.topaclar;
+      a.nisanX = tb.x; a.nisanZ = tb.z; b.nisanX = ta.x; b.nisanZ = ta.z;
+      if (t === 30) { a.atesle = true; a.secilenYuva = 2; b.atesle = true; b.secilenYuva = 2; }
+      if (t === 120) { a.atesle = true; a.secilenYuva = 2; } // ikinci Ulti: ret
+      if (t > 200) { const g = botGirdisi(d, 0, "kenar", 81); a.yonX = g.yonX; a.yonZ = g.yonZ; a.dash = g.dash; }
+      if (t > 200) { const g = botGirdisi(d, 1, "dolas", 82); b.yonX = g.yonX; b.yonZ = g.yonZ; b.dash = g.dash; }
+      return [a, b];
+    }),
+  kaydet({ surum: 1, senaryo: "tam-bot-yetenek", aciklama: "Tam maç: kademe botları yetenekleriyle (D3: Enerji dolumu, bot yetenek kararları, telegraftan kaçış), 7800 adım.", tohum: 34,
+    profiller: [GOKTASI, DENGE], takimlar: [TAKIM_1, [DENGE, SIMSEK, DON]], adim: 7800, baslangic: null },
+    (_t, d) => [botGirdisi(d, 0, "kenar", 91), botGirdisi(d, 1, "dolas", 92)]),
   kaydet({ surum: 1, senaryo: "berabere", aciklama: "İki aynı topaç aynı adımda Durma: berabere, puan yok.", tohum: 8, profiller: [MADEN, MADEN], adim: 120,
     baslangic: [{ stamina: 1 }, { stamina: 1 }] },
     () => [bosGirdi(), bosGirdi()]),

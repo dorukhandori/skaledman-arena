@@ -142,6 +142,72 @@ export const AYAR = {
     inisMesafesi: 120,
   },
 
+  // ---- § 8 Enerji (D3) ----
+  enerji: {
+    /** Bir dilim, puan. */
+    dilim: 100,
+    /** SAPMA: tuning § 8 `metreDilim` 2 (ilk sürüm) yazar; brief + nile § 0 K-7 revize: Ulti ilk sürümde → 3 dilim. */
+    metreDilim: 3,
+    pasifDolum: 1.5,
+    /** Çarpışma kazanımı: clamp(katsayi · Ş / bolen, enAz, enCok), vuran ve vurulan ayrı. */
+    carpismaKatsayi: 8,
+    carpismaBolen: 4000,
+    carpismaEnAz: 3,
+    carpismaEnCok: 12,
+    /** Hasar alma: katsayi · H / maxStamina. */
+    hasarKatsayi: 50,
+    kusakDolum: 2.0,
+    kenarDolum: 1.5,
+    /** Kenar riski: d > oran · R. */
+    kenarOran: 0.85,
+    yakinGecis: 3,
+    yakinGecisBosluk: 20,
+    yakinGecisBagilHiz: 150,
+    yakinGecisBekleme: 2,
+    zitElementCarpani: 1.25,
+    uyumAyni: 1.1,
+    uyumKomsu: 1.0,
+    uyumDiger: 0.8,
+    /** Ulti süresince ve sonrasında bu kadar s hiçbir topaçta Enerji dolmaz (flint #14). */
+    ultiSonrasiKilit: 1,
+  },
+
+  // ---- § 9 yetenek kademeleri (D3) ----
+  yetenek: {
+    /** Seviye kapıları (brief/nile K-7: Özel ve Ulti Lv.3; tuning'in "Ulti Lv.4 / sezon 2" notu yerine). */
+    seviyeYuva: [2, 3, 3, 99],
+    /** axiom #35: kaçılabilir her yetenekte telegraf alt sınırı. */
+    telegrafAltSinir: 0.3,
+    /** VARSAYIM: alan yeteneği nişan noktasına kurulur; kullanandan en çok bu kadar uzakta (br). */
+    alanMenzil: 170,
+    /** VARSAYIM: bu yarıçaptan büyük alan (Ulti) tüm çanağı kaplar, merkezi arena merkezi. */
+    tumCanakYaricap: 200,
+    /** VARSAYIM: atılış hızı verilmemiş hücumlarda (Sarmal Pençe, Taklit) kullanılan atılış hızı, br/s. */
+    varsayilanAtilisHizi: 420,
+    /** VARSAYIM (01 § 4.2 "WASD kısmi, dash kilitli"): Ulti telegrafında sürüş ivmesi çarpanı. */
+    ultiSurusCarpani: 0.5,
+    /** VARSAYIM: zincir şimşeğinin iki sıçrama arası (s). */
+    zincirAralik: 0.25,
+    /** VARSAYIM: emiş yeteneğinde yakınlık çalmasının aralığı (s). */
+    emisAralik: 0.5,
+    /** Kontra kaçırılırsa sersem (s) (00 § 4.7 #5 "kaçırırsan 1 sn sersem"). */
+    sersemSn: 1,
+    /** Kararma: Karanlık kökenli topaç Kara yetenek kullanınca (tuning § 11). */
+    kararmaArtis: 25,
+    /** Yapay Uyum: her topacın ilk yeteneği bu kadar ucuz, alt sınır. */
+    yapayIndirim: 100,
+    yapayAltSinir: 50,
+    /** Engel çarpması: duvar sekmesi katsayısı ile aynı; dayanıklılık bu hızdan büyük çarpmada düşer (br/s). */
+    engelDarbeHizi: 60,
+    /** Kriz Alevi (§ 11): stamina oranı eşiği, Enerji ve telegraf çarpanları; giriş başına ilk 12 s dolum × 0,8. */
+    krizEsik: 0.3,
+    krizEnerji: 1.5,
+    krizTelegraf: 0.85,
+    korKalbiTelegraf: 0.8,
+    girisYavasSn: 12,
+    girisYavasCarpan: 0.8,
+  },
+
   // ---- girdi ----
   /** Nişan noktası çanaktan en çok bu kadar taşabilir. */
   nisanTasma: 120,

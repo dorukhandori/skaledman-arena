@@ -8,6 +8,11 @@ import {
   macTurKarari, saatIlerlet, turArasiAdimi, turKarari,
 } from "./mac.ts";
 import { aktifMi, eylemleriUygula, sayaclariIlerlet, yorgunlukCarpani } from "./topac.ts";
+import { enerjiAdimi } from "./enerji.ts";
+import {
+  type HareketEtkisi, NOTR_HAREKET, alanAdimi, bitenleriKes, engelAdimi, hareketEtkisi, yetenekIlerlet, yetenekIstekleri,
+  yetenekleriTemizle, yetenekSayaclari,
+} from "./yetenek.ts";
 
 // Bir sim adımı (1/60 s). Fizik sırası:
 //   1) girdi temizle  2) her topaç: sayaç, eylem, hareket, erime (birbirinden bağımsız, sıra fark etmez)
@@ -27,10 +32,23 @@ function sonumAdimla(t: Topac): void {
   t.z += t.vz * AYAR.dt;
 }
 
-/** Fizik adımı; `karar` false ise erime, bitiş ve duvar bedeli yok. Bitiş adaylarını döner. */
+/** Kilitli (yetenek kilidi / sersem) topaç: sürüş, dash, sekme yok; Ulti'de dash yok. */
+function kisitliGirdi(g: Girdi, m: HareketEtkisi): Girdi {
+  if (m.kilit) return { ...g, yonX: 0, yonZ: 0, dash: false, zipla: false };
+  if (m.dashYok) return { ...g, dash: false };
+  return g;
+}
+
+/** Fizik adımı; `karar` false ise erime, bitiş, duvar bedeli ve yetenek yok. Bitiş adaylarını döner. */
 function fizikAdimi(d: Dunya, g: readonly [Girdi, Girdi], karar: boolean): readonly [AdimBitisleri, AdimBitisleri] {
   const R = d.arenaYaricap;
   const erimeCarpani = aniOlumErimeCarpani(d);
+  if (karar) {
+    // D3: yetenek sayaçları → istekler (ön-durumdan, iki oyuncu birlikte) → telegraf/etki geçişleri
+    yetenekSayaclari(d);
+    yetenekIstekleri(d, g);
+    yetenekIlerlet(d);
+  }
   for (let i = 0; i < 2; i++) {
     const t = d.topaclar[i]!;
     const p = d.profiller[i]!;
@@ -38,12 +56,19 @@ function fizikAdimi(d: Dunya, g: readonly [Girdi, Girdi], karar: boolean): reado
     if (!aktifMi(t)) continue;
     sayaclariIlerlet(t);
     const yorgunluk = yorgunlukCarpani(t, p);
-    eylemleriUygula(t, p, g[i]!, d.topaclar[1 - i]!, i, d.tick, d.olaylar);
-    hareketAdimla(t, p, g[i]!, d.tick, yorgunluk, R);
-    if (karar) erimeUygula(t, p, erimeCarpani);
+    const m = karar ? hareketEtkisi(d, i) : NOTR_HAREKET;
+    const gi = m === NOTR_HAREKET ? g[i]! : kisitliGirdi(g[i]!, m);
+    eylemleriUygula(t, p, gi, d.topaclar[1 - i]!, i, d.tick, d.olaylar);
+    hareketAdimla(t, p, gi, d.tick, yorgunluk, R, m === NOTR_HAREKET ? null : m);
+    if (karar) erimeUygula(t, p, erimeCarpani, m.erime);
   }
 
   topacCarpismasi(d);
+  if (karar) {
+    engelAdimi(d);
+    alanAdimi(d);
+    enerjiAdimi(d);
+  }
 
   const bitisler = [bosBitis(), bosBitis()] as const;
   for (let i = 0; i < 2; i++) {
@@ -74,8 +99,9 @@ export function adim(d: Dunya, girdiler: readonly [Girdi, Girdi]): void {
     if (!karar) return;
     // adım sonu: bitişleri uygula (iki topaç birden olabilir), sonra tek karar
     bitisleriUygula(d, bitisler);
+    bitenleriKes(d);
     const sonuc = turKarari(d, bitisler);
-    if (sonuc) d.olaylar.push({ tur: "turBitti", tick: d.tick, sonuc });
+    if (sonuc) { d.olaylar.push({ tur: "turBitti", tick: d.tick, sonuc }); yetenekleriTemizle(d); }
     return;
   }
 
@@ -84,11 +110,12 @@ export function adim(d: Dunya, girdiler: readonly [Girdi, Girdi]): void {
       geriSayimAdimi(d);
       return;
     case "tur": {
-      if (saatIlerlet(d)) return;
+      if (saatIlerlet(d)) { yetenekleriTemizle(d); return; }
       geriCekIstekleri(d, g);
       const bitisler = fizikAdimi(d, g, true);
       bitisleriUygula(d, bitisler);
-      macTurKarari(d, bitisler);
+      bitenleriKes(d);
+      if (macTurKarari(d, bitisler)) yetenekleriTemizle(d);
       if (d.mac.faz === "tur") geriCekIlerlet(d);
       return;
     }

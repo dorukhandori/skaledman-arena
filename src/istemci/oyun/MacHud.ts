@@ -2,13 +2,17 @@ import { AYAR } from "../../paylasilan/kurallar/ayar.ts";
 import type { Dunya, Olay, TakimUyesi } from "../../paylasilan/sim/durum.ts";
 import { MAC_ADIM, geriCekAcik } from "../../paylasilan/sim/mac.ts";
 import { staminaOrani } from "../../paylasilan/sim/topac.ts";
+import { ULTI_YUVA, yuvaBedeli, yuvaDurumu } from "../../paylasilan/sim/yetenek.ts";
+import { AYAR as AYAR_ } from "../../paylasilan/kurallar/ayar.ts";
+import { YETENEK_SIM } from "../../paylasilan/veri/yetenekSablon.ts";
 import { elementSvg } from "./elementSimge.ts";
 import { ELEMENT_RENK, KOKEN_RENK } from "./renkler.ts";
 
 // Maç HUD'u (ux § 2: H1-H15, 960×540 mantıksal DOM katmanı; konum ve boyutlar tablodan birebir).
 // Yazı boyutları: ad 10 · sayı 10 · tuş rozeti 10 · bekleme 12 · süre 14 · skor 20 · olay bandı 16.
 // Renk hiçbir bilgiyi tek başına taşımaz: ayraç + tarama + simge, element = silüet, elenen = çarpı.
-// H9 (nişan), H10 (bağlantı), H13 (telegraf) D3/D4 kapsamı; H15 yalnız Antrenman.
+// D3: H6 yuva hâlleri (hazır / bekleme / Enerji yetersiz / kilitli / basılı / etkin / kullanıldı), H1b ULTİ + parıltı,
+// H5 "Rakip: Ulti hazırlıyor"; H9 nişan ve H13 telegraf dünyada (YetenekGorsel). H10 D4; H15 yalnız Antrenman.
 
 const STIL = `
 .mh { position:absolute; left:0; top:0; width:960px; height:540px; transform-origin:0 0; pointer-events:none; font-family:"Nunito Sans",system-ui,sans-serif; color:#f3f1e8; user-select:none; }
@@ -94,6 +98,19 @@ const STIL = `
 .mh .ip { position:absolute; left:160px; top:444px; width:640px; height:40px; display:none; text-align:center; font:700 12px/36px system-ui; background:rgba(5,13,16,.85); border:2px solid #24414b; border-radius:8px; }
 .mh .ip.acik { display:block; }
 .mh .els { display:block; flex:none; }
+.mh .yv { transition:transform .06s; }
+.mh .yv.hazir { border-color:#fff6c8; box-shadow:0 0 0 1px #050d10, 0 0 6px rgba(255,246,200,.55); }
+.mh .yv.parla { box-shadow:0 0 0 2px #fff, 0 0 14px #fff6c8; }
+.mh .yv.basili { border-width:5px; transform:translateY(-4px); }
+.mh .yv.etkin { border-color:#7fd3ff; box-shadow:0 0 8px #7fd3ff; }
+.mh .yv.kullanildi { border-color:#4a5a60; color:#8d989e; background:rgba(5,13,16,.85); }
+.mh .yv .ys { display:block; margin:0 auto; }
+.mh .ya { position:absolute; top:481px; width:48px; margin-left:-2px; font-size:8px; line-height:10px; text-align:center; color:#a3b2b6; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-shadow:0 1px 0 #000; }
+.mh .ya.on { color:#f3f1e8; }
+.mh .en span.parilti { box-shadow:0 0 0 1px #fff, 0 0 10px #cfeeff; }
+.mh .en span.parilti i { background:#e6f8ff; }
+.mh .en em.ulti { color:#ffb347; text-shadow:0 0 4px #ff8a3d; }
+.mh .bant .els { display:inline-block; vertical-align:-3px; margin-left:6px; }
 `;
 
 function el<K extends keyof HTMLElementTagNameMap>(etiket: K, sinif = "", ust?: HTMLElement, metin = ""): HTMLElementTagNameMap[K] {
@@ -127,6 +144,7 @@ export class MacHud {
   private gs = el("div", "gs");
   private bantKalan = 0;
   private yuvalar: HTMLElement[] = [];
+  private yuvaAdlari: HTMLElement[] = [];
   private dash = el("div", "yv kare");
   private sekme = el("div", "yv kare");
   private takim: HTMLElement[] = [];
@@ -152,6 +170,10 @@ export class MacHud {
     for (let k = 0; k < 4; k++) {
       const y = el("div", `yv ${sekil[k]}`, this.kok);
       y.style.left = `${8 + k * 50}px`;
+      el("div", "k", y);
+      const ya = el("span", "ya", this.kok);
+      ya.style.left = `${8 + k * 50}px`;
+      this.yuvaAdlari.push(ya);
       el("span", "tus", y, String(k + 1));
       el("div", "ic", y);
       this.yuvalar.push(y);
@@ -224,8 +246,8 @@ export class MacHud {
   }
 
   /** H5 olay bandı: aynı anda tek band, yeni olay eskinin üstüne biner (1,2-2 sn). */
-  bantGoster(metin: string, sure = 1.6): void {
-    this.bant.textContent = metin;
+  bantGoster(metin: string, sure = 1.6, html = false): void {
+    if (html) this.bant.innerHTML = metin; else this.bant.textContent = metin;
     this.bant.classList.add("acik");
     this.bantKalan = sure;
   }
@@ -246,11 +268,45 @@ export class MacHud {
       case "secim":
         if (o.i !== ben && d.mac.faz === "turArasi") this.bantGoster("Rakip topaç değiştiriyor", 1.4);
         break;
+      case "yetenekBasladi":
+        if (o.kademe === 3 && o.i !== ben) this.bantGoster(`Rakip: Ulti hazırlıyor${elementSvg(d.profiller[o.i]!.element, 16)}`, 1.8, true);
+        else if (o.kademe === 3) this.bantGoster(`ULTİ · ${YETENEK_SIM[o.no]!.ad}${elementSvg(d.profiller[o.i]!.element, 16)}`, 1.6, true);
+        break;
+      case "yetenekReddi":
+        if (o.i === ben) this.bantGoster(this.retMetni(o.neden, o.yuva, d), 1.4);
+        break;
+      case "enerjiDoldu": {
+        const k = o.i === ben ? 0 : 1;
+        const dl = this.paneller[k]!.enerji[o.dilim - 1];
+        if (dl) { dl.classList.add("parilti"); this.parilti.push({ e: dl, kalan: 0.12 }); }
+        break;
+      }
       default: break;
     }
   }
 
-  guncelle(d: Dunya, dt: number): void {
+  private parilti: { e: HTMLElement; kalan: number }[] = [];
+  private oncekiHazir: boolean[] = [false, false, false, false];
+  private parlaKalan: number[] = [0, 0, 0, 0];
+
+  /** ux § 7: ne oldu + ne yapabilirsin; suçlayıcı sözcük yok. */
+  private retMetni(neden: string, yuva: number, d: Dunya): string {
+    const t = d.topaclar[this.yerel]!;
+    const p = d.profiller[this.yerel]!;
+    switch (neden) {
+      case "enerji": return `Enerji yetmiyor: ${Math.ceil(yuvaBedeli(t, p, yuva) / 100)} dilim gerekir.`;
+      case "bekleme": return `Bekleme: ${(((yuva === 0 ? t.bekleme1 : t.bekleme2) / AYAR.adimHz)).toFixed(1)} sn.`;
+      case "kilitli": return "Bu yuva Lv.3 Çekirdekte açılır.";
+      case "ultiKullanildi": return "Ulti bu maçta kullanıldı.";
+      case "rakipUlti": return "Rakibin Ulti'si sürerken Ulti kullanılamaz.";
+      case "stamina": return "Stamina yetmiyor: Ulti'nin bedeli var.";
+      case "mesgul": return "Önce süren yetenek bitsin.";
+      case "yok": return yuva === 3 ? "Parça Tekniği ilk sürümde yok." : "Bu yuva boş.";
+      default: return "";
+    }
+  }
+
+  guncelle(d: Dunya, dt: number, basiliYuva = -1): void {
     const m = d.mac;
     const T = d.takimlar!;
     // H1 / H2
@@ -262,7 +318,7 @@ export class MacHud {
       const oran = staminaOrani(t, p);
       this.yaz(pn.ik, elementSvg(p.element, 14), true);
       this.yaz(pn.ad, `${this.adlar[k]} · ${ELEMENT_RENK[p.element].ad} ${KOKEN_RENK[p.koken].ad}`);
-      this.yaz(pn.lv, "Lv.2");
+      this.yaz(pn.lv, `Lv.${d.seviye[i]}`);
       pn.dolgu.style.width = `${Math.max(0, oran) * 100}%`;
       const sinif = sinifOran(oran);
       if (pn.dolgu.className !== sinif) pn.dolgu.className = sinif;
@@ -279,7 +335,10 @@ export class MacHud {
         (dl.firstElementChild as HTMLElement).style.width = `${dolu * 100}%`;
         dl.classList.toggle("dolu", dolu >= 1);
       }
-      this.yaz(pn.enerjiYazi, e >= 300 ? "DOLU" : "");
+      const ultiAcik = yuvaDurumu(d, i, ULTI_YUVA);
+      const ultiVar = d.profiller[i]!.yetenekler[ULTI_YUVA]! >= 0 && ultiAcik !== "kilitli" && ultiAcik !== "ultiKullanildi" && ultiAcik !== "yok";
+      this.yaz(pn.enerjiYazi, e >= 300 ? (ultiVar ? "ULTİ" : "DOLU") : "");
+      pn.enerjiYazi.classList.toggle("ulti", e >= 300 && ultiVar);
       const tikOran = t.tik / p.parametreler.burstEsik;
       this.yaz(pn.ct, catlakSvg(tikOran), true);
       pn.ct.classList.toggle("titre", tikOran >= 0.9);
@@ -312,20 +371,51 @@ export class MacHud {
 
     const ben = d.topaclar[this.yerel]!;
     const bp = d.profiller[this.yerel]!;
-    // H6: Enerji yetersiz (1 / 2 dilim), yuva 3 kilitli Lv.4, yuva 4 boş (D3)
+    // H6 yuvaları (ux § 2 H6): hazır · bekleme (karartma + sn) · Enerji yetersiz (kesikli + nokta) · kilitli (Lv.3) ·
+    // basılı (kalın + 4 px yukarı) · etkin (telegraf/etki) · kullanıldı (Ulti); yuva 4 boş (Parça Tekniği yok)
     const yv = this.yuvalar;
-    const enerjiYuva = (y: HTMLElement, dilim: number, ad: string) => {
-      const yeter = ben.enerji >= dilim * 100;
-      y.classList.toggle("yetmez", !yeter);
-      y.title = `${ad}: ${dilim} Enerji dilimi gerekir (D3)`;
-      this.yaz(y.lastElementChild as HTMLElement, `<span class="nok">${"<b></b>".repeat(dilim)}</span>`, true);
-    };
-    enerjiYuva(yv[0]!, 1, "Yetenek");
-    enerjiYuva(yv[1]!, 2, "Özel");
-    yv[2]!.classList.add("kilit");
-    this.yaz(yv[2]!.lastElementChild as HTMLElement, `<svg viewBox="0 0 12 12" width="12" height="12" aria-label="kilitli"><rect x="2" y="5" width="8" height="6" rx="1" fill="#8d989e"/><path d="M4 5V3.6a2 2 0 0 1 4 0V5" fill="none" stroke="#8d989e" stroke-width="1.5"/></svg><span>Lv.4</span>`, true);
-    yv[3]!.classList.add("yok");
-    this.yaz(yv[3]!.lastElementChild as HTMLElement, "—");
+    for (let k = 0; k < 4; k++) {
+      const y = yv[k]!;
+      const no = k < 3 ? bp.yetenekler[k]! : -1;
+      const bilgi = no >= 0 ? YETENEK_SIM[no]! : null;
+      const durum = k < 3 ? yuvaDurumu(d, this.yerel, k) : "yok";
+      const etkin = ben.yetenekFaz !== 0 && ben.yetenekYuva === k;
+      const bekleme = k === 0 ? ben.bekleme1 : k === 1 ? ben.bekleme2 : 0;
+      const hazir = durum === null;
+      const kilit = durum === "kilitli";
+      const kullanildi = durum === "ultiKullanildi";
+      const bos = !bilgi;
+      const yetmez = !kilit && !kullanildi && !bos && (durum === "enerji" || durum === "stamina");
+      if (hazir && !this.oncekiHazir[k]) this.parlaKalan[k] = 0.15;
+      this.oncekiHazir[k] = hazir;
+      if (this.parlaKalan[k]! > 0) this.parlaKalan[k]! -= dt;
+      y.classList.toggle("hazir", hazir);
+      y.classList.toggle("parla", this.parlaKalan[k]! > 0);
+      y.classList.toggle("bekle", bekleme > 0 && !etkin);
+      y.classList.toggle("yetmez", yetmez && bekleme === 0);
+      y.classList.toggle("kilit", kilit);
+      y.classList.toggle("kullanildi", kullanildi);
+      y.classList.toggle("yok", bos);
+      y.classList.toggle("etkin", etkin);
+      y.classList.toggle("basili", basiliYuva === k && !bos);
+      y.dataset["durum"] = etkin ? "etkin" : basiliYuva === k ? "basili" : hazir ? "hazir" : bekleme > 0 ? "bekleme" : (durum ?? "hazir");
+      const sweep = y.firstElementChild as HTMLElement;
+      const toplam = bilgi?.beklemeAdim ?? 1;
+      sweep.style.height = `${bekleme > 0 && !etkin ? (bekleme / toplam) * 100 : 0}%`;
+      y.title = bilgi ? `${["Yetenek", "Özel Yetenek", "Ulti"][k]}: ${bilgi.ad} · ${bilgi.enerjiBedel / 100} dilim` : k === 3 ? "Parça Tekniği (ilk sürümde yok)" : "Boş";
+      this.yaz(this.yuvaAdlari[k]!, bilgi ? bilgi.ad : "");
+      this.yuvaAdlari[k]!.classList.toggle("on", hazir || basiliYuva === k);
+      const ic = y.lastElementChild as HTMLElement;
+      const simge = bilgi ? elementSvg(bp.element, 18).replace('class="els"', 'class="els ys"') : "";
+      if (bos) this.yaz(ic, "—");
+      else if (kilit) this.yaz(ic, `<svg viewBox="0 0 12 12" width="12" height="12" aria-label="kilitli"><rect x="2" y="5" width="8" height="6" rx="1" fill="#8d989e"/><path d="M4 5V3.6a2 2 0 0 1 4 0V5" fill="none" stroke="#8d989e" stroke-width="1.5"/></svg><span>Lv.${AYAR_.yetenek.seviyeYuva[k]}</span>`, true);
+      else if (kullanildi) this.yaz(ic, `${simge}<span>✓</span>`, true);
+      else if (bekleme > 0 && !etkin) { const sn = bekleme / AYAR.adimHz; this.yaz(ic, `<span class="n">${sn >= 10 ? sn.toFixed(0) : sn.toFixed(1)}</span>`, true); }
+      else if (yetmez) this.yaz(ic, `${simge}<span class="nok">${"<b></b>".repeat(Math.ceil(yuvaBedeli(ben, bp, k) / 100))}</span>`, true);
+      else this.yaz(ic, simge, true);
+    }
+    for (const p of this.parilti) { p.kalan -= dt; if (p.kalan <= 0) p.e.classList.remove("parilti"); }
+    this.parilti = this.parilti.filter((p) => p.kalan > 0);
     // H7
     this.rozet(this.dash, ben.dashBekleme, bp.sim.dashBekleme, ben.stamina - AYAR.eylemStaminaPayi < bp.sim.dashMaliyet);
     this.rozet(this.sekme, ben.sekmeBekleme, Math.round(AYAR.sekmeBekleme * AYAR.adimHz), ben.stamina - AYAR.eylemStaminaPayi < AYAR.sekmeStamina);

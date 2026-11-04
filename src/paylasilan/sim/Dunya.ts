@@ -11,7 +11,12 @@ export { adim } from "./adim.ts";
 export interface DunyaSecenekleri {
   /** Uç deseni fazları (tablo birimi). Verilmezse tohumdan: rastgele(tohum, i) · 256. Simetri testi için. */
   fazlar?: readonly [number, number];
+  /** Çekirdek seviyesi (oyuncu başına). VARSAYIM (D3, ilerleme D5'te): varsayılan Lv.3, üç yuva açık. */
+  seviye?: readonly [number, number];
 }
+
+/** VARSAYIM: D5 ilerlemesi gelene kadar çevrimdışı maçta Çekirdekler Lv.3 (tavan) sayılır. */
+export const VARSAYILAN_SEVIYE = 3;
 
 /** Tek tur dünyası (Topaç Lab, D1): topaçlar doğum noktalarında, tam stamina, tık 0, faz `tur`. */
 export function dunyaKur(profiller: readonly [TopacProfili, TopacProfili], tohum: number, sec: DunyaSecenekleri = {}): Dunya {
@@ -27,6 +32,15 @@ export function dunyaKur(profiller: readonly [TopacProfili, TopacProfili], tohum
     arenaYaricap: AYAR.arenaYaricap,
     takimlar: null,
     olaylar: [],
+    alanlar: [null, null],
+    engeller: [],
+    ultiKullanildi: [0, 0],
+    ultiKilit: 0,
+    yakinGecisBekleme: 0,
+    kararma: [0, 0],
+    seviye: [sec.seviye?.[0] ?? VARSAYILAN_SEVIYE, sec.seviye?.[1] ?? VARSAYILAN_SEVIYE],
+    sonYetenek: [-1, -1],
+    yetenekSayisi: [[0, 0, 0], [0, 0, 0]],
   };
 }
 

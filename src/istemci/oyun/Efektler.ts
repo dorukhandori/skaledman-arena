@@ -19,7 +19,12 @@ export interface HisAyarlari {
   flas: "normal" | "azaltilmis" | "kapali";
   hitstop: number; // 1 / 0,5 / 0
   parcacik: number; // 1 / 0,4
+  /** Yavaş çekim ve zoom (ux § 6.2): false ise Parçalanma 0,3× ve zoom darbeleri yok. */
+  yavasZoom?: boolean;
 }
+
+/** Ses kancası (05 § 3.3): olay anahtarı → ses adı; ses yoksa sessiz. */
+export type SesKancasi = (ad: "carpisma-hafif" | "carpisma-agir" | "carpisma-kritik" | "duvar" | "dash" | "sekme" | "ring-out" | "parcalanma" | "durma" | "telegraf" | "ulti" | "enerji-doldu" | "mac-sonu", hacim?: number) => void;
 
 export class Efektler {
   readonly parcaciklar = new Parcaciklar();
@@ -33,8 +38,9 @@ export class Efektler {
   private yavasKalanMs = 0;
   private konumlar: KonumDurumu[] = [];
   private rng = new SusRastgele(0xe7f);
-  readonly sayac = { yok: 0, hafif: 0, agir: 0, kritik: 0, duvar: 0, ringOut: 0, parcalanma: 0, durma: 0, dash: 0, sekme: 0, zitElement: 0, ekranFlas: 0, ekranFlasReddi: 0 };
-  ayar: HisAyarlari = { sarsinti: 1, flas: "normal", hitstop: 1, parcacik: 1 };
+  readonly sayac = { yok: 0, hafif: 0, agir: 0, kritik: 0, duvar: 0, ringOut: 0, parcalanma: 0, durma: 0, dash: 0, sekme: 0, zitElement: 0, ekranFlas: 0, ekranFlasReddi: 0, telegraf: 0, ulti: 0, enerjiDoldu: 0, yetenekVurus: 0, zincir: 0, kontra: 0, engel: 0 };
+  ayar: HisAyarlari = { sarsinti: 1, flas: "normal", hitstop: 1, parcacik: 1, yavasZoom: true };
+  sesKanca: SesKancasi = () => {};
 
   constructor(private sahne: Sahne, private gorseller: () => readonly TopacGorsel[]) {
     sahne.efektKatmani.addChild(this.parcaciklar.kap);
@@ -103,8 +109,14 @@ export class Efektler {
     return m;
   }
 
-  private ekranFlasi(alfa: number, ms: number): void {
+  private zoom(tepe: number, sure: number): void {
+    if (this.ayar.yavasZoom === false) return;
+    this.sahne.zoomDarbesi(tepe, sure);
+  }
+
+  private ekranFlasi(alfa: number, ms: number, renk = 0xffffff): void {
     if (this.ayar.flas === "kapali") return;
+    this.ekranFlas.tint = renk;
     const a = Math.min(HIS.ekranFlasAlfaTavani, this.ayar.flas === "azaltilmis" ? Math.min(alfa, 0.1) : alfa);
     this.flasZamanlari = this.flasZamanlari.filter((t) => this.saat - t < 1);
     if (this.flasZamanlari.length >= HIS.ekranFlasSaniyedeEnCok) { this.sayac.ekranFlasReddi++; return; }
@@ -155,6 +167,7 @@ export class Efektler {
         const r0 = ELEMENT_RENK[o.taraflar[0].element];
         const r1 = ELEMENT_RENK[o.taraflar[1].element];
         if (sd === "yok") { this.toz(x, y, 2, 0x9aa8ad); return; }
+        this.sesKanca(sd === "kritik" ? "carpisma-kritik" : sd === "agir" ? "carpisma-agir" : "carpisma-hafif");
         // hitstop
         let ms: number = HIS.hitstopMs[sd];
         if (o.zitElement) ms += HIS.hitstopMs.zitEk;
@@ -183,10 +196,10 @@ export class Efektler {
           this.sok(x, y, 6, sd === "kritik" ? 56 : 40, sure2, renkKaristir(r0.orta, r1.orta, 0.5), o.zitElement ? r1.orta : null, 3);
           if (sd === "kritik") this.sok(x, y, 2, 36, sure2 * 0.8, 0xffffff, null, 2);
           const z = sd === "kritik" ? HIS.zoom.kritik : HIS.zoom.agir;
-          S.zoomDarbesi(z[0], z[1]);
+          this.zoom(z[0], z[1]);
         }
         if (o.zitElement) this.sok(x, y, 4, 30, 200, r0.orta, r1.orta, 4);
-        if (dash) { this.sok(x, y, 10, 70, 240, 0xffffff, null, 2); S.zoomDarbesi(HIS.zoom.dash[0], HIS.zoom.dash[1]); }
+        if (dash) { this.sok(x, y, 10, 70, 240, 0xffffff, null, 2); this.zoom(HIS.zoom.dash[0], HIS.zoom.dash[1]); }
         break;
       }
       case "duvar": {
@@ -194,6 +207,7 @@ export class Efektler {
         const x = S.ekranX(o.x);
         const y = S.ekranY(o.z);
         const ms = o.vd > HIS.esik.agir ? 33 : o.vd > HIS.esik.hafif ? 16 : 0;
+        if (o.vd > HIS.esik.hafif * 0.75) this.sesKanca("duvar", Math.min(1, o.vd / HIS.esik.agir));
         if (ms > 0) this.hitstop(o.i, ms, o.nx, o.nz, false, false);
         S.sars(Math.sqrt(HIS.sarsintiPx.duvar / SAHNE.sarsintiTavan) * Math.sqrt(this.ayar.sarsinti) * Math.min(1, o.vd / HIS.esik.agir + 0.4), o.nx, o.nz, true);
         g[o.i]?.squash(o.nx, o.nz, HIS.squash.duvar[0], HIS.squash.duvar[1], HIS.squashMs.duvar / 1000);
@@ -209,6 +223,7 @@ export class Efektler {
       }
       case "dash": {
         this.sayac.dash++;
+        this.sesKanca("dash");
         const t = d.topaclar[o.i]!;
         const x = S.ekranX(t.x);
         const y = S.ekranY(t.z);
@@ -222,12 +237,14 @@ export class Efektler {
       }
       case "sekme": {
         this.sayac.sekme++;
+        this.sesKanca("sekme");
         const t = d.topaclar[o.i]!;
         this.toz(S.ekranX(t.x), S.ekranY(t.z), 6, 0x9aa8ad, 24);
         break;
       }
       case "ringOut": {
         this.sayac.ringOut++;
+        this.sesKanca("ring-out");
         const x = S.ekranX(o.x);
         const y = S.ekranY(o.z);
         const u = Math.hypot(o.vx, o.vz) || 1;
@@ -236,12 +253,13 @@ export class Efektler {
         this.ekranFlasi(HIS.ekranFlas.ringOut[0], HIS.ekranFlas.ringOut[1]);
         this.toz(x + (o.vx / u) * 20, y + (o.vz / u) * 20, HIS.parcacik.ringOut, 0xb9c6ca, 8);
         this.sok(x, y, 10, 70, HIS.sok.ringOutMs, ELEMENT_RENK[d.profiller[o.i]!.element].orta);
-        S.zoomDarbesi(HIS.zoom.ringOut[0], HIS.zoom.ringOut[1]);
+        this.zoom(HIS.zoom.ringOut[0], HIS.zoom.ringOut[1]);
         g[o.i]?.bitis("ringOut", o.vx, o.vz);
         break;
       }
       case "parcalandi": {
         this.sayac.parcalanma++;
+        this.sesKanca("parcalanma");
         const x = S.ekranX(o.x);
         const y = S.ekranY(o.z);
         const el = ELEMENT_RENK[d.profiller[o.i]!.element];
@@ -251,22 +269,112 @@ export class Efektler {
         this.kivilcim(x, y, 1, 0, HIS.parcacik.parcalanma, [el.orta, el.acik, 0xffffff, el.vurgu], [120, 420], Math.PI);
         this.toz(x, y, 12, 0xb9c6ca, 14);
         this.sok(x, y, 8, 90, HIS.sok.parcalanmaMs, el.orta, 0xffffff, 4);
-        S.zoomDarbesi(HIS.zoom.parcalanma[0], HIS.zoom.parcalanma[1]);
-        this.yavasKalanMs = HIS.yavasCekim.ms;
+        this.zoom(HIS.zoom.parcalanma[0], HIS.zoom.parcalanma[1]);
+        if (this.ayar.yavasZoom !== false) this.yavasKalanMs = HIS.yavasCekim.ms;
         g[o.i]?.bitis("parcalanma", o.vx, o.vz);
         break;
       }
       case "durma": {
         this.sayac.durma++;
+        this.sesKanca("durma");
         const x = S.ekranX(o.x);
         const y = S.ekranY(o.z);
         this.toz(x, y, HIS.parcacik.durma, 0xb9c6ca, 26);
         this.sok(x, y, 26, 40, 500, 0x9aa8ad, null, 2);
-        S.zoomDarbesi(HIS.zoom.durma[0], HIS.zoom.durma[1]);
+        this.zoom(HIS.zoom.durma[0], HIS.zoom.durma[1]);
         g[o.i]?.bitis("durma", 0, 0);
         break;
       }
+      // ---- D3: yetenek reçeteleri (05 § 3.2 Ulti telegrafı / Ulti vuruşu / Enerji doldu) ----
+      case "yetenekBasladi": {
+        this.sayac.telegraf++;
+        this.sesKanca("telegraf", o.kademe === 3 ? 1 : 0.7);
+        if (o.kademe === 3) {
+          // Ulti telegrafı: topaç hafifçe çöker, yavaş zoom %2 (sürekli 0,5 px sarsıntı YetenekGorsel'de)
+          g[o.i]?.squash(o.dx, o.dz, 0.95, 1.05, 0.9);
+          this.zoom(0.02, 0.9);
+        }
+        break;
+      }
+      case "yetenekEtki": {
+        if (o.kademe !== 3) break;
+        // Ulti vuruşu: hitstop 100-133, sarsıntı 8 / 250 ms, element renkli ekran flaşı (≤ %25), zoom %5, geniş parçacık
+        this.sayac.ulti++;
+        this.sesKanca("ulti");
+        const el = ELEMENT_RENK[d.profiller[o.i]!.element];
+        const j = 1 - o.i;
+        const t = d.topaclar[j]!;
+        const kx = t.x - d.topaclar[o.i]!.x;
+        const kz = t.z - d.topaclar[o.i]!.z;
+        const u = Math.hypot(kx, kz) || 1;
+        this.hitstop(j, 116, kx / u, kz / u, false, true);
+        S.sars(Math.sqrt(HIS.sarsintiPx.ringOut / SAHNE.sarsintiTavan) * Math.sqrt(this.ayar.sarsinti));
+        this.ekranFlasi(0.25, 90, el.orta);
+        const cx = S.ekranX(o.x);
+        const cy = S.ekranY(o.z);
+        this.kivilcim(cx, cy, 1, 0, 36, [el.orta, el.acik, el.vurgu, 0xffffff], [120, 420], Math.PI);
+        this.sok(S.ekranX(d.topaclar[o.i]!.x), S.ekranY(d.topaclar[o.i]!.z), 20, 200, 420, el.orta, el.acik, 4);
+        this.zoom(0.05, 0.3);
+        break;
+      }
+      case "yetenekVurus": {
+        if (o.hasar <= 0 && o.nx === 0 && o.nz === 0) break;
+        this.sayac.yetenekVurus++;
+        const el = ELEMENT_RENK[d.profiller[o.i]!.element];
+        const x = S.ekranX(o.x);
+        const y = S.ekranY(o.z);
+        this.kivilcim(x, y, o.nx, o.nz, 12, [el.orta, el.acik, 0xffffff], [120, 320]);
+        if (o.hasar > 0) { this.sesKanca("carpisma-agir", 0.8); g[o.hedef]?.flas(2); }
+        if (o.nx !== 0 || o.nz !== 0) g[o.hedef]?.squash(o.nx, o.nz, 0.8, 1.2, 0.12);
+        break;
+      }
+      case "zincir": {
+        this.sayac.zincir++;
+        this.sesKanca("carpisma-hafif");
+        const x = S.ekranX(o.x2);
+        const y = S.ekranY(o.z2);
+        this.kivilcim(x, y, 1, 0, 10, [ELEMENT_RENK.simsek.orta, ELEMENT_RENK.simsek.vurgu, 0xffffff], [80, 260], Math.PI);
+        g[o.hedef]?.flas(2);
+        break;
+      }
+      case "kontra": {
+        this.sayac.kontra++;
+        this.sesKanca("carpisma-kritik");
+        const x = S.ekranX(o.x);
+        const y = S.ekranY(o.z);
+        this.hitstop(o.hedef, 100, 1, 0, false, true);
+        this.sok(x, y, 6, 64, 260, ELEMENT_RENK[d.profiller[o.i]!.element].orta, 0xffffff, 4);
+        S.sars(Math.sqrt(HIS.sarsintiPx.kritik / SAHNE.sarsintiTavan) * Math.sqrt(this.ayar.sarsinti));
+        break;
+      }
+      case "engelCarpma": {
+        this.sayac.engel++;
+        this.sesKanca("duvar");
+        const x = S.ekranX(o.x);
+        const y = S.ekranY(o.z);
+        this.toz(x, y, o.kirildi ? 14 : 6, ELEMENT_RENK.kaya.acik, 6);
+        this.sok(x, y, 4, o.kirildi ? 40 : 20, 160, ELEMENT_RENK.kaya.acik, null, 2);
+        break;
+      }
+      case "enerjiDoldu": {
+        // Enerji doldu: topaç çevresinde element çemberi bir kez + 8 yukarı parçacık (HUD parıltısı MacHud'da)
+        this.sayac.enerjiDoldu++;
+        this.sesKanca("enerji-doldu", 0.8);
+        const t = d.topaclar[o.i]!;
+        const x = S.ekranX(t.x);
+        const y = S.ekranY(t.z);
+        const el = ELEMENT_RENK[d.profiller[o.i]!.element];
+        this.sok(x, y, 30, 44, 300, el.acik, null, 2);
+        const adet = Math.round(8 * this.ayar.parcacik);
+        for (let k = 0; k < adet; k++) this.parcaciklar.ekle(x + this.rng.isaretli() * 18, y + this.rng.isaretli() * 8, this.rng.isaretli() * 12, -this.rng.aralik(50, 110), this.rng.aralik(0.4, 0.7), el.vurgu, 2, 1);
+        break;
+      }
+      case "macBitti":
+        this.sesKanca("mac-sonu");
+        break;
       case "turBitti":
+        break;
+      default:
         break;
     }
   }
