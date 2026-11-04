@@ -102,7 +102,7 @@ Etiketler: **kalsın** (ana ekranda) · **sakla** (ikinci kat: seçili öğe şe
 | "Oyna" başlığı + "1v1 · ilk 3 puan · 90 sn · Oyuncu: … Takımını eşleşince seçersin." | Başlık bantta; kurallar tek satır "1V1 · İLK 3 PUAN · 90 SN"; geri kalan **kaldır** | |
 | İki kart (Oda kodu / Diğer) + açıklamalar | **3 büyük mod düğmesi**: HIZLI MAÇ · ODA KODU · ANTRENMAN; açıklamalar **kaldır** | ODA KODU seçilince kod alanı + "ODA AÇ" aynı panelde |
 | "Hızlı maç · kuyruk D7" soluk | **kalsın** (D7 gelince etkin) | |
-| Dereceli (referansta var) | **ertele** (düğme yok; "yakında" bile yok) | Sade: var olmayan özellik görünmez |
+| Dereceli (referansta var) | **gizli, ilerleme kapısıyla açılır** (sahip kararı, 2026-11-04): ilk Çekirdek Lv.3'e çıkana kadar düğme yok; "yakında" bile yok. Açılınca lobide referans 06'daki yerinde görünür | Sade: yeni oyuncuya var olmayan/erken özellik gösterilmez; ustalık göstergesi olarak açılır (bkz. `tasarim-sutunlari.md`) |
 | ◄ Atölye sağ üstte | **taşı** sol üste, kırmızı kare (Ç-8) | |
 | — | Takımın 3 topacı büyük kartlarda + "TAKIMI DEĞİŞTİR" ikincil | Oyuncu neyle gireceğini görür |
 | — | Ana düğme **MAÇ BUL** sağ alt | |
@@ -186,7 +186,7 @@ Etiketler: **kalsın** (ana ekranda) · **sakla** (ikinci kat: seçili öğe şe
 | KS-2 | Üst gezinti yalnız Atölye'de (alt şerit), alt ekranlarda yalnız ◄ + başlık + Altın | `docs/ux/kontrol-ve-hud.md` § 3.2 "Üst gezinti her ekranda aynı konumda" | `ekranlar/arayuz.ts` üst bandı | Referans 04/06 ile uyum ve ekran başına tek yön; ◄ her zaman Atölye'ye döner |
 | KS-3 | Çekirdek Günlüğü ayrı ekranı yerine Çekirdek ayrıntı paneli; ruh kişiliği Dünya sayfasında | `03` US-2.2 | D6 `Gunluk.ts` sunumu | Panel; veri ve uç noktası aynen kalır |
 | KS-4 | Element çarkı yerine yalnız "TAKIM ULTİSİ" rozeti | `03` US-2.1 ("takımın element dizilimi çarkta gösterilir") | D6 Atölye | Rozet + Yardım/Dünya'da çark |
-| KS-5 | Dereceli düğmesi hiç gösterilmez | Referans 06 (DERECELİ düğmesi); `tasarim-dili.md` GU-08 ("soluk, yakında") | GU-08 | Gösterme; sezonla gelir |
+| KS-5 | **KARAR (sahip, 2026-11-04): Dereceli düğmesi gizli; bir ilerleme kapısından sonra açılır** | Referans 06; GU-08 | GU-08 | Kapı varsayılanı: ilk Çekirdek Lv.3 (≈17 maç; Özel Yetenek açılır). Sahip "bir level" dedi, hangisi belirtilmedi: bu varsayımdır, değiştirilebilir. Dereceli mod (Elo) kodu ayrı dilim; o gelene kadar düğme hiç görünmez |
 | KS-6 | Yuva adları ve Shift/Space rozetleri ilk 3 maçtan sonra gizlenir | `kontrol-ve-hud.md` § 2 H6–H7 (sürekli) | `MacHud.ts` | Ayarlar > "HUD ipuçları: Her zaman / İlk 3 maç" (varsayılan İlk 3 maç) |
 
 Bu maddeler kararlanana kadar uygulayıcılar bağlayıcı belgeyi izler; sadelik geçişi (GU-13) yalnız çelişmeyen satırları uygular.
