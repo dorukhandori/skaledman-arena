@@ -1,6 +1,7 @@
 // ESLint düz yapılandırma. Amaç stil değil, KAPI: src/paylasilan (paylaşılan benzetim) istemci ve sunucuda
 // bit bit aynı sonucu vermeli (tahmin/uzlaşma buna dayanır). Bu yüzden orada DOM, Node, saat, rastgelelik,
-// ağ ve çerçeve bağımlılığı yasak. Çalıştır: npm run lint
+// ağ ve çerçeve bağımlılığı yasak. D4: kapsam src geneli; paylaşılan kapı kuralları yalnız src/paylasilan/**, diğer
+// dosyalarda yalnız netcode yalıtım kuralları. Çalıştır: npm run lint
 import tseslint from "typescript-eslint";
 
 const YASAK_GLOBALLER = [
@@ -36,12 +37,44 @@ const YASAK_ICE_AKTARIMLAR = {
   ],
 };
 
+// Netcode yalıtımı (axiom § 2 #7): src/ag ortak sözleşme (zod, Colyseus'suz); yalnız src/istemci/ag/** @colyseus/sdk,
+// yalnız src/sunucu/** colyseus (ve şema için @colyseus/schema) import eder; @colyseus/core doğrudan alınmaz.
+const yalitim = (kurallar) => ({ "no-restricted-imports": ["error", { paths: kurallar.paths ?? [], patterns: kurallar.patterns ?? [] }] });
+const COLYSEUS_SUNUCU = { name: "colyseus", message: "colyseus yalnız src/sunucu/** içinde." };
+const COLYSEUS_CORE = { group: ["@colyseus/core", "@colyseus/core/*"], message: "@colyseus/core doğrudan import edilmez; 'colyseus' paketinden al (src/sunucu)." };
+const SDK = { group: ["@colyseus/sdk", "@colyseus/sdk/*"], message: "@colyseus/sdk yalnız src/istemci/ag/** içinde." };
+const SEMA = { group: ["@colyseus/schema", "@colyseus/schema/*"], message: "@colyseus/schema yalnız src/sunucu/** (şema sınıfları) içinde; istemci yansıtmadan okur." };
+const DIGER_COLYSEUS = { group: ["@colyseus/*", "!@colyseus/sdk", "!@colyseus/schema", "!@colyseus/core"], message: "Colyseus yardımcı paketleri yalnız src/sunucu/** içinde." };
+
 export default tseslint.config(
   { ignores: ["node_modules/**", "dist/**", ".cache/**", "public/**", "veri/**"] },
   {
-    files: ["src/paylasilan/**/*.ts"],
+    files: ["src/**/*.ts"],
     languageOptions: { parser: tseslint.parser, ecmaVersion: 2022, sourceType: "module" },
     linterOptions: { reportUnusedDisableDirectives: "error" },
+  },
+  {
+    files: ["src/ag/**/*.ts"],
+    rules: yalitim({
+      paths: [COLYSEUS_SUNUCU, { name: "pixi.js", message: "src/ag ortak sözleşme: render yok." }],
+      patterns: [COLYSEUS_CORE, SDK, SEMA, DIGER_COLYSEUS, { group: ["node:*"], message: "src/ag hem tarayıcıda hem Node'da çalışır." }, { group: ["**/istemci/**", "**/sunucu/**"], message: "src/ag yalnız src/paylasilan ve kendine bağımlı olur." }],
+    }),
+  },
+  {
+    files: ["src/istemci/**/*.ts"],
+    ignores: ["src/istemci/ag/**"],
+    rules: yalitim({ paths: [COLYSEUS_SUNUCU], patterns: [COLYSEUS_CORE, SDK, SEMA, DIGER_COLYSEUS, { group: ["**/sunucu/**"], message: "İstemci sunucu koduna bağımlı olmaz." }] }),
+  },
+  {
+    files: ["src/istemci/ag/**/*.ts"],
+    rules: yalitim({ paths: [COLYSEUS_SUNUCU], patterns: [COLYSEUS_CORE, SEMA, DIGER_COLYSEUS, { group: ["**/sunucu/**"], message: "İstemci sunucu koduna bağımlı olmaz." }] }),
+  },
+  {
+    files: ["src/sunucu/**/*.ts"],
+    rules: yalitim({ paths: [{ name: "pixi.js", message: "Sunucu render etmez." }], patterns: [COLYSEUS_CORE, SDK, { group: ["**/istemci/**"], message: "Sunucu istemci koduna bağımlı olmaz." }] }),
+  },
+  {
+    files: ["src/paylasilan/**/*.ts"],
     rules: {
       "no-restricted-globals": ["error", ...YASAK_GLOBALLER],
       "no-restricted-properties": [

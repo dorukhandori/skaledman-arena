@@ -1,0 +1,38 @@
+# Devran oyun sunucusu (D4). Kurulum: deploy/kur.sh. Dinleme yalnız 127.0.0.1:2567; dışarıya Cloudflare Tunnel `devran`.
+[Unit]
+Description=Devran oyun sunucusu (Colyseus 0.18, yetkili 1v1)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=devran
+Group=devran
+WorkingDirectory=/opt/devran
+EnvironmentFile=/opt/devran/.env
+Environment=NODE_ENV=production
+Environment=HOST=127.0.0.1
+Environment=PORT=2567
+ExecStart=/usr/bin/node dist/server/server.mjs
+Restart=on-failure
+RestartSec=3
+# bütçe (axiom § 3, mimari § 5)
+CPUQuota=150%
+MemoryMax=1G
+TasksMax=256
+# sertleştirme
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/devran/veri-db
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+IPAddressDeny=any
+IPAddressAllow=localhost
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target

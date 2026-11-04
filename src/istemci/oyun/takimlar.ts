@@ -1,25 +1,14 @@
 import { CEKIRDEKLER, DISKLER, GOVDELER, UCLAR } from "../../paylasilan/veri/katalog.ts";
-import { type TopacProfili, topacProfiliKur } from "../../paylasilan/veri/profil.ts";
 import type { TakimProfilleri } from "../../paylasilan/sim/Dunya.ts";
+import { BASLANGIC_TAKIMLARI, type TopacSecimi, secimlerdenProfiller } from "../../paylasilan/veri/takimlar.ts";
 
 // Kayıtlı takımlar (yer tutucu; D5-D6'da profil + SQLite envanter). 3 takım × 3 topaç, her takımda 3 farklı Çekirdek
 // (tuning § 10). Topaç Lab'deki parça seçimi bir takım yuvasına yazılabilir (yalnız bu tarayıcı, localStorage).
 
-export interface TopacSecimi { cekirdek: string; govde: string; disk: string; uc: string }
+export type { TopacSecimi } from "../../paylasilan/veri/takimlar.ts";
 export interface KayitliTakim { ad: string; uyeler: [TopacSecimi, TopacSecimi, TopacSecimi] }
 
-const GOKTASI: TopacSecimi = { cekirdek: "kor-goktasi", govde: "ok-govde", disk: "hafif-disk", uc: "duz-uc" };
-const MADEN: TopacSecimi = { cekirdek: "kaya-maden", govde: "kalkan-govde", disk: "agir-disk", uc: "igne-uc" };
-const YAPAY: TopacSecimi = { cekirdek: "kasirga-yapay", govde: "savrulan-govde", disk: "denge-disk", uc: "dengeli-uc" };
-const GIRDAP: TopacSecimi = { cekirdek: "girdap-maden", govde: "halka-govde", disk: "parlak-disk", uc: "top-uc" };
-const SIMSEK: TopacSecimi = { cekirdek: "simsek-goktasi", govde: "ok-govde", disk: "alcak-disk", uc: "kusak-ucu" };
-const DON: TopacSecimi = { cekirdek: "sabir-tasi", govde: "ayaz-govde", disk: "denge-disk", uc: "duz-uc" };
-
-export const VARSAYILAN_TAKIMLAR: readonly KayitliTakim[] = [
-  { ad: "Takım 1 · Kor", uyeler: [GOKTASI, MADEN, GIRDAP] },
-  { ad: "Takım 2 · Kaya", uyeler: [MADEN, YAPAY, SIMSEK] },
-  { ad: "Takım 3 · Kasırga", uyeler: [YAPAY, GIRDAP, DON] },
-];
+export const VARSAYILAN_TAKIMLAR: readonly KayitliTakim[] = BASLANGIC_TAKIMLARI.map((t) => ({ ad: t.ad, uyeler: [...t.uyeler] as KayitliTakim["uyeler"] }));
 
 const ANAHTAR = "devran.takimlar.v1";
 
@@ -59,6 +48,5 @@ export function takimaYaz(takim: number, yuva: number, secim: TopacSecimi): stri
 }
 
 export function takimProfilleri(t: KayitliTakim): TakimProfilleri {
-  const p = (s: TopacSecimi): TopacProfili => topacProfiliKur(s.cekirdek, s.govde, s.disk, s.uc);
-  return [p(t.uyeler[0]), p(t.uyeler[1]), p(t.uyeler[2])];
+  return secimlerdenProfiller(t.uyeler);
 }

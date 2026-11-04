@@ -6,6 +6,7 @@ import { TOPAC_DURUM, type Dunya, type MacSonucu, type Olay, type TurSonucu } fr
 import { kok2, kusakta } from "../../paylasilan/sim/fizik.ts";
 import type { Girdi } from "../../paylasilan/sim/Girdi.ts";
 import { MAC_ADIM, geriCekAcik, siradakiUye, teslimEt } from "../../paylasilan/sim/mac.ts";
+import { MESAJ, ODA_FAZI } from "../../ag/protokol.ts";
 import { aktifMi, staminaOrani } from "../../paylasilan/sim/topac.ts";
 import type { EkranBaglami } from "../main.ts";
 import { Efektler } from "../oyun/Efektler.ts";
@@ -22,6 +23,8 @@ import { YetenekGorsel } from "../oyun/YetenekGorsel.ts";
 import { Ses } from "../ses/Ses.ts";
 import { ENERJI_TAVAN } from "../../paylasilan/sim/enerji.ts";
 import { YETENEK_SIM } from "../../paylasilan/veri/yetenekSablon.ts";
+import type { AgMaci } from "../ag/AgMaci.ts";
+import { AgKatmani } from "../ag/AgKatmani.ts";
 
 // Bota karşı tam maç (D2, çevrimdışı): geri sayım → tur → tur arası (H14 seçimi) → … → bitti → sonuç ekranı.
 // Sim paylaşılan kod (mac.ts, adim.ts), bot paylaşılan kod (bot.ts); bu dosya yalnız sunum ve girdi.
@@ -32,6 +35,8 @@ import { YETENEK_SIM } from "../../paylasilan/veri/yetenekSablon.ts";
 
 const YEREL = 0;
 const RAKIP = 1;
+/** Çevrimiçi kare başına en çok girdi adımı (250 ms'lik kare = 15 adım; daha uzun donma tahmini atar). */
+const AG_ADIM_TAVANI = 15;
 /** Son bitişten sonra sonuç ekranına geçiş (ux § 3.4: 1,5 sn). */
 const SONUC_GECIKMESI = 1.5;
 
@@ -79,6 +84,8 @@ const NEDEN_AD: Record<MacSonucu["neden"], string> = {
   surePuanEsitlik: "Süre doldu: Stamina eşit, puan",
   yaziTura: "Süre doldu: her şey eşit, yazı-tura",
   teslim: "Teslim",
+  hukmen: "Hükmen (bağlantı koptu / girdi yok)",
+  iptal: "Maç iptal (iki taraf da koptu)",
 };
 
 const SIMGE = {
@@ -99,7 +106,21 @@ export function baslat(b: EkranBaglami): void {
   new MacEkrani(b);
 }
 
-class MacEkrani {
+/** Çevrimiçi maç (D4): aynı sunum, kaynak sunucu (tahmin modeli A). Lobi ekranı çağırır. */
+export function cevrimiciBaslat(b: EkranBaglami, ag: AgMaci, kancalar: CevrimiciKancalar): MacEkrani {
+  return new MacEkrani(b, ag, kancalar);
+}
+
+export interface CevrimiciKancalar {
+  /** oda seçim fazına döndü (rövanş kabul): lobi takım seçimini gösterir */
+  secim(): void;
+  /** maç bitti ve odadan çıkıldı / bağlantı tamamen gitti */
+  cikis(neden: string): void;
+}
+
+export class MacEkrani {
+  private yerel = YEREL;
+  private rakip = RAKIP;
   private sahne: Sahne;
   private efektler: Efektler;
   private gorseller: TopacGorsel[] = [];
@@ -143,8 +164,18 @@ class MacEkrani {
   private kenarTikSaat = 0;
   /** Oturumda kullanılan yetenekler (yuva → sayı; debug / uçtan uca). */
   readonly yetenekKullanimi: Record<string, number> = {};
+  // ---- D4: çevrimiçi ----
+  private agMacNo = -1;
+  /** ölçüm: çevrimiçi kare ve girdi adımı sayısı */
+  agKareSayisi = 0;
+  agAdimSayisi = 0;
+  private agSonZaman = performance.now();
+  private agZamanlayici = 0;
+  private agKatman: AgKatmani | null = null;
+  private rovansIstendi = false;
 
-  constructor(private b: EkranBaglami) {
+  constructor(private b: EkranBaglami, private ag: AgMaci | null = null, private kancalar: CevrimiciKancalar | null = null) {
+    if (ag) { this.yerel = ag.yerel; this.rakip = 1 - ag.yerel; }
     const q = new URLSearchParams(location.search);
     this.tohum = Number(q.get("tohum") ?? 7) | 0;
     this.takimNo = Math.max(0, Math.min(2, Number(q.get("takim") ?? 0) | 0));
@@ -160,7 +191,7 @@ class MacEkrani {
     this.efektler = new Efektler(this.sahne, () => this.gorseller);
     this.sahne.efektKatmani.addChild(this.kenarUyari);
     this.girdi = new OyuncuGirdisi(b.app.canvas, () => b.app.screen);
-    this.yetenekGorsel = new YetenekGorsel(this.sahne, YEREL);
+    this.yetenekGorsel = new YetenekGorsel(this.sahne, this.yerel);
     // iptal bölgesi: alt şerit (mantıksal y > 492, ux § 1)
     this.girdi.iptalBolgesi = (px, py) => { const c = this.sahne.cerceve(); return (py - c.y) / c.olcek > 492; };
     this.ayarlar = ayarlariOku();
@@ -174,9 +205,20 @@ class MacEkrani {
     b.ustYazi.appendChild(this.ust);
     this.menuKur();
     this.yeniMac(this.tohum);
+    if (this.ag) {
+      this.agKatman = new AgKatmani(this.ust, this.ag, () => this.hud);
+      this.agZamanlayici = window.setInterval(this.agDongu, 1000 / 240);
+    }
     window.addEventListener("keydown", this.tus, { capture: true });
     window.addEventListener("keyup", this.tusBirak, { capture: true });
     b.app.ticker.add(this.kare);
+    if (q.has("debug") && q.get("cizim") === "yok") {
+      // ölçüm koşusu (yalnız ?debug): headless yazılım GL'de çizim ana iş parçacığını kilitliyor (2-4 kare/sn);
+      // çizim kapalı, mantık (olay, HUD, bantlar) 30 Hz zamanlayıcıyla akar. Ekran görüntüsü koşusu çizimlidir.
+      b.app.stop();
+      let son = performance.now();
+      window.setInterval(() => { const t = performance.now(); b.app.ticker.deltaMS = t - son; son = t; this.kare(); }, 1000 / 30);
+    }
     if (q.has("debug")) (window as unknown as { __mac: MacEkrani }).__mac = this;
   }
 
@@ -186,7 +228,7 @@ class MacEkrani {
   get olaylar(): Olay[] { return this.sonOlaylar; }
   get sonucAcik(): boolean { return this.sonucOrt.classList.contains("acik"); }
   /** Debug: Enerji'yi doldurur (uçtan uca doğrulama; yalnız ?debug). */
-  enerjiDoldur(i = YEREL, miktar = ENERJI_TAVAN): void { this.dunya.topaclar[i]!.enerji = Math.min(ENERJI_TAVAN, miktar); }
+  enerjiDoldur(i = this.yerel, miktar = ENERJI_TAVAN): void { this.dunya.topaclar[i]!.enerji = Math.min(ENERJI_TAVAN, miktar); }
   get ses(): { sayac: Record<string, number>; calinan: Record<string, number>; yuklenen: string[]; hatalar: string[]; acik: boolean; bagli: boolean } {
     return { sayac: { ...Ses.sayac }, calinan: { ...Ses.calinan }, yuklenen: [...Ses.yuklenen], hatalar: [...Ses.hatalar], acik: Ses.acikMi, bagli: Ses.bagliMi };
   }
@@ -217,11 +259,18 @@ class MacEkrani {
 
   /** Yeni maç (Tekrar): aynı takımlar, yeni tohum. */
   yeniMac(tohum: number): void {
+    if (this.ag && this.ag.yerel !== this.yerel) { this.yerel = this.ag.yerel; this.rakip = 1 - this.yerel; }
     this.tohum = tohum;
-    const takimlar = takimlariOku();
-    const ta = takimProfilleri(takimlar[this.takimNo]!);
-    const tb = takimProfilleri(takimlar[this.rakipNo]!);
-    this.dunya = macDunyasiKur([ta, tb], tohum, { seviye: [this.seviye, this.seviye] });
+    const gorunum = this.ag?.gorunum(1) ?? null;
+    if (gorunum) {
+      this.dunya = gorunum;
+      this.agMacNo = this.ag!.macNo;
+    } else {
+      const takimlar = takimlariOku();
+      const ta = takimProfilleri(takimlar[this.takimNo]!);
+      const tb = takimProfilleri(takimlar[this.rakipNo]!);
+      this.dunya = macDunyasiKur([ta, tb], tohum, { seviye: [this.seviye, this.seviye] });
+    }
     this.yetenekGorsel?.temizle();
     this.sonGeriSayim = -1;
     this.turlar = [];
@@ -233,7 +282,7 @@ class MacEkrani {
     this.efektler.temizle();
     if (!this.gorseller.length) {
       for (let i = 0; i < 2; i++) {
-        const g = new TopacGorsel(this.dunya.profiller[i]!, i === YEREL ? "oyuncu" : "rakip", this.sahne.golgeKatmani, this.sahne.efektKatmani);
+        const g = new TopacGorsel(this.dunya.profiller[i]!, i === this.yerel ? "oyuncu" : "rakip", this.sahne.golgeKatmani, this.sahne.efektKatmani);
         this.sahne.nesneKatmani.addChild(g.kok);
         this.gorseller.push(g);
         const iz = new Iz(ELEMENT_RENK[this.dunya.profiller[i]!.element].acik);
@@ -245,28 +294,32 @@ class MacEkrani {
     this.onceki = this.dunya.topaclar.map((t) => ({ x: t.x, z: t.z }));
     this.hud?.yokEt();
     const kip = this.botSecimi === "tip" ? "tipine göre" : this.botSecimi;
-    this.hud = new MacHud(this.b.ustYazi, YEREL, [this.oto ? "Sen (oto)" : "Sen", `Bot (${kip})`]);
+    const adlar: [string, string] = this.ag
+      ? [`${this.ag.oyuncu(this.yerel)?.ad ?? "Sen"}${this.oto ? " (oto)" : ""}`, this.ag.oyuncu(this.rakip)?.ad ?? "Rakip"]
+      : [this.oto ? "Sen (oto)" : "Sen", `Bot (${kip})`];
+    const hudAdlari: [string, string] = this.yerel === 0 ? adlar : [adlar[1], adlar[0]];
+    this.hud = new MacHud(this.b.ustYazi, this.yerel, this.yerel === 0 ? adlar : hudAdlari);
     this.hud.kartSecildi = (k) => this.secimIste(k);
     this.b.ustYazi.appendChild(this.ust); // sonuç/menü HUD'un üstünde
   }
 
   private gorselYenile(i: number): void {
     const p = this.dunya.profiller[i]!;
-    this.gorseller[i]!.profilAyarla(p, i === YEREL ? "oyuncu" : "rakip");
+    this.gorseller[i]!.profilAyarla(p, i === this.yerel ? "oyuncu" : "rakip");
     this.gorseller[i]!.sifirla();
     this.izler[i]!.sifirla();
     this.izler[i]!.renk = ELEMENT_RENK[p.element].acik;
   }
 
   private botKipi(i: number): BotKipi {
-    if (i === RAKIP && this.botSecimi !== "tip") return this.botSecimi;
+    if (i === this.rakip && this.botSecimi !== "tip") return this.botSecimi;
     return botKademesiSec(this.dunya.profiller[i]!.tip);
   }
 
   // ---- girdi ----
   private secimIste(uye: number): void {
     const d = this.dunya;
-    const tk = d.takimlar![YEREL]!;
+    const tk = d.takimlar![this.yerel]!;
     if (d.mac.faz === "turArasi" && tk.secim === -2 && !tk.uyeler[uye]!.elendi) this.bekleyenDegistir = uye;
   }
 
@@ -279,7 +332,7 @@ class MacEkrani {
         else if (e.code !== "Space") {
           const odak = document.activeElement;
           if (odak instanceof HTMLButtonElement && this.sonucKutu.contains(odak)) odak.click();
-          else this.yeniMac(this.tohum + 1);
+          else if (!this.ag) this.yeniMac(this.tohum + 1);
         }
       }
       return;
@@ -303,8 +356,8 @@ class MacEkrani {
     if (e.code === "Tab") {
       e.preventDefault();
       if (e.repeat || d.mac.faz !== "tur") return;
-      if (geriCekAcik(d, YEREL)) this.bekleyenDegistir = siradakiUye(d.takimlar![YEREL]!);
-      else this.hud.bantGoster(d.topaclar[YEREL].geriCekKalan > 0 ? "Geri çekiliyor…" : d.takimlar![YEREL]!.geriCekBekleme > 0 ? "Geri çek beklemede." : "Geri çekmek için stamina %25'in altında olmalı.", 1.6);
+      if (geriCekAcik(d, this.yerel)) this.bekleyenDegistir = siradakiUye(d.takimlar![this.yerel]!);
+      else this.hud.bantGoster(d.topaclar[this.yerel]!.geriCekKalan > 0 ? "Geri çekiliyor…" : d.takimlar![this.yerel]!.geriCekBekleme > 0 ? "Geri çek beklemede." : "Geri çekmek için stamina %25'in altında olmalı.", 1.6);
       return;
     }
     const m = /^Digit([1-3])$/.exec(e.code) ?? /^Numpad([1-3])$/.exec(e.code);
@@ -402,45 +455,116 @@ class MacEkrani {
   }
 
   // ---- döngü ----
-  private tekAdim(): void {
-    const d = this.dunya;
-    this.onceki = d.topaclar.map((t) => ({ x: t.x, z: t.z }));
-    let g0: Girdi = this.girdi.olustur(this.sahne, d.topaclar[YEREL]);
+  /** Yerel girdi (klavye/fare ya da ?oto botu); menü açıkken sürüş yok. */
+  private yerelGirdi(d: Dunya): Girdi {
+    let g0: Girdi = this.girdi.olustur(this.sahne, d.topaclar[this.yerel]!);
     if (this.menuAcik) { g0 = { ...g0, yonX: 0, yonZ: 0, dash: false, zipla: false, dinlen: false }; }
     if (this.oto && !this.menuAcik) {
-      const b = botGirdisi(d, YEREL, this.oto, this.tohum * 7907 + 11);
+      const b = botGirdisi(d, this.yerel, this.oto, this.tohum * 7907 + 11);
       // otomatik oynanış: sürüş/eylem/geri çek bottan; tur arası seçimi klavyeden (H14), yoksa süre dolunca sıradaki
       g0 = { ...b, degistir: d.mac.faz === "turArasi" ? -1 : b.degistir };
     }
+    if (this.ag && this.oto && this.otoKlavye) g0 = this.klavyeyeIndir(g0);
     if (this.bekleyenDegistir >= 0) { g0 = { ...g0, degistir: this.bekleyenDegistir }; this.bekleyenDegistir = -1; }
-    let g1 = botGirdisi(d, RAKIP, this.botKipi(RAKIP), this.tohum * 7919 + 3);
-    if (this.zorlaRakip >= 0) { g1 = { ...g1, atesle: true, secilenYuva: this.zorlaRakip, nisanX: d.topaclar[YEREL].x, nisanZ: d.topaclar[YEREL].z }; this.zorlaRakip = -1; }
-    adim(d, [g0, g1]);
+    return g0;
+  }
+
+  /**
+   * Çevrimiçi otomatik oynanış (yalnız test): botun analog yönünü klavye oyuncusu gibi 8 yöne indirir ve yön
+   * değişimini en az 6 adım (100 ms) tutar (ADR-003: WASD). `&otoGirdi=analog` ile ham bot (en kötü durum).
+   */
+  private klavyeyeIndir(g: Girdi): Girdi {
+    const esik = 0.38;
+    const x = g.yonX > esik ? 1 : g.yonX < -esik ? -1 : 0;
+    const z = g.yonZ > esik ? 1 : g.yonZ < -esik ? -1 : 0;
+    if ((x !== this.otoYon.x || z !== this.otoYon.z) && this.otoTutma <= 0) { this.otoYon = { x, z }; this.otoTutma = 6; }
+    this.otoTutma--;
+    return { ...g, yonX: this.otoYon.x, yonZ: this.otoYon.z };
+  }
+  private otoYon = { x: 0, z: 0 };
+  private otoTutma = 0;
+  private otoKlavye = new URLSearchParams(location.search).get("otoGirdi") !== "analog";
+
+  /** Çevrimiçi adım: girdi gönder + kendi topacını tahmin et (sim sunucuda). */
+  private agAdim(): void {
+    this.ag!.yerelAdim(this.yerelGirdi(this.dunya), this.efektler.hitstopVar(this.yerel));
+  }
+
+  /** Bir olayı sunuma uygula (çevrimdışı adımdan ya da sunucudan). Dönen: ışınlama gerekli mi. */
+  private olayUygula(o: Olay, d: Dunya): boolean {
     let isinla = false;
-    for (const o of d.olaylar) {
-      if (this.durTalebi && !this.durTalebi.oldu && this.durTalebi.turler.includes(o.tur) && (this.durTalebi.i < 0 || ("i" in o && o.i === this.durTalebi.i))) this.durTalebi.oldu = o;
-      this.efektler.olay(o, d);
-      this.hud.olay(o, d);
-      this.yetenekGorsel.olay(o, d);
-      switch (o.tur) {
-        case "turBitti":
-          this.turlar.push(o.sonuc);
-          this.gorulenBitisler[o.sonuc.tur] = (this.gorulenBitisler[o.sonuc.tur] ?? 0) + 1;
-          break;
-        case "degisim": this.gorselYenile(o.i); isinla = true; break;
-        case "turBasladi":
-          if (o.turNo > 1) { this.efektler.temizle(); for (const g of this.gorseller) g.sifirla(); for (const z of this.izler) z.sifirla(); }
-          isinla = true;
-          break;
-        case "macBitti": this.macSonuclari.push(o.sonuc); this.sonucKalan = SONUC_GECIKMESI; sekmeIpucuMacBitti(); break;
-        case "yetenekBasladi": {
-          const ad = `${o.i === YEREL ? "sen" : "rakip"}:${YETENEK_SIM[o.no]!.id}`;
-          this.yetenekKullanimi[ad] = (this.yetenekKullanimi[ad] ?? 0) + 1;
-          break;
-        }
-        default: break;
+    if (this.durTalebi && !this.durTalebi.oldu && this.durTalebi.turler.includes(o.tur) && (this.durTalebi.i < 0 || ("i" in o && o.i === this.durTalebi.i))) this.durTalebi.oldu = o;
+    if (o.tur === "degisim" && this.ag?.profiller) d.profiller[o.i] = this.ag.profiller[o.i]![o.uye]!;
+    this.efektler.olay(o, d);
+    this.hud.olay(o, d);
+    this.yetenekGorsel.olay(o, d);
+    switch (o.tur) {
+      case "turBitti":
+        this.turlar.push(o.sonuc);
+        this.gorulenBitisler[o.sonuc.tur] = (this.gorulenBitisler[o.sonuc.tur] ?? 0) + 1;
+        break;
+      case "degisim": this.gorselYenile(o.i); isinla = true; break;
+      case "turBasladi":
+        if (o.turNo > 1) { this.efektler.temizle(); for (const g of this.gorseller) g.sifirla(); for (const z of this.izler) z.sifirla(); }
+        isinla = true;
+        break;
+      case "macBitti":
+        this.macSonuclari.push(o.sonuc); this.sonucKalan = o.sonuc.neden === "teslim" || o.sonuc.neden === "hukmen" || o.sonuc.neden === "iptal" ? 0.3 : SONUC_GECIKMESI;
+        sekmeIpucuMacBitti();
+        break;
+      case "yetenekBasladi": {
+        const ad = `${o.i === this.yerel ? "sen" : "rakip"}:${YETENEK_SIM[o.no]!.id}`;
+        this.yetenekKullanimi[ad] = (this.yetenekKullanimi[ad] ?? 0) + 1;
+        break;
       }
+      default: break;
     }
+    return isinla;
+  }
+
+  /**
+   * Çevrimiçi girdi/tahmin döngüsü: çizimden bağımsız zamanlayıcı (performance.now birikimi, 60 adım/sn). Kare hızı
+   * düşse de (yazılım GL, ağır efekt) girdi hızı sunucu adımına yetişir. Sekme gizliyken girdi gönderilmez
+   * (sunucu AFK sayar: 10 sn uyarı, 30 sn terk); dönüşte tam durumdan yetişilir (AgKatmani).
+   */
+  private agDongu = (): void => {
+    const simdi = performance.now();
+    const dt = Math.min(0.25, (simdi - this.agSonZaman) / 1000);
+    this.agSonZaman = simdi;
+    if (document.hidden) { this.birikim = 0; return; }
+    this.birikim += dt;
+    let n = 0;
+    while (this.birikim >= AYAR.dt && n < AG_ADIM_TAVANI) { this.agAdim(); this.birikim -= AYAR.dt; n++; this.agAdimSayisi++; }
+    if (n === AG_ADIM_TAVANI) this.birikim = 0;
+  };
+
+  private agKare(dt: number): void {
+    const ag = this.ag!;
+    if (ag.macNo !== this.agMacNo && ag.sunucu && ag.faz === ODA_FAZI.mac) { this.rovansIstendi = false; this.yeniMac(this.tohum + 1); }
+    this.agKareSayisi++;
+    const alfa = Math.min(1, this.birikim / AYAR.dt);
+    const g = ag.gorunum(alfa);
+    if (g) this.dunya = g;
+    const d = this.dunya;
+    let isinla = false;
+    const olaylar = ag.olaylariAl();
+    for (const o of olaylar) isinla = this.olayUygula(o, d) || isinla;
+    if (olaylar.length) this.sonOlaylar = [...this.sonOlaylar, ...olaylar].slice(-60);
+    if (isinla) for (const z of this.izler) z.sifirla();
+    this.onceki = d.topaclar.map((t) => ({ x: t.x, z: t.z }));
+    this.agKatman?.guncelle(dt, d, this.yerel);
+  }
+
+  private tekAdim(): void {
+    const d = this.dunya;
+    this.onceki = d.topaclar.map((t) => ({ x: t.x, z: t.z }));
+    const g0 = this.yerelGirdi(d);
+    let g1 = botGirdisi(d, this.rakip, this.botKipi(this.rakip), this.tohum * 7919 + 3);
+    if (this.zorlaRakip >= 0) { g1 = { ...g1, atesle: true, secilenYuva: this.zorlaRakip, nisanX: d.topaclar[this.yerel]!.x, nisanZ: d.topaclar[this.yerel]!.z }; this.zorlaRakip = -1; }
+    const girdiler: [Girdi, Girdi] = this.yerel === 0 ? [g0, g1] : [g1, g0];
+    adim(d, girdiler);
+    let isinla = false;
+    for (const o of d.olaylar) isinla = this.olayUygula(o, d) || isinla;
     if (isinla) this.onceki = d.topaclar.map((t) => ({ x: t.x, z: t.z }));
     if (d.olaylar.length) this.sonOlaylar = [...this.sonOlaylar, ...d.olaylar].slice(-60);
   }
@@ -448,15 +572,18 @@ class MacEkrani {
   private kare = (): void => {
     const dt = Math.min(this.b.app.ticker.deltaMS / 1000, 0.25);
     this.zaman += dt;
-    this.birikim += dt * this.hiz;
-    let n = 0;
-    const tavan = AYAR.enFazlaAdimKare * this.hiz;
-    while (this.birikim >= AYAR.dt && n < tavan) {
-      this.tekAdim(); this.birikim -= AYAR.dt; n++;
-      // ekran görüntüsü talebi (yalnız ?debug): olaydan sonra kare başına tek adım, `kare` adım sonra dur
-      if (this.durTalebi?.oldu) { this.birikim = 0; break; }
+    if (this.ag) this.agKare(dt);
+    else {
+      this.birikim += dt * this.hiz;
+      let n = 0;
+      const tavan = AYAR.enFazlaAdimKare * this.hiz;
+      while (this.birikim >= AYAR.dt && n < tavan) {
+        this.tekAdim(); this.birikim -= AYAR.dt; n++;
+        // ekran görüntüsü talebi (yalnız ?debug): olaydan sonra kare başına tek adım, `kare` adım sonra dur
+        if (this.durTalebi?.oldu) { this.birikim = 0; break; }
+      }
+      if (n === tavan) this.birikim = 0;
     }
-    if (n === tavan) this.birikim = 0;
     if (this.sonucKalan > 0) {
       this.sonucKalan -= dt;
       if (this.sonucKalan <= 0) this.sonucGoster();
@@ -468,12 +595,15 @@ class MacEkrani {
       if (this.teslimTutma >= 2) {
         this.teslimBirak();
         this.menu.classList.remove("acik");
-        teslimEt(this.dunya, YEREL);
-        for (const o of this.dunya.olaylar) if (o.tur === "macBitti") { this.macSonuclari.push(o.sonuc); this.sonucKalan = 0.3; }
+        if (this.ag) this.ag.gonder(MESAJ.teslim);
+        else {
+          teslimEt(this.dunya, this.yerel);
+          for (const o of this.dunya.olaylar) if (o.tur === "macBitti") { this.macSonuclari.push(o.sonuc); this.sonucKalan = 0.3; }
+        }
       }
     }
     if (this.sonucAcik) this.sonucIlerlet(dt);
-    this.ciz(dt, Math.min(1, this.birikim / AYAR.dt));
+    this.ciz(dt, this.ag ? 1 : Math.min(1, this.birikim / AYAR.dt));
     const dur = this.durTalebi;
     if (dur?.oldu && dur.kare-- <= 0) { this.sonDurmaOlayi = dur.oldu; this.durTalebi = null; this.b.app.ticker.stop(); this.b.app.render(); }
   };
@@ -506,10 +636,10 @@ class MacEkrani {
     });
     const daralma = d.mac.aniOlum ? Math.min(1, d.mac.aniOlumTick / MAC_ADIM.aniOlumDaralma) : 0;
     S.arena.guncelle(dt, d.arenaYaricap, d.topaclar.some((t) => aktifMi(t) && kusakta(t, d.arenaYaricap)), d.mac.aniOlum ? Math.max(0.05, daralma) : 0);
-    kenarUyarisiCiz(this.kenarUyari, d, YEREL, SAHNE.merkezX, SAHNE.merkezY, this.zaman);
+    kenarUyarisiCiz(this.kenarUyari, d, this.yerel, SAHNE.merkezX, SAHNE.merkezY, this.zaman);
     // H9 nişan (yalnız Fare modu; "Hareket yönü" modunda çizgi çizilmez) + H13 telegraf + dekaller + Ulti anı
     const basili = this.menuAcik ? -1 : this.girdi.basiliYuva;
-    const nisan = basili >= 0 && basili < 3 && this.girdi.nisanModu === "fare" ? { yuva: basili, ...this.girdi.nisanNoktasi(S, d.topaclar[YEREL]) } : null;
+    const nisan = basili >= 0 && basili < 3 && this.girdi.nisanModu === "fare" ? { yuva: basili, ...this.girdi.nisanNoktasi(S, d.topaclar[this.yerel]!) } : null;
     this.yetenekGorsel.guncelle(d, dt, nisan);
     this.hud.guncelle(d, dt, basili);
     this.sesKancalari(dt);
@@ -530,11 +660,11 @@ class MacEkrani {
       this.sonSureSn = sn;
     }
     this.kenarTikSaat -= dt;
-    const t = d.topaclar[YEREL]!;
+    const t = d.topaclar[this.yerel]!;
     if (m.faz === "tur" && aktifMi(t) && this.kenarTikSaat <= 0) {
       const dm = kok2(t.x, t.z);
       const disa = dm > 1e-6 ? (t.vx * t.x + t.vz * t.z) / dm : 0;
-      if (dm > AYAR.kusakDis * d.arenaYaricap && disa > 0.7 * d.profiller[YEREL]!.sim.ringOutHizi) { Ses.cal("kenar-uyari"); this.kenarTikSaat = 0.5; }
+      if (dm > AYAR.kusakDis * d.arenaYaricap && disa > 0.7 * d.profiller[this.yerel]!.sim.ringOutHizi) { Ses.cal("kenar-uyari"); this.kenarTikSaat = 0.5; }
     }
   }
 
@@ -544,25 +674,27 @@ class MacEkrani {
     const s = d.mac.macSonucu!;
     const k = this.sonucKutu;
     k.innerHTML = "";
-    const tur = s.kazanan === YEREL ? "zafer" : s.kazanan < 0 ? "berabere" : "yenilgi";
+    const tur = s.kazanan === this.yerel ? "zafer" : s.kazanan < 0 ? "berabere" : "yenilgi";
     const h = el("h2", tur, k);
     h.innerHTML = `${SIMGE[tur]}<span>${tur === "zafer" ? "ZAFER" : tur === "yenilgi" ? "YENİLGİ" : "BERABERE"}</span>`;
-    el("div", "alt", k, tur === "yenilgi" ? "Bu sefer olmadı." : "");
-    el("div", "skr", k, `${s.puan[YEREL]} – ${s.puan[RAKIP]}`);
-    el("div", "ndn", k, `Rakip: Bot (${this.botSecimi === "tip" ? "tipine göre" : this.botSecimi}) · ${NEDEN_AD[s.neden]} · ${(d.mac.saat / AYAR.adimHz).toFixed(0)} sn`);
+    const rakipTerk = this.ag && s.neden === "hukmen" && s.kazanan === this.yerel;
+    el("div", "alt", k, rakipTerk ? "Rakip maçtan ayrıldı. Galibiyet sende." : s.neden === "iptal" ? "İki taraf da koptu: bu maç sayılmaz." : tur === "yenilgi" ? "Bu sefer olmadı." : "");
+    el("div", "skr", k, `${s.puan[this.yerel]} – ${s.puan[this.rakip]}`);
+    const rakipAdi = this.ag ? (this.ag.oyuncu(this.rakip)?.ad ?? "Rakip") : `Bot (${this.botSecimi === "tip" ? "tipine göre" : this.botSecimi})`;
+    el("div", "ndn", k, `Rakip: ${rakipAdi} · ${NEDEN_AD[s.neden]} · ${(d.mac.saat / AYAR.adimHz).toFixed(0)} sn`);
     const tablo = el("table", "", k);
     tablo.innerHTML = "<thead><tr><th>Bitiş</th><th>Puan</th></tr></thead>";
     const govde = el("tbody", "", tablo);
     this.sonucSatirlari = [];
     this.turlar.forEach((t, n) => {
       const tr = el("tr", "satir", govde);
-      const kim = t.kazanan < 0 ? "puan yok" : t.kazanan === YEREL ? "sen" : "rakip";
+      const kim = t.kazanan < 0 ? "puan yok" : t.kazanan === this.yerel ? "sen" : "rakip";
       tr.innerHTML = `<td>${n + 1}. ${BITIS_AD[t.tur]} · ${kim}</td><td>${t.puan > 0 ? `+${t.puan}` : "0"}</td>`;
       this.sonucSatirlari.push(tr);
     });
     if (s.neden === "teslim") { const tr = el("tr", "satir", govde); tr.innerHTML = `<td>Teslim</td><td>0 – 3</td>`; this.sonucSatirlari.push(tr); }
     const od = el("div", "od", k);
-    const kazandi = s.kazanan === YEREL;
+    const kazandi = s.kazanan === this.yerel;
     const satir = (a: string, b2: string) => {
       const x = el("div", "satir", od, a);
       const y = el("div", "satir", od);
@@ -573,13 +705,20 @@ class MacEkrani {
     satir("Altın", `+${kazandi ? 100 : 60} Altın <span class="yt">yer tutucu</span>`);
     satir("Çekirdek tecrübesi", `+${kazandi ? 40 : 25} XP · Lv.2 <span class="yt">yer tutucu</span>`);
     satir("Başarım", `ilerleme D7'de <span class="yt">yer tutucu</span>`);
-    const ys = d.yetenekSayisi[YEREL];
+    const ys = d.yetenekSayisi[this.yerel]!;
     satir("Yetenek kullanımı", `Yetenek ${ys[0]} · Özel ${ys[1]} · Ulti ${ys[2]}`);
-    if (d.kararma[YEREL]! > 0) satir("Kararma sayacı", `+${d.kararma[YEREL]} <span class="yt">Çekirdek sönmesi D7</span>`);
+    if (d.kararma[this.yerel]! > 0) satir("Kararma sayacı", `+${d.kararma[this.yerel]} <span class="yt">Çekirdek sönmesi D7</span>`);
     el("div", "ipc", k, "Space / Enter: atla · Enter: Tekrar");
     const dg = el("div", "dg", k);
-    const tekrar = el("button", "bir", dg, "Tekrar");
-    tekrar.addEventListener("click", () => this.yeniMac(this.tohum + 1));
+    const tekrar = el("button", "bir", dg, this.ag ? "Rövanş" : "Tekrar");
+    tekrar.dataset["rovans"] = "1";
+    tekrar.addEventListener("click", () => {
+      if (!this.ag) { this.yeniMac(this.tohum + 1); return; }
+      this.rovansIstendi = true;
+      this.ag.gonder(MESAJ.rovans);
+      tekrar.textContent = "Rövanş bekleniyor…";
+      tekrar.disabled = true;
+    });
     const atolye = el("button", "", dg, "Atölye");
     atolye.title = "Atölye D6'da gelir; şimdilik Topaç Lab";
     atolye.addEventListener("click", () => { location.search = "?ekran=topac-lab"; });

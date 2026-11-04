@@ -10,7 +10,7 @@ const MASKE = 0xffffffffffffffffn;
 const FAZ_KODU = { tur: 0, turBitti: 1, geriSayim: 2, turArasi: 3, bitti: 4 } as const;
 const MOD_KODU = { tekTur: 0, mac: 1 } as const;
 const SONUC_KODU = { durma: 0, ringOut: 1, parcalanma: 2, berabere: 3 } as const;
-const NEDEN_KODU = { puan: 0, tukenme: 1, aniOlum: 2, surePuan: 3, sureStamina: 4, surePuanEsitlik: 5, yaziTura: 6, teslim: 7 } as const;
+const NEDEN_KODU = { puan: 0, tukenme: 1, aniOlum: 2, surePuan: 3, sureStamina: 4, surePuanEsitlik: 5, yaziTura: 6, teslim: 7, hukmen: 8, iptal: 9 } as const;
 
 /** Topaç alanları, hash sırası. */
 export const TOPAC_ALANLARI = [

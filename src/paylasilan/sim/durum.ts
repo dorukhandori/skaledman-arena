@@ -92,10 +92,12 @@ export interface TurSonucu {
 export type MacFazi = "geriSayim" | "tur" | "turArasi" | "turBitti" | "bitti";
 
 export type MacBitisNedeni =
-  | "puan" | "tukenme" | "aniOlum" | "surePuan" | "sureStamina" | "surePuanEsitlik" | "yaziTura" | "teslim";
+  | "puan" | "tukenme" | "aniOlum" | "surePuan" | "sureStamina" | "surePuanEsitlik" | "yaziTura" | "teslim"
+  /** D4 (yalnız sunucu çağırır): kopma 20 s aşıldı ya da AFK 30 s → kopan 0-3; ikisi de dönmedi → iptal (kazanan −1). */
+  | "hukmen" | "iptal";
 
 export interface MacSonucu {
-  /** Kazanan takım; −1 yalnız iki takım birden iptal edilirse (D2'de üretilmez). */
+  /** Kazanan takım; −1 yalnız maç iptal edilirse (D4: iki taraf da kopup dönmedi). */
   kazanan: number;
   neden: MacBitisNedeni;
   puan: [number, number];

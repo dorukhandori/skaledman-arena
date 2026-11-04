@@ -1,0 +1,64 @@
+{
+ "not": "Otomatik oynanış: A paylaşılan 'kenar', B 'dolas' botuyla sürülür (klavye benzeri 8 yön). İki ayrı Chromium süreci, N3 vekili.",
+ "kod": "BYXJJCKP",
+ "bAlanDolu": "BYXJ-JCKP",
+ "rakipBulundu": [
+  "Rakip bulundu: Oyuncu794",
+  "Rakip bulundu: Oyuncu128"
+ ],
+ "h10": "1137 ms",
+ "teslimSonucu": {
+  "kazanan": 0,
+  "neden": "teslim",
+  "puan": [
+   3,
+   0
+  ]
+ },
+ "rakipBaglaniyor": "Rakip bağlanıyor… 17Maç donduruldu. 20 sn içinde dönmezse galibiyet sende.",
+ "bBagKoptu": "Bağlantı koptu. Yeniden bağlanıyoruz… 12",
+ "donusSn": "10 sn kesme sonrası döndü",
+ "hukmen": {
+  "kazanan": 0,
+  "neden": "hukmen",
+  "puan": [
+   3,
+   0
+  ]
+ },
+ "hukmenAlt": "Rakip maçtan ayrıldı. Galibiyet sende.",
+ "bSon": "Bağlantı koptu. Yeniden bağlanıyoruz… 13",
+ "cekilen": [
+  "docs/production/raporlar/ekran/D4-lobi.png",
+  "docs/production/raporlar/ekran/D4-oda-kodu.png",
+  "docs/production/raporlar/ekran/D4-katil-baglanti.png",
+  "docs/production/raporlar/ekran/D4-rakip-bulundu-A.png",
+  "docs/production/raporlar/ekran/D4-rakip-bulundu-B.png",
+  "docs/production/raporlar/ekran/D4-rakip-bulundu.png",
+  "docs/production/raporlar/ekran/D4-mac-ortasi-A.png",
+  "docs/production/raporlar/ekran/D4-mac-ortasi-B.png",
+  "docs/production/raporlar/ekran/D4-mac-ortasi.png",
+  "docs/production/raporlar/ekran/D4-h10-rozeti.png",
+  "docs/production/raporlar/ekran/D4-teslim-sonucu-A.png",
+  "docs/production/raporlar/ekran/D4-teslim-sonucu-B.png",
+  "docs/production/raporlar/ekran/D4-teslim-sonucu.png",
+  "docs/production/raporlar/ekran/D4-rovans-bekleniyor.png",
+  "docs/production/raporlar/ekran/D4-rovans.png",
+  "docs/production/raporlar/ekran/D4-rakip-baglaniyor.png",
+  "docs/production/raporlar/ekran/D4-baglanti-koptu.png",
+  "docs/production/raporlar/ekran/D4-hukmen.png",
+  "docs/production/raporlar/ekran/D4-hukmen-B.png"
+ ],
+ "konsolHata": [
+  "B WebSocket connection to 'ws://localhost:2632/QQ0gMi8E_/BYXJJCKP?sessionId=MmDHVqaqS&reconnectionToken=Aav6Q6Kbs&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+  "B WebSocket connection to 'ws://localhost:2632/QQ0gMi8E_/BYXJJCKP?sessionId=MmDHVqaqS&reconnectionToken=Aav6Q6Kbs&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+  "B WebSocket connection to 'ws://localhost:2632/QQ0gMi8E_/BYXJJCKP?sessionId=MmDHVqaqS&reconnectionToken=rcQTYKIdo&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+  "B WebSocket connection to 'ws://localhost:2632/QQ0gMi8E_/BYXJJCKP?sessionId=MmDHVqaqS&reconnectionToken=rcQTYKIdo&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+  "B WebSocket connection to 'ws://localhost:2632/QQ0gMi8E_/BYXJJCKP?sessionId=MmDHVqaqS&reconnectionToken=rcQTYKIdo&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+  "B WebSocket connection to 'ws://localhost:2632/QQ0gMi8E_/BYXJJCKP?sessionId=MmDHVqaqS&reconnectionToken=rcQTYKIdo&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+  "B WebSocket connection to 'ws://localhost:2632/QQ0gMi8E_/BYXJJCKP?sessionId=MmDHVqaqS&reconnectionToken=rcQTYKIdo&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+  "B WebSocket connection to 'ws://localhost:2632/QQ0gMi8E_/BYXJJCKP?sessionId=MmDHVqaqS&reconnectionToken=rcQTYKIdo&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+  "B WebSocket connection to 'ws://localhost:2632/QQ0gMi8E_/BYXJJCKP?sessionId=MmDHVqaqS&reconnectionToken=rcQTYKIdo&skipHandshake=true' failed: Connection closed before receiving a handshake response"
+ ],
+ "konsolUyari": []
+}

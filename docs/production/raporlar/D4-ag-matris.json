@@ -1,0 +1,1350 @@
+{
+ "N0": {
+  "profil": "N0",
+  "not": "temel",
+  "kod": "ZJFJXGXD",
+  "macSureSn": 72.843,
+  "sonuc": {
+   "kazanan": 0,
+   "neden": "puan",
+   "puan": [
+    3,
+    1
+   ]
+  },
+  "tick": 4371,
+  "A": {
+   "wireHash": "73/73",
+   "wireSapma": 0,
+   "yenidenOynatma": "72/72 son eşit",
+   "yenidenOynatmaSapma": 0,
+   "uzlasma": {
+    "yokSay": 864,
+    "yumusak": 269,
+    "buyuk": 13,
+    "darbeYumusak": 10,
+    "deneyYumusak": 0,
+    "sicrama": 3
+   },
+   "buyukPer10": 2.653061224489796,
+   "sicramaPer10": 0.6122448979591837,
+   "gorunurSicrama": 3,
+   "gorunurPer10": 0.6122448979591837,
+   "carpismalar": 49,
+   "varis": {
+    "n": 49,
+    "ort": 2.4693877551020407,
+    "p50": 2,
+    "p95": 4,
+    "enFazla": 4
+   },
+   "isleme": {
+    "n": 49,
+    "ort": 17.346938775510203,
+    "p50": 15,
+    "p95": 35,
+    "enFazla": 36
+   },
+   "rtt": {
+    "n": 73,
+    "ort": 12.287671232876713,
+    "p50": 12,
+    "p95": 14,
+    "enFazla": 15
+   },
+   "hayalet": 0,
+   "ayirma": 105,
+   "yenidenOynatmaEnFazla": 8,
+   "yamalar": 1500,
+   "kopma": 0
+  },
+  "B": {
+   "wireHash": "73/73",
+   "wireSapma": 0,
+   "yenidenOynatma": "72/72 son eşit",
+   "yenidenOynatmaSapma": 0,
+   "uzlasma": {
+    "yokSay": 894,
+    "yumusak": 238,
+    "buyuk": 14,
+    "darbeYumusak": 12,
+    "deneyYumusak": 0,
+    "sicrama": 2
+   },
+   "buyukPer10": 2.8571428571428568,
+   "sicramaPer10": 0.4081632653061224,
+   "gorunurSicrama": 4,
+   "gorunurPer10": 0.8163265306122448,
+   "carpismalar": 49,
+   "varis": {
+    "n": 49,
+    "ort": 2.2244897959183674,
+    "p50": 2,
+    "p95": 3,
+    "enFazla": 4
+   },
+   "isleme": {
+    "n": 49,
+    "ort": 16.632653061224488,
+    "p50": 16,
+    "p95": 33,
+    "enFazla": 34
+   },
+   "rtt": {
+    "n": 73,
+    "ort": 12.452054794520548,
+    "p50": 12,
+    "p95": 15,
+    "enFazla": 16
+   },
+   "hayalet": 0,
+   "ayirma": 143,
+   "yenidenOynatmaEnFazla": 6,
+   "yamalar": 1478,
+   "kopma": 0
+  },
+  "sunucu": {
+   "oda": "ZJFJXGXD",
+   "adim": 4371,
+   "p50": 0.13668500003404915,
+   "p95": 0.24832300003618002,
+   "p99": 0.47294499981217086,
+   "enFazla": 3.0157699999399483,
+   "sayac": {
+    "birlestirme": 0,
+    "borc": 653,
+    "tasima": 655,
+    "notr": 0,
+    "dondurma": 0,
+    "hukmen": 0
+   },
+   "tick": 4371,
+   "sonHash": "dfba800eb34a57ea"
+  },
+  "bantA": [
+   {
+    "yol": "/QQ0gMi8E_/ZJFJXGXD?sessionId=DDtwi56-T",
+    "sureMs": 75039,
+    "asagiBayt": 289461,
+    "yukariBayt": 63132,
+    "asagiCerceve": 1756,
+    "yukariCerceve": 4449,
+    "kayipCerceve": 0,
+    "asagiKBs": 3.767064563926758,
+    "yukariKBs": 0.8216040159117259
+   }
+  ],
+  "bantB": [
+   {
+    "yol": "/QQ0gMi8E_/ZJFJXGXD?sessionId=t7QNS_JBp",
+    "sureMs": 73955,
+    "asagiBayt": 288959,
+    "yukariBayt": 63316,
+    "asagiCerceve": 1732,
+    "yukariCerceve": 4447,
+    "kayipCerceve": 0,
+    "asagiKBs": 3.81565172655669,
+    "yukariKBs": 0.836076414711649
+   }
+  ],
+  "konsolHata": [],
+  "adimA": 4421,
+  "adimB": 4422
+ },
+ "N1": {
+  "profil": "N1",
+  "not": "iyi",
+  "kod": "EFNERQKL",
+  "macSureSn": 82.573,
+  "sonuc": {
+   "kazanan": 0,
+   "neden": "puan",
+   "puan": [
+    3,
+    1
+   ]
+  },
+  "tick": 4956,
+  "A": {
+   "wireHash": "83/83",
+   "wireSapma": 0,
+   "yenidenOynatma": "82/82 son eşit",
+   "yenidenOynatmaSapma": 0,
+   "uzlasma": {
+    "yokSay": 967,
+    "yumusak": 393,
+    "buyuk": 23,
+    "darbeYumusak": 20,
+    "deneyYumusak": 0,
+    "sicrama": 3
+   },
+   "buyukPer10": 3.898305084745763,
+   "sicramaPer10": 0.5084745762711864,
+   "gorunurSicrama": 2,
+   "gorunurPer10": 0.3389830508474576,
+   "carpismalar": 59,
+   "varis": {
+    "n": 59,
+    "ort": 42.067796610169495,
+    "p50": 42,
+    "p95": 46,
+    "enFazla": 49
+   },
+   "isleme": {
+    "n": 59,
+    "ort": 58.898305084745765,
+    "p50": 59,
+    "p95": 73,
+    "enFazla": 81
+   },
+   "rtt": {
+    "n": 83,
+    "ort": 91.7710843373494,
+    "p50": 92,
+    "p95": 95,
+    "enFazla": 103
+   },
+   "hayalet": 0,
+   "ayirma": 152,
+   "yenidenOynatmaEnFazla": 7,
+   "yamalar": 1784,
+   "kopma": 0
+  },
+  "B": {
+   "wireHash": "83/83",
+   "wireSapma": 0,
+   "yenidenOynatma": "82/82 son eşit",
+   "yenidenOynatmaSapma": 0,
+   "uzlasma": {
+    "yokSay": 998,
+    "yumusak": 364,
+    "buyuk": 21,
+    "darbeYumusak": 17,
+    "deneyYumusak": 0,
+    "sicrama": 4
+   },
+   "buyukPer10": 3.559322033898305,
+   "sicramaPer10": 0.6779661016949152,
+   "gorunurSicrama": 5,
+   "gorunurPer10": 0.847457627118644,
+   "carpismalar": 59,
+   "varis": {
+    "n": 59,
+    "ort": 42.52542372881356,
+    "p50": 43,
+    "p95": 47,
+    "enFazla": 48
+   },
+   "isleme": {
+    "n": 59,
+    "ort": 57.16949152542373,
+    "p50": 56,
+    "p95": 75,
+    "enFazla": 81
+   },
+   "rtt": {
+    "n": 83,
+    "ort": 92.13253012048193,
+    "p50": 92,
+    "p95": 95,
+    "enFazla": 96
+   },
+   "hayalet": 0,
+   "ayirma": 169,
+   "yenidenOynatmaEnFazla": 6,
+   "yamalar": 1756,
+   "kopma": 0
+  },
+  "sunucu": {
+   "oda": "EFNERQKL",
+   "adim": 4956,
+   "p50": 0.12409000005573034,
+   "p95": 0.20652699982747436,
+   "p99": 0.3851680001243949,
+   "enFazla": 13.57401300035417,
+   "sayac": {
+    "birlestirme": 0,
+    "borc": 1243,
+    "tasima": 1255,
+    "notr": 0,
+    "dondurma": 0,
+    "hukmen": 0
+   },
+   "tick": 4956,
+   "sonHash": "b7ca54eda1fa82e9"
+  },
+  "bantA": [
+   {
+    "yol": "/QQ0gMi8E_/EFNERQKL?sessionId=PzYyOCfvG",
+    "sureMs": 85358,
+    "asagiBayt": 339125,
+    "yukariBayt": 72043,
+    "asagiCerceve": 2073,
+    "yukariCerceve": 5045,
+    "kayipCerceve": 0,
+    "asagiKBs": 3.8798561097085216,
+    "yukariKBs": 0.8242284517854214
+   }
+  ],
+  "bantB": [
+   {
+    "yol": "/QQ0gMi8E_/EFNERQKL?sessionId=ssdvq-Ho4",
+    "sureMs": 84016,
+    "asagiBayt": 338797,
+    "yukariBayt": 71927,
+    "asagiCerceve": 2043,
+    "yukariCerceve": 5042,
+    "kayipCerceve": 0,
+    "asagiKBs": 3.938017107604504,
+    "yukariKBs": 0.8360456453235098
+   }
+  ],
+  "konsolHata": [],
+  "adimA": 5006,
+  "adimB": 5006
+ },
+ "N2": {
+  "profil": "N2",
+  "not": "orta",
+  "kod": "CCUEBMJW",
+  "macSureSn": 80.269,
+  "sonuc": {
+   "kazanan": 0,
+   "neden": "puan",
+   "puan": [
+    4,
+    2
+   ]
+  },
+  "tick": 4819,
+  "A": {
+   "wireHash": "81/81",
+   "wireSapma": 0,
+   "yenidenOynatma": "80/80 son eşit",
+   "yenidenOynatmaSapma": 0,
+   "uzlasma": {
+    "yokSay": 566,
+    "yumusak": 676,
+    "buyuk": 54,
+    "darbeYumusak": 31,
+    "deneyYumusak": 0,
+    "sicrama": 23
+   },
+   "buyukPer10": 19.285714285714285,
+   "sicramaPer10": 8.214285714285714,
+   "gorunurSicrama": 13,
+   "gorunurPer10": 4.642857142857143,
+   "carpismalar": 28,
+   "varis": {
+    "n": 28,
+    "ort": 84.67857142857143,
+    "p50": 75,
+    "p95": 96,
+    "enFazla": 329
+   },
+   "isleme": {
+    "n": 28,
+    "ort": 98.5,
+    "p50": 87,
+    "p95": 124,
+    "enFazla": 341
+   },
+   "rtt": {
+    "n": 82,
+    "ort": 192.70731707317074,
+    "p50": 187,
+    "p95": 238,
+    "enFazla": 266
+   },
+   "hayalet": 0,
+   "ayirma": 171,
+   "yenidenOynatmaEnFazla": 29,
+   "yamalar": 1658,
+   "kopma": 0
+  },
+  "B": {
+   "wireHash": "81/81",
+   "wireSapma": 0,
+   "yenidenOynatma": "80/80 son eşit",
+   "yenidenOynatmaSapma": 0,
+   "uzlasma": {
+    "yokSay": 580,
+    "yumusak": 677,
+    "buyuk": 39,
+    "darbeYumusak": 20,
+    "deneyYumusak": 0,
+    "sicrama": 19
+   },
+   "buyukPer10": 13.928571428571427,
+   "sicramaPer10": 6.7857142857142865,
+   "gorunurSicrama": 10,
+   "gorunurPer10": 3.5714285714285716,
+   "carpismalar": 28,
+   "varis": {
+    "n": 28,
+    "ort": 78.39285714285714,
+    "p50": 80,
+    "p95": 94,
+    "enFazla": 96
+   },
+   "isleme": {
+    "n": 28,
+    "ort": 92.28571428571429,
+    "p50": 93,
+    "p95": 115,
+    "enFazla": 126
+   },
+   "rtt": {
+    "n": 81,
+    "ort": 200.64197530864197,
+    "p50": 198,
+    "p95": 249,
+    "enFazla": 345
+   },
+   "hayalet": 0,
+   "ayirma": 139,
+   "yenidenOynatmaEnFazla": 27,
+   "yamalar": 1631,
+   "kopma": 0
+  },
+  "sunucu": {
+   "oda": "CCUEBMJW",
+   "adim": 4819,
+   "p50": 0.11912200041115284,
+   "p95": 0.20960600022226572,
+   "p99": 0.40076200012117624,
+   "enFazla": 2.2621119995601475,
+   "sayac": {
+    "birlestirme": 0,
+    "borc": 4225,
+    "tasima": 4247,
+    "notr": 0,
+    "dondurma": 0,
+    "hukmen": 0
+   },
+   "tick": 4819,
+   "sonHash": "0f6822acbf92a03c"
+  },
+  "bantA": [
+   {
+    "yol": "/QQ0gMi8E_/CCUEBMJW?sessionId=J7x8Ais6y",
+    "sureMs": 83628,
+    "asagiBayt": 297861,
+    "yukariBayt": 68086,
+    "asagiCerceve": 1907,
+    "yukariCerceve": 4903,
+    "kayipCerceve": 75,
+    "asagiKBs": 3.4782594682701964,
+    "yukariKBs": 0.7950714398885541
+   }
+  ],
+  "bantB": [
+   {
+    "yol": "/QQ0gMi8E_/CCUEBMJW?sessionId=9H2ldI9Y8",
+    "sureMs": 82079,
+    "asagiBayt": 297489,
+    "yukariBayt": 69454,
+    "asagiCerceve": 1873,
+    "yukariCerceve": 4903,
+    "kayipCerceve": 63,
+    "asagiKBs": 3.5394754025085593,
+    "yukariKBs": 0.8263523175842786
+   }
+  ],
+  "konsolHata": [],
+  "adimA": 4868,
+  "adimB": 4868
+ },
+ "N3": {
+  "profil": "N3",
+  "not": "kötü (zorunlu kapı)",
+  "kod": "DERYZXGB",
+  "macSureSn": 89.078,
+  "sonuc": {
+   "kazanan": 1,
+   "neden": "puan",
+   "puan": [
+    1,
+    3
+   ]
+  },
+  "tick": 5347,
+  "A": {
+   "wireHash": "90/90",
+   "wireSapma": 0,
+   "yenidenOynatma": "89/89 son eşit",
+   "yenidenOynatmaSapma": 0,
+   "uzlasma": {
+    "yokSay": 609,
+    "yumusak": 710,
+    "buyuk": 128,
+    "darbeYumusak": 62,
+    "deneyYumusak": 0,
+    "sicrama": 66
+   },
+   "buyukPer10": 27.82608695652174,
+   "sicramaPer10": 14.347826086956522,
+   "gorunurSicrama": 29,
+   "gorunurPer10": 6.304347826086957,
+   "carpismalar": 46,
+   "varis": {
+    "n": 46,
+    "ort": 205.3695652173913,
+    "p50": 162,
+    "p95": 489,
+    "enFazla": 521
+   },
+   "isleme": {
+    "n": 46,
+    "ort": 221.1304347826087,
+    "p50": 174,
+    "p95": 515,
+    "enFazla": 533
+   },
+   "rtt": {
+    "n": 91,
+    "ort": 405.2307692307692,
+    "p50": 405,
+    "p95": 461,
+    "enFazla": 479
+   },
+   "hayalet": 0,
+   "ayirma": 358,
+   "yenidenOynatmaEnFazla": 45,
+   "yamalar": 1851,
+   "kopma": 0
+  },
+  "B": {
+   "wireHash": "90/90",
+   "wireSapma": 0,
+   "yenidenOynatma": "89/89 son eşit",
+   "yenidenOynatmaSapma": 0,
+   "uzlasma": {
+    "yokSay": 568,
+    "yumusak": 772,
+    "buyuk": 107,
+    "darbeYumusak": 52,
+    "deneyYumusak": 0,
+    "sicrama": 55
+   },
+   "buyukPer10": 23.26086956521739,
+   "sicramaPer10": 11.956521739130434,
+   "gorunurSicrama": 31,
+   "gorunurPer10": 6.739130434782608,
+   "carpismalar": 46,
+   "varis": {
+    "n": 46,
+    "ort": 199.17391304347825,
+    "p50": 160,
+    "p95": 437,
+    "enFazla": 503
+   },
+   "isleme": {
+    "n": 46,
+    "ort": 213.7391304347826,
+    "p50": 170,
+    "p95": 455,
+    "enFazla": 533
+   },
+   "rtt": {
+    "n": 90,
+    "ort": 421.0111111111111,
+    "p50": 416,
+    "p95": 519,
+    "enFazla": 590
+   },
+   "hayalet": 0,
+   "ayirma": 205,
+   "yenidenOynatmaEnFazla": 47,
+   "yamalar": 1810,
+   "kopma": 0
+  },
+  "sunucu": {
+   "oda": "DERYZXGB",
+   "adim": 5347,
+   "p50": 0.11330500012263656,
+   "p95": 0.1971539999358356,
+   "p99": 0.3857559999451041,
+   "enFazla": 3.3348439997062087,
+   "sayac": {
+    "birlestirme": 0,
+    "borc": 6063,
+    "tasima": 6114,
+    "notr": 0,
+    "dondurma": 0,
+    "hukmen": 0
+   },
+   "tick": 5347,
+   "sonHash": "e4867bc3cee4a2e7"
+  },
+  "bantA": [
+   {
+    "yol": "/QQ0gMi8E_/DERYZXGB?sessionId=GbqEYl4zX",
+    "sureMs": 93715,
+    "asagiBayt": 329320,
+    "yukariBayt": 75797,
+    "asagiCerceve": 2161,
+    "yukariCerceve": 5442,
+    "kayipCerceve": 152,
+    "asagiKBs": 3.4316978338579736,
+    "yukariKBs": 0.7898469595315584
+   }
+  ],
+  "bantB": [
+   {
+    "yol": "/QQ0gMi8E_/DERYZXGB?sessionId=Ex__pvK5d",
+    "sureMs": 91612,
+    "asagiBayt": 328835,
+    "yukariBayt": 76888,
+    "asagiCerceve": 2117,
+    "yukariCerceve": 5442,
+    "kayipCerceve": 155,
+    "asagiKBs": 3.5053042143769377,
+    "yukariKBs": 0.8196081026503078
+   }
+  ],
+  "konsolHata": [],
+  "adimA": 5396,
+  "adimB": 5398
+ },
+ "N4": {
+  "profil": "N4",
+  "not": "aşırı",
+  "kod": "NLGEHUTR",
+  "macSureSn": 42.221,
+  "sonuc": {
+   "kazanan": 1,
+   "neden": "puan",
+   "puan": [
+    0,
+    4
+   ]
+  },
+  "tick": 2507,
+  "A": {
+   "wireHash": "42/42",
+   "wireSapma": 0,
+   "yenidenOynatma": "41/41 son eşit",
+   "yenidenOynatmaSapma": 0,
+   "uzlasma": {
+    "yokSay": 310,
+    "yumusak": 255,
+    "buyuk": 96,
+    "darbeYumusak": 35,
+    "deneyYumusak": 0,
+    "sicrama": 61
+   },
+   "buyukPer10": 30.967741935483872,
+   "sicramaPer10": 19.67741935483871,
+   "gorunurSicrama": 23,
+   "gorunurPer10": 7.419354838709678,
+   "carpismalar": 31,
+   "varis": {
+    "n": 31,
+    "ort": 372.03225806451616,
+    "p50": 296,
+    "p95": 699,
+    "enFazla": 703
+   },
+   "isleme": {
+    "n": 31,
+    "ort": 385.80645161290323,
+    "p50": 315,
+    "p95": 706,
+    "enFazla": 718
+   },
+   "rtt": {
+    "n": 45,
+    "ort": 714.6444444444444,
+    "p50": 714,
+    "p95": 845,
+    "enFazla": 850
+   },
+   "hayalet": 0,
+   "ayirma": 173,
+   "yenidenOynatmaEnFazla": 79,
+   "yamalar": 972,
+   "kopma": 0
+  },
+  "B": {
+   "wireHash": "42/42",
+   "wireSapma": 0,
+   "yenidenOynatma": "41/41 son eşit",
+   "yenidenOynatmaSapma": 0,
+   "uzlasma": {
+    "yokSay": 332,
+    "yumusak": 260,
+    "buyuk": 69,
+    "darbeYumusak": 25,
+    "deneyYumusak": 0,
+    "sicrama": 44
+   },
+   "buyukPer10": 22.258064516129032,
+   "sicramaPer10": 14.193548387096776,
+   "gorunurSicrama": 18,
+   "gorunurPer10": 5.806451612903226,
+   "carpismalar": 31,
+   "varis": {
+    "n": 31,
+    "ort": 381.6774193548387,
+    "p50": 297,
+    "p95": 677,
+    "enFazla": 718
+   },
+   "isleme": {
+    "n": 31,
+    "ort": 398.38709677419354,
+    "p50": 315,
+    "p95": 699,
+    "enFazla": 747
+   },
+   "rtt": {
+    "n": 43,
+    "ort": 779.953488372093,
+    "p50": 792,
+    "p95": 871,
+    "enFazla": 887
+   },
+   "hayalet": 0,
+   "ayirma": 149,
+   "yenidenOynatmaEnFazla": 81,
+   "yamalar": 916,
+   "kopma": 0
+  },
+  "sunucu": {
+   "oda": "NLGEHUTR",
+   "adim": 2507,
+   "p50": 0.10095500014722347,
+   "p95": 0.1953480001538992,
+   "p99": 0.34860200015828013,
+   "enFazla": 1.8038820000365376,
+   "sayac": {
+    "birlestirme": 0,
+    "borc": 4095,
+    "tasima": 4152,
+    "notr": 7,
+    "dondurma": 0,
+    "hukmen": 0
+   },
+   "tick": 2507,
+   "sonHash": "786182e51acfb22d"
+  },
+  "bantA": [
+   {
+    "yol": "/QQ0gMi8E_/NLGEHUTR?sessionId=vRCryAv1k",
+    "sureMs": 48372,
+    "asagiBayt": 148221,
+    "yukariBayt": 34606,
+    "asagiCerceve": 1137,
+    "yukariCerceve": 2582,
+    "kayipCerceve": 192,
+    "asagiKBs": 2.9923730735239396,
+    "yukariKBs": 0.6986463630819483
+   }
+  ],
+  "bantB": [
+   {
+    "yol": "/QQ0gMi8E_/NLGEHUTR?sessionId=gLmDuWhkZ",
+    "sureMs": 45603,
+    "asagiBayt": 147579,
+    "yukariBayt": 34815,
+    "asagiCerceve": 1079,
+    "yukariCerceve": 2584,
+    "kayipCerceve": 186,
+    "asagiKBs": 3.1603209698375108,
+    "yukariKBs": 0.7455435703243207
+   }
+  ],
+  "konsolHata": [],
+  "adimA": 2586,
+  "adimB": 2585
+ },
+ "N5": {
+  "profil": "N5",
+  "not": "asimetrik: A 20 ms, B 200 ms",
+  "kod": "YRADNCEF",
+  "macSureSn": 58.299,
+  "sonuc": {
+   "kazanan": 0,
+   "neden": "puan",
+   "puan": [
+    3,
+    1
+   ]
+  },
+  "tick": 3491,
+  "A": {
+   "wireHash": "59/59",
+   "wireSapma": 0,
+   "yenidenOynatma": "58/58 son eşit",
+   "yenidenOynatmaSapma": 0,
+   "uzlasma": {
+    "yokSay": 353,
+    "yumusak": 463,
+    "buyuk": 37,
+    "darbeYumusak": 19,
+    "deneyYumusak": 0,
+    "sicrama": 18
+   },
+   "buyukPer10": 15.416666666666668,
+   "sicramaPer10": 7.5,
+   "gorunurSicrama": 1,
+   "gorunurPer10": 0.41666666666666663,
+   "carpismalar": 24,
+   "varis": {
+    "n": 24,
+    "ort": 36.791666666666664,
+    "p50": 40,
+    "p95": 116,
+    "enFazla": 143
+   },
+   "isleme": {
+    "n": 24,
+    "ort": 52.166666666666664,
+    "p50": 51,
+    "p95": 130,
+    "enFazla": 169
+   },
+   "rtt": {
+    "n": 60,
+    "ort": 93.76666666666667,
+    "p50": 94,
+    "p95": 130,
+    "enFazla": 136
+   },
+   "hayalet": 0,
+   "ayirma": 65,
+   "yenidenOynatmaEnFazla": 23,
+   "yamalar": 1241,
+   "kopma": 0
+  },
+  "B": {
+   "wireHash": "59/59",
+   "wireSapma": 0,
+   "yenidenOynatma": "58/58 son eşit",
+   "yenidenOynatmaSapma": 0,
+   "uzlasma": {
+    "yokSay": 293,
+    "yumusak": 456,
+    "buyuk": 104,
+    "darbeYumusak": 44,
+    "deneyYumusak": 0,
+    "sicrama": 60
+   },
+   "buyukPer10": 43.33333333333333,
+   "sicramaPer10": 25,
+   "gorunurSicrama": 25,
+   "gorunurPer10": 10.416666666666668,
+   "carpismalar": 24,
+   "varis": {
+    "n": 24,
+    "ort": 231.08333333333334,
+    "p50": 212,
+    "p95": 428,
+    "enFazla": 541
+   },
+   "isleme": {
+    "n": 24,
+    "ort": 245.58333333333334,
+    "p50": 230,
+    "p95": 429,
+    "enFazla": 542
+   },
+   "rtt": {
+    "n": 58,
+    "ort": 516.3620689655172,
+    "p50": 524,
+    "p95": 619,
+    "enFazla": 645
+   },
+   "hayalet": 0,
+   "ayirma": 155,
+   "yenidenOynatmaEnFazla": 67,
+   "yamalar": 1192,
+   "kopma": 0
+  },
+  "sunucu": {
+   "oda": "YRADNCEF",
+   "adim": 3491,
+   "p50": 0.11398199992254376,
+   "p95": 0.2007710002362728,
+   "p99": 0.3633169997483492,
+   "enFazla": 1.1947630001232028,
+   "sayac": {
+    "birlestirme": 0,
+    "borc": 4165,
+    "tasima": 4200,
+    "notr": 0,
+    "dondurma": 0,
+    "hukmen": 0
+   },
+   "tick": 3491,
+   "sonHash": "1f670a402f7cea49"
+  },
+  "bantA": [
+   {
+    "yol": "/QQ0gMi8E_/YRADNCEF?sessionId=MuGoyE6vT",
+    "sureMs": 62548,
+    "asagiBayt": 208725,
+    "yukariBayt": 49815,
+    "asagiCerceve": 1423,
+    "yukariCerceve": 3555,
+    "kayipCerceve": 99,
+    "asagiKBs": 3.2588253471334014,
+    "yukariKBs": 0.7777620537427256
+   }
+  ],
+  "bantB": [
+   {
+    "yol": "/QQ0gMi8E_/YRADNCEF?sessionId=koIt8xigc",
+    "sureMs": 60661,
+    "asagiBayt": 208197,
+    "yukariBayt": 49446,
+    "asagiCerceve": 1375,
+    "yukariCerceve": 3551,
+    "kayipCerceve": 102,
+    "asagiKBs": 3.351698501714446,
+    "yukariKBs": 0.7960157164405466
+   }
+  ],
+  "konsolHata": [],
+  "adimA": 3548,
+  "adimB": 3537
+ },
+ "N6": {
+  "profil": "N6",
+  "not": "patlama: 30 ms + maç ortasında 2,9 sn %100 kayıp (iki yön)",
+  "kod": "LKCQRKSE",
+  "macSureSn": 70.167,
+  "sonuc": {
+   "kazanan": 1,
+   "neden": "puan",
+   "puan": [
+    0,
+    4
+   ]
+  },
+  "tick": 4212,
+  "A": {
+   "wireHash": "71/71",
+   "wireSapma": 0,
+   "yenidenOynatma": "70/70 son eşit",
+   "yenidenOynatmaSapma": 0,
+   "uzlasma": {
+    "yokSay": 1069,
+    "yumusak": 167,
+    "buyuk": 23,
+    "darbeYumusak": 19,
+    "deneyYumusak": 0,
+    "sicrama": 4
+   },
+   "buyukPer10": 10,
+   "sicramaPer10": 1.7391304347826086,
+   "gorunurSicrama": 5,
+   "gorunurPer10": 2.1739130434782608,
+   "carpismalar": 23,
+   "varis": {
+    "n": 23,
+    "ort": 95.52173913043478,
+    "p50": 32,
+    "p95": 33,
+    "enFazla": 1501
+   },
+   "isleme": {
+    "n": 23,
+    "ort": 112.47826086956522,
+    "p50": 50,
+    "p95": 66,
+    "enFazla": 1515
+   },
+   "rtt": {
+    "n": 71,
+    "ort": 93.21126760563381,
+    "p50": 73,
+    "p95": 137,
+    "enFazla": 137
+   },
+   "hayalet": 0,
+   "ayirma": 111,
+   "yenidenOynatmaEnFazla": 187,
+   "yamalar": 1523,
+   "kopma": 0
+  },
+  "B": {
+   "wireHash": "71/71",
+   "wireSapma": 0,
+   "yenidenOynatma": "70/70 son eşit",
+   "yenidenOynatmaSapma": 0,
+   "uzlasma": {
+    "yokSay": 1044,
+    "yumusak": 154,
+    "buyuk": 61,
+    "darbeYumusak": 57,
+    "deneyYumusak": 0,
+    "sicrama": 4
+   },
+   "buyukPer10": 26.52173913043478,
+   "sicramaPer10": 1.7391304347826086,
+   "gorunurSicrama": 18,
+   "gorunurPer10": 7.826086956521739,
+   "carpismalar": 23,
+   "varis": {
+    "n": 23,
+    "ort": 144.3913043478261,
+    "p50": 32,
+    "p95": 33,
+    "enFazla": 2627
+   },
+   "isleme": {
+    "n": 23,
+    "ort": 161.8695652173913,
+    "p50": 51,
+    "p95": 67,
+    "enFazla": 2650
+   },
+   "rtt": {
+    "n": 71,
+    "ort": 97.02816901408451,
+    "p50": 73,
+    "p95": 156,
+    "enFazla": 156
+   },
+   "hayalet": 0,
+   "ayirma": 164,
+   "yenidenOynatmaEnFazla": 190,
+   "yamalar": 1496,
+   "kopma": 0
+  },
+  "sunucu": {
+   "oda": "LKCQRKSE",
+   "adim": 4212,
+   "p50": 0.10979099990800023,
+   "p95": 0.19120999984443188,
+   "p99": 0.3790919999592006,
+   "enFazla": 2.349852000363171,
+   "sayac": {
+    "birlestirme": 118,
+    "borc": 350,
+    "tasima": 420,
+    "notr": 310,
+    "dondurma": 0,
+    "hukmen": 0
+   },
+   "tick": 4212,
+   "sonHash": "b8f46fae9ed9d302"
+  },
+  "bantA": [
+   {
+    "yol": "/QQ0gMi8E_/LKCQRKSE?sessionId=Fwp0qpE-W",
+    "sureMs": 72872,
+    "asagiBayt": 273985,
+    "yukariBayt": 60433,
+    "asagiCerceve": 1733,
+    "yukariCerceve": 4286,
+    "kayipCerceve": 241,
+    "asagiKBs": 3.6716911373710066,
+    "yukariKBs": 0.8098666368769898
+   }
+  ],
+  "bantB": [
+   {
+    "yol": "/QQ0gMi8E_/LKCQRKSE?sessionId=8f16U7h_-",
+    "sureMs": 71524,
+    "asagiBayt": 273671,
+    "yukariBayt": 60824,
+    "asagiCerceve": 1705,
+    "yukariCerceve": 4285,
+    "kayipCerceve": 242,
+    "asagiKBs": 3.7366036007144454,
+    "yukariKBs": 0.830468618925116
+   }
+  ],
+  "konsolHata": [],
+  "adimA": 4260,
+  "adimB": 4261
+ },
+ "kopma": {
+  "kod": "XGFBXMLT",
+  "satirlar": [
+   {
+    "kesmeSn": 2,
+    "geriDonusVeyaSonucMs": 3613,
+    "donmaGoruldu": false,
+    "bantA": "Rakibin bağlantısı koptu.",
+    "bantB": "Bağlantı koptu. Yeniden bağlanıyoruz… 15",
+    "bYenidenBaglandi": 1,
+    "bKopma": 4,
+    "donustenSonraHash": "4/4",
+    "aHash": "15/15",
+    "aTickOnce": 540,
+    "aTickSonra": 907,
+    "sonuc": null,
+    "odaFazB": 2,
+    "bBant": ""
+   },
+   {
+    "kesmeSn": 10,
+    "geriDonusVeyaSonucMs": 11604,
+    "donmaGoruldu": true,
+    "bantA": "Rakip bağlanıyor… 10Maç donduruldu. 20 sn içinde dönmezse galibiyet sende.",
+    "bantB": "Bağlantı koptu. Yeniden bağlanıyoruz… 15",
+    "bYenidenBaglandi": 1,
+    "bKopma": 12,
+    "donustenSonraHash": "3/3",
+    "aHash": "24/24",
+    "aTickOnce": 1087,
+    "aTickSonra": 1483,
+    "sonuc": null,
+    "odaFazB": 2,
+    "bBant": ""
+   },
+   {
+    "kesmeSn": 25,
+    "geriDonusVeyaSonucMs": 20080,
+    "donmaGoruldu": true,
+    "bantA": "Rakip bağlanıyor… 1Maç donduruldu. 20 sn içinde dönmezse galibiyet sende.",
+    "bantB": "Bağlantı koptu. Yeniden bağlanıyoruz… 15",
+    "bYenidenBaglandi": 0,
+    "bKopma": 24,
+    "donustenSonraHash": "0/0",
+    "aHash": "30/30",
+    "aTickOnce": 1663,
+    "aTickSonra": 1847,
+    "sonuc": {
+     "kazanan": 0,
+     "neden": "hukmen",
+     "puan": [
+      3,
+      0
+     ]
+    },
+    "odaFazB": 2,
+    "bBant": "Bağlantı koptu. Yeniden bağlanıyoruz… 15"
+   }
+  ],
+  "yenidenOynatmaA": null,
+  "konsolHata": [
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=shq3ZaYEn&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=shq3ZaYEn&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=shq3ZaYEn&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=HeBK8rtnG&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=HeBK8rtnG&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=HeBK8rtnG&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=HeBK8rtnG&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=HeBK8rtnG&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=HeBK8rtnG&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=HeBK8rtnG&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=HeBK8rtnG&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=HeBK8rtnG&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=HeBK8rtnG&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=HeBK8rtnG&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response",
+   "WebSocket connection to 'ws://localhost:2622/QQ0gMi8E_/XGFBXMLT?sessionId=XZpKGBAUe&reconnectionToken=Vb1C_VQjM&skipHandshake=true' failed: Connection closed before receiving a handshake response"
+  ]
+ },
+ "ucuncu": {
+  "kod": "DTXDNRSE",
+  "apiDurum": {
+   "durum": "dolu"
+  },
+  "ucuncuHata": "Oda dolu.",
+  "gecersizKodHata": "Bu kod bulunamadı. Kod 8 harftir, örnek: ABCD-EFGH.",
+  "gizliBant": "Duraklatıldı",
+  "afkUyari": [
+   {
+    "v": 3,
+    "tur": "afkUyari",
+    "kalanSn": 20
+   }
+  ],
+  "donusBant": "Oyuna dönüldü.",
+  "donustenSonraSonuc": null,
+  "hashB": "20/0",
+  "konsolHata": []
+ },
+ "bekleme": {
+  "kod": "SZUYELAY",
+  "kapanmaSn": 59.968,
+  "lobiMetni": "Bu odanın süresi doldu. Yeni oda aç.",
+  "apiDurum": {
+   "durum": "suresiDoldu"
+  },
+  "konsolHata": []
+ },
+ "N3-d40": {
+  "profil": "N3",
+  "not": "kötü (zorunlu kapı) · DENEY atlama eşiği 40 br",
+  "kod": "ZHNDUSNT",
+  "macSureSn": 64.21,
+  "sonuc": {
+   "kazanan": 1,
+   "neden": "puan",
+   "puan": [
+    0,
+    3
+   ]
+  },
+  "tick": 3865,
+  "A": {
+   "wireHash": "65/65",
+   "wireSapma": 0,
+   "yenidenOynatma": "64/64 son eşit",
+   "yenidenOynatmaSapma": 0,
+   "uzlasma": {
+    "yokSay": 477,
+    "yumusak": 581,
+    "buyuk": 78,
+    "darbeYumusak": 9,
+    "deneyYumusak": 61,
+    "sicrama": 8
+   },
+   "buyukPer10": 17.727272727272727,
+   "sicramaPer10": 1.8181818181818183,
+   "gorunurSicrama": 17,
+   "gorunurPer10": 3.8636363636363633,
+   "carpismalar": 44,
+   "varis": {
+    "n": 44,
+    "ort": 168.45454545454547,
+    "p50": 156,
+    "p95": 352,
+    "enFazla": 394
+   },
+   "isleme": {
+    "n": 44,
+    "ort": 185.27272727272728,
+    "p50": 173,
+    "p95": 374,
+    "enFazla": 418
+   },
+   "rtt": {
+    "n": 66,
+    "ort": 379.59090909090907,
+    "p50": 385,
+    "p95": 440,
+    "enFazla": 454
+   },
+   "hayalet": 0,
+   "ayirma": 210,
+   "yenidenOynatmaEnFazla": 51,
+   "yamalar": 1421,
+   "kopma": 0
+  },
+  "B": {
+   "wireHash": "65/65",
+   "wireSapma": 0,
+   "yenidenOynatma": "64/64 son eşit",
+   "yenidenOynatmaSapma": 0,
+   "uzlasma": {
+    "yokSay": 466,
+    "yumusak": 571,
+    "buyuk": 99,
+    "darbeYumusak": 14,
+    "deneyYumusak": 75,
+    "sicrama": 10
+   },
+   "buyukPer10": 22.5,
+   "sicramaPer10": 2.2727272727272725,
+   "gorunurSicrama": 22,
+   "gorunurPer10": 5,
+   "carpismalar": 44,
+   "varis": {
+    "n": 44,
+    "ort": 175.97727272727272,
+    "p50": 149,
+    "p95": 373,
+    "enFazla": 473
+   },
+   "isleme": {
+    "n": 44,
+    "ort": 192.61363636363637,
+    "p50": 169,
+    "p95": 387,
+    "enFazla": 483
+   },
+   "rtt": {
+    "n": 66,
+    "ort": 389.27272727272725,
+    "p50": 391,
+    "p95": 457,
+    "enFazla": 466
+   },
+   "hayalet": 0,
+   "ayirma": 206,
+   "yenidenOynatmaEnFazla": 59,
+   "yamalar": 1381,
+   "kopma": 0
+  },
+  "sunucu": {
+   "oda": "ZHNDUSNT",
+   "adim": 3865,
+   "p50": 0.1150340000167489,
+   "p95": 0.19790600007399917,
+   "p99": 0.35477300034835935,
+   "enFazla": 4.464250000193715,
+   "sayac": {
+    "birlestirme": 0,
+    "borc": 4162,
+    "tasima": 4228,
+    "notr": 11,
+    "dondurma": 0,
+    "hukmen": 0
+   },
+   "tick": 3865,
+   "sonHash": "e14397d71e16b3de"
+  },
+  "bantA": [
+   {
+    "yol": "/QQ0gMi8E_/ZHNDUSNT?sessionId=nVLo_510b",
+    "sureMs": 68952,
+    "asagiBayt": 260919,
+    "yukariBayt": 55993,
+    "asagiCerceve": 1660,
+    "yukariCerceve": 3916,
+    "kayipCerceve": 99,
+    "asagiKBs": 3.6953781027018797,
+    "yukariKBs": 0.7930250618183664
+   }
+  ],
+  "bantB": [
+   {
+    "yol": "/QQ0gMi8E_/ZHNDUSNT?sessionId=_Wl1ixhWf",
+    "sureMs": 66938,
+    "asagiBayt": 260456,
+    "yukariBayt": 55333,
+    "asagiCerceve": 1618,
+    "yukariCerceve": 3942,
+    "kayipCerceve": 114,
+    "asagiKBs": 3.799808218052526,
+    "yukariKBs": 0.8072564584018046
+   }
+  ],
+  "konsolHata": [],
+  "adimA": 3902,
+  "adimB": 3922
+ }
+}

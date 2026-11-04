@@ -481,3 +481,20 @@ export function teslimEt(d: Dunya, i: number): void {
   d.mac.puan[1 - i] = M.kazanmaPuani;
   macBitir(d, 1 - i, "teslim");
 }
+
+/**
+ * Hükmen (D4, flint #10 / #18): kopan (ya da 30 s girdisiz) oyuncu 0-3 yenik. Sim dışı karar, yalnız sunucu çağırır;
+ * kayıtta (`MacKaydi`) eylem olarak tutulur, yeniden oynatma aynı adımda aynı çağrıyı yapar.
+ */
+export function hukmenBitir(d: Dunya, kaybeden: number): void {
+  if (d.mac.mod !== "mac" || d.mac.faz === "bitti") return;
+  d.mac.puan[kaybeden] = 0;
+  d.mac.puan[1 - kaybeden] = M.kazanmaPuani;
+  macBitir(d, 1 - kaybeden, "hukmen");
+}
+
+/** İptal (flint #11): iki taraf da kopup 20 s'de dönmedi. Sonuç yok (kazanan −1), puan olduğu gibi. */
+export function macIptal(d: Dunya): void {
+  if (d.mac.mod !== "mac" || d.mac.faz === "bitti") return;
+  macBitir(d, -1, "iptal");
+}

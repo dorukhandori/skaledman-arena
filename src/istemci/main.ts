@@ -1,9 +1,10 @@
 import { Application } from "pixi.js";
 
-// İstemci girişi. Ekran seçimi URL'den: ?ekran=mac (bota karşı tam maç, D2) ya da ?ekran=topac-lab (varsayılan).
+// İstemci girişi. Ekran seçimi URL'den: ?ekran=mac (bota karşı tam maç, D2), ?ekran=lobi (çevrimiçi, D4; `#oda=` ile
+// de açılır) ya da ?ekran=topac-lab (varsayılan).
 // Her ekran modülü `baslat(baglam)` dışa aktarır ve kendi temizliğini yapar.
 
-export type EkranAdi = "topac-lab" | "mac";
+export type EkranAdi = "topac-lab" | "mac" | "lobi";
 
 export interface EkranBaglami {
   app: Application;
@@ -14,11 +15,14 @@ export interface EkranBaglami {
 const EKRANLAR: Record<EkranAdi, () => Promise<{ baslat: (b: EkranBaglami) => Promise<void> | void }>> = {
   "topac-lab": () => import("./ekranlar/TopacLab.ts"),
   mac: () => import("./ekranlar/Mac.ts"),
+  lobi: () => import("./ekranlar/Lobi.ts"),
 };
 
 function ekranAdi(): EkranAdi {
   const istenen = new URLSearchParams(location.search).get("ekran");
-  return istenen && istenen in EKRANLAR ? (istenen as EkranAdi) : "topac-lab";
+  if (istenen && istenen in EKRANLAR) return istenen as EkranAdi;
+  // oda bağlantısı (`#oda=ABCDEFGH`, ux § 3.3) doğrudan lobiye açılır
+  return location.hash.startsWith("#oda=") ? "lobi" : "topac-lab";
 }
 
 async function ana() {

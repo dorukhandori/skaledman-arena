@@ -26,14 +26,14 @@
       #sahne canvas { display: block; image-rendering: pixelated; }
       #ustYazi { position: absolute; inset: 0; pointer-events: none; }
       #ustYazi > * { pointer-events: none; }
-      #ustYazi > .lab { pointer-events: auto; }
+      #ustYazi > .lab, #ustYazi > .lobi { pointer-events: auto; }
       @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
     </style>
   </head>
   <body>
     <header>
-      <h1>DEVRAN <span>D3 · çevrimdışı</span></h1>
-      <nav id="menu"><a href="?ekran=mac">Maç (bota karşı)</a><a href="?ekran=topac-lab">Topaç Lab</a></nav>
+      <h1>DEVRAN <span>D4 · çevrimiçi</span></h1>
+      <nav id="menu"><a href="?ekran=lobi">Çevrimiçi</a><a href="?ekran=mac">Maç (bota karşı)</a><a href="?ekran=topac-lab">Topaç Lab</a></nav>
     </header>
     <div id="sahne"><div id="ustYazi"></div></div>
     <script type="module" src="/src/istemci/main.ts"></script>
