@@ -7,3 +7,4 @@
 - **Köken uyarısı:** kenney.nl bu oturumun ağ politikasında engelli; dosyalar üçüncü kişi aynasından. Entegrasyondan önce kenney.nl'den indirilen orijinal paketle (dosya adı + içerik) karşılaştırılmalı. Ayna, Kenney paketinin kendi `License.txt` dosyasını içermiyor; genel CC0 metni var.
 - **Biçim:** Ogg Vorbis, 44,1 kHz, stereo. Toplam 84 101 bayt. Entegrasyonda mono 22 050 Hz'e indirilebilir.
 - Satır satır olay eşlemesi: `veri/manifest-ses.json` → `kayitAdaylari`.
+- **2026-11-04 (4. tur):** Ağ açıldı ama kenney.nl otomatik istemciye sitenin kendisinden HTTP 403 veriyor. Paket OGA ve kenney.itch.io'da da yok; sha256 karşılaştırması yapılamadı, durum **K-ayna**. Sahip zip'i tarayıcıdan indirirse karşılaştırılır.

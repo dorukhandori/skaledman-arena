@@ -25,26 +25,26 @@ Lisans sütunu: **CC0** = atıf gerekmez · **MIT** = kod/varlıkla birlikte tel
 
 | # | Kaynak | URL | Ne sunuyor | Biçim | Lisans | Doğrulama | Kalite / Devran uyumu |
 |---|---|---|---|---|---|---|---|
-| G1 | **00GameDevs VFX Library** | https://00gamedevs.com/en/ | 64 Three.js efekti (mermi, ışın, alan, patlama, girdap, duman, kalkan, ekran), tarayıcıda önizleme, kod kopyalama; ayrıca 46 "game object" ve shader örnekleri; efekt başına hafif/standart/ağır performans kademesi | JS/GLSL kodu (3B), sprite sheet **yok** | Sitede (arama özetinden, aynen): "Exported assets are free to use commercially and modify." · "Original exported code is MIT licensed." · "Website branding, avatars and promotional artwork are excluded." · "Third-party code keeps its own notices." Codex'in LICENSE dosyası telifi "Copyright (c) 2026 00GameDevs (@00vchannel)" olarak aktarıyor | A (site), K (codex'teki aktarım) | Kalite yüksek ama 3B, yumuşak ışık, bloom: pixel dilimize **doğrudan uymaz**. Değeri: tasarım ve zamanlama referansı + codex üzerinden pixel sürümü. Ücretli/ücretsiz ayrımı: aramada ücretli içerik görülmedi; sitede doğrulanamadı |
+| G1 | **00GameDevs VFX Library** | https://00gamedevs.com/en/ | 64 Three.js efekti (mermi, ışın, alan, patlama, girdap, duman, kalkan, ekran), tarayıcıda önizleme, kod kopyalama; ayrıca 46 "game object" ve shader örnekleri; efekt başına hafif/standart/ağır performans kademesi | JS/GLSL kodu (3B), sprite sheet **yok** | Sitede (arama özetinden, aynen): "Exported assets are free to use commercially and modify." · "Original exported code is MIT licensed." · "Website branding, avatars and promotional artwork are excluded." · "Third-party code keeps its own notices." Codex'in LICENSE dosyası telifi "Copyright (c) 2026 00GameDevs (@00vchannel)" olarak aktarıyor | **K** (2026-11-04, sayfa + "Asset usage & license" penceresi; § 9.2) | Kalite yüksek ama 3B, yumuşak ışık, bloom: pixel dilimize **doğrudan uymaz**. Değeri: tasarım ve zamanlama referansı + codex üzerinden pixel sürümü. Ücretli/ücretsiz ayrımı: aramada ücretli içerik görülmedi; sitede doğrulanamadı |
 | G2 | **pixel-vfx-codex** (888wing) | https://github.com/888wing/pixel-vfx-codex · demo https://888wing.github.io/pixel-vfx-codex/ | 00GameDevs'in 64 efektinin pixel art yorumu; 3 kamera (3B 240×150, **2.5D izometrik 240×150 20 fps**, 2B 160×100 12 fps); efekt başına ayar düğmeleri, hitstop/sarsıntı/flaş zamanlama katmanı; **PNG sprite sheet dışa aktarma** (arka plan/dekor olmadan seçeneği); motor için hazır prompt | Statik site, bağımlılık yok; `node tools/snap.mjs` başsız PNG | **MIT** (LICENSE okundu; 00GameDevs ve pixel-plays MIT bildirimleri dahil) | K | Bayer dither + renk rampası: dilimize yakın. Dikkat: dither'lı 2.5D görünüm bizim düz renkli, 1 px çizgili topaç diliyle çatışabilir; **2B kamera (düz bantlar, 1 px çizgi, dither yok)** daha uyumlu. Sheet'ler bir "diorama" sahnesi için kadrajlı: kare boyutu kamera çözünürlüğü (160×100 / 240×150) |
 | G3 | **pixelfx** (patch-gg) | https://github.com/patch-gg/pixelfx · galeri https://patch-gg.github.io/pixelfx/ · katalog `docs/CATALOG.md` | 244 efekt, 21 kategori (impacts, explosions, ice, lightning, fire, water, nature, ui, pickups, spawn & death, status, weather…); her biri küçük JS dosyası; `palette` (koyu→açık hex rampası) ile yeniden boyama; tohumlu, kare-bağımsız `draw(p,t)`; `node tools/render.mjs <id> --sheet` → şeffaf PNG + Aseprite tarzı JSON (kare dikdörtgenleri, süreler, fps, pivot) | JS kodu + CLI sheet | **MIT** ("MIT, code and effects. Use them in anything, commercial included."); telif: Patch + Hugo Duprez; `act.js` Hollow Crown (MIT); `gallery/fonts` Patch Pixel fontu **MIT dışı, kullanma** | K | **En güçlü aday.** Kendi sürüm 0.3.0 (genç proje, API değişebilir). Kareler efekt başına sabit tuval (ör. hit-spark 136×80, crit-hit 216×136): tuval geniş, efektin dolu kısmı küçük; bizim 64 px topaç ölçeğinde **kırpma + gerekirse küçük palet ayarı** gerekir (§ 5.2) |
-| G4 | Sprite Fusion pixel-art VFX (Hugo Duprez) | https://www.spritefusion.com/pixel-art-vfx | pixelfx'in temel aldığı açık kaynak efektler | kod | MIT (pixelfx NOTICE.md'de: "Copyright (c) 2026 Hugo Duprez, MIT License") | K (dolaylı), sayfa A | pixelfx onları zaten içeriyor; ayrıca almaya gerek yok |
-| G5 | **Kenney Particle Pack** | https://kenney.nl/assets/particle-pack · OGA https://opengameart.org/node/85611 | 80 parçacık / ışık çerezi sprite'ı (kıvılcım, duman, ateş, büyü, elektrik) | ayrı PNG + tilesheet | **CC0** | A | Yüksek çözünürlüklü yumuşak dokular, **pixel değil**: yalnız linear karışımlı parlama/iz katmanı için (pixel planı § 1.3 "bulanık katmanlar linear" izni). İkincil |
-| G6 | Kenney Smoke Particles | (OGA "smoke particle assets") | 77 duman, 5 stil | PNG | CC0 | A | Aynı not: pixel değil; Parçalanma toz bulutu için ancak küçültülüp eşiklenirse |
-| G7 | **Foozle "Pixel Magic Effects"** | https://foozlecc.itch.io/pixel-magic-sprite-effects | 2 ateş, 2 su, 2 toprak, 2 rüzgâr büyüsü + portal + patlama | PNG sheet | **CC0** (arama özetinde: "free to use and modify for all projects, including commercial") | A | Kor/Girdap/Kaya/Kasırga elementlerine 4/6 kapsama; buz ve şimşek yok. Kare boyutu doğrulanmadı |
-| G8 | **Aim Studios "Explosions - Pixel Art"** | https://aim-studios.itch.io/explosions-pixel-art | 5 tür patlama, 9 sheet, 32×32 kareler (default, blue…) | PNG sheet | **CC0** (sayfa özetinde "LICENSE: CC0 License") | A | 32 px: topacın yarısı; hafif/ağır çarpışma patlaması ve Parçalanma için ideal ölçek |
-| G9 | Reactorcore "Explosion Spriteanim Sheet Minipack" | https://reactorcore.itch.io/explosion-spriteanim-sheet-minipack | 10 sheet, 16 kare (4×4), çoğu 32×32 | PNG | **dikkat**: CC0 yalnız bir yorumcunun iddiası, sayfada yazmıyor | A | Lisans sayfada görülene dek **kullanma** |
-| G10 | OGA "Radial lightning effect" (13rice) | https://opengameart.org/content/radial-lightning-effect | ışınsal kıvılcım sheet'i + pikselleştirilmiş tilesheet | PNG | CC0, ama sayfa 13rice'a atıf **rica ediyor** | A | Şimşek çarpışması / karşıt element kıvılcımı. CC0 olsa da kredilere yazılır |
-| G11 | OGA "M484 lightning weapon" | https://opengameart.org/content/m484-lightning-weapon | 40 şimşek parçası, 30×30, parça başına 2 kare | PNG | CC0 ("public domain, attribution not needed") | A | Şimşek Ulti ağı / Şimşek Ağı dekali için modüler parça; ölçek uyumlu |
-| G12 | OGA "Free VFX asset pack" (CodeManu, SpriteMancer ile) | https://opengameart.org/content/free-vfx-asset-pack | pixel efektler | PNG | CC0 | A | İçerik listesi doğrulanmadı; yedek havuz |
-| G13 | OGA Sinestesia "hit animation" / "Blood, Hit and Both" | https://opengameart.org/content/hit-animation-frame-by-frame | 16 kare vuruş, 512-1024 px kareler | PNG | CC0 | A | Pixel değil, çok büyük: **uygun değil** |
-| G14 | OGA "lightning" (Calinou, 2048×512 şeritler) | https://opengameart.org/content/lightning | dikişsiz şimşek şeritleri | PNG | CC0 | A | Pixel değil; MeshRope dokusu olarak Şimşek izi için düşünülebilir, düşük öncelik |
-| G15 | ParticleFX Studio | https://particlefx.studio/effects | 650-800+ ücretsiz 2B efekt (GIF + sheet); Godot eklentisi MIT | sheet | **dikkat**: eklenti kodu MIT; efekt görselleri için "ticari oyunda kullanılabilir" ifadesi var ama atıf ve yeniden dağıtım şartı açık değil; içe aktarma ücretsiz hesap + API anahtarı istiyor | A | Şartlar sayfası okunmadan **kullanma** |
-| G16 | Raphael Hatencia "Particle FX" | https://raphaelhatencia.artstation.com/store/bk322/particle-fx-pixel-art | pixel parçacık paketi | PNG | **CC-BY 4.0** (atıf şart) | A | Kabul edilebilir yedek; atıf metni kredilere |
-| G17 | ragnapixel "Particle FX" | https://ragnapixel.itch.io/particle-fx | pixel parçacık | PNG | **kullanma**: açıklama ile itch meta verisindeki lisans farklı (yorumcu uyarısı) | A | — |
-| G18 | "Free Game FX" (ashishlko11) | https://opengameart.org/content/free-game-fx | 7 efekt × 20 kare | PSD/PNG | CC-BY 3.0 / GPL 3.0 | A | Pixel değil; atıf gerekir; düşük öncelik |
-| G19 | BlackCreepyCat Flare/Target Effects | https://blackcreepycat.itch.io/spritesheet-flare-effects-vol-1 | parlama efektleri | PNG | **dikkat**: ticari/kişisel kullanım serbest ama "redistribute" yasak | A | Depomuz herkese açık olabilir (B-37): yeniden dağıtım sayılır → **kullanma** |
-| G20 | Frostwindz "Pixel Art Lightning" | https://frostwindz.itch.io/pixel-art-skill-animations-lightning | şimşek animasyonları | PNG | **dikkat**: yeniden dağıtma/satma yasak | A | Aynı neden → **kullanma** |
+| G4 | Sprite Fusion pixel-art VFX (Hugo Duprez) | https://www.spritefusion.com/pixel-art-vfx | pixelfx'in temel aldığı açık kaynak efektler | kod | MIT (pixelfx NOTICE.md'de: "Copyright (c) 2026 Hugo Duprez, MIT License") | **K** (sayfa: "open source under the MIT license") | pixelfx onları zaten içeriyor; ayrıca almaya gerek yok |
+| G5 | **Kenney Particle Pack** | https://kenney.nl/assets/particle-pack · OGA https://opengameart.org/node/85611 | 80 parçacık / ışık çerezi sprite'ı (kıvılcım, duman, ateş, büyü, elektrik) | ayrı PNG + tilesheet | **CC0** | **K** (OGA, yükleyen Kenney: "License(s): CC0"; kenney.nl otomatik istemciyi reddediyor) | Yüksek çözünürlüklü yumuşak dokular, **pixel değil**: yalnız linear karışımlı parlama/iz katmanı için (pixel planı § 1.3 "bulanık katmanlar linear" izni). İkincil |
+| G6 | Kenney Smoke Particles | (OGA "smoke particle assets") | 77 duman, 5 stil | PNG | CC0 | A (OGA sayfası bu turda aranmadı) | Aynı not: pixel değil; Parçalanma toz bulutu için ancak küçültülüp eşiklenirse |
+| G7 | **Foozle "Pixel Magic Effects"** | https://foozlecc.itch.io/pixel-magic-sprite-effects | 2 ateş, 2 su, 2 toprak, 2 rüzgâr büyüsü + portal + patlama | PNG sheet | **CC0** (arama özetinde: "free to use and modify for all projects, including commercial") | **K** (CC0 1.0; 32×32, 10 büyü + ikon; § 9.2) | Kor/Girdap/Kaya/Kasırga elementlerine 4/6 kapsama; buz ve şimşek yok. Kare 32×32 (sayfada yazılı) |
+| G8 | **Aim Studios "Explosions - Pixel Art"** | https://aim-studios.itch.io/explosions-pixel-art | 5 tür patlama, 9 sheet, 32×32 kareler (default, blue…) | PNG sheet | **CC0** (sayfa özetinde "LICENSE: CC0 License") | **K** (CC0; 9 sheet, 32×32 + 64×64; § 9.2) | 32 px: topacın yarısı; hafif/ağır çarpışma patlaması ve Parçalanma için ideal ölçek |
+| G9 | Reactorcore "Explosion Spriteanim Sheet Minipack" | https://reactorcore.itch.io/explosion-spriteanim-sheet-minipack | 10 sheet, 16 kare (4×4), çoğu 32×32 | PNG | **dikkat**: CC0 yalnız bir yorumcunun iddiası, sayfada yazmıyor | **dikkat** (sayfada/meta veride lisans yok; yalnız yazarın yorumu "CC0") | Lisans sayfada görülene dek **kullanma** |
+| G10 | OGA "Radial lightning effect" (13rice) | https://opengameart.org/content/radial-lightning-effect | ışınsal kıvılcım sheet'i + pikselleştirilmiş tilesheet | PNG | CC0, ama sayfa 13rice'a atıf **rica ediyor** | **K** (CC0; "Attribution appreciated to 13rice") | Şimşek çarpışması / karşıt element kıvılcımı. CC0 olsa da kredilere yazılır |
+| G11 | OGA "M484 lightning weapon" | https://opengameart.org/content/m484-lightning-weapon | 40 şimşek parçası, 30×30, parça başına 2 kare | PNG | CC0 ("public domain, attribution not needed") | **K** (CC0) | Şimşek Ulti ağı / Şimşek Ağı dekali için modüler parça; ölçek uyumlu |
+| G12 | OGA "Free VFX asset pack" (CodeManu, SpriteMancer ile) | https://opengameart.org/content/free-vfx-asset-pack | pixel efektler | PNG | CC0 | **K** (CC0; 22 efekt, 30/60 fps, zip 94,6 MB) | İçerik listesi doğrulanmadı; yedek havuz |
+| G13 | OGA Sinestesia "hit animation" / "Blood, Hit and Both" | https://opengameart.org/content/hit-animation-frame-by-frame | 16 kare vuruş, 512-1024 px kareler | PNG | CC0 | **K** (CC0; 1024² kare, 16 kare) | Pixel değil, çok büyük: **uygun değil** |
+| G14 | OGA "lightning" (Calinou, 2048×512 şeritler) | https://opengameart.org/content/lightning | dikişsiz şimşek şeritleri | PNG | CC0 | **K, çelişki**: yazar **wreaderror** (Calinou değil); 8 şerit (4 mor, 4 mavi) | Pixel değil; MeshRope dokusu olarak Şimşek izi için düşünülebilir, düşük öncelik |
+| G15 | ParticleFX Studio | https://particlefx.studio/effects | 650-800+ ücretsiz 2B efekt (GIF + sheet); Godot eklentisi MIT | sheet | **dikkat**: eklenti kodu MIT; efekt görselleri için "ticari oyunda kullanılabilir" ifadesi var ama atıf ve yeniden dağıtım şartı açık değil; içe aktarma ücretsiz hesap + API anahtarı istiyor | A (efekt sayfası açıldı: "free to use in commercial projects"; şartlar sayfası okunmadı) | Şartlar sayfası okunmadan **kullanma** |
+| G16 | Raphael Hatencia "Particle FX" | https://raphaelhatencia.artstation.com/store/bk322/particle-fx-pixel-art | pixel parçacık paketi | PNG | **CC-BY 4.0** (atıf şart) | **engelli** (artstation 403) | Kabul edilebilir yedek; atıf metni kredilere |
+| G17 | ragnapixel "Particle FX" | https://ragnapixel.itch.io/particle-fx | pixel parçacık | PNG | **kullanma**: açıklama ile itch meta verisindeki lisans farklı (yorumcu uyarısı) | **K, çelişki giderildi**: açıklama ve itch meta ikisi de **CC-BY 4.0**, yazar Raphael Hatencia (= G16); tam paket ücretli (3,99 $), ücretsiz demo var | — |
+| G18 | "Free Game FX" (ashishlko11) | https://opengameart.org/content/free-game-fx | 7 efekt × 20 kare | PSD/PNG | CC-BY 3.0 / GPL 3.0 | **K** (CC-BY 3.0 + GPL 3.0; 256×256 kare) | Pixel değil; atıf gerekir; düşük öncelik |
+| G19 | BlackCreepyCat Flare/Target Effects | https://blackcreepycat.itch.io/spritesheet-flare-effects-vol-1 | parlama efektleri | PNG | **dikkat**: ticari/kişisel kullanım serbest ama "redistribute" yasak | A (itch 429 hız sınırı) | Depomuz herkese açık olabilir (B-37): yeniden dağıtım sayılır → **kullanma** |
+| G20 | Frostwindz "Pixel Art Lightning" | https://frostwindz.itch.io/pixel-art-skill-animations-lightning | şimşek animasyonları | PNG | **dikkat**: yeniden dağıtma/satma yasak | **K** ("You are not allowed to redistribute or resell the assets." → kullanma) | Aynı neden → **kullanma** |
 | G21 | Will's Magic Particle Effects, Fellor Elemental Bundle, Admurin buz/şimşek, InfectedTribe | itch.io | — | — | **ücretli** | A | Kâr amaçsız, ücretsiz kaynak kuralı → kapsam dışı |
 
 ### 1.1 00GameDevs → Devran: ilgili efektler (codex `data/meta.js` kataloğundan, MIT)
@@ -102,32 +102,32 @@ Ad ve açıklamalar 00GameDevs kataloğundan (codex üzerinden okundu). "Pixel s
 | # | Kaynak | URL | İçerik | Lisans | Doğrulama | Not |
 |---|---|---|---|---|---|---|
 | S1 | **Kenney Impact Sounds** | https://kenney.nl/assets/impact-sounds | 130 OGG (26 grup × 5: metal light/medium/heavy, plate, tin, glass, bell, wood, punch, footstep…) | **CC0** | **K-ayna** (§ 8.1) | 12 dosya indirildi: `kaynak/efekt/kenney-impact-sounds/`. Dosya adları, biçim (Ogg Vorbis 44,1 kHz stereo), süreler doğrulandı; lisans aynadaki CC0 metni, kenney.nl sayfası hâlâ okunmadı |
-| S2 | **Kenney Interface Sounds** | https://opengameart.org/content/interface-sounds | 100 ayrı OGG (tık, onay, hata, cam…) | **CC0** | A | UI tık, satın alma, başarım "ding" |
-| S3 | Kenney RPG Audio / Sci-Fi Sounds / Digital Audio | https://opengameart.org/content/50-rpg-sound-effects · https://opengameart.org/content/sci-fi-sounds | 50 RPG (metal, bozuk para) · 70 sci-fi OGG | CC0 | A | Enerji doldu, telegraf (sci-fi şarj), bozuk para |
-| S4 | **Juhani Junkala "The Essential Retro Video Game Sound Effects Collection [512 sounds]"** | https://opengameart.org (arama: 512 sound effects 8-bit) | 512 retro SFX | **CC0** (INFO dosyası: "released under CC0 creative commons license") | A (ayna) | Pixel estetiğe uygun; geri sayım, maç sonu, UI. Kayıt değil chiptune: metal ağırlığı için tek başına yetmez |
-| S5 | OGA "metal impact sounds" | https://opengameart.org/content/metal-impact-sounds | küçük metal vuruş seti | CC0 | A | Hafif "tık" |
-| S6 | OGA qubodup "Metal Interactions" / "Impact" | https://opengameart.org/content/metal-interactions · https://opengameart.org/content/impact | 166 KB / 131 KB .7z | CC0 | A | Ağır "çın", duvar "tonk" |
-| S7 | OGA "100 CC0 metal and wood SFX", "100 CC0 SFX 2", "75 CC0 breaking/falling/hit" (rubberduck) | https://opengameart.org/content/100-cc0-metal-and-wood-sfx · https://opengameart.org/content/100-cc0-sfx-2 · https://opengameart.org/node/142820 | geniş CC0 havuzu (cam dahil) | CC0 | A | Parçalanma kırılma katmanı |
-| S8 | **OGA "Glass Break" (Till Behrend)** | https://opengameart.org/content/glass-break | `glass_breaking.wav`, 230,9 KB | **CC0** | A | Parçalanma (kısaltılıp OGG'ye çevrilir) |
-| S9 | OGA "Ice breaking/shattering" (IgnasD) | https://opengameart.org/content/ice-breakingshattering | buz kırılma | CC0 | A | Don element katmanı / Don Parçalanma |
-| S10 | **BigSoundBank "Coin spinning on a table"** (#2698, #2700) | https://bigsoundbank.com/coin-spinning-on-a-table-4-s2700.html | 2 € bozuk para masada döner, yavaşlar, durur | **CC0** (sayfa "4"te yazılı; "2" sayfası doğrulanmadı) | A | **Durma** sesi için birebir (05 § 3.2: "bozuk para yatışı"). Topaç temasına en yakın gerçek kayıt |
-| S11 | OGA "Dropping coin on table" | https://opengameart.org/node/28043 | düşen bozuk para | CC0 | A | Durma son "tıkırtı" yedek |
+| S2 | **Kenney Interface Sounds** | https://opengameart.org/content/interface-sounds | 100 ayrı OGG (tık, onay, hata, cam…) | **CC0** | **K** (OGA, Kenney; zip içinde Kenney `License.txt`) | UI tık, satın alma, başarım "ding" |
+| S3 | Kenney RPG Audio / Sci-Fi Sounds / Digital Audio | https://opengameart.org/content/50-rpg-sound-effects · https://opengameart.org/content/sci-fi-sounds | 50 RPG (metal, bozuk para) · 70 sci-fi OGG | CC0 | **K** (iki sayfa CC0, Kenney) | Enerji doldu, telegraf (sci-fi şarj), bozuk para |
+| S4 | **Juhani Junkala "The Essential Retro Video Game Sound Effects Collection [512 sounds]"** | https://opengameart.org (arama: 512 sound effects 8-bit) | 512 retro SFX | **CC0** (INFO dosyası: "released under CC0 creative commons license") | **K** (OGA, yazar SubspaceAudio; CC0) | Pixel estetiğe uygun; geri sayım, maç sonu, UI. Kayıt değil chiptune: metal ağırlığı için tek başına yetmez |
+| S5 | OGA "metal impact sounds" | https://opengameart.org/content/metal-impact-sounds | küçük metal vuruş seti | CC0 | **K** (CC0; yazar BMacZero) | Hafif "tık" |
+| S6 | OGA qubodup "Metal Interactions" / "Impact" | https://opengameart.org/content/metal-interactions · https://opengameart.org/content/impact | 166 KB / 131 KB .7z | CC0 | **K** (iki sayfa CC0) | Ağır "çın", duvar "tonk" |
+| S7 | OGA "100 CC0 metal and wood SFX", "100 CC0 SFX 2", "75 CC0 breaking/falling/hit" (rubberduck) | https://opengameart.org/content/100-cc0-metal-and-wood-sfx · https://opengameart.org/content/100-cc0-sfx-2 · https://opengameart.org/node/142820 | geniş CC0 havuzu (cam dahil) | CC0 | **K, çelişki**: ilk iki sayfa CC0; `node/142820` bir **koleksiyon** (jlerossignol "SoundFX Library [CC0]"), "75 CC0 breaking/falling/hit" onun içinde | Parçalanma kırılma katmanı |
+| S8 | **OGA "Glass Break" (Till Behrend)** | https://opengameart.org/content/glass-break | `glass_breaking.wav`, 230,9 KB | **CC0** | **K** (CC0; 1,31 sn stereo WAV) → indirildi | Parçalanma (kısaltılıp OGG'ye çevrilir) |
+| S9 | OGA "Ice breaking/shattering" (IgnasD) | https://opengameart.org/content/ice-breakingshattering | buz kırılma | CC0 | **K** (CC0; 5 OGG) → 2 tanesi indirildi | Don element katmanı / Don Parçalanma |
+| S10 | **BigSoundBank "Coin spinning on a table"** (#2698, #2700) | https://bigsoundbank.com/coin-spinning-on-a-table-4-s2700.html | 2 € bozuk para masada döner, yavaşlar, durur | **CC0** (sayfa "4"te yazılı; "2" sayfası doğrulanmadı) | **K** (#2700 sayfası: "License CC0 (public domain)"; 14,6 sn) → indirildi | **Durma** sesi için birebir (05 § 3.2: "bozuk para yatışı"). Topaç temasına en yakın gerçek kayıt |
+| S11 | OGA "Dropping coin on table" | https://opengameart.org/node/28043 | düşen bozuk para | CC0 | **K, çelişki**: başlık "Coin Drop" (yazar Vinrax), CC0 | Durma son "tıkırtı" yedek |
 | S12 | Freesound InspectorJ "Coin Flipping, A.wav" | freesound.org | yazı-tura atış | CC0 (ikinci el ayna) | A | Freesound açılamadı; doğrulamadan kullanma |
 | S13 | Freesound genel | https://freesound.org | çok geniş | sese göre değişir (CC0 / CC-BY / CC-BY-NC) | **erişilemedi** | Ses başına lisans tek tek okunmalı; CC-BY-NC = **kullanma** (kâr amaçsız olsak da yayın/Kick bağlamı tartışmalı) |
 | S14 | Pixabay ses | https://pixabay.com/sound-effects/ | geniş | **Pixabay Content License** (CC0 değil): ticari kullanım serbest; **AI eğitiminde kullanım ve ham dosyanın yeniden dağıtımı yasak**; müzikte Content ID iddiası olabilir | A | Depo herkese açılırsa ham dosya dağıtımı sayılabilir → **kullanma** (yalnız son çare, sahip kararı) |
-| S15 | **ChipTone** (SFB Games) | https://sfbgames.itch.io/chiptone | tarayıcıda SFX üretici | Üretilen sesler **CC0**, atıf gerekmez (geliştirici beyanı) | A | Sentezimizin yanında en temiz üretim aracı |
+| S15 | **ChipTone** (SFB Games) | https://sfbgames.itch.io/chiptone | tarayıcıda SFX üretici | Üretilen sesler **CC0**, atıf gerekmez (geliştirici beyanı) | A (itch 429 hız sınırı) | Sentezimizin yanında en temiz üretim aracı |
 | S16 | jfxr (ttencate) | https://github.com/ttencate/jfxr | sfxr türevi üretici | README aynen: "The code itself is under a three-clause BSD license; see LICENSE for details." · "Any sound effects you make are entirely yours to do with as you please, without any restrictions whatsoever." | **K** | Uygun; ChipTone yerine birincil üretim aracı |
 | S17 | jsfxr / sfxr.me | https://github.com/mneubrand/jsfxr | sfxr JS | kod Apache-2.0; **çıktı lisansı yazılı değil**; npm `license` alanı boş | A + npm | **Kullanma** (çıktı için ChipTone/jfxr/kendi sentezimiz) |
 | S18 | Kendi sentezimiz `araclar/ses-uret.ts` | depo | 16 ses | CC0 (bizim) | K | Taban; korunur |
-| M1 | **"Chiptune Battle Music" (pmiller)** | OGA (arama: chiptune battle music pmiller) | RPG savaş, ~7,5 sn'de kusursuz döngü | **CC0** | A | **Arena döngüsü** 1. aday: kısa döngü = küçük dosya |
-| M2 | "Chipped Urgency" | https://opengameart.org/content/chipped-urgency | döngülü, yarı retro, savaş | CC0 | A | Arena 2. aday |
-| M3 | "Rin's Theme" | OGA | giriş + döngü OGG ayrı | CC0 | A | Arena/menü |
-| M4 | "Fast fight battle music" (Ville Nousiainen) | https://opengameart.org/content/fast-fight-battle-music | yüksek favori; döngü değil (yorumda döngülü sürüm linki) | CC0 | A | Döngülü sürümün lisansı ayrıca okunmalı |
-| M5 | **"Menu Theme" (tamesu)** | https://opengameart.org/content/menu-theme | 8-bit menü, BeepBox kaynağı ekli (düzenlenebilir) | CC0 | A | **Menü döngüsü** 1. aday (kaynak dosyası sayesinde tempoyu/uzunluğu kısaltabiliriz) |
-| M6 | "Chiptune Title Screen" (tomcat, 2026-03) | https://opengameart.org/content/chiptune-title-screen | NES tarzı menü | CC0 | A | Menü 2. aday |
-| M7 | "Menu Chill Music" (etrock) | https://opengameart.org/content/menu-chill-music | sakin menü döngüsü (chiptune değil) | CC0 | A | Yedek |
-| M8 | "Boss Fight Bounce" | OGA | — | GPL 3.0 + CC0 çift | A | CC0 tarafı seçilebilir ama **dikkat**; ihtiyaç yok |
-| M9 | "Their Spears Fell Like Rain", "Sunshine Skirmish" | OGA | — | **CC-BY 4.0** | A | Kabul edilebilir ama gereksiz; CC0 adaylar yeterli |
+| M1 | **"Chiptune Battle Music" (pmiller)** | OGA (arama: chiptune battle music pmiller) | RPG savaş, ~7,5 sn'de kusursuz döngü | **CC0** | **K** (OGA `content/chiptune-battle-music`, CC0; 152 sn) | **Arena döngüsü** 1. aday: kısa döngü = küçük dosya |
+| M2 | "Chipped Urgency" | https://opengameart.org/content/chipped-urgency | döngülü, yarı retro, savaş | CC0 | **K** (CC0; yazar Centurion_of_war) | Arena 2. aday |
+| M3 | "Rin's Theme" | OGA | giriş + döngü OGG ayrı | CC0 | **K** (CC0; yazar request; intro + loop OGG) | Arena/menü |
+| M4 | "Fast fight battle music" (Ville Nousiainen) | https://opengameart.org/content/fast-fight-battle-music | yüksek favori; döngü değil (yorumda döngülü sürüm linki) | CC0 | **K** (CC0; döngülü sürüm ayrıca okunmadı) | Döngülü sürümün lisansı ayrıca okunmalı |
+| M5 | **"Menu Theme" (tamesu)** | https://opengameart.org/content/menu-theme | 8-bit menü, BeepBox kaynağı ekli (düzenlenebilir) | CC0 | **K** (CC0; MP3 + MIDI + BeepBox, OGG yok; 65,7 sn) | **Menü döngüsü** 1. aday (kaynak dosyası sayesinde tempoyu/uzunluğu kısaltabiliriz) |
+| M6 | "Chiptune Title Screen" (tomcat, 2026-03) | https://opengameart.org/content/chiptune-title-screen | NES tarzı menü | CC0 | **K** (CC0) | Menü 2. aday |
+| M7 | "Menu Chill Music" (etrock) | https://opengameart.org/content/menu-chill-music | sakin menü döngüsü (chiptune değil) | CC0 | **K** (CC0) | Yedek |
+| M8 | "Boss Fight Bounce" | OGA | — | GPL 3.0 + CC0 çift | **K** (GPL 3.0 + CC0) | CC0 tarafı seçilebilir ama **dikkat**; ihtiyaç yok |
+| M9 | "Their Spears Fell Like Rain", "Sunshine Skirmish" | OGA | — | **CC-BY 4.0** | **K** (iki parça da CC-BY 4.0) | Kabul edilebilir ama gereksiz; CC0 adaylar yeterli |
 
 ### 2.1 Kod kütüphaneleri
 
@@ -455,32 +455,102 @@ Maçta en çok 3 atlas yüklenir: ortak + iki elementinki. Toplam PNG 2,93 MB; t
   - `ground-slam`, `heavy-landing`, `poof` ve `collect-burst` pixelfx'in varsayılan **mor-gri / pembe** paletinde kaldı. `ground-slam`'da `stone: #4a3f69` seçeneği de mor; reçeteye yalnız `palette` verildi. Tasarım diline uymuyor: yeniden pişirmede nötr toz rampası (§ 5.3 Kaya rampası ya da gri-bej) ve `stone` seçeneği verilmeli.
 - **Entegrasyon için (src/ dilimi):** atlaslar `public/efekt/`'e taşınır; Pixi `Spritesheet` JSON doğrudan yüklenir (`animations` → `AnimatedSprite`, kare süresi `meta.devran.<ad>.kareMs`). `scaleMode = "nearest"`.
 
-## 9. 4. tur (2026-11-04 ~23:06 UTC): ağ yeniden denendi, toz paleti hazırlandı
+## 9. 4. tur (2026-11-04, 23:06-23:30 UTC): ağ açıldı, doğrulama ve indirme
 
-### 9.1 Ağ durumu
+### 9.1 Alan adları
 
-Sahip "ağ açıldı" dedi, ancak bu konteynerde değişiklik görünmüyor:
+- **İlk deneme (23:06):** 5 alan adının hepsi vekilde `CONNECT 403` verdi (policy denial). Sahip ortamın Network access ayarını **Full** yaptı; ayar oturuma yaklaşık 1 dakikada geçti (yeni oturum gerekmedi).
+- **Açılanlar (curl 200):** opengameart.org, 00gamedevs.com, bigsoundbank.com, foozlecc.itch.io, aim-studios.itch.io, reactorcore.itch.io, ragnapixel.itch.io, frostwindz.itch.io, kenney.itch.io, www.spritefusion.com, particlefx.studio, github.com.
+- **Hâlâ engelli:**
+  - **kenney.nl:** sitenin kendi sunucusu (nginx) otomatik istemciye `HTTP 403` veriyor; vekil engeli değil. Tarayıcı kimliğine bürünme denenmedi.
+  - **raphaelhatencia.artstation.com:** 403.
+  - **sfbgames.itch.io, blackcreepycat.itch.io:** itch `429` hız sınırı.
+- **itch.io indirmeleri:** "Name your own price" indirme akışı (`/download_url` POST) Claude Code otomatik izin denetimince reddedildi. Lisans doğrulandı, dosyalar indirilmedi.
 
-- **curl:** 5 alan adının hepsinde `CONNECT tunnel failed, response 403`. Vekil `connect_rejected` kaydı (policy denial) düştü: kenney.nl, opengameart.org, 00gamedevs.com, bigsoundbank.com, foozlecc.itch.io.
-- **WebFetch:** aynı 5 adres `getaddrinfo ENOTFOUND` verdi.
-- **Açık olanlar:** yalnız github.com ve codeload (pixelfx klonu çalıştı).
+### 9.2 Doğrulama (lisans metni sayfadan aynen)
 
-**Sonuç:** Görev 1-4 yapılamadı (A satırı doğrulama, Kenney orijinal paket ve sha256 karşılaştırması, BigSoundBank/OGA/Kenney Interface/müzik indirmeleri, 00gamedevs ile itch.io görsel paketleri). Hiçbir satır uydurulmadı; A/K-ayna durumları **değişmedi**. Ağ ayarı büyük olasılıkla yalnız yeni oturuma uygulanıyor.
+| # | Sayfadan aynen | Sonuç |
+|---|---|---|
+| G1 00GameDevs | Ana sayfa: "Exported assets are free to use commercially and modify." · "Original exported code is MIT licensed. Keep included copyright and license notices. Website branding, avatars and promotional artwork are excluded. Third-party code keeps its own notices." · Lisans penceresi: "You may modify, share, redistribute and sell the code." · "Attribution in the credits is optional." · "Keep the supplied copyright and license text when copying, sharing or shipping with your game." · "Formal license: MIT" | **K**: MIT, bildirim korunur. `/en/license` diye ayrı bir sayfa yok (404); metin sitenin JS penceresinde |
+| G7 Foozle | "License: (Creative Commons Zero, CC0) http://creativecommons.org/publicdomain/zero/1.0/ This content is free to use and modify for all projects, including commercial projects. Attribution not required." · itch meta: "Asset license Creative Commons Zero v1.0 Universal" · "A set of 10 Pixel Magic Spell Effects with Icons in 32x32 format." · dosya `Foozle_2DE0001_Pixel_Magic_Effects.zip` 101 kB · "Commissioned from: lordfitoi" | **K** CC0, 32×32 |
+| G8 Aim Studios | "LICENSE: CC0 License. You can use the assets, modified or as it is, in your commercial as well as non-commercial projects without credit or mention." · meta CC0 1.0 · 9 sheet: Blast/Explosion default+blue 32×32, Realistic Explosion default/green/fantasy… 64×64 | **K** CC0 |
+| G9 Reactorcore | Sayfada lisans yok; yorum: "licence?" → yazar "CC0" · 10 sheet, 4×4 kare, 8× 32 px, 2× 64 px | **dikkat** (değişmedi) |
+| G14 | Yazar: wreaderror; "eight 2048x512px PNGs … 4 Purpleish and 4 Blueish" | **K**, yazar adı düzeltilmeli (Calinou değil) |
+| G17 | "LICENCE: Creative Commons Attribution v4.0 International … You must credit me as Raphael Hatencia" · meta: CC-BY 4.0 · 3,99 $ + ücretsiz demo `Particle FX 1.3 Free.zip` | **K**: CC-BY 4.0. Önceki "çelişki" uyarısı geçersiz; tam paket ücretli |
+| G20 Frostwindz | "You are not allowed to redistribute or resell the assets." | **K**: kullanma (değişmedi) |
+| S10 BigSoundBank #2700 | "License CC0 (public domain): Free and royalty-free" · "Sound of a €2 coin spinning on my varnished wooden kitchen table. It turns, then slows down and stops." · 0:15, 48 kHz stereo · lisans sayfası: "This is: Creative Commons CC0 1.0 Universal" (sayfa başlığı "Royalty-Free Sound License (CC0-like)") · yazar Joseph SARDIN | **K** CC0 |
+| S8, S9, S2, M1, M5 | OGA alanları: "License(s): CC0" | **K** |
 
-### 9.2 pixelfx toz paleti (hazırlandı, pişirilmedi)
+Ayrıntılar (yazar, dosya, süre) § 1-2 tablolarının Doğrulama sütununda.
 
-`recete.json` ve `arac/bake.py` güncellendi. `bake.py` artık reçetedeki `secenek` alanını `--opts`'a ekliyor; eski `kareSiniri` KeyError'ı da giderildi.
+**Çelişkiler:**
+- G14'ün yazarı wreaderror.
+- S7 `node/142820` bir koleksiyon sayfası.
+- S11'in başlığı "Coin Drop", yazarı Vinrax.
+- G17 için verilen çelişki uyarısı geçersiz: sayfa ve itch meta verisi ikisi de CC-BY 4.0. Paket ücretli, ücretsiz bir demosu var.
+- M5'in OGG dosyası yok (MP3 + MIDI + BeepBox).
+
+### 9.3 İndirilenler (ses)
+
+Tümü CC0. Dönüştürme: `ffmpeg -ac 1 -ar 22050 -c:a libvorbis -q:a 2 -map_metadata -1`. Kenney UI dosyaları **dönüştürülmedi** (paket dosyası aynen).
+
+| Dosya | Kaynak | Hedef olay | Süre | Bayt | sha256 (indirilen asıl dosya) |
+|---|---|---|---|---|---|
+| `kaynak/efekt/bigsoundbank/bsb-2700-coin-spinning-durma.ogg` | BigSoundBank #2700 FLAC, 12,60-13,95 sn kırpıldı (para 13,75 sn'de duruyor), 40 ms giriş + 150 ms çıkış sönümü | durma | 1,35 sn | 9 773 | FLAC `b945fc7b…4759a040` |
+| `kaynak/efekt/oga-glass-break/glass_breaking.ogg` | OGA Glass Break (Till Behrend), WAV → OGG | parcalanma | 1,31 sn | 10 520 | WAV `37d29069…93f502b3` |
+| `kaynak/efekt/oga-ice-shatter/LedasLuzta.ogg`, `LedasLuzta4.ogg` | OGA Ice breaking/shattering (IgnasD), 44,1 → 22,05 kHz | don-kirilma (2 varyant) | 0,59 / 1,04 sn | 6 792 / 9 758 | zip `b84ea396…e41cf9eb7` |
+| `kaynak/efekt/kenney-interface-sounds/click_001.ogg`, `confirmation_001.ogg` | Kenney Interface Sounds 1.0 (OGA zip, Kenney `License.txt` dahil) | ui-tik, ui-onay | 0,10 / 0,29 sn | 4 876 / 8 968 | zip `f2193d07…27c81232` |
+
+**Ses bütçesi:** 288 817 + 50 687 = **339 504 B ≤ 512 000** (kalan 172 496 B ≈ 168 KiB).
+
+- `click_002`…`005` 10 ms'lik çok kısa tıklar; bu yüzden `click_001` seçildi.
+- Buz paketinde 5 dosya var; 2'si alındı.
+
+### 9.4 Müzik: bütçeye sığmıyor (indirilmedi, depoya konmadı)
+
+| Aday | Asıl | Süre | Deneme kodlaması (mono) |
+|---|---|---|---|
+| M1 `battle_music_01-loop.ogg` | 2 724 366 B, 44,1 kHz stereo | 152 sn (döngü noktası ~7,5 sn) | Vorbis 22 kHz q0: 552 949 B · Opus 16k: 339 238 B |
+| M5 `menu_title.mp3` | 1 577 378 B | 65,7 sn | Vorbis 22 kHz q0: 213 160 B · Opus 16k: 176 814 B |
+
+Efektlerden sonra kalan ~168 KiB, en küçük denemeye (M5 Opus 16k) bile yetmiyor. Seçenekler (**sahip kararı**):
+- (a) Müzik için ayrı bir bütçe (ör. ≤ 600 KB, akışla yüklenir).
+- (b) M5'in BeepBox kaynağından 15-20 sn'lik kısa bir döngü üretilir (≈ 40-60 KB).
+- (c) Müzik ertelenir.
+
+M1'in 152 sn'lik parçası kesilerek kısaltılamaz; döngü yapısı buna izin vermiyor.
+
+### 9.5 Görsel paketler (G7, G8)
+
+- **Lisans:** İkisi de CC0 doğrulandı. İndirme, izin denetiminde kaldı (§ 9.1).
+- **Hibrit kamera değerlendirmesi** (sayfa bilgisinden; dosya görülmedi):
+  - G8 32×32 / 64×64 patlamalar **hava** öğesi, eğik çanakta yön sorunu yok. Ağır çarpışma ve Parçalanma için uygun ölçek.
+  - G7'nin 32×32 büyüleri yandan bakış (mermi/mızrak). Yalnız patlama ve portal kareleri işe yarayabilir.
+  - Atlas etkisi küçük: 32 px kareler 2048²'nin %1'inden az.
+- **Sahip için:** İki paketi tarayıcıdan indirip (itch "Download Now" → "No thanks, just take me to the downloads") `kaynak/efekt/foozle-pixel-magic/` ve `kaynak/efekt/aim-explosions/` altına koyarsan değerlendirmeyi tamamlarım.
+
+### 9.6 Kenney Impact Sounds orijinal karşılaştırma
+
+kenney.nl otomatik istemciyi reddediyor (§ 9.1). Paket OGA'da ve kenney.itch.io'da yok (itch'te yalnız ücretli "All-in-1" var). sha256 karşılaştırması **yapılamadı**; durum **K-ayna** olarak kalıyor.
+- **Dolaylı kanıt:** Aynı yazarın OGA'daki Interface Sounds zip'inde Kenney'nin `License.txt` şablonu var ("License: (Creative Commons Zero, CC0)"). Impact paketinin kendi `License.txt`'si alınamadı; **uydurulmadı**.
+- **Sahip için:** kenney.nl/assets/impact-sounds'tan zip'i tarayıcıdan indirip depoya (ya da sohbete) koyarsan karşılaştırırım.
+
+### 9.7 pixelfx toz paleti (hazır, pişirilmedi)
+
+`recete.json` ve `arac/bake.py` güncellendi: `secenek` alanı `--opts`'a ekleniyor; eski `kareSiniri` KeyError'ı giderildi.
 
 | Efekt | Palet | Ek seçenek |
 |---|---|---|
 | `impacts/heavy-landing` | toz-7: `#1E1A14,#3A3024,#5E5040,#8A7458,#A8987C,#C2AC86,#EDE0C8` | `stone: #6E604C` |
 | `impacts/ground-slam` | kaya (değişmedi) | `stone: #6E604C` (eski mor `#4a3f69` yerine) |
 | `spawn/poof` | toz-6: `#3A3024,#6E604C,#A8987C,#C2AC86,#EDE0C8,#FFFFFF` | `stars: #C2AC86,#EDE0C8,#FFFFFF` |
-| `pickups/collect-burst` | nötr açık-8: `#1E1A14 … #FFFFFF` (oyunda element rengiyle tint) | — |
+| `pickups/collect-burst` | nötr açık-8 `#1E1A14 … #FFFFFF` (oyunda element rengiyle tint) | — |
 
-**Pişirilmedi:** Bu oturumda `node tools/render.mjs` (dış kod) otomatik izin denetimince reddedildi; `npm ci` de reddedildi (render için gerekmiyor, esbuild yalnız galeride kullanılıyor). Atlas ve `onizleme.png` **eski haliyle** duruyor (mor/pembe). Yeniden pişirme komutu `kaynak/efekt/pixelfx/KAYNAK.md`'de.
+`node tools/render.mjs` (dış kod) bu oturumda otomatik izin denetimince reddedildi. Atlas ve `onizleme.png` hâlâ eski (mor/pembe). Komutlar `kaynak/efekt/pixelfx/KAYNAK.md`'de.
 
-### 9.3 Sahip kararı bekleyenler
+### 9.8 Sahip kararı bekleyenler
 
-- **K1 (ağ):** ortam ayarında Network access → Full, ya da Allowed domains'e şunlar eklenmeli: kenney.nl, opengameart.org, 00gamedevs.com, bigsoundbank.com, itch.io, *.itch.io, img.itch.zone. Ardından **yeni oturum** açılmalı.
-- **K2' (render):** pixelfx render çalıştırma izni Claude Code izin ayarlarına eklenmeli (Bash `node …/tools/render.mjs`) ya da oturum izin modu değiştirilmeli.
+- **K10 müzik bütçesi:** § 9.4'teki (a), (b) ya da (c).
+- **K11 pixelfx render izni:** Bash `node …/tools/render.mjs` için izin kuralı ya da izin modu.
+- **K12 elle indirme:** Foozle, Aim Studios ve Kenney Impact zip'leri (tarayıcıdan).
+- **K13 G17 Ragnapixel (CC-BY 4.0):** Yalnız ücretsiz demo kullanılabilir; gerekli mi?

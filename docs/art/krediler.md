@@ -8,6 +8,10 @@ Kural: yalnız ücretsiz ve lisansı uygun kaynak (CC0 tercih; MIT / CC-BY atıf
 | Varlık | Yazar / kaynak | Lisans | Atıf metni (oyun içi) | Durum |
 |---|---|---|---|---|
 | 12 metal / teneke / plaka / cam / çan vuruş sesi (`kaynak/efekt/kenney-impact-sounds/`) | Kenney, *Impact Sounds* — https://kenney.nl/assets/impact-sounds | CC0 1.0 | "Ses efektleri: Kenney (www.kenney.nl), CC0" | aday, entegre değil; köken GitHub aynası, kenney.nl'den yeniden doğrulanacak |
+| Durma sesi: bozuk para yatışı (`kaynak/efekt/bigsoundbank/`) | Joseph Sardin, BigSoundBank #2700 — https://bigsoundbank.com/coin-spinning-on-a-table-4-s2700.html | CC0 1.0 | "Durma sesi: Joseph Sardin, BigSoundBank (CC0)" | aday, entegre değil; kırpıldı + mono OGG |
+| Cam kırılma sesi (`kaynak/efekt/oga-glass-break/`) | Till Behrend — https://opengameart.org/content/glass-break | CC0 1.0 | "Cam kırılma: Till Behrend (OpenGameArt), CC0" | aday, entegre değil; mono OGG |
+| 2 buz kırılma sesi (`kaynak/efekt/oga-ice-shatter/`) | IgnasD — https://opengameart.org/content/ice-breakingshattering | CC0 1.0 | "Buz kırılma: IgnasD (OpenGameArt), CC0" | aday, entegre değil; 22 kHz OGG |
+| UI tık + onay (`kaynak/efekt/kenney-interface-sounds/`) | Kenney, *Interface Sounds* — https://opengameart.org/content/interface-sounds | CC0 1.0 | "Arayüz sesleri: Kenney (www.kenney.nl), CC0" | aday, entegre değil; dosyalar aynen, Kenney `License.txt` dahil |
 | 7 efekt atlası, 16 efekt (`kaynak/efekt/pixelfx/atlas/`) | pixelfx (Patch, Hugo Duprez) | MIT | "Efektler: pixelfx — Patch, Hugo Duprez (MIT)" + aşağıdaki MIT bildirimi | pişirildi, entegre değil |
 
 ## Pişirilmiş kod kaynaklı efektler
