@@ -3,6 +3,8 @@
 **Tarih:** 2026-11-04 · **Şapka:** `@iris` (sanat yönetimi) + UX belgeleme · **Dal:** `devran-kod` · **Durum:** taslak otorite. Sahip itiraz etmezse görsel ve sunum kararlarında bu belge kazanır.
 **Sahibin isteği (2026-11-04):** "Efekt oturumunu ve tasarım dilini belgelendirelim. Projenin en başında onayladığım referans görsellere en yakın şekilde tasarım dili benimseyeceğiz ve onları tutturacağız."
 
+**Sahip kararları (2026-11-04, bu belgeye işlendi):** **K-1 = Hibrit** kamera (sunum eğik, fizik/netcode düz; § 9.1) · K-2 bronz-turuncu ana düğme ve K-3 Enerji rengi **varsayılan** (sahip cevap vermedi, itiraz etmedi; § 9.1) · "Referanstaki gibi olsun her şey" (menüler dahil, kasıtlı farklar hariç) · **"Menüler olabildiğince sade ve anlaşılır olsun; gerekirse lore derinliğinden feragat"** → İ-12 ve [`docs/design/sadelik-ilkeleri.md`](../design/sadelik-ilkeleri.md). Maketler: § 10, [`docs/art/maketler/`](maketler/).
+
 **Otorite sırası.** Oynanış ve sayılar `docs/design/` (`docs/design/beyblade/00..05`, `tuning.md`) kazanır. Oyuncuya sunum (konum, metin, akış) `docs/ux/kontrol-ve-hud.md` kazanır. **Görünüş** (palet, şekil, yazı, panel, efekt, kompozisyon) bu belge kazanır ve hedefi **dokuz onaylı referans ekrandır**. Referansla belge çeliştiğinde belge kazanır (`docs/design/beyblade/gorunum/README.md`); bu belge her böyle farkı § 7.11'de "kasıtlı" olarak listeler. Kalan her fark "kaçak"tır ve Görsel Uyum Geçişi'nde (§ 8) kapatılır.
 
 **Referans görseller:** `docs/design/beyblade/gorunum/01-giris-profil.jpg … 09-sonuc.jpg` (commit `eb74c12`, 1376×768 JPG; Gemini `gemini-3.1-flash-image` ile üretilmiş **konsept**, nihai sanat değil; sahip tek tek onayladı: `02-sahip-kararlari.md` sonu). Kullanım ve hijyen notu: `docs/art/referans.md`. Bu belgedeki her referans tarifi görseller açılıp bakılarak yazıldı; renkler görsellerden piksel örneklenerek alındı (§ 2.0).
@@ -20,13 +22,14 @@ Bağlı belgeler: `docs/art/topac-pixel-plani.md`, `docs/design/beyblade/05-carp
 | İ-2 | **Kick yayınında 720p'de okunur** | Bilgi taşıyan çizgi ≥ 2 px, metin ≥ 10 px mantıksal (1080p'de 20 px), seyirci kontrastı ≥ 4,5:1 | kaynak: `kontrol-ve-hud.md` § 2, § 5, § 6.3 |
 | İ-3 | **Renk tek kanal değil** | Element = silüet, takım = düz/kesikli çember + ▲/◆, tehlike = tarama, stamina = ayraç + tarama + "!" | kaynak: `kontrol-ve-hud.md` § 6.1; `tide-ux.md` G-14, G-26 |
 | İ-4 | **1 px = 1 mantıksal px** | Aynı piksel yoğunluğu; karma yoğunluk yasak; ölçek tam sayı + `nearest`; bulanık katmanlar linear | kaynak: `topac-pixel-plani.md` § 1.3; `efekt-kaynaklari.md` § 5.2 |
-| İ-5 | **Oyun alanı tam üstten** (sahip teyidi bekliyor, § 9 K-1) | Zemin ve topaç üstten; yükseklik gölge + paralaksla; tribün üst bantta | kaynak: `topac-pixel-plani.md` § 1.1; `tide-ux.md` C-5 |
+| İ-5 | **Fizik üstten, sunum eğik (Hibrit)** (sahip kararı K-1, 2026-11-04) | Sim, çarpışma, tahmin, hash, bot ve telegraf alan geometrisi düz daire koordinatında; çizim referans 07/08 gibi eğik: elips çanak (zOranı ≈ 0,62), yandan katmanlı topaç, görünür iç duvar ve tribün, elips gölge. Erişilebilirlik ayarı "Düz görünüm" eski tam üstten sunumu korur | kaynak: sahip (bu oturum); § 9.1 K-1; maket `maketler/m1-mac-hibrit.png` |
 | İ-6 | **Efekt kodla, atlas küçük** | Hafif efektler kodla; dış sheet yalnız bitiş, element patlaması, Ulti; atlas ≤ 2048² | kaynak: `topac-pixel-plani.md` § 5; `efekt-kaynaklari.md` § 0, § 5.2 |
 | İ-7 | **Sabit kamera** | Takip yok; kısa zoom darbeleri | kaynak: `topac-pixel-plani.md` § 1.2 |
 | İ-8 | **Genel oyun terimleri, Türkçe** | Sözlüğün sağ sütunu; İngilizce metin yok | kaynak: `04-sozluk.md`; `tide-ux.md` C-3 |
 | İ-9 | **Özgün IP** | Kanatlı/ejderli üst tasarım ve anka okuması yok | kaynak: `topac-pixel-plani.md` § 4.3; `nile-kapsam.md` B-36 |
 | İ-10 | **Erişilebilir hareket** | Nabız ≤ 2 Hz; tam ekran flaş ≤ %25, ≤ 3/sn; sarsıntı/flaş/hitstop/zoom kapatılabilir | kaynak: `kontrol-ve-hud.md` § 6.2 |
 | İ-11 | **Her şey pixel art** (referanstan) | Arayüz dahil: pixel yazı tipi, pixel çerçeve, pixel ikon, sahne arka planı. Referansta tek bir düzgün kenarlı (vektör) öğe yok | kaynak: görseller 01–09 |
+| İ-12 | **Sadelik > lore** | Menüde ekran başına 1 ana eylem, 5–7 öğe kümesi, ana düğme sabit konumda, tek tıkla geri, kısa genel terim; yalnız lore taşıyan öğe ana ekranda durmaz (ipucu / ikinci kat / Dünya sayfası). Mekanik silinmez, yalnız arayüz | kaynak: sahip (2026-11-04); `docs/design/sadelik-ilkeleri.md` |
 
 ---
 
@@ -117,7 +120,7 @@ Referans 07'nin zemini **çatlaklı taş levhalar**, merkezde içe çökük çuk
 | Stamina > %60 | `#F2E8B0` | bej `#C9AE72` (08'in bejı ile krem arası; CVD testinde amberden ayrılmalı) | 08; ux H1a |
 | Stamina %25-60 | `#F2A33A` | sarı `#FFE45E` | 07 sarı bölge |
 | Stamina < %25 | `#E3350D` + tarama | turuncu-kırmızı `#F2622F` + tarama | 07 kırmızı bölge |
-| Enerji dilimi | `#7FD3FF` | dolarken yeşil `#86E065`; 3 dilim dolu ve Ulti açık: sarı-turuncu `#FEE55F` + "ULTİ" `#E8762F` | 07, 08 |
+| Enerji dilimi | `#7FD3FF` | dolarken yeşil `#86E065`; 3 dilim dolu ve Ulti açık: sarı-turuncu `#FEE55F` + "ULTİ" `#E8762F` (**K-3 varsayılan**, sahip itiraz etmedi) | 07, 08 |
 | Telegraf | `#E3350D` | `#C82625` | 08 |
 | Ulti kenar | `#FF8A3D` | `#E6680C` | 08 |
 Hedef değerler bir öneridir; GU-01'de gri ton + 3 CVD simülasyonuyla (`@pebble`) sınanmadan koda girmez.
@@ -186,7 +189,7 @@ Referans 08'deki Ulti telegrafı **eş merkezli iki kırmızı halka** (dolu, ta
 
 **Bizde:** petrol yeşili kart, 14 px yarıçap, 3 px koyu çerçeve, düğme 8 px yarıçap, ana eylem sarı dolgu, ◄ "Atölye" düğmesi kartın sağ üstünde (Lobi), sahne arka planı yok (düz radyal koyu), ikonlar düz renkli SVG silüet, parça kartları metin.
 
-**Karar (hedef stil):** referans panel stili benimsenir: lacivert zemin, basamaklı köşe (yarıçap 0, 2 px köşe kesiği), 2 px bej dış + 1 px koyu iç çizgi, vurgu için bronz çerçeve, başlık plakası, sol üstte kırmızı kare geri düğmesi. Ana eylem kuralı: **seçili / birincil = bronz-turuncu dolgu + altın çerçeve** (06 HIZLI MAÇ dili); 01'deki tek yeşil düğme istisna kabul edilmez (tek tutarlı ana eylem rengi). Gezinti kuralı aynı kalır: Atölye ana ekran, ◄ yalnız alt ekranlarda sol üstte, X yalnız modal (kaynak: ux § 3.2; G-15).
+**Karar (hedef stil):** referans panel stili benimsenir: lacivert zemin, basamaklı köşe (yarıçap 0, 2 px köşe kesiği), 2 px bej dış + 1 px koyu iç çizgi, vurgu için bronz çerçeve, başlık plakası, sol üstte kırmızı kare geri düğmesi. Ana eylem kuralı: **seçili / birincil = bronz-turuncu dolgu + altın çerçeve** (06 HIZLI MAÇ dili; **K-2 varsayılan**, sahip itiraz etmedi; maket `m3-*.png` bu kuralı çizer); 01'deki tek yeşil düğme istisna kabul edilmez (tek tutarlı ana eylem rengi). Gezinti kuralı aynı kalır: Atölye ana ekran, ◄ yalnız alt ekranlarda sol üstte, X yalnız modal (kaynak: ux § 3.2; G-15).
 
 ---
 
@@ -267,17 +270,19 @@ Bakılanlar: `D5-karsilama`, `D5-profil`, `D5-ilk-cekirdek`, `D6-atolye-genel`, 
 ### 7.1 Özet tablo
 Puan 0–5: 0 ekran yok · 1 iskelet · 2 öğeler var, düzen ve stil farklı · 3 düzen yakın, stil farklı · 4 düzen ve stil yakın · 5 ayırt etmek zor (kasıtlı farklar hariç). Puan **bugünkü** durumdur.
 
-| # | Referans | Uygulama dosyası | Dilim | Ekran görüntüsü | Belge uyumu | Görsel uyum (0-5) |
-|---|---|---|---|---|---|---|
-| 01 | `01-giris-profil.jpg` | `ekranlar/Kimlik.ts`, `Profil.ts` | D5 | `D5-karsilama`, `D5-profil` | Kısmen | **2** |
-| 02 | `02-ilk-cekirdek.jpg` | `ekranlar/IlkCekirdek.ts` | D5 | `D5-ilk-cekirdek` | Uyuyor (önizleme zayıf) | **2** |
-| 03 | `03-atolye.jpg` | `ekranlar/Atolye.ts`, `Dene.ts`, `Gunluk.ts` | D5-D6 | `D6-atolye-genel`, `D6-*` | Kısmen (D6 sürüyor) | **3** |
-| 04 | `04-market.jpg` | `ekranlar/Diger.ts` | D7 | yok | Yok | **0** |
-| 05 | `05-basarimlar.jpg` | `ekranlar/Diger.ts` | D5 iskelet, D7 | yok | Yok | **1** |
-| 06 | `06-lobi.jpg` | `ekranlar/Lobi.ts` | D4-D5 | `D5-lobi`, `D5-takim-secimi` | Kısmen | **2** |
-| 07 | `07-arena-mac.jpg` | `oyun/MacHud.ts`, `ekranlar/Mac.ts`, `oyun/KusakArenasi.ts`, `oyun/TopacGorsel.ts` | D2-D3 | `D5-mac-ortasi`, `D2-*`, `D3-01` | Uyuyor (HUD) | **2** |
-| 08 | `08-arena-ulti.jpg` | `oyun/YetenekGorsel.ts`, `Efektler.ts`, `MacHud.ts` | D3 | `D3-07*`, `D3-08` | Kısmen | **2** |
-| 09 | `09-sonuc.jpg` | `ekranlar/Mac.ts` (sonuç) | D2, D5, D7 | `D5-sonuc-xp`, `D2-12-*` | Kısmen | **2** |
+| # | Referans | Uygulama dosyası | Dilim | Ekran görüntüsü | Belge uyumu | Görsel uyum bugün (0-5) | Maket (öz değ.) | Tavan (K-1 Hibrit + GU) |
+|---|---|---|---|---|---|---|---|---|
+| 01 | `01-giris-profil.jpg` | `ekranlar/Kimlik.ts`, `Profil.ts` | D5 | `D5-karsilama`, `D5-profil` | Kısmen | **2** | — (maket yok) | 4 (illüstrasyon görseli ile 5) |
+| 02 | `02-ilk-cekirdek.jpg` | `ekranlar/IlkCekirdek.ts` | D5 | `D5-ilk-cekirdek` | Uyuyor (önizleme zayıf) | **2** | 4 | 4–5 (sahne görseli) |
+| 03 | `03-atolye.jpg` | `ekranlar/Atolye.ts`, `Dene.ts`, `Gunluk.ts` | D5-D6 | `D6-atolye-genel`, `D6-*` | Kısmen (D6 sürüyor) | **3** | 4 | 4 (sade düzen ve 6 çubuk kasıtlı) |
+| 04 | `04-market.jpg` | `ekranlar/Diger.ts` | D7 | yok | Yok | **0** | 4 | 5 |
+| 05 | `05-basarimlar.jpg` | `ekranlar/Diger.ts` | D5 iskelet, D7 | yok | Yok | **1** | 4 | 5 |
+| 06 | `06-lobi.jpg` | `ekranlar/Lobi.ts` | D4-D5 | `D5-lobi`, `D5-takim-secimi` | Kısmen | **2** | 3–4 (Oyna + Lobi iki ekran) | 4 |
+| 07 | `07-arena-mac.jpg` | `oyun/MacHud.ts`, `ekranlar/Mac.ts`, `oyun/KusakArenasi.ts`, `oyun/TopacGorsel.ts` | D2-D3 | `D5-mac-ortasi`, `D2-*`, `D3-01` | Uyuyor (HUD) | **2** | 3–4 | **4** (Hibrit ile; topaç sprite hattı gelince 5). A seçeneğinde tavan 3 idi |
+| 08 | `08-arena-ulti.jpg` | `oyun/YetenekGorsel.ts`, `Efektler.ts`, `MacHud.ts` | D3 | `D3-07*`, `D3-08` | Kısmen | **2** | 3 | **4** (avatar sanatı gelince 4–5; kuş yerine özgün ruh kasıtlı) |
+| 09 | `09-sonuc.jpg` | `ekranlar/Mac.ts` (sonuç) | D2, D5, D7 | `D5-sonuc-xp`, `D2-12-*` | Kısmen | **2** | 4 | 5 |
+
+"Maket" sütunu `docs/art/maketler/` görsellerinin referansa göre öz değerlendirmesidir (yer tutucu sanat; ölçülmedi). "Tavan" GU-00…GU-13 bittikten ve kasıtlı farklar düşüldükten sonra beklenen en yüksek puandır.
 
 Farklar aşağıda iki etiketle: **[K]** kasıtlı (belge kazandı, kapatılmaz) · **[S]** kaçak (sapma, GU'da kapatılır).
 
@@ -341,7 +346,8 @@ Farklar aşağıda iki etiketle: **[K]** kasıtlı (belge kazandı, kapatılmaz)
 - **Referansta:** kamera **eğik** (~35-45° yükselti; çanak geniş elips, iç duvar ve tribün görünür); zemin çatlaklı sıcak gri taş levhalar, ortada içe çökük çukur, dış kuşakta **ışıyan krem-turuncu halka**, kenarda koyu duvar, üstte ve yanlarda kalabalık silüetleri. Topaçlar **3/4 yandan** görünüşlü pixel sprite (turuncu Kor, mavi Girdap), altlarında koyu gölge, çarpışmada sarı-beyaz ışınsal patlama + kırmızı/mavi hız çizgileri + krem sarmal iz. HUD: sol üst "STAMINA" etiketi + ~480 px uzunlukta çubuk (dış uçtan kırmızı, sonra sarı bölge, sonra boş), altında "ENERJİ" + yeşil segmentli kısa çubuk; sağ üst ayna; üst ortada bronz çerçeveli trapez plaka "1 - 2" (turuncu rakam) ve altında "0:47" kutusu. Sol alt 3 ikonlu kare yuva (alev patlaması, kırmızı yasak dairesi, mavi sarmal); sağ alt 3 boş kare (ilki turuncu çerçeve).
 - **Bizde:** tam üstten daire; köşe panelleri (ad satırı, stamina eşik renkli + %, Enerji 3 açık mavi dilim, Çatlak); skor + süre koyu kutular; 4 yuva + yetenek adları + Shift/Space; 3 takım yuvası element silüetli.
 - **Farklar:**
-  - [K] Köşe paneli (08 dili) + alt yuvalar (C-4); çubuk rengi eşikle (C-16); yasak dairesi yerine kilit (C-7); sağ alt = takım yuvaları (C-8); ad/Lv. satırı, Çatlak, Shift/Space rozetleri, 4. yuva (ux § 2); takım çemberi (İ-3); **tam üstten bakış ve üstten topaç** (C-5) **sahip kararı bekliyor** (§ 9 K-1).
+  - [K] Köşe paneli (08 dili) + alt yuvalar (C-4); çubuk rengi eşikle (C-16); yasak dairesi yerine kilit (C-7); sağ alt = takım yuvaları (C-8); ad/Lv. satırı, Çatlak, Shift/Space rozetleri, 4. yuva (ux § 2); takım çemberi (İ-3, Hibrit'te zeminde elips).
+  - [S] **Kamera:** referans eğik, bizde tam üstten → **K-1 = Hibrit** ile kaçak fark oldu, GU-00 kapatır (fizik düz kalır; `maketler/m1-mac-hibrit.png`).
   - [S] "STAMINA" / "ENERJİ" büyük harf pixel etiketleri yok.
   - [S] Enerji rengi açık mavi, referans yeşil (§ 2.0).
   - [S] Skor plakası bronz trapez + turuncu rakam değil.
@@ -353,7 +359,7 @@ Farklar aşağıda iki etiketle: **[K]** kasıtlı (belge kazandı, kapatılmaz)
 - **Referansta:** kamera eğik, koyu kayrak zemin radyal çizgili; beyaza yakın ışıyan halka; sol üst panel (STAMINA bej çubuk, ENERJİ 3 dolu turuncu-sarı dilim, üçüncüsü parlıyor, yanında turuncu "ULTİ"), sağ üst ayna (rakip Enerji bej 1,5 dilim); üst ortada "2 - 1" ve "0:31" (bu ekranda rakamlar krem); arka bantta kalabalık. Kor topacın altında eş merkezli 2 kırmızı halka, üstünde alev; arkasında büyük yarı saydam turuncu **açık kanatlı kuş**; mavi topaç mavi koni iziyle saldırıyor; **sol ve sağ ekran kenarında turuncu parlama**.
 - **Bizde:** silüet kanatsız geometrik, üst-orta; "ULTİ · Ata Közü" sarı çerçeveli bant; Enerji açık mavi; kenar parlaması var (yalnız "Flaş: Normal").
 - **Farklar:**
-  - [K] Kuş avatarı özgün yeniden çizilir (C-6, B-36); avatar boyutu pixel planı sınırında (§ 6.4); telegrafta tarama (G-14); H5 bandı (ux § 2.2); tam üstten (K-1 bekliyor).
+  - [K] Kuş avatarı özgün yeniden çizilir (C-6, B-36); avatar boyutu pixel planı sınırında (§ 6.4); telegrafta tarama (G-14); H5 bandı (ux § 2.2). Kamera eğikliği artık [S]: GU-00 (K-1 = Hibrit; `maketler/m2-ulti-hibrit.png`).
   - [S] Gerçek avatar illüstrasyonu yok (yer tutucu silüet).
   - [S] Enerji dilimleri turuncu-sarı + "ULTİ" etiketi dilimlerin yanında değil (bizde ULTİ yazısı var, renk farklı).
   - [S] Stamina bejı (`#A88D58`) yerine krem.
@@ -377,7 +383,7 @@ Farklar aşağıda iki etiketle: **[K]** kasıtlı (belge kazandı, kapatılmaz)
 | 02: kartta farklı stat çiftleri | aynı 4 çubuk | karşılaştırma | C-2 |
 | İngilizce: CORE-A, SPARK, GEAR, VAER, BLAZE STRIKER, STORM/IGNIS/FALCON, COUNTDOWN, TEAM SELECT, OPPONENT, CORE; bozuk FİNF/SCPR, GENKİN OSTAVI | Türkçe sözlük | K-12 | C-3 |
 | 07: tam genişlik iki bölgeli çubuk | köşe panelinde eşik renkli çubuk | okunurluk | C-4, C-16 |
-| 07/08: eğik arena, 3/4 topaç | tam üstten | çarpışma okunurluğu | C-5 · **sahip kararı bekliyor (K-1)** |
+| 07/08: eğik arena, 3/4 topaç | **sunum eğik (Hibrit), fizik düz daire**; yalnız "Düz görünüm" erişilebilirlik ayarında tam üstten | sahip kararı K-1 (2026-11-04): kasıtlı fark kalktı, fizik farkı ekranda görünmez | C-5 yerine K-1 |
 | 08: alevli kanatlı kuş | özgün avatar | IP | C-6; B-36 |
 | 07: kırmızı yasak dairesi | asma kilit + Lv.3 | anlam | C-7 |
 | 03/05: X; 03/04/06 karışık ◄ | G-15 kuralı | tutarlılık | C-9 |
@@ -405,7 +411,7 @@ Farklar aşağıda iki etiketle: **[K]** kasıtlı (belge kazandı, kapatılmaz)
 ### 8.2 Kontrol listesi ve kabul eşiği
 | Ölçüt | Ölçüm | Kabul |
 |---|---|---|
-| Yerleşim | ana öğe kutuları, mantıksal px | ±8 px (kamera kararı K-1 açıkken arena hariç) |
+| Yerleşim | ana öğe kutuları, mantıksal px | ±8 px (arena dahil: Hibrit elips çanak, referans 07/08 ile bindirilir) |
 | Palet | baskın renk örneği, ΔE76 (Pillow medyan) | arayüz tokenları ≤ 12; vurgu (turuncu, altın, stamina, Enerji) ≤ 8; element/köken pixel planında kalır |
 | Yazı | pixel font, büyük harf etiket, cap-height | font ailesi pixel; boyut ±1 px; alt sınır 10 |
 | Öğe sayısı | sayım | birebir, § 7.11 hariç |
@@ -416,13 +422,14 @@ Farklar aşağıda iki etiketle: **[K]** kasıtlı (belge kazandı, kapatılmaz)
 **Ekran kabulü:** ≥ 4/5, yerleşim ve öğe sayısı kırmızı değil.
 
 ### 8.3 Kaçak farklardan öncelikli "Görsel Uyum Geçişi" (GU) iş listesi
-Sıra: önce **tüm ekranları birden etkileyen temel** (GU-01), sonra yayında en görünür ekranlar. Tahminler ajan iş günü (tahmin, ölçülmedi). Sim, kurallar ve altın hash'ler değişmez; yalnız sunum katmanı.
+Sıra: önce **GU-00 Hibrit kamera** (HUD, efekt ve arena işleri onun koordinat dönüşümüne dayanır), sonra **tüm ekranları birden etkileyen temel** (GU-01), sonra yayında en görünür ekranlar (GU-02…06), menüler (GU-07…10, 13). Tahminler ajan iş günü (tahmin, ölçülmedi). Sim, kurallar ve altın hash'ler değişmez; yalnız sunum katmanı.
 
 | # | Ekran | İş (kaçak farkı kapatır) | Dosyalar | Tahmin | Bağımlılık |
 |---|---|---|---|---|---|
+| GU-00 | 07/08 | **Hibrit kamera sunumu (her şeyden önce):** `Sahne.ts` mantıksal→ekran dönüşümü (ekranX = x, ekranY = merkez + z·zOranı − yükseklik; zOranı ≈ 0,62, ayar sabiti), arena çizimi (elips çanak, iç duvar, dudak, tribün bandı), topaç yandan/üç çeyrek çizimi (yer tutucu: katmanlı Graphics; gölge elipsi, uç, disk, gövde, çekirdek), Sekme/Ring Out'ta gölge ayrılması, telegraf ve alan dekalleri zeminde taramalı elips + merkez simge, H9 nişan ve H11 kenar uyarısı elips dudakta, efekt yönleri (sarsıntı ve squash normali zOranı ile, 05 § 3.3), çarpışma noktası parlaması, Ayarlar › "Düz görünüm (erişilebilirlik)" eski tam üstten sunumu korur. Sim, tahmin, hash, bot **değişmez** | `oyun/Sahne.ts`, `KusakArenasi.ts`, `TopacGorsel.ts`, `YetenekGorsel.ts`, `Efektler.ts`, `Iz.ts`, ayarlar | **2,5** (dönüşüm 0,5 · arena 0,5 · topaç 0,5 · telegraf/dekal/nişan/kenar 0,5 · efekt + ayar + test/ekran 0,5) + sanat kolu (topaç sprite kareleri 35–45° açıdan render, pixel planı § 3; yön/eğim kare seti ~×2) | `@pebble` okunurluk testi (dikey mesafe, kenar); `@byte` determinizm kapısı yeşil kalmalı |
 | GU-01 | tümü | **Temel:** pixel font (Türkçe glifli, OFL/CC0, lisans krediler'e) + büyük harf etiket kuralı; token seti § 2.5 (lacivert panel, bej çerçeve, bronz, turuncu vurgu, kırmızı geri); panel bileşeni (basamaklı köşe, çift çizgi), başlık plakası, kırmızı kare ◄ sol üstte, ana eylem bronz-turuncu; `araclar/uyum-ekran.ts` (§ 8.1 çekim + yan yana) | `index.html` (`:root`), `ekranlar/arayuz.ts`, `oyun/MacHud.ts`, `oyun/renkler.ts`, yeni araç | 1,5 | `@pebble` CVD testi; font lisansı |
 | GU-02 | 07 | HUD: "STAMINA"/"ENERJİ" pixel etiketleri, Enerji yeşil → dolu turuncu-sarı, stamina tonları § 2.5, skor bronz trapez plaka + turuncu rakam | `oyun/MacHud.ts` | 0,5 | GU-01 |
-| GU-03 | 07 | Arena: ışıyan halka (glow, linear katman), çatlaklı taş dokusu, merkez çukur, iç duvar bandı, tribün kalabalık bandı (tileset) | `oyun/KusakArenasi.ts`, `Sahne.ts`, `public/` arena dokuları | 1,5 | K-1 kararı (eğikse kapsam büyür); `@cove` |
+| GU-03 | 07 | Arena dokusu (GU-00'ın üstüne): ışıyan halka (glow, linear katman, `#FBBE88`), çatlaklı taş + çakıl, merkez çukur, iç duvar dikişleri, tribün kalabalık bandı (tileset, uzak sıra küçük) | `oyun/KusakArenasi.ts`, `public/` arena dokuları | 1 | GU-00; `@cove` |
 | GU-04 | 07/08 | Çarpışma efekti: ışınsal yıldız patlaması, takım/element renkli hız çizgileri, belirgin gölge; dash koni izi; topaç üstü element aurası | `oyun/Efektler.ts`, `Parcaciklar.ts`, `Iz.ts` | 1 | efekt-oturumu K2 (pixelfx `hit-spark`/`crit-hit` pişirme) isteğe bağlı |
 | GU-05 | 08 | Ulti: eş merkezli 2 halka telegraf (tarama korunur), Enerji dilim + ULTİ etiketi rengi, kenar parlaması `#E6680C`, avatar yer tutucusunu referans kompozisyonuna (arkada, üst-orta, büyük, yarı saydam) taşı | `oyun/YetenekGorsel.ts`, `MacHud.ts` | 0,5 | avatar sanatı ayrı (PixelLab sahip onayı) |
 | GU-06 | 09 | Sonuç: ZAFER plakası (kanat + yıldız), konfeti, tablo ikonları, ödül üç sütun kartı (sikke, Çekirdek görseli, başarım), siyah tam ekran zemin | `ekranlar/Mac.ts` | 1 | GU-01; Altın/başarım verisi D7 |
@@ -432,7 +439,8 @@ Sıra: önce **tüm ekranları birden etkileyen temel** (GU-01), sonra yayında 
 | GU-10 | 01 | Giriş/profil: iki panel (sol Çekirdek illüstrasyonu), logo rozeti, pixel arma ikonları, renk şeridi stili | `ekranlar/Profil.ts`, `Kimlik.ts`, `oyun/elementSimge.ts` | 0,75 | illüstrasyon görseli |
 | GU-11 | 04 | Market: referans düzeni D7'de doğrudan uygulanır (ahşap tabelalı 2×2 raf, fiyat rozeti, kilit + ilerleme, ???, günün parçası bandı, ALTIN sayacı, pazar arka planı) | `ekranlar/Diger.ts` → yeni `Market.ts` | D7 içinde +0,5 | D7 |
 | GU-12 | 05 | Başarımlar: 6 sekme, kalkan rozetli kart ızgarası, ilerleme çubuğu, kilitli gri hâl | `ekranlar/Diger.ts` → yeni `Basarimlar.ts` | D7 içinde +0,5 | D7 |
-| | | **Toplam** | | **~11 gün** (GU-01…10; GU-11/12 D7'ye eklenir) | |
+| GU-13 | menüler | **Sadelik geçişi:** `docs/design/sadelik-ilkeleri.md` § 2 "kaldır/sakla" satırları (filtreler tek düğme, element çarkı → rozet, geliştirici araçları `?gelistir=1`, Günlük → Çekirdek ayrıntı paneli, uzun açıklamalar, tek ana düğme kuralı); § 5 KS-1…KS-6 kararlanınca o satırlar | `ekranlar/*.ts`, `arayuz.ts` | 1 | GU-01; KS kararları |
+| | | **Toplam** | | **~13 ajan günü** (GU-00…10 ve 13; GU-11/12 D7'ye eklenir; sanat kolu ayrı) | |
 
 **Kapsam dışı (GU puanını sınırlar, ayrı hat):** topaç sprite'ları (Blender → pixel boru hattı, pixel planı § 7), ruh avatarları (pixel planı § 4.3), parça ikon seti (B-14 ≤ 12 şekil), sahne arka plan görselleri (02 tapınak, 03 blueprint, 04 pazar, 01 Çekirdek illüstrasyonu; üretim yolu ve IP kontrolü `@iris`), efekt pişirme (efekt-oturumu K2).
 
@@ -443,18 +451,18 @@ Sıra: önce **tüm ekranları birden etkileyen temel** (GU-01), sonra yayında 
 ## 9. Çelişkiler / açık sorular
 
 ### 9.1 Sahip kararı bekleyen
-**K-1 · Kamera: tam üstten mi, referanstaki eğik arena mı?**
-Sahip "referanslara en yakın" istiyor; referans 07 ve 08 **eğik** (~35-45° yükselti, elips çanak, 3/4 topaç, görünür iç duvar ve tribün). Belgeler (pixel planı § 1.1 C, `tide-ux.md` C-5, `gorunum/README.md`) **tam üstten** der ve bugünkü kod öyle. README'ye göre belge kazanır, ama bu referansla en büyük tekil farktır; sahibe açıkça sorulmalı.
+**K-1 · Kamera → KARAR: Hibrit (sahip, 2026-11-04).** Sahip önce "tam nasıl olur hayal edemiyorum" dedi, maket istedi, ardından "Referanstaki gibi olsun her şey istiyorum" diyerek **hibrit**i seçti.
+- **Ne demek:** sim ve çarpışma düz daire / üstten koordinatla kalır (sim, tahmin, hash, bot, telegraf alan **geometrisi** değişmez); yalnız çizim eğik görünür: elips çanak (~35–45° yükselti, referans 07/08), topaçlar yandan / üç çeyrek, iç duvar ve tribün görünür, gölgeler elips, telegraf halkaları ve alanlar zeminde elips.
+- **Dönüşüm:** ekranX = merkezX + x; ekranY = merkezY + z·zOranı − yükseklik; zOranı ≈ 0,62 (0,6–0,7 aralığı, ayar sabiti; maket 0,62 kullandı). Topaç yüksekliği (Disk, Sekme) ekranda yukarı kayma; Sekme / Ring Out düşüşünde gölge ayrılır. Ekran sarsıntısı ve squash normali aynı oranla çevrilir (05 § 3.3).
+- **Maliyet (tahmin):** sunum katmanı ~2–3 ajan günü (GU-00: Sahne dönüşümü, topaç çizimi, zemin/duvar/tribün, telegraf elips çizimi, efekt yönleri, kenar uyarısı ve nişan çizgisi, "Düz görünüm" ayarı, test/ekran) + sanat kolu (topaç sprite kareleri 35–45° açıdan; pixel planı § 3 render düzeneğinde kamera açısı değişir, yön/eğim kare seti ~×2).
+- **Okunurluk riski:** dikey eksende mesafe ve kenar ~%38 kısalır; yukarı-aşağı çarpışmalar ve üst/alt kenara yakınlık daha zor okunur; topaç üstte duran topacı kısmen örtebilir.
+- **Önlemler:** (1) telegraf alanları zeminde **taramalı elips + merkezde element simgesi** (ux § 2.2 korunur); (2) H11 kenar uyarısı **elips dudak üzerinde** yay; (3) çarpışma noktası parlaması (yıldız patlaması) temas noktasının ekran izdüşümünde; (4) takım çemberi zeminde elips (▲/◆ topacın üstünde); (5) z-sırası ekranY'ye göre, öndeki topaç önde; (6) Ayarlar › **"Düz görünüm (erişilebilirlik)"**: eski tam üstten sunum korunur ve aynı sim üstünde çalışır; (7) `@pebble` okunurluk testi (720p, H.264) ve GU-00 kabulünde dikey çarpışma senaryosu.
+- **Görsel:** `maketler/m1-mac-hibrit.png`, `m2-ulti-hibrit.png`, üçlü kıyas `m4-kamera-kiyas.png`, önce/sonra `karsilastirma-mac.png`, `karsilastirma-ulti.png`.
+- **Not:** bu "Hibrit" önceki taslaktaki C satırından (çanak ~%85–90 basık, ~15–20° topaç) **daha eğiktir**; sahip referansa en yakını istedi. Pixel planı § 1.1 C (zemin tam üstten) ve § 2.2 (topaç tam üstten katmanlar) bu karara göre revize edilmeli (Ç-19).
 
-| Seçenek | Ne değişir | Maliyet (tahmin) | Risk |
-|---|---|---|---|
-| **A. Tam üstten (bugün)** | Hiçbir şey; arena GU-03 ile referansın dokusuna (çatlak, ışıyan halka, tribün) yaklaşır | 0 ek | 07/08 görsel uyumu tavanı ~3/5 (açı farkı hep görünür) |
-| **B. Eğik (referans gibi)** | Sahne projeksiyonu (z → ölçek, `Sahne.ts`'teki eski 2.5D derinlik ölçeği geri gelir), çanak elips, topaç sprite'ları 3/4 açıdan render (Blender kamera açısı değişir, yön/eğim kare seti ~×2), gölge, H9/H11/H13 telegraf ve dekaller elips ölçekli, çarpışma normalinin ekrana çevrimi, Ring Out dudağı ve duvar arkası, efekt yönleri | ~4-6 ajan günü (sahne + arena 2, telegraf/dekal/kenar 1, efekt ve gölge 1, test/ekran 1) + sanat hattında kare sayısı ~×2 | Mesafe ve temas yargısı dikeyde yanıltır (pixel planı § 1.1 B); sim değişmez ama okunurluk testi (`@pebble`) şart |
-| **C. Hibrit (öneri)** | Oyun alanı fiziksel olarak tam üstten kalır; **sunum** hafif eğik: çanağın dikey ekseni ~%85-90 basık elips, iç duvar bandı ve tribün üstte görünür, topaç sprite'ları ~15-20° eğik render; telegraf aynı basıklıkla | ~2-3 ajan günü + sprite render açısı | Az; referansa belirgin yaklaşır, daire çarpışması hâlâ okunur |
-Karar sahibin; `@iris` önerisi C. Karar gelene kadar GU-03 yalnız açıdan bağımsız işleri (doku, halka, tribün) yapar.
-
-**K-2 · Ana eylem rengi:** 01'deki yeşil GİRİŞ mi, 06'daki bronz-turuncu seçili düğme mi tek kural olsun? Öneri: bronz-turuncu (§ 4.3).
-**K-3 · Enerji rengi:** 07 yeşil, 08 turuncu-sarı; öneri: dolarken yeşil, Ulti hazırken turuncu-sarı (§ 2.5).
+**K-2 · Ana eylem rengi → varsayılan: bronz-turuncu** (§ 4.3). Sahip cevap vermedi, itiraz etmedi; maketler bu kuralı kullanır. 01'deki yeşil GİRİŞ kullanılmaz.
+**K-3 · Enerji rengi → varsayılan: dolarken yeşil `#86E065`, Ulti hazırken sarı-turuncu `#FEE55F` + "ULTİ" `#E8762F`** (§ 2.5). Sahip cevap vermedi, itiraz etmedi. CVD sınaması GU-01'de.
+**KS-1…KS-6 · Sadelik önerilerinin bağlayıcı belgelerle çelişen maddeleri** (Market hizip alt başlıkları, üst gezinti, Günlük ekranı, element çarkı, Dereceli düğmesi, HUD ipuçları): `docs/design/sadelik-ilkeleri.md` § 5. KS-1 acil: D7 Market alt başlıklarını şu an yazıyor.
 
 ### 9.2 Belge çelişkileri
 | # | Konu | Çelişen kaynaklar | Durum | Kime |
@@ -470,10 +478,28 @@ Karar sahibin; `@iris` önerisi C. Karar gelene kadar GU-03 yalnız açıdan ba�
 | Ç-9 | Giriş | 03 US-1.1 ve ux: Kick · D5: ad + şifre | sahip kararı | Kick dilimi |
 | Ç-10 | Oda kodu | 03 § 5.1 4-6 · ux + D4: 8 harf | 8 | `@helix` |
 | Ç-11 | İlk arena adı | pixel "Kuşak Çanağı" · nile B-12 "Kuşak Arenası" | Kuşak Arenası | `@iris` |
-| Ç-12 | Kamera | referans eğik · belgeler tam üstten | **K-1** | sahip |
+| Ç-12 | Kamera | referans eğik · belgeler tam üstten | **Çözüldü: K-1 = Hibrit** (2026-11-04) | sahip |
 | Ç-13 | Yazı tipi | belgelerde yok · referans pixel · kod sans | pixel (GU-01) | `@iris`, `@glyph` |
 | Ç-14 | `SAHNE_RENK.zemin` `#3B4A4F` vs Kuşak `#6E6A66` | `renkler.ts` · `KusakArenasi.ts` | tek tokena bağla (GU-01) | `@glyph` |
-| Ç-15 | Enerji rengi referansın kendi içinde | 07 yeşil · 08 turuncu-sarı · kod açık mavi | **K-3** | sahip |
+| Ç-15 | Enerji rengi referansın kendi içinde | 07 yeşil · 08 turuncu-sarı · kod açık mavi | **K-3 varsayılan** (yeşil → Ulti'de sarı-turuncu) | sahip (itiraz etmedi) |
 | Ç-16 | Element simgeleri | ux § 6.1 Kasırga bulut/hortum, Girdap sarmal · referans 01: bulut, **mavi hortum**, sarmal yok; kod: Kasırga yeşil hortum, Girdap sarmal | belge kazanır (Girdap = sarmal); 01'in bulut simgesi Kasırga'ya alınabilir | `@iris` |
 | Ç-17 | Avatar boyutu | pixel § 4.1 192-216 px · referans 08 ~%50 ekran yüksekliği | pixel sınırı (okunurluk) | `@iris` |
 | Ç-18 | `tide-ux.md` C-11 "alt rozetlerin anlamı yok" ve C-10 "su damlası ve yeşil leke" | referans 06'da rakip panelinde alev, sarı güneş benzeri ve yeşil leke; takım kartlarında alev, su damlası, yeşil | C kaydı doğru; rakip ikonlarından biri güneş benzeri (kayıtta yok) | bilgi |
+| Ç-19 | Topaç ve zemin bakışı | `topac-pixel-plani.md` § 1.1 C, § 2.2 (zemin ve topaç tam üstten), `tide-ux.md` C-5 · K-1 = Hibrit (sunum eğik) | K-1 kazanır; pixel planı revize edilir (render açısı 35–45°, yandan katman sırası, elips gölge) | `@iris` |
+| Ç-20 | Eski "kamera bekliyor / belge kazanır tam üstten" metni | `docs/art/referans.md` son satır, `docs/design/beyblade/gorunum/README.md` ("07/08'deki eğik kamera: pixel planının tam üstten bakışı") | K-1 kazanır; iki dosya bu görevin yazma kapsamı dışında, sonraki belge geçişinde güncellenir | `@iris` |
+| Ç-21 | Sadelik vs bağlayıcı lore/akış belgeleri | `04-sozluk.md`, `03` US-2.1/2.2/3.2, ux § 3.2, § 2 H6–H7 | `sadelik-ilkeleri.md` § 5 KS-1…KS-6 | sahip |
+
+---
+
+## 10. Maketler (2026-11-04)
+
+Yer: [`docs/art/maketler/`](maketler/) (README orada). Hepsi **yer tutucu sanat, nihai değil**; oyun kodu import edilmeden HTML/Canvas ile çizildi (480×270 mantıksal piksel, ×4 tam sayı ölçek, Bayer dither, 4–6 tonlu rampalar), Playwright ile 960×540 DPR 2 (= 1920×1080) çekildi. Yazı tipi: Pixelify Sans (OFL, etiket ve metin) + Press Start 2P (OFL, yalnız rakamlar); ikisi de Google Fonts'tan maket için indirildi, oyuna girmeden önce GU-01'de lisans ve Türkçe glif denetimi (`krediler.md`) gerekir.
+
+| Görsel | Ne gösterir |
+|---|---|
+| `m1-mac-hibrit.png` | M1 · 07 karşılığı: Hibrit eğik elips çanak, çatlak taş + çakıl, ışıyan halka `#FBBE88`, iç duvar ve tribün kalabalığı, yandan katmanlı Kor ve Girdap topaçları, elips gölge, takım elipsleri, çarpışma (yıldız patlaması, şok elipsi, iki renkli parçacık, hız çizgisi, krem sarmal iz), referans HUD (STAMINA/ENERJİ, kırmızı→sarı çubuk, yeşil Enerji, bronz skor plakası, süre, yuvalar, takım yuvaları) |
+| `m2-ulti-hibrit.png` | M2 · 08 karşılığı: kenar turuncu parlaması, zeminde iki kırmızı elips halka + çapraz tarama, Kor alev aurası, Girdap atılış konisi, ruh **Közkaracal** (püsküllü kulaklı, alev yeleli kedi; kanatsız, kuş/ejderha/anka değil), Enerji 3 sarı-turuncu dilim + ULTİ, H5 bandı |
+| `m3-ilk-cekirdek.png`, `m3-atolye.png`, `m3-market.png`, `m3-basarimlar.png`, `m3-oyna.png`, `m3-lobi.png`, `m3-sonuc.png` | M3 · sade menü ailesi (02, 03, 04, 05, 06 mod seçimi, 06 eşleşme, 09): aynı panel/düğme/başlık bileşenleri, tek ana düğme, referans sahneleri (tapınak, blueprint, pazar sokağı, konfeti) |
+| `karsilastirma-*.png` | Önce (D5/D6 ekran görüntüsü) / sonra (maket) ve kaldırılan–eklenen öğe listesi: `ilk-cekirdek`, `atolye`, `market`, `basarimlar`, `oyna`, `lobi`, `sonuc`, `mac`, `ulti` |
+| `m4-kamera-kiyas.png` | M4 · şimdiki oyun / Hibrit maket / referans 07 yan yana; kayıp, kazanç, "fizik değişmez", önlemler ve dönüşüm şeması |
+
