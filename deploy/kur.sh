@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Devran VPS kurulumu (D4). Root ya da sudo ile, depo kökünden: sudo bash deploy/kur.sh
+# Devran VPS kurulumu (D4, D5: SQLite + OTURUM_SIRRI). Root ya da sudo ile, depo kökünden: sudo bash deploy/kur.sh
 # Yapar: Node 22 (yoksa NodeSource), `devran` sistem kullanıcısı, /opt/devran'a kopya, npm ci, npm run build,
 # .env (yoksa .env.example'dan), systemd servisi (127.0.0.1:2567). Cloudflare Tunnel ayrı adım: deploy/README.md.
 set -euo pipefail
@@ -16,11 +16,16 @@ node -v
 id devran >/dev/null 2>&1 || useradd --system --home "$HEDEF" --shell /usr/sbin/nologin devran
 mkdir -p "$HEDEF" "$HEDEF/veri-db"
 rsync -a --delete --exclude node_modules --exclude dist --exclude .git --exclude .env --exclude veri-db "$KAYNAK/" "$HEDEF/"
-[ -f "$HEDEF/.env" ] || cp "$HEDEF/.env.example" "$HEDEF/.env"
+if [ ! -f "$HEDEF/.env" ]; then
+  cp "$HEDEF/.env.example" "$HEDEF/.env"
+  # D5: oturum/bilet imza anahtarı rastgele üretilir (sunucu bunsuz açılmaz)
+  sed -i "s|^OTURUM_SIRRI=.*|OTURUM_SIRRI=$(openssl rand -base64 48 | tr -d '\n')|" "$HEDEF/.env"
+fi
 chown -R devran:devran "$HEDEF"
 chmod 600 "$HEDEF/.env"
 
 cd "$HEDEF"
+# better-sqlite3 yerel modül: Node 22 için önceden derlenmiş ikili indirilir (yoksa derlemek için build-essential gerekir)
 sudo -u devran npm ci --no-audit --no-fund
 sudo -u devran npm run build
 test -f dist/server/server.mjs

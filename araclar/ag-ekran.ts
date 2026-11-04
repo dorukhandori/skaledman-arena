@@ -7,7 +7,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import sharp from "sharp";
 import { AgSimulatoru, simetrik } from "./ag-simulatoru.ts";
-import { adres, bekle, bekleKosul, ev, istemciAc, ozetAl, tikla } from "./ag-ortak.ts";
+import { adres, bekle, bekleKosul, ev, hesapHazirla, istemciAc, ozetAl, tikla } from "./ag-ortak.ts";
 
 const KLASOR = "docs/production/raporlar/ekran";
 mkdirSync(KLASOR, { recursive: true });
@@ -38,6 +38,7 @@ const macta = (s: typeof a, faz = "tur") => bekleKosul(s.sayfa, `(() => { const 
 const sonucAcik = (s: typeof a, ms: number) => bekleKosul(s.sayfa, `!!(window.__lobi.macEkrani && window.__lobi.macEkrani.sonucAcik)`, ms);
 
 try {
+  await hesapHazirla(a, 2631); await hesapHazirla(b, 2632); // D5: lobi giriş ister
   await a.sayfa.goto(adres(2631, "oto=kenar&debug&takim=0"));
   await bekleKosul(a.sayfa, `!!document.querySelector("[data-eylem=oda-ac]")`, 30000);
   await bekle(500);

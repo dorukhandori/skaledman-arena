@@ -8,7 +8,7 @@
 // Önce: npm run dev. Çalıştır: npm run ag:matris [-- N0 N3 ...] [--kopma] [--ucuncu] [--bekleme]
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from "node:fs";
 import { AgSimulatoru, type AgProfili, simetrik } from "./ag-simulatoru.ts";
-import { TABAN, bekle, bekleKosul, ev, istatistik, istemciAc, kayitDogrula, odayiKur, ozetAl, tikla, type Istemci } from "./ag-ortak.ts";
+import { TABAN, bekle, bekleKosul, ev, hesapHazirla, istatistik, istemciAc, kayitDogrula, odayiKur, ozetAl, tikla, type Istemci } from "./ag-ortak.ts";
 
 const CIKTI = "docs/production/raporlar/D4-ag-matris.json";
 const arg = process.argv.slice(2);
@@ -160,6 +160,7 @@ async function ucuncuKos(): Promise<void> {
     const kod = await odayiKur(a, b, null, null, "oto=kenar&debug&cizim=yok&takim=0", "oto=dolas&debug&cizim=yok&takim=1");
     await bekleKosul(a.sayfa, `window.__lobi.asama === "mac"`, 30000);
     const api = await (await fetch(`${TABAN}api/oda/${kod}`)).json();
+    await hesapHazirla(c, null);
     await c.sayfa.goto(`${TABAN}?ekran=lobi&debug#oda=${kod}`);
     await bekleKosul(c.sayfa, `!!document.querySelector("[data-eylem=katil]")`, 20000);
     await tikla(c.sayfa, "[data-eylem=katil]");
@@ -196,6 +197,7 @@ async function ucuncuKos(): Promise<void> {
 async function beklemeKos(): Promise<void> {
   const a = await istemciAc("A");
   try {
+    await hesapHazirla(a, null);
     await a.sayfa.goto(`${TABAN}?ekran=lobi&debug`);
     await bekleKosul(a.sayfa, `!!document.querySelector("[data-eylem=oda-ac]")`, 20000);
     await tikla(a.sayfa, "[data-eylem=oda-ac]");

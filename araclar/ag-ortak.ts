@@ -39,8 +39,27 @@ export function adres(port: number | null, ek: string): string {
   return `${taban}?${q.toString().replace(/=(?=&|$)/g, "")}`;
 }
 
+/**
+ * D5: lobi giriş ister. İstemciye yeni bir test hesabı açar (kayıt → profil → ilk Çekirdek; sayfa içi fetch, çerez
+ * sayfanın kökeninde). Vekil kökeni (localhost:26xx) da aynı çerez alanıdır (çerez port ayırmaz). Bir kez yeter.
+ */
+export async function hesapHazirla(s: Istemci, port: number | null): Promise<void> {
+  const taban = port ? `http://localhost:${port}/` : TABAN;
+  await s.sayfa.goto(`${taban}?ekran=ayarlar`);
+  const ad = `${s.ad}${Math.random().toString(36).slice(2, 8)}`;
+  await ev(s.sayfa, `(async () => {
+    const p = (y, g) => fetch(y, { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify(g) });
+    await p("/api/kayit", { ad: ${JSON.stringify(ad)}, sifre: "test-sifre-1", sifreTekrar: "test-sifre-1" });
+    await p("/api/profil", { arma: "kor", renk: "#f4cf47" });
+    await p("/api/ilk-cekirdek", { set: ${JSON.stringify(s.ad === "B" ? "yapay" : "goktasi")} });
+    return true;
+  })()`);
+}
+
 /** A oda açar, B bağlantıyla katılır, ikisi Hazır → maç. Dönen: oda kodu. */
 export async function odayiKur(a: Istemci, b: Istemci, portA: number | null, portB: number | null, ekA: string, ekB: string, hazir = true): Promise<string> {
+  await hesapHazirla(a, portA);
+  await hesapHazirla(b, portB);
   await a.sayfa.goto(adres(portA, ekA));
   await bekleKosul(a.sayfa, `!!document.querySelector("[data-eylem=oda-ac]")`, 20000);
   await tikla(a.sayfa, "[data-eylem=oda-ac]");

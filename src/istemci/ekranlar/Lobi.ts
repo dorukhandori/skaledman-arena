@@ -1,6 +1,7 @@
 import { type OdaGorunumu } from "../../ag/durum.ts";
 import { MESAJ, ODA_FAZI, odaKoduBicimle, odaKoduCoz } from "../../ag/protokol.ts";
-import { BASLANGIC_TAKIMLARI, takimProfilleriKimlikten } from "../../paylasilan/veri/takimlar.ts";
+import { takimKoduYaz, takimProfilleriKimlikten } from "../../paylasilan/veri/takimlar.ts";
+import { type Girisli, SON_TAKIM, git, oku, sakla } from "../hesap.ts";
 import type { EkranBaglami } from "../main.ts";
 import { AgMaci } from "../ag/AgMaci.ts";
 import { Baglanti, BaglantiHatasiE, HATA_METNI } from "../ag/Baglanti.ts";
@@ -10,7 +11,8 @@ import { type MacEkrani, cevrimiciBaslat } from "./Mac.ts";
 // Lobi (D4, ux § 3.3, basit DOM): Oda aç (kod + Kodu kopyala + Bağlantıyı kopyala `#oda=ABCDEFGH`, QR yer tutucu),
 // Odaya katıl (tek alan; yapıştır çalışır; bağlantıyla gelince dolu), Hızlı maç (yer tutucu: kuyruk D7),
 // Antrenman (sunucu botu). Eşleşince "Rakip bulundu: <ad>" 3 sn, takım seçimi 20 sn (süre dolunca son takım).
-// Kimlik D4'te sahte (`KIMLIK_MODU=yerel`): oyuncu adı bu tarayıcıda saklanır; D5'te Kick.
+// D5: kimlik oturumdan (ad + şifre); her katılımda `/api/bilet` (60 s, tek kullanımlık). Takımlar SQLite'tan:
+// takım seçiminde oyuncunun kayıtlı takımları (ödünç yuvalar gri), süre dolunca son takım (nile B-21).
 
 const STIL = `
 .lobi { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:auto; background:radial-gradient(circle at 50% 40%, #10222a, #070a1c 75%); z-index:5; }
@@ -51,11 +53,7 @@ function el<K extends keyof HTMLElementTagNameMap>(etiket: K, sinif = "", ust?: 
   return e;
 }
 
-const AD_ANAHTAR = "devran.ad.v1";
-const TAKIM_ANAHTAR = "devran.sonTakim.v1";
-
-function sakla(k: string, v: string): void { try { localStorage.setItem(k, v); } catch { /* kapalı */ } }
-function oku(k: string): string | null { try { return localStorage.getItem(k); } catch { return null; } }
+const TAKIM_ANAHTAR = SON_TAKIM;
 
 export function baslat(b: EkranBaglami): void {
   new LobiEkrani(b);
@@ -78,15 +76,16 @@ class LobiEkrani {
   private secilenTakim: string;
   private zamanlayici = 0;
 
+  private ben: Girisli;
+
   constructor(private b: EkranBaglami) {
+    this.ben = b.ben as Girisli;
     this.stil.textContent = STIL;
     document.head.appendChild(this.stil);
     b.ustYazi.appendChild(this.kok);
-    this.secilenTakim = oku(TAKIM_ANAHTAR) ?? BASLANGIC_TAKIMLARI[0]!.id;
-    if (!BASLANGIC_TAKIMLARI.some((t) => t.id === this.secilenTakim)) this.secilenTakim = BASLANGIC_TAKIMLARI[0]!.id;
-    const q = new URLSearchParams(location.search);
-    const t = q.get("takim");
-    if (t && /^[0-2]$/.test(t)) this.secilenTakim = BASLANGIC_TAKIMLARI[Number(t)]!.id;
+    const takimlar = this.ben.takimlar;
+    this.secilenTakim = oku(TAKIM_ANAHTAR) ?? takimlar[0]?.id ?? "0";
+    if (!takimlar.some((t) => t.id === this.secilenTakim)) this.secilenTakim = takimlar[0]?.id ?? "0";
     this.giris();
     (window as unknown as { __lobi: LobiEkrani }).__lobi = this;
     this.zamanlayici = window.setInterval(() => this.tik(), 200);
@@ -95,29 +94,17 @@ class LobiEkrani {
   get macEkrani(): MacEkrani | null { return this.mac; }
   get agMaci(): AgMaci | null { return this.ag; }
 
-  private ad(): string {
-    const v = oku(AD_ANAHTAR);
-    if (v) return v;
-    const yeni = `Oyuncu${Math.floor(Math.random() * 900 + 100)}`;
-    sakla(AD_ANAHTAR, yeni);
-    return yeni;
-  }
-
   private giris(hata = ""): void {
     this.asama = "giris";
     this.hata = hata;
     const k = this.kart;
     k.innerHTML = "";
-    el("h2", "", k, "Çevrimiçi");
-    el("div", "alt", k, "1v1 · ilk 3 puan · 90 sn. Takım: başlangıç takımları (atölye D6).");
-    const adSatir = el("div", "blok", k);
-    adSatir.style.marginBottom = "12px";
-    el("label", "", adSatir, "Oyuncu adı (geçici; Kick girişi D5)");
-    const adAlan = el("input", "ad", adSatir);
-    adAlan.value = this.ad();
-    adAlan.maxLength = 16;
-    adAlan.setAttribute("aria-label", "Oyuncu adı");
-    adAlan.addEventListener("change", () => { const v = adAlan.value.trim(); if (v) sakla(AD_ANAHTAR, v); });
+    const geri = el("button", "", k, "◄ Atölye");
+    geri.style.float = "right";
+    geri.setAttribute("aria-label", "Geri: Atölye");
+    geri.addEventListener("click", () => git("atolye"));
+    el("h2", "", k, "Oyna");
+    el("div", "alt", k, `1v1 · ilk 3 puan · 90 sn · Oyuncu: ${this.ben.oyuncu.ad}. Takımını eşleşince seçersin.`);
     const iz = el("div", "izgara", k);
     const ac = el("div", "blok", iz);
     el("h3", "", ac, "Oda kodu");
@@ -144,13 +131,12 @@ class LobiEkrani {
     el("p", "", diger, "Antrenman sunucuda oynanır; rakip paylaşılan bot.");
     const h = el("div", "hata", k, hata);
     h.setAttribute("role", "alert");
-    const adAl = () => { const v = adAlan.value.trim() || this.ad(); sakla(AD_ANAHTAR, v); return v; };
-    acB.addEventListener("click", () => void this.bagla(() => this.yeniBaglanti().odaAc(adAl(), this.secilenTakim)));
-    ant.addEventListener("click", () => void this.bagla(() => this.yeniBaglanti().antrenman(adAl(), this.secilenTakim)));
+    acB.addEventListener("click", () => void this.bagla(() => this.yeniBaglanti().odaAc(this.secilenTakim)));
+    ant.addEventListener("click", () => void this.bagla(() => this.yeniBaglanti().antrenman(this.secilenTakim)));
     const katil = () => {
       const kod = odaKoduCoz(alan.value);
       if (!kod) { h.textContent = HATA_METNI.gecersiz; this.hata = HATA_METNI.gecersiz; return; }
-      void this.bagla(() => this.yeniBaglanti().katil(kod, adAl(), this.secilenTakim));
+      void this.bagla(() => this.yeniBaglanti().katil(kod, this.secilenTakim));
     };
     katB.addEventListener("click", katil);
     alan.addEventListener("keydown", (e) => { if (e.key === "Enter") katil(); });
@@ -246,11 +232,13 @@ class LobiEkrani {
     const ust = el("div", "rakip", k);
     ust.dataset["rakip"] = "1";
     const izg = el("div", "takimlar", k);
-    for (const t of BASLANGIC_TAKIMLARI) {
+    for (const t of this.ben.takimlar) {
       const d = el("button", "takim", izg);
       d.dataset["takim"] = t.id;
-      const p = takimProfilleriKimlikten(t.id);
-      d.innerHTML = `<b>${t.ad}</b><span>${p.map((x) => elementSvg(x.element, 16)).join("")}</span>`;
+      const p = takimProfilleriKimlikten(takimKoduYaz(t.uyeler));
+      const uyeler = p.map((x, j) => `<span title="${t.uyeler[j]!.odunc ? "Ödünç · Lv.1" : `Lv.${t.uyeler[j]!.seviye}`}" style="${t.uyeler[j]!.odunc ? "filter:grayscale(1);opacity:.55" : ""}">${elementSvg(x.element, 16)}</span>`).join("");
+      d.innerHTML = `<b></b><span>${uyeler}</span><small style="color:#a3b2b6">${t.uyeler.filter((u) => u.odunc).length ? `${t.uyeler.filter((u) => u.odunc).length} ödünç topaç` : "3 Çekirdek"}</small>`;
+      d.querySelector("b")!.textContent = t.ad;
       d.addEventListener("click", () => {
         this.secilenTakim = t.id;
         sakla(TAKIM_ANAHTAR, t.id);
@@ -266,7 +254,7 @@ class LobiEkrani {
     sayac.dataset["secimSayac"] = "1";
     // sunucudaki takım bu istemcinin seçtiğinden farklıysa (yeni oda) bildir
     const ben = ag.oyuncu(ag.yerel);
-    if (ben && ben.takimId !== this.secilenTakim) ag.gonder(MESAJ.takimSec, { takimId: this.secilenTakim });
+    if (ben && ben.takimNo !== this.secilenTakim) ag.gonder(MESAJ.takimSec, { takimId: this.secilenTakim });
     this.secimGuncelle();
     queueMicrotask(() => hazir.focus());
   }
@@ -277,7 +265,7 @@ class LobiEkrani {
     const s = ag.durum;
     for (const d of this.kart.querySelectorAll<HTMLElement>("[data-takim]")) d.setAttribute("aria-pressed", String(d.dataset["takim"] === this.secilenTakim));
     const sayac = this.kart.querySelector<HTMLElement>("[data-secim-sayac]");
-    if (sayac) sayac.textContent = `Süre ${s.secimKalan} sn · süre dolunca seçili takım`;
+    if (sayac) sayac.textContent = `Süre ${s.secimKalan} sn · süre dolunca son seçtiğin takım`;
     const rk = ag.oyuncu(1 - ag.yerel);
     const r = this.kart.querySelector<HTMLElement>("[data-rakip]");
     if (r && rk) {
@@ -297,6 +285,7 @@ class LobiEkrani {
       this.mac = cevrimiciBaslat(this.b, this.ag!, {
         secim: () => {},
         cikis: (neden) => { this.giris(neden); },
+        ben: this.ben,
       });
     }
   }

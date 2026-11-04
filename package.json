@@ -19,7 +19,8 @@
     "yetenek:ekran": "tsx araclar/yetenek-ekran.ts",
     "ag:matris": "tsx araclar/ag-matris.ts",
     "ag:ekran": "tsx araclar/ag-ekran.ts",
-    "ag:simulator": "tsx araclar/ag-simulatoru.ts"
+    "ag:simulator": "tsx araclar/ag-simulatoru.ts",
+    "d5:akis": "tsx araclar/d5-akis.ts"
   },
   "dependencies": {
     "@colyseus/monitor": "0.18.7",
@@ -27,11 +28,13 @@
     "@colyseus/schema": "5.0.43",
     "@colyseus/sdk": "0.18.9",
     "@pixi/sound": "6.0.2",
+    "better-sqlite3": "13.0.3",
     "colyseus": "0.18.10",
     "pixi.js": "8.22.0",
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "9.6.0",
     "@types/node": "^24.10.1",
     "eslint": "^10.14.0",
     "sharp": "^0.34.5",

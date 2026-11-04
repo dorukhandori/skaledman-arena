@@ -1,12 +1,13 @@
 import { Graphics } from "pixi.js";
 import { botGirdisi, botKademesiSec, type BotKipi } from "../../paylasilan/bot/bot.ts";
 import { AYAR } from "../../paylasilan/kurallar/ayar.ts";
-import { adim, macDunyasiKur } from "../../paylasilan/sim/Dunya.ts";
+import { adim, macDunyasiKur, type TakimProfilleri } from "../../paylasilan/sim/Dunya.ts";
 import { TOPAC_DURUM, type Dunya, type MacSonucu, type Olay, type TurSonucu } from "../../paylasilan/sim/durum.ts";
 import { kok2, kusakta } from "../../paylasilan/sim/fizik.ts";
 import type { Girdi } from "../../paylasilan/sim/Girdi.ts";
 import { MAC_ADIM, geriCekAcik, siradakiUye, teslimEt } from "../../paylasilan/sim/mac.ts";
-import { MESAJ, ODA_FAZI } from "../../ag/protokol.ts";
+import { MESAJ, ODA_FAZI, type OdulBilgisi } from "../../ag/protokol.ts";
+import type { Girisli } from "../hesap.ts";
 import { aktifMi, staminaOrani } from "../../paylasilan/sim/topac.ts";
 import type { EkranBaglami } from "../main.ts";
 import { Efektler } from "../oyun/Efektler.ts";
@@ -72,6 +73,13 @@ const STIL = `
 .ms .menu.genis { left:270px; top:70px; width:420px; }
 .ms .ay { display:grid; grid-template-columns:1fr 150px; gap:6px 10px; align-items:center; font-size:12px; margin-bottom:10px; }
 .ms .ay button { flex:none; padding:5px 8px; font-size:12px; }
+.ms .od .ck { display:flex; flex-wrap:wrap; align-items:center; gap:4px; justify-content:flex-end; margin-bottom:3px; }
+.ms .od .ck .xpb { display:block; width:100%; height:6px; background:#1b2a30; border:1px solid #050d10; border-radius:3px; overflow:hidden; }
+.ms .od .ck .xpb i { display:block; height:100%; background:#7fd3ff; }
+.ms .od .ck small { width:100%; text-align:right; color:#a3b2b6; font-size:10px; }
+.ms .od .ck em { width:100%; text-align:right; font-style:normal; color:#f4cf47; font-weight:800; font-size:11px; }
+.ms .hlk { display:inline-flex; gap:2px; } .ms .hl { width:8px; height:8px; border-radius:50%; border:1px solid #7fd3ff; }
+.ms .hl.on { background:#7fd3ff; } .ms .hl.yeni { background:#f4cf47; border-color:#f4cf47; box-shadow:0 0 6px #f4cf47; }
 `;
 
 const BITIS_AD = { durma: "DURMA", ringOut: "RING OUT", parcalanma: "PARÇALANMA", berabere: "BERABERE" } as const;
@@ -111,7 +119,26 @@ export function cevrimiciBaslat(b: EkranBaglami, ag: AgMaci, kancalar: Cevrimici
   return new MacEkrani(b, ag, kancalar);
 }
 
+/** Antrenman eğitimi (D5, ux § 4.2): aynı maç sunumu, eğitim kuralları ekranın kancalarında. */
+export interface EgitimKancalari {
+  takimlar(): { ta: TakimProfilleri; tb: TakimProfilleri; seviye: [number, number] };
+  adlar: [string, string];
+  /** rakip (Antrenman Kuklası) girdisi: varsayılan bot girdisi verilir, eğitim adımı değiştirebilir */
+  rakipGirdisi(d: Dunya, g: Girdi): Girdi;
+  /** her sim adımından sonra (olaylar d.olaylar'da): adım makinesi, stamina/saat kuralları */
+  adimSonrasi(d: Dunya, g0: Girdi): void;
+  /** Esc menüsünün ilk maddesi */
+  atla(): void;
+}
+
+/** Antrenman eğitimi ekranı (çevrimdışı sim, bot Antrenman Kuklası). */
+export function egitimBaslat(b: EkranBaglami, k: EgitimKancalari): MacEkrani {
+  return new MacEkrani(b, null, null, k);
+}
+
 export interface CevrimiciKancalar {
+  /** D5: oturumdaki oyuncu (sonuç ekranı) */
+  ben?: Girisli;
   /** oda seçim fazına döndü (rövanş kabul): lobi takım seçimini gösterir */
   secim(): void;
   /** maç bitti ve odadan çıkıldı / bağlantı tamamen gitti */
@@ -174,7 +201,7 @@ export class MacEkrani {
   private agKatman: AgKatmani | null = null;
   private rovansIstendi = false;
 
-  constructor(private b: EkranBaglami, private ag: AgMaci | null = null, private kancalar: CevrimiciKancalar | null = null) {
+  constructor(private b: EkranBaglami, private ag: AgMaci | null = null, private kancalar: CevrimiciKancalar | null = null, private egitim: EgitimKancalari | null = null) {
     if (ag) { this.yerel = ag.yerel; this.rakip = 1 - ag.yerel; }
     const q = new URLSearchParams(location.search);
     this.tohum = Number(q.get("tohum") ?? 7) | 0;
@@ -219,8 +246,16 @@ export class MacEkrani {
       let son = performance.now();
       window.setInterval(() => { const t = performance.now(); b.app.ticker.deltaMS = t - son; son = t; this.kare(); }, 1000 / 30);
     }
-    if (q.has("debug")) (window as unknown as { __mac: MacEkrani }).__mac = this;
+    if (q.has("debug") || this.egitim) (window as unknown as { __mac: MacEkrani }).__mac = this;
   }
+
+  // ---- D5: Antrenman eğitimi katmanı için ----
+  get hudKok(): HTMLElement { return this.hud.kok; }
+  get ustKatman(): HTMLElement { return this.ust; }
+  get yerelIndeks(): number { return this.yerel; }
+  /** son karede basılı tutulan yuva (eğitim nişan vurgusu) */
+  get basiliYuva(): number { return this.girdi.basiliYuva; }
+  durdur(): void { this.b.app.ticker.stop(); window.clearInterval(this.agZamanlayici); window.removeEventListener("keydown", this.tus, { capture: true }); }
 
   // ---- hata ayıklama kancaları (Playwright) ----
   get durum(): Dunya { return this.dunya; }
@@ -266,10 +301,15 @@ export class MacEkrani {
       this.dunya = gorunum;
       this.agMacNo = this.ag!.macNo;
     } else {
-      const takimlar = takimlariOku();
-      const ta = takimProfilleri(takimlar[this.takimNo]!);
-      const tb = takimProfilleri(takimlar[this.rakipNo]!);
-      this.dunya = macDunyasiKur([ta, tb], tohum, { seviye: [this.seviye, this.seviye] });
+      if (this.egitim) {
+        const e = this.egitim.takimlar();
+        this.dunya = macDunyasiKur([e.ta, e.tb], tohum, { seviye: e.seviye });
+      } else {
+        const takimlar = takimlariOku();
+        const ta = takimProfilleri(takimlar[this.takimNo]!);
+        const tb = takimProfilleri(takimlar[this.rakipNo]!);
+        this.dunya = macDunyasiKur([ta, tb], tohum, { seviye: [this.seviye, this.seviye] });
+      }
     }
     this.yetenekGorsel?.temizle();
     this.sonGeriSayim = -1;
@@ -296,7 +336,7 @@ export class MacEkrani {
     const kip = this.botSecimi === "tip" ? "tipine göre" : this.botSecimi;
     const adlar: [string, string] = this.ag
       ? [`${this.ag.oyuncu(this.yerel)?.ad ?? "Sen"}${this.oto ? " (oto)" : ""}`, this.ag.oyuncu(this.rakip)?.ad ?? "Rakip"]
-      : [this.oto ? "Sen (oto)" : "Sen", `Bot (${kip})`];
+      : this.egitim ? this.egitim.adlar : [this.oto ? "Sen (oto)" : "Sen", `Bot (${kip})`];
     const hudAdlari: [string, string] = this.yerel === 0 ? adlar : [adlar[1], adlar[0]];
     this.hud = new MacHud(this.b.ustYazi, this.yerel, this.yerel === 0 ? adlar : hudAdlari);
     this.hud.kartSecildi = (k) => this.secimIste(k);
@@ -387,12 +427,18 @@ export class MacEkrani {
     if (adim === "ana") {
       el("h3", "", m, "Menü");
       const dg = el("div", "dg", m);
+      if (this.egitim) {
+        const atla = el("button", "", dg, "Atla");
+        atla.addEventListener("click", () => { this.menuAcKapa(false); this.egitim!.atla(); });
+      }
       const devam = el("button", "bir", dg, "Devam");
       devam.addEventListener("click", () => this.menuAcKapa(false));
       const ayar = el("button", "", dg, "Ayarlar");
       ayar.addEventListener("click", () => { this.menuGoster("ayarlar"); });
-      const teslim = el("button", "", dg, "Teslim ol");
-      teslim.addEventListener("click", () => { this.menuGoster("teslim"); });
+      if (!this.egitim) {
+        const teslim = el("button", "", dg, "Teslim ol");
+        teslim.addEventListener("click", () => { this.menuGoster("teslim"); });
+      }
       el("div", "not", m, "Maç durmaz. Esc ile kapat.");
       queueMicrotask(() => devam.focus());
     } else if (adim === "ayarlar") {
@@ -540,7 +586,7 @@ export class MacEkrani {
 
   private agKare(dt: number): void {
     const ag = this.ag!;
-    if (ag.macNo !== this.agMacNo && ag.sunucu && ag.faz === ODA_FAZI.mac) { this.rovansIstendi = false; this.yeniMac(this.tohum + 1); }
+    if (ag.macNo !== this.agMacNo && ag.sunucu && ag.faz === ODA_FAZI.mac) { this.rovansIstendi = false; this.rovansRed = false; this.yeniMac(this.tohum + 1); }
     this.agKareSayisi++;
     const alfa = Math.min(1, this.birikim / AYAR.dt);
     const g = ag.gorunum(alfa);
@@ -553,6 +599,7 @@ export class MacEkrani {
     if (isinla) for (const z of this.izler) z.sifirla();
     this.onceki = d.topaclar.map((t) => ({ x: t.x, z: t.z }));
     this.agKatman?.guncelle(dt, d, this.yerel);
+    if (this.sonucAcik) { this.odulYaz(); this.rovansDenetle(); }
   }
 
   private tekAdim(): void {
@@ -561,12 +608,14 @@ export class MacEkrani {
     const g0 = this.yerelGirdi(d);
     let g1 = botGirdisi(d, this.rakip, this.botKipi(this.rakip), this.tohum * 7919 + 3);
     if (this.zorlaRakip >= 0) { g1 = { ...g1, atesle: true, secilenYuva: this.zorlaRakip, nisanX: d.topaclar[this.yerel]!.x, nisanZ: d.topaclar[this.yerel]!.z }; this.zorlaRakip = -1; }
+    if (this.egitim) g1 = this.egitim.rakipGirdisi(d, g1);
     const girdiler: [Girdi, Girdi] = this.yerel === 0 ? [g0, g1] : [g1, g0];
     adim(d, girdiler);
     let isinla = false;
     for (const o of d.olaylar) isinla = this.olayUygula(o, d) || isinla;
     if (isinla) this.onceki = d.topaclar.map((t) => ({ x: t.x, z: t.z }));
     if (d.olaylar.length) this.sonOlaylar = [...this.sonOlaylar, ...d.olaylar].slice(-60);
+    this.egitim?.adimSonrasi(d, g0);
   }
 
   private kare = (): void => {
@@ -703,7 +752,16 @@ export class MacEkrani {
     };
     // Altın/XP/başarım: yer tutucu (D5-D7). Sayılar tuning § 14-15'ten gösterim için.
     satir("Altın", `+${kazandi ? 100 : 60} Altın <span class="yt">yer tutucu</span>`);
-    satir("Çekirdek tecrübesi", `+${kazandi ? 40 : 25} XP · Lv.2 <span class="yt">yer tutucu</span>`);
+    if (this.ag) {
+      // D5: Çekirdek kartı sunucudan (ödül bilgisi); gelmediyse "hesaplanıyor", gelince doldurulur
+      const x = el("div", "satir", od, "Çekirdek kartı");
+      const y = el("div", "satir", od);
+      y.dataset["odul"] = "1";
+      y.innerHTML = `<span class="yt">hesaplanıyor…</span>`;
+      this.sonucSatirlari.push(x, y);
+      this.odulYazildi = false;
+      this.odulYaz();
+    } else satir("Çekirdek tecrübesi", `+${kazandi ? 40 : 25} XP <span class="yt">bota karşı maç sayılmaz</span>`);
     satir("Başarım", `ilerleme D7'de <span class="yt">yer tutucu</span>`);
     const ys = d.yetenekSayisi[this.yerel]!;
     satir("Yetenek kullanımı", `Yetenek ${ys[0]} · Özel ${ys[1]} · Ulti ${ys[2]}`);
@@ -720,13 +778,57 @@ export class MacEkrani {
       tekrar.disabled = true;
     });
     const atolye = el("button", "", dg, "Atölye");
-    atolye.title = "Atölye D6'da gelir; şimdilik Topaç Lab";
-    atolye.addEventListener("click", () => { location.search = "?ekran=topac-lab"; });
+    atolye.dataset["eylem"] = "atolye";
+    atolye.addEventListener("click", () => { location.search = "?ekran=atolye"; });
     this.sonucAdim = 0;
     this.sonucSaat = 0;
     this.sonucOrt.classList.add("acik");
     this.hud.kok.style.opacity = "0.35";
     queueMicrotask(() => tekrar.focus());
+  }
+
+  private odulYazildi = false;
+  private rovansRed = false;
+  /** Sonuç ekranı Çekirdek kartı satırı (ux § 3.5: Lv. + tecrübe çubuğu; seviye atlarsa halkalar yanar, yeni yetenek). */
+  private odulYaz(): void {
+    if (!this.ag || this.odulYazildi) return;
+    const hedef = this.sonucKutu.querySelector<HTMLElement>("[data-odul]");
+    if (!hedef) return;
+    let o: { cekirdekler: OdulBilgisi[]; sayilmadi?: string } | null = null;
+    for (const b of this.ag.bilgiler) if (b.tur === "odul") o = b;
+    if (!o) return;
+    this.odulYazildi = true;
+    if (o.sayilmadi) { hedef.textContent = "Bu maç sayılmadı."; return; }
+    if (!o.cekirdekler.length) { hedef.innerHTML = `<span class="yt">Ödünç topaçlar tecrübe almaz.</span>`; return; }
+    hedef.innerHTML = "";
+    for (const c of o.cekirdekler) {
+      const kutu = el("div", "ck", hedef);
+      const oran = c.ust > c.alt ? Math.max(0, Math.min(1, (c.xp - c.alt) / (c.ust - c.alt))) : 1;
+      const atladi = c.seviye > c.seviyeOnce;
+      const halka = [1, 2, 3].map((n) => `<b class="hl${n <= c.seviye ? " on" : ""}${atladi && n > c.seviyeOnce && n <= c.seviye ? " yeni" : ""}" aria-hidden="true"></b>`).join("");
+      kutu.innerHTML = `<span class="ckad"></span> <span class="hlk">${halka}</span> Lv.${c.seviye} · +${c.kazanc} XP<span class="xpb" role="meter" aria-label="Tecrübe" aria-valuenow="${c.xp}"><i style="width:${Math.round(oran * 100)}%"></i></span><small>${c.ust > c.alt ? `${c.xp} / ${c.ust} XP` : `${c.xp} XP · tavan`}${c.omur !== null ? ` · ömür ${c.omur} maç` : ""}</small>${atladi ? `<em>Seviye atladı! Yeni: <span class="yy"></span></em>` : ""}`;
+      kutu.querySelector(".ckad")!.textContent = c.ad;
+      const yy = kutu.querySelector(".yy");
+      if (yy) yy.textContent = c.yeniYetenek ?? `Lv.${c.seviye}`;
+      kutu.dataset["seviye"] = String(c.seviye);
+      kutu.dataset["kazanc"] = String(c.kazanc);
+    }
+  }
+
+  /** Rövanş reddi: rakip sonuç ekranından ayrıldıysa düğme kapanır (B-21: ceza yok). */
+  private rovansDenetle(): void {
+    const ag = this.ag;
+    if (!ag || this.rovansRed || !this.sonucAcik) return;
+    const rk = ag.oyuncu(this.rakip);
+    const ayrildi = ag.faz === ODA_FAZI.kapandi || (rk !== undefined && !rk.bagli) || ag.bilgiler.some((b) => b.tur === "kapandi");
+    if (!ayrildi) return;
+    this.rovansRed = true;
+    const d = this.sonucKutu.querySelector<HTMLButtonElement>("[data-rovans]");
+    if (d) { d.textContent = "Rakip ayrıldı"; d.disabled = true; d.dataset["red"] = "1"; }
+    const alt = el("div", "alt", this.sonucKutu, "Rakip rövanş istemedi. Atölye'ye dönebilirsin.");
+    alt.dataset["rovansRed"] = "1";
+    alt.setAttribute("role", "status");
+    this.sonucKutu.querySelector<HTMLButtonElement>("[data-eylem=atolye]")?.focus();
   }
 
   /** Satırlar sırayla belirir (≤ 6 sn); Space/Enter atlar; ekran kendiliğinden kapanmaz. */

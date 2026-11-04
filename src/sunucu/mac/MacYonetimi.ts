@@ -10,7 +10,7 @@ import {
 } from "../../paylasilan/sim/Girdi.ts";
 import { dunyaHash } from "../../paylasilan/sim/hash.ts";
 import { hukmenBitir, macIptal, teslimEt } from "../../paylasilan/sim/mac.ts";
-import { takimProfilleriKimlikten } from "../../paylasilan/veri/takimlar.ts";
+import { takimKurulumu } from "../../paylasilan/veri/takimlar.ts";
 import { girdiDiziye } from "../../ag/kayit.ts";
 
 // Yetkili maç yönetimi (Colyseus'suz, test edilebilir): sim dünyası, girdi tüketimi (birikme / boşluk taşıma),
@@ -73,8 +73,11 @@ export class MacYonetimi {
 
   constructor(k: MacKurulumu) {
     const seviye = k.seviye ?? [3, 3];
-    this.profiller = [takimProfilleriKimlikten(k.takimlar[0]), takimProfilleriKimlikten(k.takimlar[1])];
-    this.dunya = macDunyasiKur(this.profiller, k.tohum, { seviye });
+    const a = takimKurulumu(k.takimlar[0]);
+    const b = takimKurulumu(k.takimlar[1]);
+    this.profiller = [a.profiller, b.profiller];
+    // D5: kayıtlı takım kodunda üye seviyeleri var (ödünç Lv.1); başlangıç takımında oyuncu seviyesi (Lv.3)
+    this.dunya = macDunyasiKur(this.profiller, k.tohum, { seviye, uyeSeviyeleri: [a.seviyeler, b.seviyeler] });
     this.bot = k.bot ?? [false, false];
     this.kayit = { v: PROTOKOL_SURUMU, takimlar: [...k.takimlar], tohum: k.tohum, seviye: [...seviye], girdiler: [], eylemler: [], hashler: [], sonHash: dunyaHash(this.dunya), sonTick: 0 };
   }

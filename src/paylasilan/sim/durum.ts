@@ -138,6 +138,8 @@ export interface TakimUyesi {
   bekleme1: number;
   bekleme2: number;
   yapayIndirim: number;
+  /** D5: bu üyenin Çekirdek seviyesi (kayıtlı takım, ödünç Lv.1). Verilmezse oyuncu seviyesi değişmez (hash'e girmez; d.seviye girer). */
+  seviye?: number;
 }
 
 export interface Takim {

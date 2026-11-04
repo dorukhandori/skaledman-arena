@@ -6,8 +6,11 @@ import type { Olay } from "../paylasilan/sim/durum.ts";
 // Colyseus'a bağımlı olamaz (eslint kapısı), şemalar ve mesajlar bu klasörde durur. Colyseus import ETMEZ
 // (eslint yalıtımı: yalnız src/istemci/ag/** @colyseus/sdk, yalnız src/sunucu/** colyseus).
 
-/** Her mesaj ve katılma seçeneği bu sürümü taşır; uyuşmazsa sunucu reddeder, istemci yok sayar. v3: maç durumu şeması. */
-export const PROTOKOL_SURUMU = 3;
+/**
+ * Her mesaj ve katılma seçeneği bu sürümü taşır; uyuşmazsa sunucu reddeder, istemci "yenile" bandı gösterir.
+ * v3: maç durumu şeması. v4 (D5): katılmada oda bileti (ad yok), kayıtlı takım kodu, maç sonu ödül bilgisi.
+ */
+export const PROTOKOL_SURUMU = 4;
 
 export const ODA_ADI = "mac";
 /** Sabit adım (K-6) ve yama yayını (ADR-002). Yama elle, her `YAMA_ADIMI` sim adımında bir (adım hizalı). */
@@ -107,16 +110,16 @@ export const MOD = ["oda", "hizli", "antrenman"] as const;
 export type OdaModu = (typeof MOD)[number];
 
 /**
- * Katılma (axiom § 2 #6): parça listesi istemciden ALINMAZ; sunucu takımı kimlikten (SQLite, D5) okur.
- * D4'te `takimId` bir başlangıç takımı kimliğidir (`src/paylasilan/veri/takimlar.ts`). `ad` yalnız
- * `KIMLIK_MODU=yerel` (geliştirme) içindir; D5'te Kick kimliği gelir. `katalog`: istemcinin `katalogOzeti`.
+ * Katılma (axiom § 2 #6, #22): parça listesi istemciden ALINMAZ; sunucu takımı oturumun oyuncusundan (SQLite) okur.
+ * `bilet`: `/api/bilet`'ten 60 s ömürlü, tek kullanımlık HMAC bileti (oda/hızlı için zorunlu; antrenman misafire
+ * açık). `takimId`: oyuncunun kayıtlı takım numarası (yoksa ilk takım). `katalog`: istemcinin `katalogOzeti`.
  */
 export const KatilmaSema = z.object({
   v: z.literal(PROTOKOL_SURUMU),
-  takimId: z.string().min(1).max(64),
   mod: z.enum(MOD),
-  ad: z.string().trim().min(1).max(16),
   katalog: z.string().min(1).max(32),
+  bilet: z.string().min(1).max(512).optional(),
+  takimId: z.string().min(1).max(64).optional(),
 });
 export type KatilmaSecenekleri = z.infer<typeof KatilmaSema>;
 
@@ -140,7 +143,15 @@ export type BilgiMesaji =
   | { v: number; tur: "rakipBulundu"; ad: string }
   | { v: number; tur: "afkUyari"; kalanSn: number }
   | { v: number; tur: "kapandi"; neden: KapanisNedeni }
-  | { v: number; tur: "katalogUyusmuyor" };
+  | { v: number; tur: "katalogUyusmuyor" }
+  /** D5: maç sonu Çekirdek kartı (yalnız o oyuncuya; sunucu hesaplar) */
+  | { v: number; tur: "odul"; cekirdekler: OdulBilgisi[]; sayilmadi?: string };
+
+/** Sonuç ekranı Çekirdek kartı satırı (sunucunun OdulSatiri'nin ağ biçimi). */
+export interface OdulBilgisi {
+  tanimId: string; ad: string; seviyeOnce: number; seviye: number; xpOnce: number; xp: number; kazanc: number;
+  alt: number; ust: number; yeniYetenek: string | null; omur: number | null;
+}
 
 export type KapanisNedeni = "rakipGelmedi" | "sureDoldu" | "rakipAyrildi" | "sunucu";
 

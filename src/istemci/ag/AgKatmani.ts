@@ -23,6 +23,9 @@ const STIL = `
 .agk .dbg { position:absolute; left:6px; bottom:4px; font:600 9px/1.2 ui-monospace,monospace; color:#7fe3a0; background:rgba(0,0,0,.55); padding:2px 4px; border-radius:3px; }
 `;
 
+/** ux § 7: "Yeniden bağlanıyoruz… N" (15 sn geri sayım), sonra "Bağlanamadık". */
+const KOPMA_GERI_SAYIM_SN = 15;
+
 const SINYAL = `<svg viewBox="0 0 12 10" width="12" height="10" aria-hidden="true"><rect x="0" y="7" width="2.5" height="3" fill="currentColor"/><rect x="4" y="4" width="2.5" height="6" fill="currentColor"/><rect x="8" y="1" width="2.5" height="9" fill="currentColor" opacity=".35"/></svg>`;
 
 export class AgKatmani {
@@ -57,7 +60,7 @@ export class AgKatmani {
     ust.appendChild(this.kok);
     document.addEventListener("visibilitychange", this.gorunurluk);
     ag.oda.onDrop(() => { this.kopmaBas = performance.now(); });
-    ag.oda.onReconnect(() => { this.kopmaBas = -1; this.hud().bantGoster("Yeniden bağlandın.", 1.2); });
+    ag.oda.onReconnect(() => { this.kopmaBas = -1; this.kalici = false; this.hud().bantGoster("Yeniden bağlandın.", 1.2); });
     ag.oda.onLeave((kod) => { if (kod !== 1000 && kod !== 4000 && ag.faz !== ODA_FAZI.kapandi) this.kalici = true; });
   }
 
@@ -86,7 +89,8 @@ export class AgKatmani {
       tekrar.addEventListener("click", () => { location.reload(); });
       const atolye = document.createElement("button");
       atolye.textContent = "Atölye";
-      atolye.addEventListener("click", () => { location.search = "?ekran=topac-lab"; });
+      atolye.dataset["eylem"] = "atolye";
+      atolye.addEventListener("click", () => { location.search = "?ekran=atolye"; });
       dg.append(tekrar, atolye);
       this.bant.appendChild(dg);
     }
@@ -105,11 +109,15 @@ export class AgKatmani {
     const s = ag.durum;
     const rakip = 1 - yerel;
     const r = ag.baglantiRozeti();
-    this.h10.classList.toggle("acik", r.goster && ag.bagli);
+    // sonuç ekranında rozet başlığın üstüne binmesin
+    this.h10.classList.toggle("acik", r.goster && ag.bagli && s?.faz === ODA_FAZI.mac);
     if (r.goster) this.h10.innerHTML = `${SINYAL}${r.kayip && r.ms <= 150 ? "kayıp" : `${r.ms} ms`}`;
-    if (this.kalici) this.bantYaz("Bağlanamadık.", "Sorun sunucudaysa bu maç sayılmaz.", true);
+    // D4 notu düzeltmesi: SDK 30 denemeyi bitirmeyi beklemeden, 15 sn geri sayım bitince (ux § 7) kalıcı bant;
+    // SDK arka planda denemeyi sürdürür, dönerse bant kalkar (onReconnect).
+    if (!this.kalici && !ag.bagli && this.kopmaBas >= 0 && simdi - this.kopmaBas >= KOPMA_GERI_SAYIM_SN * 1000) this.kalici = true;
+    if (this.kalici) this.bantYaz("Bağlanamadık. Sorun sunucudaysa bu maç sayılmaz.", "", true);
     else if (!ag.bagli && this.kopmaBas >= 0) {
-      const n = Math.max(0, 15 - Math.floor((simdi - this.kopmaBas) / 1000));
+      const n = Math.max(0, KOPMA_GERI_SAYIM_SN - Math.floor((simdi - this.kopmaBas) / 1000));
       this.bantYaz(`Bağlantı koptu. Yeniden bağlanıyoruz… ${n}`);
     } else if (s && s.faz === ODA_FAZI.mac && s.kopan === rakip) {
       this.bantYaz(s.donma ? `Rakip bağlanıyor… ${s.donmaKalan}` : "Rakibin bağlantısı koptu.", s.donma ? "Maç donduruldu. 20 sn içinde dönmezse galibiyet sende." : "");

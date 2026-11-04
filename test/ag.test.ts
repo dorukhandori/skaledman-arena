@@ -21,13 +21,14 @@ import { type AgGirdisi, type GirdiKaynagi, KOPMA_ADIM, MacYonetimi } from "../s
 const T = ["takim-1", "takim-2"] as const;
 const profiller = () => [takimProfilleriKimlikten(T[0]), takimProfilleriKimlikten(T[1])] as const;
 
-describe("protokol v3", () => {
-  it("sürüm 3, katılma şeması ad + katalog ister", () => {
-    expect(PROTOKOL_SURUMU).toBe(3);
-    expect(KatilmaSema.safeParse({ v: 3, takimId: "takim-1", mod: "oda", ad: "Ayşe", katalog: KATALOG_OZETI }).success).toBe(true);
-    expect(KatilmaSema.safeParse({ v: 2, takimId: "takim-1", mod: "oda", ad: "Ayşe", katalog: KATALOG_OZETI }).success).toBe(false);
-    expect(KatilmaSema.safeParse({ v: 3, takimId: "takim-1", mod: "oda", katalog: KATALOG_OZETI }).success).toBe(false);
-    expect(KatilmaSema.safeParse({ v: 3, takimId: "takim-1", mod: "dereceli", ad: "A", katalog: "x" }).success).toBe(false);
+describe("protokol v4", () => {
+  it("sürüm 4, katılma şeması mod + katalog (+ bilet, takım numarası) ister; parça listesi yok", () => {
+    expect(PROTOKOL_SURUMU).toBe(4);
+    expect(KatilmaSema.safeParse({ v: 4, mod: "oda", bilet: "x.y", takimId: "0", katalog: KATALOG_OZETI }).success).toBe(true);
+    expect(KatilmaSema.safeParse({ v: 4, mod: "antrenman", katalog: KATALOG_OZETI }).success).toBe(true);
+    expect(KatilmaSema.safeParse({ v: 3, mod: "oda", bilet: "x.y", katalog: KATALOG_OZETI }).success).toBe(false);
+    expect(KatilmaSema.safeParse({ v: 4, mod: "oda", bilet: "x".repeat(600), katalog: KATALOG_OZETI }).success).toBe(false);
+    expect(KatilmaSema.safeParse({ v: 4, mod: "dereceli", katalog: "x" }).success).toBe(false);
   });
   it("uzlaşma eşikleri flint § 2: yumuşak > 0,5, sıçrama > 8; boşluk taşıma TCP yeniden iletimini kapsar", () => {
     expect(UZLASMA.yokSay).toBe(0.5);

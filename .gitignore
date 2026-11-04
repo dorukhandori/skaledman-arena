@@ -5,6 +5,9 @@ dist/
 !.env.example
 *.sqlite
 *.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+.veri/
 .DS_Store
 .cache/
 

@@ -218,7 +218,7 @@ export function dunyaGorunumu(d: Dunya): DunyaGorunumu {
 
 /** Oda kökü (sunucu `OdaSema`): istemci SDK'nın çözdüğü durumu bu alan adlarıyla okur. */
 export interface OyuncuGorunumu {
-  oturum: string; ad: string; takimId: string; bagli: boolean; hazir: boolean; rovans: boolean; bot: boolean;
+  oturum: string; ad: string; takimId: string; takimNo: string; bagli: boolean; hazir: boolean; rovans: boolean; bot: boolean;
   ack: number; ackTick: number; dondurmaHakki: number;
 }
 export interface OdaGorunumu {

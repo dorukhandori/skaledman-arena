@@ -33,7 +33,7 @@ export type AlanS = Sayisal;
 export type EngelS = Sayisal;
 export type MacS = Sayisal;
 export type DunyaS = Sayisal & { mac: MacS; topaclar: ArraySchema<TopacS>; takimlar: ArraySchema<TakimS>; alanlar: ArraySchema<AlanS>; engeller: ArraySchema<EngelS> };
-export interface OyuncuS { oturum: string; ad: string; takimId: string; bagli: boolean; hazir: boolean; rovans: boolean; bot: boolean; ack: number; ackTick: number; dondurmaHakki: number }
+export interface OyuncuS { oturum: string; ad: string; takimId: string; takimNo: string; bagli: boolean; hazir: boolean; rovans: boolean; bot: boolean; ack: number; ackTick: number; dondurmaHakki: number }
 export interface OdaS {
   faz: number; kod: string; mod: string; macNo: number; secimKalan: number; beklemeKalan: number;
   donma: number; donmaKalan: number; kopan: number; dunyaVar: boolean;
@@ -59,7 +59,10 @@ export const OyuncuSema = schema({
   /** Colyseus sessionId (istemci kendi indeksini bulur; yeniden bağlanmada aynı kalır) */
   oturum: t.string().default(""),
   ad: t.string().default(""),
+  /** takım: başlangıç takımı kimliği ya da kayıtlı takım kodu (sunucu üretir; istemci profilleri bundan kurar) */
   takimId: t.string().default(""),
+  /** D5: kayıtlı takım numarası (seçim arayüzü) */
+  takimNo: t.string().default(""),
   bagli: t.boolean().default(false),
   hazir: t.boolean().default(false),
   rovans: t.boolean().default(false),

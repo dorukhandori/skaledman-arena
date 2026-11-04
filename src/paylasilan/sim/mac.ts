@@ -56,11 +56,13 @@ export function macKur(mod: MacDurumu["mod"] = "tekTur"): MacDurumu {
   };
 }
 
-export function takimKur(profiller: readonly [TopacProfili, TopacProfili, TopacProfili]): Takim {
+export function takimKur(profiller: readonly [TopacProfili, TopacProfili, TopacProfili], seviyeler?: readonly [number, number, number]): Takim {
   const ids = profiller.map((p) => p.parcalar.cekirdek);
   if (ids[0] === ids[1] || ids[0] === ids[2] || ids[1] === ids[2]) throw new Error(`Takımda 3 farklı Çekirdek olmalı: ${ids.join(", ")}`);
   const uye = (p: TopacProfili): TakimUyesi => ({ profil: p, stamina: p.maxStamina, tik: 0, enerji: 0, elendi: 0, bekleme1: 0, bekleme2: 0, yapayIndirim: p.koken === "yapay" ? 1 : 0 });
-  return { uyeler: [uye(profiller[0]), uye(profiller[1]), uye(profiller[2])], aktif: 0, geriCekHedef: -1, geriCekBekleme: 0, secim: -1, elenen: 0 };
+  const uyeler: Takim["uyeler"] = [uye(profiller[0]), uye(profiller[1]), uye(profiller[2])];
+  if (seviyeler) for (let k = 0; k < 3; k++) uyeler[k]!.seviye = seviyeler[k]!;
+  return { uyeler, aktif: 0, geriCekHedef: -1, geriCekBekleme: 0, secim: -1, elenen: 0 };
 }
 
 /** Bu adımda bir topacın aday bitişleri. */
@@ -206,6 +208,8 @@ export function uyeSahayaKoy(d: Dunya, i: number, uye: number, x: number, z: num
   t.koruma = MAC_ADIM.koruma;
   tk.aktif = uye;
   d.profiller[i] = u.profil;
+  // D5: üye seviyesi (kayıtlı takım) sahaya girince yuva kapılarını belirler
+  if (u.seviye !== undefined) d.seviye[i] = u.seviye;
   d.olaylar.push({ tur: "degisim", tick: d.tick, i, uye, x, z, enerjiDevri: devir });
 }
 

@@ -47,12 +47,18 @@ describe("ESLint netcode yalıtımı (axiom § 2 #7)", () => {
     ["src/sunucu → @colyseus/sdk", `import { Client } from "@colyseus/sdk"; export const a = Client;`, "src/sunucu/_d.ts"],
     ["src/sunucu → @colyseus/core", `import { Room } from "@colyseus/core"; export const a = Room;`, "src/sunucu/_d.ts"],
     ["src/paylasilan → colyseus", `import { Room } from "colyseus"; export const a = Room;`, "src/paylasilan/_d.ts"],
+    // D5: SQLite yalnız src/sunucu/db/**
+    ["src/sunucu/odalar → better-sqlite3", `import Database from "better-sqlite3"; export const a = Database;`, "src/sunucu/odalar/_d.ts"],
+    ["src/sunucu/api → better-sqlite3", `import Database from "better-sqlite3"; export const a = Database;`, "src/sunucu/api/_d.ts"],
+    ["src/istemci → better-sqlite3", `import Database from "better-sqlite3"; export const a = Database;`, "src/istemci/_d.ts"],
+    ["src/paylasilan → better-sqlite3", `import Database from "better-sqlite3"; export const a = Database;`, "src/paylasilan/_d.ts"],
   ] as const) {
     it(`yasak: ${ad}`, async () => { expect((await dosyada(kod, yol)).length).toBeGreaterThan(0); });
   }
   for (const [ad, kod, yol] of [
     ["src/istemci/ag → @colyseus/sdk", `import { Client } from "@colyseus/sdk"; export const a = Client;`, "src/istemci/ag/_d.ts"],
     ["src/sunucu → colyseus + @colyseus/schema", `import { Room } from "colyseus"; import { schema } from "@colyseus/schema"; export const a = [Room, schema];`, "src/sunucu/_d.ts"],
+    ["src/sunucu/db → better-sqlite3", `import Database from "better-sqlite3"; export const a = Database;`, "src/sunucu/db/_d.ts"],
     ["src/ag → zod + paylasilan", `import { z } from "zod"; import { AYAR } from "../paylasilan/kurallar/ayar.ts"; export const a = [z, AYAR];`, "src/ag/_d.ts"],
   ] as const) {
     it(`izinli: ${ad}`, async () => { expect(await dosyada(kod, yol)).toStrictEqual([]); });

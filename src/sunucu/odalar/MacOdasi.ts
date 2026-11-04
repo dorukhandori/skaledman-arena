@@ -1,4 +1,4 @@
-import { randomInt } from "node:crypto";
+import { randomInt, randomUUID } from "node:crypto";
 import { type AuthContext, type Client, Room, ServerError } from "colyseus";
 import { f32, gorunumdenDunya, type DunyaGorunumu } from "../../ag/durum.ts";
 import { KATALOG_OZETI } from "../../ag/katalog.ts";
@@ -9,10 +9,16 @@ import {
 } from "../../ag/protokol.ts";
 import type { Olay } from "../../paylasilan/sim/durum.ts";
 import { dunyaHash } from "../../paylasilan/sim/hash.ts";
-import { BASLANGIC_TAKIMLARI, takimBul } from "../../paylasilan/veri/takimlar.ts";
+import { BASLANGIC_TAKIMLARI, takimKoduYaz } from "../../paylasilan/veri/takimlar.ts";
+import { takimStaminaOrani } from "../../paylasilan/sim/mac.ts";
+import { staminaOrani } from "../../paylasilan/sim/topac.ts";
+import { ILERLEME } from "../../paylasilan/kurallar/ilerleme.ts";
 import { type GirdiKaynagi, MacYonetimi } from "../mac/MacYonetimi.ts";
 import { kodAc, kodKapat, yeniKod } from "../odaKayit.ts";
-import { kimlikDogrula, kokenIzinli } from "../kimlik.ts";
+import { biletTuket, kokenIzinli } from "../kimlik.ts";
+import { type TakimYuvasi, depo } from "../db/depo.ts";
+import { oduncDoldur } from "../oyuncu/kurallar.ts";
+import { macSonuYaz } from "../oyuncu/macSonu.ts";
 import { GirdiSema, OdaSema, type OdaS, OyuncuSema, type OyuncuS } from "./sema.ts";
 import { dunyayiYaz } from "./semaYaz.ts";
 import { olcumKaydet } from "../olcum.ts";
@@ -24,9 +30,16 @@ import { olcumKaydet } from "../olcum.ts";
 // allowRewindState KULLANILMAZ: topaç çarpışması fizik etkileşimi, geri sarma anlamsız (05 § 4).
 
 interface KullaniciVerisi { i: number }
-interface Kimlik { id: string; ad: string }
+/** Katılan: kayıtlı oyuncu (SQLite) ya da Antrenman misafiri (oyuncuId null). */
+interface OdaTakimi { id: string; kod: string; yuvalar: (TakimYuvasi | null)[] }
+interface Kimlik { oyuncuId: number | null; ad: string; takimlar: OdaTakimi[] }
 
-const HATA = { surum: 4101, katalog: 4102, kimlik: 4103, koken: 4104, sema: 4105 } as const;
+const HATA = { surum: 4101, katalog: 4102, kimlik: 4103, koken: 4104, sema: 4105, takim: 4106, ayni: 4107 } as const;
+
+/** Oyuncunun kayıtlı takımları → oda takımları (boş yuvalar ödünçle dolu kod). */
+export function odaTakimlari(oyuncuId: number): OdaTakimi[] {
+  return depo().takimlar(oyuncuId).map((t) => ({ id: String(t.takimNo), kod: takimKoduYaz(oduncDoldur(t.yuvalar)), yuvalar: t.yuvalar }));
+}
 
 type GirdiS = InstanceType<typeof GirdiSema>;
 
@@ -52,10 +65,28 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
     const k = KatilmaSema.safeParse(o);
     if (!k.success) throw new ServerError(HATA.sema, "sema");
     if (k.data.katalog !== KATALOG_OZETI) throw new ServerError(HATA.katalog, "katalog");
-    const kim = kimlikDogrula(k.data);
-    if (!kim) throw new ServerError(HATA.kimlik, "kimlik");
-    return kim;
+    // misafir yalnız Antrenman'a girer (tide O-1 b); oda kodu / hızlı maç bilet ister
+    if (!k.data.bilet) {
+      if (k.data.mod !== "antrenman") throw new ServerError(HATA.kimlik, "kimlik");
+      return { oyuncuId: null, ad: "Misafir", takimlar: [] };
+    }
+    const b = biletTuket(k.data.bilet);
+    if ("hata" in b) throw new ServerError(HATA.kimlik, `kimlik:${b.hata}`);
+    const oy = depo().oyuncu(b.oyuncuId);
+    if (!oy) throw new ServerError(HATA.kimlik, "kimlik");
+    if (this.oyuncuIdleri.includes(oy.id)) throw new ServerError(HATA.ayni, "ayni");
+    const takimlar = odaTakimlari(oy.id);
+    if (!takimlar.length) throw new ServerError(HATA.takim, "takim");
+    return { oyuncuId: oy.id, ad: oy.ad, takimlar };
   }
+
+  /** katılan oyuncuların kimlikleri (aynı hesap iki koltuğa oturamaz) ve takımları */
+  private oyuncuIdleri: (number | null)[] = [null, null];
+  private odaTakimlari: OdaTakimi[][] = [[], []];
+  private krizGordu: [boolean, boolean] = [false, false];
+  private macId = "";
+  private macBaslangic = 0;
+  private macYuvalari: [(TakimYuvasi | null)[], (TakimYuvasi | null)[]] = [[], []];
 
   onCreate(options: unknown): void {
     const o = KatilmaSema.safeParse(options);
@@ -91,8 +122,12 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
     this.onMessage(MESAJ.takimSec, (c: Client, m: unknown) => {
       const t = TakimSecSema.safeParse(m);
       const i = this.indeks(c);
-      if (!t.success || i < 0 || this.state.faz !== ODA_FAZI.secim || !takimBul(t.data.takimId)) return;
-      this.oyuncu(i).takimId = t.data.takimId;
+      if (!t.success || i < 0 || this.state.faz !== ODA_FAZI.secim) return;
+      // yalnız bu oyuncunun kayıtlı takımlarından biri (sunucu kodu üretir; istemci yalnız numara yollar)
+      const secilen = this.odaTakimlari[i]!.find((x) => x.id === t.data.takimId);
+      if (!secilen) return;
+      this.oyuncu(i).takimId = secilen.kod;
+      this.oyuncu(i).takimNo = secilen.id;
     });
   }
 
@@ -108,7 +143,12 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
     const p = this.oyuncu(i);
     p.oturum = client.sessionId;
     p.ad = auth.ad;
-    p.takimId = takimBul(options.takimId) ? options.takimId : BASLANGIC_TAKIMLARI[0]!.id;
+    this.oyuncuIdleri[i] = auth.oyuncuId;
+    this.odaTakimlari[i] = auth.takimlar;
+    // son kullanılan takım (istemci hatırlar) ya da ilk takım; misafir: başlangıç takımı
+    const t = auth.takimlar.find((x) => x.id === options.takimId) ?? auth.takimlar[0];
+    p.takimId = t ? t.kod : BASLANGIC_TAKIMLARI[0]!.id;
+    p.takimNo = t ? t.id : "";
     p.bagli = true;
     p.bot = false;
     console.log(`[mac ${this.roomId}] katıldı ${i}: ${auth.ad} (${this.mod})`);
@@ -164,6 +204,7 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
     const p = this.oyuncu(i);
     p.bagli = false;
     this.istemciler[i] = null;
+    if (this.state.faz === ODA_FAZI.bekliyor || this.state.faz === ODA_FAZI.secim) this.oyuncuIdleri[i] = null;
     console.log(`[mac ${this.roomId}] ayrıldı ${i}`);
     const s = this.state;
     if (s.faz === ODA_FAZI.mac && this.yon && !this.yon.bitti) {
@@ -209,6 +250,11 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
     const s = this.state;
     const takimlar: [string, string] = [this.oyuncu(0).takimId, this.oyuncu(1).takimId];
     this.yon = new MacYonetimi({ takimlar, tohum: randomInt(1, 0x7fffffff), bot: [this.oyuncu(0).bot, this.oyuncu(1).bot] });
+    this.krizGordu = [false, false];
+    this.macId = randomUUID();
+    this.macBaslangic = Date.now();
+    // XP için maç başındaki sahip olunan yuvalar (seçilen takımın)
+    for (let i = 0; i < 2; i++) this.macYuvalari[i] = this.odaTakimlari[i]!.find((x) => x.kod === takimlar[i])?.yuvalar ?? [];
     for (let i = 0; i < 2; i++) {
       const p = this.oyuncu(i);
       p.ack = 0;
@@ -238,6 +284,10 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
     if (s.faz === ODA_FAZI.mac && y) {
       const k: [GirdiKaynagi | null, GirdiKaynagi | null] = [this.kaynak(0), this.kaynak(1)];
       const r = y.adimla(k);
+      // krizden galibiyet (tuning § 14): sahadaki topaç stamina < %25 gördü mü
+      for (let i = 0; i < 2; i++) {
+        if (!this.krizGordu[i] && y.dunya.mac.faz === "tur" && staminaOrani(y.dunya.topaclar[i]!, y.dunya.profiller[i]!) < ILERLEME.krizEsik) this.krizGordu[i] = true;
+      }
       for (let i = 0; i < 2; i++) {
         const p = this.oyuncu(i);
         p.ack = y.ack[i]!;
@@ -280,7 +330,30 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
     const ms = this.yon!.dunya.mac.macSonucu;
     console.log(`[mac ${this.roomId}] maç bitti: ${ms?.neden} ${ms?.puan.join("-")} (tick ${this.yon!.dunya.tick}, hash ${this.yon!.kayit.sonHash})`);
     olcumKaydet(this.roomId, this.yon!);
+    this.macSonuIsle();
     this.bosSayaciKur();
+  }
+
+  /** D5: maç satırı + Çekirdek XP/ömür (antrenman sayılmaz); her oyuncuya kendi Çekirdek kartı. */
+  private macSonuIsle(): void {
+    const y = this.yon!;
+    const ms = y.dunya.mac.macSonucu;
+    if (!ms || this.mod === "antrenman") return;
+    try {
+      const odul = macSonuYaz(depo(), {
+        macId: this.macId, mod: this.mod, oyuncular: [this.oyuncuIdleri[0]!, this.oyuncuIdleri[1]!],
+        takimKodlari: [this.oyuncu(0).takimId, this.oyuncu(1).takimId], yuvalar: this.macYuvalari, sonuc: ms,
+        sureSn: y.dunya.mac.saat / SIM_HZ, krizGordu: this.krizGordu,
+        kalanStaminaOrani: [takimStaminaOrani(y.dunya, 0), takimStaminaOrani(y.dunya, 1)], katalogOzeti: KATALOG_OZETI, baslangic: this.macBaslangic,
+      });
+      for (let i = 0; i < 2; i++) {
+        const c = this.istemciler[i];
+        if (c) this.bilgi(c, { v: PROTOKOL_SURUMU, tur: "odul", cekirdekler: odul[i]!.map(({ cekirdekId: _c, ...o }) => o), ...(ms.neden === "iptal" ? { sayilmadi: "iptal" } : {}) });
+      }
+      console.log(`[mac ${this.roomId}] kayıt ${this.macId}: ${odul.map((o) => o.map((x) => `${x.tanimId}+${x.kazanc}`).join(",")).join(" | ")}`);
+    } catch (e) {
+      console.error(`[mac ${this.roomId}] maç sonu yazılamadı`, e);
+    }
   }
 
   private saniyelik(): void {

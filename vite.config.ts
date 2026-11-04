@@ -14,5 +14,9 @@ export default defineConfig({
   server: {
     port: 5173,
     strictPort: true,
+    // SQLite dosyası (.veri/) değişince sayfa yenilenmesin
+    watch: { ignored: ["**/.veri/**", "**/*.sqlite*"] },
   },
+  // D5: better-sqlite3 (yerel modül) sunucu paketine gömülmez: colyseus/vite eklentisi sunucu ortamında (`colyseus`)
+  // tüm bağımlılıkları zaten dışlar (`resolve.external: true`); ayrıca `ssr` ortamı tanımlanmaz (html girdisi hatası).
 });

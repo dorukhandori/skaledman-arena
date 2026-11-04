@@ -1,0 +1,94 @@
+{
+  "not": "Otomatik oynanış (betik klavye/fare; çevrimiçi maçta paylaşılan bot). İnsan play pass değil.",
+  "egitim": {
+    "gecisler": [
+      "eylem",
+      "eylem",
+      "eylem",
+      "eylem",
+      "eylem",
+      "eylem"
+    ],
+    "adimGercekMs": [
+      31514,
+      29168,
+      21704,
+      3080,
+      4208,
+      5728
+    ],
+    "toplamGercekSn": 96
+  },
+  "egitimSonuc": "misafir",
+  "kayitHata1": "Şifreler eşleşmiyor.",
+  "kayitHata2": "Bu ad uygun değil.",
+  "atolye": {
+    "oynaSoluk": false,
+    "odunc": [
+      "0",
+      "1",
+      "1"
+    ],
+    "toast": "İlk Devir başarımı: Market açıldı."
+  },
+  "bEgitimeGitti": true,
+  "odaKodu": "UEXWVEXA",
+  "takimSecimi": {
+    "takimlar": [
+      "Takım 1KayaKorKasırga2 ödünç topaç"
+    ],
+    "rakip": "Rakip: Bora 14jr KasırgaKorKaya",
+    "sayac": "Süre 19 sn · süre dolunca son seçtiğin takım"
+  },
+  "sonucA": {
+    "baslik": "YENİLGİ",
+    "skor": "2 – 3",
+    "odul": "Kaya Maden\nLv.2 · +13 XP\n163 / 700 XP"
+  },
+  "sonucB": {
+    "baslik": "ZAFER",
+    "skor": "3 – 2",
+    "odul": "Kasırga Döküm\nLv.2 · +53 XP\n203 / 700 XP · ömür 29 maç"
+  },
+  "rovansRed": "Rakip ayrıldı | Rakip rövanş istemedi. Atölye'ye dönebilirsin.",
+  "atolyeMacSonrasi": "Maden · Lv.2 / Kalkan Gövde · Ağır Disk · İğne Uç / Tecrübe 163 / 700 XP / Göktaşı · Lv.1 / Ok Gövde · Hafif Disk · Düz Uç / Lv.1 ödünç topaç: tecrübe ve başarım almaz. Yeni Çekirdek edinince yerini alır. / Yapay · Lv.1 / Savrulan Gövde · Denge Disk · Dengeli Uç / Lv.1 ödünç topaç: tecrübe ve başarım almaz. Yeni Çekirdek edinince yerini alır.",
+  "girisHata": "Ad ya da şifre yanlış.",
+  "tekrarGiris": "?ekran=atolye",
+  "konsolHatalari": [],
+  "konsolHamHatalar": [
+    "A: Failed to load resource: the server responded with a status of 400 (Bad Request)",
+    "A: Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "A: Failed to load resource: net::ERR_CONNECTION_REFUSED"
+  ],
+  "cekilen": [
+    "docs/production/raporlar/ekran/D5-karsilama.png",
+    "docs/production/raporlar/ekran/D5-egitim-1.png",
+    "docs/production/raporlar/ekran/D5-egitim-2.png",
+    "docs/production/raporlar/ekran/D5-egitim-3.png",
+    "docs/production/raporlar/ekran/D5-egitim-5.png",
+    "docs/production/raporlar/ekran/D5-egitim-6.png",
+    "docs/production/raporlar/ekran/D5-egitim-kapanis.png",
+    "docs/production/raporlar/ekran/D5-egitim-misafir-sonu.png",
+    "docs/production/raporlar/ekran/D5-kayit-hata-sifre.png",
+    "docs/production/raporlar/ekran/D5-kayit-hata-ad.png",
+    "docs/production/raporlar/ekran/D5-profil.png",
+    "docs/production/raporlar/ekran/D5-ilk-cekirdek.png",
+    "docs/production/raporlar/ekran/D5-atolye.png",
+    "docs/production/raporlar/ekran/D5-lobi.png",
+    "docs/production/raporlar/ekran/D5-takim-secimi.png",
+    "docs/production/raporlar/ekran/D5-mac-ortasi.png",
+    "docs/production/raporlar/ekran/D5-sonuc-xp.png",
+    "docs/production/raporlar/ekran/D5-sonuc-xp-B.png",
+    "docs/production/raporlar/ekran/D5-rovans-red.png",
+    "docs/production/raporlar/ekran/D5-giris-hata.png",
+    "docs/production/raporlar/ekran/D5-giris.png",
+    "docs/production/raporlar/ekran/D5-tekrar-giris-atolye.png",
+    "docs/production/raporlar/ekran/D5-hata-surum.png",
+    "docs/production/raporlar/ekran/D5-hata-bakim.png",
+    "docs/production/raporlar/ekran/D5-hata-dar-ekran.png"
+  ],
+  "hesaplar": [
+    "Ayşe 14jr",
+    "Bora 14jr"
+  ]
+}

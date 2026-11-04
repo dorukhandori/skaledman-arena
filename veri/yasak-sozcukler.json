@@ -1,0 +1,7 @@
+{
+  "surum": 1,
+  "aciklama": "Oyuncu adı filtresi (nile B-23). Ad küçük harfe (Türkçe) indirilir, aksan/benzer karakter sadeleşir (ı→i, ş→s, 0→o, 1→i, 3→e, 4→a, 5→s, 7→t, @→a, $→s), harf dışı atılır. 'icerir': sadeleşmiş adın herhangi bir yerinde geçerse ret. 'kelime': ad sözcüklerinden biri tam olarak buysa ret. 'onek': bir sözcük bununla başlıyorsa ret.",
+  "icerir": ["orospu", "yarrak", "amcik", "pezevenk", "siktir", "sikerim", "sikeyim", "gavat", "kahpe", "yavsak", "dalyarak", "serefsiz", "ananiskm", "anani", "orosbu", "amina", "hitler", "fuck", "bitch", "nigger", "nigga"],
+  "kelime": ["amk", "aq", "oc", "pic", "got", "sik", "ibne", "pust", "mal", "salak", "gerizekali", "sex", "seks", "nazi", "shit", "cunt", "admin", "moderator", "devran"],
+  "onek": ["sikt", "sikic", "ibnel", "gotver", "orosp", "pezev", "kahpel", "puste"]
+}

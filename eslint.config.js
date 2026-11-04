@@ -27,7 +27,7 @@ const YASAK_ICE_AKTARIMLAR = {
   paths: [
     { name: "fs" }, { name: "path" }, { name: "os" }, { name: "crypto" }, { name: "child_process" },
     { name: "http" }, { name: "https" }, { name: "net" }, { name: "worker_threads" }, { name: "pixi.js" },
-    { name: "colyseus" },
+    { name: "colyseus" }, { name: "better-sqlite3" },
   ].map((p) => ({ ...p, message: "src/paylasilan'a Node/çerçeve bağımlılığı girmez." })),
   patterns: [
     { group: ["node:*"], message: "src/paylasilan'da Node modülü yasak." },
@@ -44,6 +44,8 @@ const COLYSEUS_SUNUCU = { name: "colyseus", message: "colyseus yalnız src/sunuc
 const COLYSEUS_CORE = { group: ["@colyseus/core", "@colyseus/core/*"], message: "@colyseus/core doğrudan import edilmez; 'colyseus' paketinden al (src/sunucu)." };
 const SDK = { group: ["@colyseus/sdk", "@colyseus/sdk/*"], message: "@colyseus/sdk yalnız src/istemci/ag/** içinde." };
 const SEMA = { group: ["@colyseus/schema", "@colyseus/schema/*"], message: "@colyseus/schema yalnız src/sunucu/** (şema sınıfları) içinde; istemci yansıtmadan okur." };
+// D5: SQLite yalnız veri katmanında (src/sunucu/db/**); oda/API kodu depo.ts üzerinden erişir.
+const SQLITE = { group: ["better-sqlite3", "better-sqlite3/*"], message: "better-sqlite3 yalnız src/sunucu/db/** içinde (Depo üzerinden eriş)." };
 const DIGER_COLYSEUS = { group: ["@colyseus/*", "!@colyseus/sdk", "!@colyseus/schema", "!@colyseus/core"], message: "Colyseus yardımcı paketleri yalnız src/sunucu/** içinde." };
 
 export default tseslint.config(
@@ -57,20 +59,25 @@ export default tseslint.config(
     files: ["src/ag/**/*.ts"],
     rules: yalitim({
       paths: [COLYSEUS_SUNUCU, { name: "pixi.js", message: "src/ag ortak sözleşme: render yok." }],
-      patterns: [COLYSEUS_CORE, SDK, SEMA, DIGER_COLYSEUS, { group: ["node:*"], message: "src/ag hem tarayıcıda hem Node'da çalışır." }, { group: ["**/istemci/**", "**/sunucu/**"], message: "src/ag yalnız src/paylasilan ve kendine bağımlı olur." }],
+      patterns: [COLYSEUS_CORE, SDK, SEMA, DIGER_COLYSEUS, SQLITE, { group: ["node:*"], message: "src/ag hem tarayıcıda hem Node'da çalışır." }, { group: ["**/istemci/**", "**/sunucu/**"], message: "src/ag yalnız src/paylasilan ve kendine bağımlı olur." }],
     }),
   },
   {
     files: ["src/istemci/**/*.ts"],
     ignores: ["src/istemci/ag/**"],
-    rules: yalitim({ paths: [COLYSEUS_SUNUCU], patterns: [COLYSEUS_CORE, SDK, SEMA, DIGER_COLYSEUS, { group: ["**/sunucu/**"], message: "İstemci sunucu koduna bağımlı olmaz." }] }),
+    rules: yalitim({ paths: [COLYSEUS_SUNUCU], patterns: [COLYSEUS_CORE, SDK, SEMA, DIGER_COLYSEUS, SQLITE, { group: ["**/sunucu/**"], message: "İstemci sunucu koduna bağımlı olmaz." }] }),
   },
   {
     files: ["src/istemci/ag/**/*.ts"],
-    rules: yalitim({ paths: [COLYSEUS_SUNUCU], patterns: [COLYSEUS_CORE, SEMA, DIGER_COLYSEUS, { group: ["**/sunucu/**"], message: "İstemci sunucu koduna bağımlı olmaz." }] }),
+    rules: yalitim({ paths: [COLYSEUS_SUNUCU], patterns: [COLYSEUS_CORE, SEMA, DIGER_COLYSEUS, SQLITE, { group: ["**/sunucu/**"], message: "İstemci sunucu koduna bağımlı olmaz." }] }),
   },
   {
     files: ["src/sunucu/**/*.ts"],
+    ignores: ["src/sunucu/db/**"],
+    rules: yalitim({ paths: [{ name: "pixi.js", message: "Sunucu render etmez." }], patterns: [COLYSEUS_CORE, SDK, SQLITE, { group: ["**/istemci/**"], message: "Sunucu istemci koduna bağımlı olmaz." }] }),
+  },
+  {
+    files: ["src/sunucu/db/**/*.ts"],
     rules: yalitim({ paths: [{ name: "pixi.js", message: "Sunucu render etmez." }], patterns: [COLYSEUS_CORE, SDK, { group: ["**/istemci/**"], message: "Sunucu istemci koduna bağımlı olmaz." }] }),
   },
   {

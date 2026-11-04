@@ -1,42 +1,82 @@
 import { Application } from "pixi.js";
+import { type Ben, BakimHatasi, benGetir } from "./hesap.ts";
+import { bakimKatmani, darEkranDenetle, metinOlcegiUygula, surumDenetle, ustGezinti } from "./ekranlar/arayuz.ts";
 
-// İstemci girişi. Ekran seçimi URL'den: ?ekran=mac (bota karşı tam maç, D2), ?ekran=lobi (çevrimiçi, D4; `#oda=` ile
-// de açılır) ya da ?ekran=topac-lab (varsayılan).
-// Her ekran modülü `baslat(baglam)` dışa aktarır ve kendi temizliğini yapar.
+// İstemci girişi. Ekran URL'den: ?ekran=<ad>. Varsayılan Karşılama (girişliyse profil → ilk çekirdek → Atölye;
+// ux § 3.1). `#oda=` bağlantısı lobiye açılır (girişsizse Karşılama). Her ekran modülü `baslat(baglam)` verir.
+// D5: karsilama, kayit, giris, profil, ilk-cekirdek, antrenman (misafire açık), atolye (ana ekran), market,
+// basarimlar, ayarlar, lobi; geliştirici: mac (bota karşı), topac-lab.
 
-export type EkranAdi = "topac-lab" | "mac" | "lobi";
+export type EkranAdi =
+  | "karsilama" | "kayit" | "giris" | "profil" | "ilk-cekirdek" | "antrenman" | "atolye" | "market" | "basarimlar" | "ayarlar"
+  | "lobi" | "mac" | "topac-lab";
 
 export interface EkranBaglami {
   app: Application;
   kok: HTMLElement; // #sahne
   ustYazi: HTMLElement; // DOM üst katmanı (HUD, panel)
+  /** `/api/ben` (mac/topac-lab ekranlarında null olabilir) */
+  ben: Ben | null;
 }
 
-const EKRANLAR: Record<EkranAdi, () => Promise<{ baslat: (b: EkranBaglami) => Promise<void> | void }>> = {
-  "topac-lab": () => import("./ekranlar/TopacLab.ts"),
-  mac: () => import("./ekranlar/Mac.ts"),
+type Modul = { baslat: (b: EkranBaglami) => Promise<void> | void };
+const EKRANLAR: Record<EkranAdi, () => Promise<Modul>> = {
+  karsilama: () => import("./ekranlar/Kimlik.ts").then((m) => ({ baslat: m.karsilama })),
+  kayit: () => import("./ekranlar/Kimlik.ts").then((m) => ({ baslat: m.kayit })),
+  giris: () => import("./ekranlar/Kimlik.ts").then((m) => ({ baslat: m.giris })),
+  profil: () => import("./ekranlar/Profil.ts"),
+  "ilk-cekirdek": () => import("./ekranlar/IlkCekirdek.ts"),
+  antrenman: () => import("./ekranlar/Antrenman.ts"),
+  atolye: () => import("./ekranlar/Atolye.ts"),
+  market: () => import("./ekranlar/Diger.ts").then((m) => ({ baslat: m.market })),
+  basarimlar: () => import("./ekranlar/Diger.ts").then((m) => ({ baslat: m.basarimlar })),
+  ayarlar: () => import("./ekranlar/Diger.ts").then((m) => ({ baslat: m.ayarlar })),
   lobi: () => import("./ekranlar/Lobi.ts"),
+  mac: () => import("./ekranlar/Mac.ts"),
+  "topac-lab": () => import("./ekranlar/TopacLab.ts"),
 };
+
+/** Giriş isteyen ekranlar (misafir yalnız Karşılama / Kayıt / Giriş / Antrenman / Ayarlar). */
+const GIRIS_GEREKIR = new Set<EkranAdi>(["profil", "ilk-cekirdek", "atolye", "market", "basarimlar", "lobi"]);
+/** Pixi gerekmeyen menü ekranları */
+const CANVASSIZ = new Set<EkranAdi>(["karsilama", "kayit", "giris", "profil", "atolye", "market", "basarimlar", "ayarlar"]);
 
 function ekranAdi(): EkranAdi {
   const istenen = new URLSearchParams(location.search).get("ekran");
   if (istenen && istenen in EKRANLAR) return istenen as EkranAdi;
-  // oda bağlantısı (`#oda=ABCDEFGH`, ux § 3.3) doğrudan lobiye açılır
-  return location.hash.startsWith("#oda=") ? "lobi" : "topac-lab";
+  return location.hash.startsWith("#oda=") ? "lobi" : "karsilama";
 }
 
 async function ana() {
+  metinOlcegiUygula();
   const kok = document.getElementById("sahne")!;
   const ustYazi = document.getElementById("ustYazi")!;
-  const ad = ekranAdi();
-  for (const a of document.querySelectorAll<HTMLAnchorElement>("#menu a")) {
-    if (a.getAttribute("href") === `?ekran=${ad}`) a.setAttribute("aria-current", "page");
+  let ad = ekranAdi();
+  let ben: Ben | null = null;
+  if (ad !== "mac" && ad !== "topac-lab") {
+    try {
+      ben = await benGetir();
+    } catch (e) {
+      if (e instanceof BakimHatasi) { ustGezinti(ad, null); bakimKatmani(() => location.reload()); return; }
+      throw e;
+    }
+    if (!surumDenetle(ben)) { /* bant gösterildi; ekran yine açılır */ }
+    if (GIRIS_GEREKIR.has(ad) && !ben.girisli) {
+      const oda = location.hash.startsWith("#oda=") ? `&mesaj=oda&donus=${location.hash.slice(5)}` : "";
+      history.replaceState(null, "", `${location.pathname}?ekran=karsilama${oda}`);
+      ad = "karsilama";
+    }
   }
-  const app = new Application();
-  await app.init({ resizeTo: kok, background: 0x0b1418, antialias: false, roundPixels: true, preference: "webgl" });
-  kok.insertBefore(app.canvas, ustYazi);
+  ustGezinti(ad, ben);
+  darEkranDenetle();
+  let app: Application | null = null;
+  if (!CANVASSIZ.has(ad)) {
+    app = new Application();
+    await app.init({ resizeTo: kok, background: 0x0b1418, antialias: false, roundPixels: true, preference: "webgl" });
+    kok.insertBefore(app.canvas, ustYazi);
+  }
   const modul = await EKRANLAR[ad]();
-  await modul.baslat({ app, kok, ustYazi });
+  await modul.baslat({ app: app as Application, kok, ustYazi, ben });
 }
 
 ana().catch((hata) => {

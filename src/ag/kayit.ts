@@ -3,7 +3,7 @@ import { adim, macDunyasiKur, type TakimProfilleri } from "../paylasilan/sim/Dun
 import { type Girdi, agAlanlarindanGirdi, tusMaskesi } from "../paylasilan/sim/Girdi.ts";
 import { dunyaHash } from "../paylasilan/sim/hash.ts";
 import { hukmenBitir, macIptal, teslimEt } from "../paylasilan/sim/mac.ts";
-import { takimProfilleriKimlikten } from "../paylasilan/veri/takimlar.ts";
+import { takimKurulumu } from "../paylasilan/veri/takimlar.ts";
 
 // Maç kaydı (ortak, Colyseus'suz): sunucu tükettiği girdileri ve sim dışı eylemleri yazar; aynı kayıt Node'da
 // (vitest) ve tarayıcıda (?debug, ağ matrisi) yeniden oynatılır → her HASH_ARALIGI adımda aynı hash (flint § 2 m. 6).
@@ -22,8 +22,10 @@ export function diziGirdiye(a: readonly number[]): Girdi {
  * her HASH_ARALIGI adımda aynı hash. Dönen: karşılaştırma listesi ve son hash.
  */
 export function kaydiOynat(k: MacKaydi): { hashler: { t: number; h: string }[]; sonHash: string; sonTick: number } {
-  const profiller: [TakimProfilleri, TakimProfilleri] = [takimProfilleriKimlikten(k.takimlar[0]), takimProfilleriKimlikten(k.takimlar[1])];
-  const d = macDunyasiKur(profiller, k.tohum, { seviye: k.seviye });
+  const a = takimKurulumu(k.takimlar[0]);
+  const b = takimKurulumu(k.takimlar[1]);
+  const profiller: [TakimProfilleri, TakimProfilleri] = [a.profiller, b.profiller];
+  const d = macDunyasiKur(profiller, k.tohum, { seviye: k.seviye, uyeSeviyeleri: [a.seviyeler, b.seviyeler] });
   const hashler: { t: number; h: string }[] = [];
   const eylem = (t: number) => {
     for (const e of k.eylemler) {
