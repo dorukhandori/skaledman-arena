@@ -1,0 +1,307 @@
+{
+ "kaynak": "https://github.com/patch-gg/pixelfx",
+ "commit": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+ "commitTarihi": "2026-10-31T01:41:17-07:00",
+ "surum": "0.3.0",
+ "lisans": "MIT",
+ "kapsamDisi": [
+  "gallery/fonts (Patch Pixel, MIT dışı)",
+  "yazı içeren efektler: explosions/cartoon-pow, ui/level-up, ui/countdown, crit-number, combo-counter",
+  "actor/dummy gövdeleri (--no-actor)"
+ ],
+ "efektler": [
+  {
+   "id": "impacts/hit-spark",
+   "ad": "efekt.kivilcim",
+   "fps": 12,
+   "kareSiniri": 6,
+   "hedefKutu": [
+    64,
+    40
+   ],
+   "palet": null,
+   "paletAdi": "notr",
+   "actor": false,
+   "bg": "none",
+   "yazi": false
+  },
+  {
+   "id": "impacts/crit-hit",
+   "ad": "efekt.kritik",
+   "fps": 12,
+   "kareSiniri": 10,
+   "hedefKutu": [
+    112,
+    80
+   ],
+   "palet": null,
+   "paletAdi": "notr",
+   "actor": false,
+   "bg": "none",
+   "yazi": false
+  },
+  {
+   "id": "impacts/ricochet",
+   "ad": "efekt.sekme-iz",
+   "fps": 12,
+   "kareSiniri": 8,
+   "hedefKutu": [
+    96,
+    40
+   ],
+   "palet": null,
+   "paletAdi": "notr",
+   "actor": false,
+   "bg": "none",
+   "yazi": false
+  },
+  {
+   "id": "impacts/heavy-landing",
+   "ad": "efekt.toz-halka",
+   "fps": 12,
+   "kareSiniri": 10,
+   "hedefKutu": [
+    96,
+    40
+   ],
+   "palet": null,
+   "paletAdi": "notr",
+   "actor": false,
+   "bg": "none",
+   "yazi": false
+  },
+  {
+   "id": "impacts/ground-slam",
+   "ad": "efekt.zemin-sok",
+   "fps": 12,
+   "kareSiniri": 14,
+   "hedefKutu": [
+    160,
+    96
+   ],
+   "palet": [
+    "#3A3024",
+    "#8A7458",
+    "#C2AC86",
+    "#EDE0C8"
+   ],
+   "paletAdi": "kaya",
+   "actor": false,
+   "bg": "none",
+   "yazi": false
+  },
+  {
+   "id": "spawn/poof",
+   "ad": "efekt.toz-bulut",
+   "fps": 12,
+   "kareSiniri": 10,
+   "hedefKutu": [
+    80,
+    64
+   ],
+   "palet": null,
+   "paletAdi": "notr",
+   "actor": false,
+   "bg": "none",
+   "yazi": false
+  },
+  {
+   "id": "lightning/zap-hit",
+   "ad": "efekt.simsek-carpma",
+   "fps": 12,
+   "kareSiniri": 8,
+   "hedefKutu": [
+    80,
+    64
+   ],
+   "palet": [
+    "#6B5A10",
+    "#F7D83A",
+    "#FFF3A0",
+    "#FFFFFF"
+   ],
+   "paletAdi": "simsek",
+   "actor": false,
+   "bg": "none",
+   "yazi": false
+  },
+  {
+   "id": "lightning/charge-up",
+   "ad": "efekt.telegraf-sarj",
+   "fps": 12,
+   "kareSiniri": 12,
+   "hedefKutu": [
+    96,
+    96
+   ],
+   "palet": [
+    "#6B5A10",
+    "#F7D83A",
+    "#FFF3A0",
+    "#FFFFFF"
+   ],
+   "paletAdi": "simsek",
+   "actor": false,
+   "bg": "none",
+   "yazi": false
+  },
+  {
+   "id": "ice/ice-shatter",
+   "ad": "efekt.don-kirilma",
+   "fps": 12,
+   "kareSiniri": 12,
+   "hedefKutu": [
+    112,
+    72
+   ],
+   "palet": [
+    "#2E6A80",
+    "#9FE3F5",
+    "#DDF7FF",
+    "#FFFFFF"
+   ],
+   "paletAdi": "don",
+   "actor": false,
+   "bg": "none",
+   "yazi": false
+  },
+  {
+   "id": "ice/frost-nova",
+   "ad": "efekt.ulti-don",
+   "fps": 12,
+   "kareSiniri": 14,
+   "hedefKutu": [
+    144,
+    112
+   ],
+   "palet": [
+    "#2E6A80",
+    "#9FE3F5",
+    "#DDF7FF",
+    "#FFFFFF"
+   ],
+   "paletAdi": "don",
+   "actor": false,
+   "bg": "none",
+   "yazi": false
+  },
+  {
+   "id": "fire/fire-ring",
+   "ad": "efekt.ulti-kor",
+   "fps": 12,
+   "kareSiniri": 14,
+   "hedefKutu": [
+    144,
+    96
+   ],
+   "palet": [
+    "#5A1A10",
+    "#E8452C",
+    "#FF9A5C",
+    "#FFE0B0",
+    "#FFFFFF"
+   ],
+   "paletAdi": "kor",
+   "actor": false,
+   "bg": "none",
+   "yazi": false
+  },
+  {
+   "id": "nature/earth-spike",
+   "ad": "efekt.ulti-kaya",
+   "fps": 12,
+   "kareSiniri": 14,
+   "hedefKutu": [
+    144,
+    96
+   ],
+   "palet": [
+    "#3A3024",
+    "#8A7458",
+    "#C2AC86",
+    "#EDE0C8"
+   ],
+   "paletAdi": "kaya",
+   "actor": false,
+   "bg": "none",
+   "yazi": false
+  },
+  {
+   "id": "nature/tornado",
+   "ad": "efekt.ulti-kasirga",
+   "fps": 12,
+   "kareSiniri": 12,
+   "hedefKutu": [
+    112,
+    112
+   ],
+   "palet": [
+    "#1F5A47",
+    "#5BD1A5",
+    "#A8F0D4",
+    "#FFFFFF"
+   ],
+   "paletAdi": "kasirga",
+   "actor": false,
+   "bg": "none",
+   "yazi": false
+  },
+  {
+   "id": "explosions/implosion",
+   "ad": "efekt.ulti-girdap",
+   "fps": 12,
+   "kareSiniri": 12,
+   "hedefKutu": [
+    128,
+    112
+   ],
+   "palet": [
+    "#0F2560",
+    "#2A5BD7",
+    "#7FA8FF",
+    "#D8E6FF",
+    "#FFFFFF"
+   ],
+   "paletAdi": "girdap",
+   "actor": false,
+   "bg": "none",
+   "yazi": false
+  },
+  {
+   "id": "water/whirlpool",
+   "ad": "efekt.girdap-dekal",
+   "fps": 12,
+   "kareSiniri": 12,
+   "hedefKutu": [
+    112,
+    72
+   ],
+   "palet": [
+    "#0F2560",
+    "#2A5BD7",
+    "#7FA8FF",
+    "#D8E6FF",
+    "#FFFFFF"
+   ],
+   "paletAdi": "girdap",
+   "actor": false,
+   "bg": "none",
+   "yazi": false
+  },
+  {
+   "id": "pickups/collect-burst",
+   "ad": "efekt.enerji-doldu",
+   "fps": 12,
+   "kareSiniri": 8,
+   "hedefKutu": [
+    64,
+    64
+   ],
+   "palet": null,
+   "paletAdi": "notr",
+   "actor": false,
+   "bg": "none",
+   "yazi": false
+  }
+ ]
+}

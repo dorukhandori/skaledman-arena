@@ -1,0 +1,629 @@
+{
+ "surum": 1,
+ "aciklama": "Devran görsel varlıkları: kaynak, araç, tarih, lisans, atıf (topac-pixel-plani § 7.4, efekt-kaynaklari § 5.4).",
+ "atlas": {
+  "dosya": "public/efekt/efekt.png",
+  "sinir": [
+   2048,
+   2048
+  ],
+  "tahminiDoluPiksel": 1753600,
+  "oran": 0.418,
+  "not": "Ham 30 fps tam tuval toplamı 34025056 px (2048² = 4194304 px'in 8.1 katı): sığmaz. Bu yüzden 12 fps, kare sınırı ve hedef kutuya kırpma zorunlu."
+ },
+ "dosyalar": [
+  {
+   "ad": "efekt.kivilcim",
+   "dosya": "efekt/efekt.png#kivilcim",
+   "olay": "Ağır çarpışma kıvılcımı (hafifte ilk 4-5 kare)",
+   "kaynak": "pixelfx impacts/hit-spark",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/impacts/hit-spark.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    136,
+    80
+   ],
+   "kaynakSureSn": 0.5,
+   "dongu": false,
+   "hamKare30fps": 16,
+   "pisirme": {
+    "fps": 12,
+    "kareSiniri": 6,
+    "hedefKutu": [
+     64,
+     40
+    ],
+    "palet": null,
+    "paletAdi": "notr",
+    "actor": false,
+    "bg": "none",
+    "yazi": false
+   },
+   "arac": "node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 --opts '{\"palette\":[...]}' + kırpma (araclar/efekt-pisir.ts, yazılacak)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+  },
+  {
+   "ad": "efekt.kritik",
+   "dosya": "efekt/efekt.png#kritik",
+   "olay": "Kritik çarpışma yıldız patlaması",
+   "kaynak": "pixelfx impacts/crit-hit",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/impacts/crit-hit.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    216,
+    136
+   ],
+   "kaynakSureSn": 0.9,
+   "dongu": false,
+   "hamKare30fps": 28,
+   "pisirme": {
+    "fps": 12,
+    "kareSiniri": 10,
+    "hedefKutu": [
+     112,
+     80
+    ],
+    "palet": null,
+    "paletAdi": "notr",
+    "actor": false,
+    "bg": "none",
+    "yazi": false
+   },
+   "arac": "node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 --opts '{\"palette\":[...]}' + kırpma (araclar/efekt-pisir.ts, yazılacak)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+  },
+  {
+   "ad": "efekt.sekme-iz",
+   "dosya": "efekt/efekt.png#sekme-iz",
+   "olay": "Duvar/kenar kayma izi (yedek)",
+   "kaynak": "pixelfx impacts/ricochet",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/impacts/ricochet.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    232,
+    84
+   ],
+   "kaynakSureSn": 1.1,
+   "dongu": false,
+   "hamKare30fps": 34,
+   "pisirme": {
+    "fps": 12,
+    "kareSiniri": 8,
+    "hedefKutu": [
+     96,
+     40
+    ],
+    "palet": null,
+    "paletAdi": "notr",
+    "actor": false,
+    "bg": "none",
+    "yazi": false
+   },
+   "arac": "node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 --opts '{\"palette\":[...]}' + kırpma (araclar/efekt-pisir.ts, yazılacak)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+  },
+  {
+   "ad": "efekt.toz-halka",
+   "dosya": "efekt/efekt.png#toz-halka",
+   "olay": "Durma toz halkası, Ring Out kenar tozu",
+   "kaynak": "pixelfx impacts/heavy-landing",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/impacts/heavy-landing.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    176,
+    80
+   ],
+   "kaynakSureSn": 1.6,
+   "dongu": false,
+   "hamKare30fps": 49,
+   "pisirme": {
+    "fps": 12,
+    "kareSiniri": 10,
+    "hedefKutu": [
+     96,
+     40
+    ],
+    "palet": null,
+    "paletAdi": "notr",
+    "actor": false,
+    "bg": "none",
+    "yazi": false
+   },
+   "arac": "node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 --opts '{\"palette\":[...]}' + kırpma (araclar/efekt-pisir.ts, yazılacak)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+  },
+  {
+   "ad": "efekt.zemin-sok",
+   "dosya": "efekt/efekt.png#zemin-sok",
+   "olay": "Parçalanma zemin şoku, Kaya Ulti tabanı",
+   "kaynak": "pixelfx impacts/ground-slam",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/impacts/ground-slam.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    288,
+    208
+   ],
+   "kaynakSureSn": 3.2,
+   "dongu": false,
+   "hamKare30fps": 97,
+   "pisirme": {
+    "fps": 12,
+    "kareSiniri": 14,
+    "hedefKutu": [
+     160,
+     96
+    ],
+    "palet": [
+     "#3A3024",
+     "#8A7458",
+     "#C2AC86",
+     "#EDE0C8"
+    ],
+    "paletAdi": "kaya",
+    "actor": false,
+    "bg": "none",
+    "yazi": false
+   },
+   "arac": "node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 --opts '{\"palette\":[...]}' + kırpma (araclar/efekt-pisir.ts, yazılacak)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+  },
+  {
+   "ad": "efekt.toz-bulut",
+   "dosya": "efekt/efekt.png#toz-bulut",
+   "olay": "Parçalanma toz bulutu (yıldız/çizgi öğeleri kapalı)",
+   "kaynak": "pixelfx spawn/poof",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/spawn/poof.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    112,
+    92
+   ],
+   "kaynakSureSn": 1.6,
+   "dongu": false,
+   "hamKare30fps": 49,
+   "pisirme": {
+    "fps": 12,
+    "kareSiniri": 10,
+    "hedefKutu": [
+     80,
+     64
+    ],
+    "palet": null,
+    "paletAdi": "notr",
+    "actor": false,
+    "bg": "none",
+    "yazi": false
+   },
+   "arac": "node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 --opts '{\"palette\":[...]}' + kırpma (araclar/efekt-pisir.ts, yazılacak)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+  },
+  {
+   "ad": "efekt.simsek-carpma",
+   "dosya": "efekt/efekt.png#simsek-carpma",
+   "olay": "Şimşek karşıt element / çarpışma katmanı",
+   "kaynak": "pixelfx lightning/zap-hit",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/lightning/zap-hit.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    144,
+    112
+   ],
+   "kaynakSureSn": 0.9,
+   "dongu": false,
+   "hamKare30fps": 28,
+   "pisirme": {
+    "fps": 12,
+    "kareSiniri": 8,
+    "hedefKutu": [
+     80,
+     64
+    ],
+    "palet": [
+     "#6B5A10",
+     "#F7D83A",
+     "#FFF3A0",
+     "#FFFFFF"
+    ],
+    "paletAdi": "simsek",
+    "actor": false,
+    "bg": "none",
+    "yazi": false
+   },
+   "arac": "node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 --opts '{\"palette\":[...]}' + kırpma (araclar/efekt-pisir.ts, yazılacak)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+  },
+  {
+   "ad": "efekt.telegraf-sarj",
+   "dosya": "efekt/efekt.png#telegraf-sarj",
+   "olay": "Ulti telegrafı şarjı (element paletiyle)",
+   "kaynak": "pixelfx lightning/charge-up",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/lightning/charge-up.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    272,
+    184
+   ],
+   "kaynakSureSn": 2.7,
+   "dongu": false,
+   "hamKare30fps": 82,
+   "pisirme": {
+    "fps": 12,
+    "kareSiniri": 12,
+    "hedefKutu": [
+     96,
+     96
+    ],
+    "palet": [
+     "#6B5A10",
+     "#F7D83A",
+     "#FFF3A0",
+     "#FFFFFF"
+    ],
+    "paletAdi": "simsek",
+    "actor": false,
+    "bg": "none",
+    "yazi": false
+   },
+   "arac": "node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 --opts '{\"palette\":[...]}' + kırpma (araclar/efekt-pisir.ts, yazılacak)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+  },
+  {
+   "ad": "efekt.don-kirilma",
+   "dosya": "efekt/efekt.png#don-kirilma",
+   "olay": "Don çarpışma / Don Parçalanma",
+   "kaynak": "pixelfx ice/ice-shatter",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/ice/ice-shatter.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    224,
+    112
+   ],
+   "kaynakSureSn": 2.8,
+   "dongu": false,
+   "hamKare30fps": 85,
+   "pisirme": {
+    "fps": 12,
+    "kareSiniri": 12,
+    "hedefKutu": [
+     112,
+     72
+    ],
+    "palet": [
+     "#2E6A80",
+     "#9FE3F5",
+     "#DDF7FF",
+     "#FFFFFF"
+    ],
+    "paletAdi": "don",
+    "actor": false,
+    "bg": "none",
+    "yazi": false
+   },
+   "arac": "node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 --opts '{\"palette\":[...]}' + kırpma (araclar/efekt-pisir.ts, yazılacak)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+  },
+  {
+   "ad": "efekt.ulti-don",
+   "dosya": "efekt/efekt.png#ulti-don",
+   "olay": "Don Ulti vuruşu",
+   "kaynak": "pixelfx ice/frost-nova",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/ice/frost-nova.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    288,
+    192
+   ],
+   "kaynakSureSn": 3.4,
+   "dongu": false,
+   "hamKare30fps": 103,
+   "pisirme": {
+    "fps": 12,
+    "kareSiniri": 14,
+    "hedefKutu": [
+     144,
+     112
+    ],
+    "palet": [
+     "#2E6A80",
+     "#9FE3F5",
+     "#DDF7FF",
+     "#FFFFFF"
+    ],
+    "paletAdi": "don",
+    "actor": false,
+    "bg": "none",
+    "yazi": false
+   },
+   "arac": "node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 --opts '{\"palette\":[...]}' + kırpma (araclar/efekt-pisir.ts, yazılacak)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+  },
+  {
+   "ad": "efekt.ulti-kor",
+   "dosya": "efekt/efekt.png#ulti-kor",
+   "olay": "Kor Ulti vuruşu",
+   "kaynak": "pixelfx fire/fire-ring",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/fire/fire-ring.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    224,
+    128
+   ],
+   "kaynakSureSn": 3.9,
+   "dongu": false,
+   "hamKare30fps": 118,
+   "pisirme": {
+    "fps": 12,
+    "kareSiniri": 14,
+    "hedefKutu": [
+     144,
+     96
+    ],
+    "palet": [
+     "#5A1A10",
+     "#E8452C",
+     "#FF9A5C",
+     "#FFE0B0",
+     "#FFFFFF"
+    ],
+    "paletAdi": "kor",
+    "actor": false,
+    "bg": "none",
+    "yazi": false
+   },
+   "arac": "node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 --opts '{\"palette\":[...]}' + kırpma (araclar/efekt-pisir.ts, yazılacak)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+  },
+  {
+   "ad": "efekt.ulti-kaya",
+   "dosya": "efekt/efekt.png#ulti-kaya",
+   "olay": "Kaya Ulti vuruşu",
+   "kaynak": "pixelfx nature/earth-spike",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/nature/earth-spike.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    272,
+    150
+   ],
+   "kaynakSureSn": 3.4,
+   "dongu": false,
+   "hamKare30fps": 103,
+   "pisirme": {
+    "fps": 12,
+    "kareSiniri": 14,
+    "hedefKutu": [
+     144,
+     96
+    ],
+    "palet": [
+     "#3A3024",
+     "#8A7458",
+     "#C2AC86",
+     "#EDE0C8"
+    ],
+    "paletAdi": "kaya",
+    "actor": false,
+    "bg": "none",
+    "yazi": false
+   },
+   "arac": "node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 --opts '{\"palette\":[...]}' + kırpma (araclar/efekt-pisir.ts, yazılacak)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+  },
+  {
+   "ad": "efekt.ulti-kasirga",
+   "dosya": "efekt/efekt.png#ulti-kasirga",
+   "olay": "Kasırga Ulti / Kasırga Alanı (döngü)",
+   "kaynak": "pixelfx nature/tornado",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/nature/tornado.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    196,
+    168
+   ],
+   "kaynakSureSn": 2.0,
+   "dongu": true,
+   "hamKare30fps": 60,
+   "pisirme": {
+    "fps": 12,
+    "kareSiniri": 12,
+    "hedefKutu": [
+     112,
+     112
+    ],
+    "palet": [
+     "#1F5A47",
+     "#5BD1A5",
+     "#A8F0D4",
+     "#FFFFFF"
+    ],
+    "paletAdi": "kasirga",
+    "actor": false,
+    "bg": "none",
+    "yazi": false
+   },
+   "arac": "node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 --opts '{\"palette\":[...]}' + kırpma (araclar/efekt-pisir.ts, yazılacak)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+  },
+  {
+   "ad": "efekt.ulti-girdap",
+   "dosya": "efekt/efekt.png#ulti-girdap",
+   "olay": "Girdap Ulti çekimi",
+   "kaynak": "pixelfx explosions/implosion",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/explosions/implosion.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    208,
+    184
+   ],
+   "kaynakSureSn": 1.65,
+   "dongu": false,
+   "hamKare30fps": 51,
+   "pisirme": {
+    "fps": 12,
+    "kareSiniri": 12,
+    "hedefKutu": [
+     128,
+     112
+    ],
+    "palet": [
+     "#0F2560",
+     "#2A5BD7",
+     "#7FA8FF",
+     "#D8E6FF",
+     "#FFFFFF"
+    ],
+    "paletAdi": "girdap",
+    "actor": false,
+    "bg": "none",
+    "yazi": false
+   },
+   "arac": "node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 --opts '{\"palette\":[...]}' + kırpma (araclar/efekt-pisir.ts, yazılacak)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+  },
+  {
+   "ad": "efekt.girdap-dekal",
+   "dosya": "efekt/efekt.png#girdap-dekal",
+   "olay": "Girdap Çekimi zemin dekali (üstten, döngü)",
+   "kaynak": "pixelfx water/whirlpool",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/water/whirlpool.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    128,
+    84
+   ],
+   "kaynakSureSn": 3.0,
+   "dongu": true,
+   "hamKare30fps": 90,
+   "pisirme": {
+    "fps": 12,
+    "kareSiniri": 12,
+    "hedefKutu": [
+     112,
+     72
+    ],
+    "palet": [
+     "#0F2560",
+     "#2A5BD7",
+     "#7FA8FF",
+     "#D8E6FF",
+     "#FFFFFF"
+    ],
+    "paletAdi": "girdap",
+    "actor": false,
+    "bg": "none",
+    "yazi": false
+   },
+   "arac": "node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 --opts '{\"palette\":[...]}' + kırpma (araclar/efekt-pisir.ts, yazılacak)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+  },
+  {
+   "ad": "efekt.enerji-doldu",
+   "dosya": "efekt/efekt.png#enerji-doldu",
+   "olay": "Enerji doldu parıltısı (yarı boy)",
+   "kaynak": "pixelfx pickups/collect-burst",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/pickups/collect-burst.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    112,
+    108
+   ],
+   "kaynakSureSn": 1.35,
+   "dongu": false,
+   "hamKare30fps": 41,
+   "pisirme": {
+    "fps": 12,
+    "kareSiniri": 8,
+    "hedefKutu": [
+     64,
+     64
+    ],
+    "palet": null,
+    "paletAdi": "notr",
+    "actor": false,
+    "bg": "none",
+    "yazi": false
+   },
+   "arac": "node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 --opts '{\"palette\":[...]}' + kırpma (araclar/efekt-pisir.ts, yazılacak)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "reçete; pişirilmedi (dış kod çalıştırma bu oturumda izinli değil)"
+  }
+ ]
+}

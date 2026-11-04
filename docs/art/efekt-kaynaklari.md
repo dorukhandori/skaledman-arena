@@ -1,6 +1,6 @@
 # Efekt ve ses kaynakları araştırması (Devran)
 
-**Tarih:** 2026-11-04 · **Dal:** `devran-kod` · **Şapka:** `@iris` (sanat yönetimi / efekt araştırması) · **Durum:** araştırma; varlık indirilmedi, kod yazılmadı.
+**Tarih:** 2026-11-04 · **Dal:** `devran-kod` · **Şapka:** `@iris` (sanat yönetimi / efekt araştırması) · **Durum:** 2. tur (§ 8): doğrulama denendi, 12 CC0 ses adayı ve pixelfx pişirme reçetesi depoda; PNG pişirilmedi, `src/` değişmedi.
 
 Bağlam: `docs/design/beyblade/05-carpisma-hissi.md` § 3.2 (olay reçeteleri), `docs/art/topac-pixel-plani.md` § 1.3, § 2.3, § 5, § 7.3-7.5, `docs/production/boslukler/nile-kapsam.md` B-35, `veri/manifest-ses.json` (16 sentez WAV, 199,9 KB, CC0), `docs/production/raporlar/D3.md` § 8.
 
@@ -101,7 +101,7 @@ Ad ve açıklamalar 00GameDevs kataloğundan (codex üzerinden okundu). "Pixel s
 
 | # | Kaynak | URL | İçerik | Lisans | Doğrulama | Not |
 |---|---|---|---|---|---|---|
-| S1 | **Kenney Impact Sounds** | https://kenney.nl/assets/impact-sounds | ~130 vuruş/gümleme/çarpma (metal, plaka, cam, tahta…) | **CC0** | A | Metal çarpışma katmanları için ana aday. Biçim muhtemelen OGG (Kenney'in diğer ses paketleri OGG); dosya adları indirildiğinde doğrulanır |
+| S1 | **Kenney Impact Sounds** | https://kenney.nl/assets/impact-sounds | 130 OGG (26 grup × 5: metal light/medium/heavy, plate, tin, glass, bell, wood, punch, footstep…) | **CC0** | **K-ayna** (§ 8.1) | 12 dosya indirildi: `kaynak/efekt/kenney-impact-sounds/`. Dosya adları, biçim (Ogg Vorbis 44,1 kHz stereo), süreler doğrulandı; lisans aynadaki CC0 metni, kenney.nl sayfası hâlâ okunmadı |
 | S2 | **Kenney Interface Sounds** | https://opengameart.org/content/interface-sounds | 100 ayrı OGG (tık, onay, hata, cam…) | **CC0** | A | UI tık, satın alma, başarım "ding" |
 | S3 | Kenney RPG Audio / Sci-Fi Sounds / Digital Audio | https://opengameart.org/content/50-rpg-sound-effects · https://opengameart.org/content/sci-fi-sounds | 50 RPG (metal, bozuk para) · 70 sci-fi OGG | CC0 | A | Enerji doldu, telegraf (sci-fi şarj), bozuk para |
 | S4 | **Juhani Junkala "The Essential Retro Video Game Sound Effects Collection [512 sounds]"** | https://opengameart.org (arama: 512 sound effects 8-bit) | 512 retro SFX | **CC0** (INFO dosyası: "released under CC0 creative commons license") | A (ayna) | Pixel estetiğe uygun; geri sayım, maç sonu, UI. Kayıt değil chiptune: metal ağırlığı için tek başına yetmez |
@@ -116,7 +116,7 @@ Ad ve açıklamalar 00GameDevs kataloğundan (codex üzerinden okundu). "Pixel s
 | S13 | Freesound genel | https://freesound.org | çok geniş | sese göre değişir (CC0 / CC-BY / CC-BY-NC) | **erişilemedi** | Ses başına lisans tek tek okunmalı; CC-BY-NC = **kullanma** (kâr amaçsız olsak da yayın/Kick bağlamı tartışmalı) |
 | S14 | Pixabay ses | https://pixabay.com/sound-effects/ | geniş | **Pixabay Content License** (CC0 değil): ticari kullanım serbest; **AI eğitiminde kullanım ve ham dosyanın yeniden dağıtımı yasak**; müzikte Content ID iddiası olabilir | A | Depo herkese açılırsa ham dosya dağıtımı sayılabilir → **kullanma** (yalnız son çare, sahip kararı) |
 | S15 | **ChipTone** (SFB Games) | https://sfbgames.itch.io/chiptone | tarayıcıda SFX üretici | Üretilen sesler **CC0**, atıf gerekmez (geliştirici beyanı) | A | Sentezimizin yanında en temiz üretim aracı |
-| S16 | jfxr (ttencate) | https://github.com/ttencate/jfxr | sfxr türevi üretici | kod BSD-3; "sound effects you create are yours to use without restrictions" | A | Uygun |
+| S16 | jfxr (ttencate) | https://github.com/ttencate/jfxr | sfxr türevi üretici | README aynen: "The code itself is under a three-clause BSD license; see LICENSE for details." · "Any sound effects you make are entirely yours to do with as you please, without any restrictions whatsoever." | **K** | Uygun; ChipTone yerine birincil üretim aracı |
 | S17 | jsfxr / sfxr.me | https://github.com/mneubrand/jsfxr | sfxr JS | kod Apache-2.0; **çıktı lisansı yazılı değil**; npm `license` alanı boş | A + npm | **Kullanma** (çıktı için ChipTone/jfxr/kendi sentezimiz) |
 | S18 | Kendi sentezimiz `araclar/ses-uret.ts` | depo | 16 ses | CC0 (bizim) | K | Taban; korunur |
 | M1 | **"Chiptune Battle Music" (pmiller)** | OGA (arama: chiptune battle music pmiller) | RPG savaş, ~7,5 sn'de kusursuz döngü | **CC0** | A | **Arena döngüsü** 1. aday: kısa döngü = küçük dosya |
@@ -322,3 +322,90 @@ Bu bulut oturumunun ağ politikası şu alanlara bağlantıyı reddetti: **00gam
 - OpenGameArt: https://opengameart.org/content/radial-lightning-effect · https://opengameart.org/content/m484-lightning-weapon · https://opengameart.org/content/lightning · https://opengameart.org/content/free-vfx-asset-pack · https://opengameart.org/content/hit-animation-frame-by-frame · https://opengameart.org/content/free-game-fx · https://opengameart.org/content/metal-impact-sounds · https://opengameart.org/content/metal-interactions · https://opengameart.org/content/impact · https://opengameart.org/content/100-cc0-metal-and-wood-sfx · https://opengameart.org/content/100-cc0-sfx-2 · https://opengameart.org/node/142820 · https://opengameart.org/content/glass-break · https://opengameart.org/content/ice-breakingshattering · https://opengameart.org/node/28043 · https://opengameart.org/content/chipped-urgency · https://opengameart.org/content/fast-fight-battle-music · https://opengameart.org/content/menu-theme · https://opengameart.org/content/chiptune-title-screen · https://opengameart.org/content/menu-chill-music
 - Diğer: https://bigsoundbank.com/coin-spinning-on-a-table-4-s2700.html · https://particlefx.studio/effects · https://raphaelhatencia.artstation.com/store/bk322/particle-fx-pixel-art · https://pixabay.com/service/faq/ · https://github.com/ttencate/jfxr · https://github.com/mneubrand/jsfxr
 - PixiJS 8: https://pixijs.com/8.x/guides/components/scene-objects/particle-container · https://pixijs.com/blog/particlecontainer-v8 · https://pixijs.download/v8.8.0/docs/scene.html · npm `@pixi/particle-emitter` 5.0.10, `pixi-filters` 6.1.5
+
+---
+
+## 8. 2. tur (2026-11-04): doğrulama, indirme, sahip kararları
+
+### 8.1 Doğrulama sonucu (alan adı başına)
+
+Yöntem: konteynerden `curl` (ajan vekili) ve WebFetch aracı, URL başına bir deneme. "A" satırlarının hiçbiri asıl sayfadan okunamadı; **hiçbir A satırı K olmadı**, yalnız GitHub'dan okunabilenler güncellendi.
+
+| Alan adı | curl (konteyner) | WebFetch | Etkilenen satırlar |
+|---|---|---|---|
+| 00gamedevs.com | CONNECT 403 | `getaddrinfo ENOTFOUND` | G1 (A kalır; lisans codex LICENSE üzerinden K) |
+| kenney.nl | 403 | ENOTFOUND | G5, G6, S1-S3 (S1 → **K-ayna**: GitHub aynasından dosya düzeyinde doğrulandı) |
+| opengameart.org | 403 | ENOTFOUND | G6, G10-G14, G18, S2-S9, S11, M1-M9 |
+| itch.io ve alt alanlar (foozlecc, aim-studios, reactorcore, ragnapixel, frostwindz, blackcreepycat, sfbgames) | 403 | ENOTFOUND | G7-G9, G17, G19-G21, S15 |
+| bigsoundbank.com | 403 | ENOTFOUND | S10 |
+| freesound.org, pixabay.com | 403 | — | S12-S14 |
+| www.spritefusion.com, particlefx.studio, raphaelhatencia.artstation.com | 403 | ENOTFOUND | G4, G15, G16 |
+| \*.github.io (888wing, patch-gg galerileri) | 403 | — | G2, G3 demoları (depo okunabildi) |
+| **github.com, raw.githubusercontent.com** | **açık** | — | G2, G3, S16 (**K**), S1 (K-ayna) |
+
+**Sahibe tek adım:** oturum başlığındaki bulut ortamı menüsü → Edit → Network access → Allowed domains: `00gamedevs.com, kenney.nl, opengameart.org, itch.io, *.itch.io, bigsoundbank.com, freesound.org, spritefusion.com, particlefx.studio, *.github.io` ekle.
+
+**K-ayna** = dosyalar ve lisans dosyası üçüncü kişi aynasından okundu; asıl sayfa okunmadı. Entegrasyondan önce asıl kaynakla karşılaştırılır.
+
+### 8.2 Kaynak başına somut varlıklar (Devran olayına göre)
+
+**pixelfx** (MIT, commit `a841596`, `src/fx/<id>.js`, tuval ve süre dosyanın `meta`sından aynen; hepsinde yazı yok, kontrol edildi):
+
+| id | Tuval · süre | Olay | Palet |
+|---|---|---|---|
+| `impacts/hit-spark` | 136×80 · 0,5 sn | Ağır çarpışma (hafifte ilk 4-5 kare) | nötr |
+| `impacts/crit-hit` | 216×136 · 0,9 sn | Kritik çarpışma | nötr |
+| `impacts/ricochet` | 232×84 · 1,1 sn | Duvar/kenar (yedek) | nötr |
+| `impacts/heavy-landing` | 176×80 · 1,6 sn | Durma, Ring Out kenar tozu | nötr |
+| `impacts/ground-slam` | 288×208 · 3,2 sn | Parçalanma zemin şoku | Kaya |
+| `spawn/poof` | 112×92 · 1,6 sn | Parçalanma toz bulutu | nötr |
+| `lightning/zap-hit` | 144×112 · 0,9 sn | Karşıt element (Şimşek) | Şimşek |
+| `lightning/charge-up` | 272×184 · 2,7 sn | Ulti telegrafı şarjı | element |
+| `ice/ice-shatter` | 224×112 · 2,8 sn | Don çarpışma / Parçalanma | Don |
+| `ice/frost-nova` | 288×192 · 3,4 sn | Don Ulti | Don |
+| `fire/fire-ring` | 224×128 · 3,9 sn | Kor Ulti | Kor |
+| `nature/earth-spike` | 272×150 · 3,4 sn | Kaya Ulti | Kaya |
+| `nature/tornado` | 196×168 · 2 sn döngü | Kasırga Ulti / Alanı | Kasırga |
+| `explosions/implosion` | 208×184 · 1,65 sn | Girdap Ulti | Girdap |
+| `water/whirlpool` | 128×84 · 3 sn döngü | Girdap Çekimi dekali | Girdap |
+| `pickups/collect-burst` | 112×108 · 1,35 sn | Enerji doldu | nötr |
+
+Hepsi 30 fps; ham tam tuval toplamı 2048²'nin **8,1 katı**. Reçete (12 fps, efekt başına 6-14 kare, hedef kutuya kırpma) ≈ **%42**: `veri/manifest-gorsel.json` → `atlas`.
+
+**pixel-vfx-codex** (MIT, commit `a7f829b`, 64 efekt `fx/<id>.js`): § 1.1'deki id'lerin 10'u varlığıyla kontrol edildi (`shockwave`, `spell-indicator-circle`, `energy-burst`, `ice-shatter`, `magma-fissure`, `burning-ground`, `frost-field`, `spiral-gale`, `thunder-strike`, `tidal-surge`). Kamera boyutları README'den aynen: 3D 240×150 30 fps · 2.5D 240×150 20 fps (Bayer dither) · **2D 160×100, "flat colour bands, no dither and 1 px outlines, stepped at 12 fps"** → bizim için 2D. Hazır sheet yok.
+
+**00gamedevs.com:** site okunamadı. Somut liste yalnız codex `data/meta.js` üzerinden (§ 1.1); lisans, codex LICENSE'ındaki aktarım: "The MIT License / Copyright (c) 2026 00GameDevs (@00vchannel)" ve "The 00GameDevs website UI, branding, avatars and promotional images are not covered by that license and are not used here."
+
+**Kenney Impact Sounds** (CC0, K-ayna): 26 grup × 5 dosya. Seçilen 12 dosya § 8.3'te.
+
+**OpenGameArt, BigSoundBank, itch.io, ChipTone:** okunamadı; § 1-2'deki A satırları geçerli, yeni somut veri yok. **jfxr:** K (lisans § 2 S16).
+
+### 8.3 İndirilenler
+
+| Dosya | Kaynak | Lisans | Süre / boyut | Hedef olay |
+|---|---|---|---|---|
+| `impact_metal_light_000/002/004.ogg` | Kenney Impact Sounds (ayna) | CC0 | 0,35 / 0,24 / 0,21 sn · 21,1 KB | Hafif çarpışma (3 varyant, perde ±%8) |
+| `impact_metal_medium_001/002.ogg` | 〃 | CC0 | 0,14 / 0,12 sn · 12,0 KB | Ağır çarpışma "çın" (sentez alt vuruşla) |
+| `impact_metal_heavy_000/003.ogg` | 〃 | CC0 | 0,17 / 0,21 sn · 12,3 KB | Kritik / Dash çarpması |
+| `impact_tin_medium_002.ogg`, `impact_plate_heavy_001.ogg` | 〃 | CC0 | 0,13 / 0,35 sn · 14,9 KB | Duvar "tonk" |
+| `impact_glass_heavy_001/004.ogg` | 〃 | CC0 | 0,43 / 0,40 sn · 17,2 KB | Parçalanma kırılma katmanı |
+| `impact_bell_heavy_004.ogg` | 〃 | CC0 | 0,30 sn · 6,5 KB | Enerji doldu (sentez ding ile kıyas) |
+| `LICENSE`, `NOTICE.md`, `recete.json` | pixelfx | MIT | — | Pişirme reçetesi (PNG yok) |
+| `LICENSE` | pixel-vfx-codex | MIT | — | Yedek kaynak |
+
+Ses: yeni 84 101 bayt + mevcut sentez 204 716 = **288 817 bayt ≤ 500 KB**. Görsel: atlas üretilmedi (tahmin %42 / 2048²).
+
+Kayıtlar: `veri/manifest-ses.json` → `kayitAdaylari` (oyun yüklemiyor), `veri/manifest-gorsel.json` (yeni), krediler `docs/art/krediler.md`.
+**Dikkat:** `araclar/ses-uret.ts` `manifest-ses.json`'u baştan yazar; tekrar çalıştırılırsa `kayitAdaylari` bloğu silinir. Entegrasyon diliminde ayrı dosyaya taşınmalı ya da araç bloğu korumalı.
+
+### 8.4 Yapılamayanlar
+
+- **PNG pişirme:** pixelfx/codex depolarında hazır görsel yok; sheet `node tools/render.mjs` / `tools/snap.mjs` ile üretiliyor. Bu oturumda indirilen dış kodu çalıştırma izni verilmedi, PNG üretilmedi.
+- BigSoundBank (Durma, bozuk para), OGA Glass Break, müzik adayları: alan adları engelli, indirilemedi.
+
+### 8.5 Sahip kararı bekleyenler (§ 7'ye ek)
+
+1. **Ağ izni** (§ 8.1 tek adım). Açılınca: A satırlarının doğrulanması, Kenney orijinal paketiyle karşılaştırma, S10 bozuk para + S8 cam + M1/M5 müzik indirmesi.
+2. **pixelfx render aracının çalıştırılması:** reçetedeki 16 efekti pişirmek için `node tools/render.mjs` (sabit commit, ağ erişimi yok, yalnız PNG/JSON yazar) çalıştırma izni ya da sahibin yerelde çalıştırıp çıktıyı koyması.
+3. Kenney sesleri ayna kökenliyken entegre edilsin mi, yoksa kenney.nl doğrulaması mı beklensin? (Öneri: bekle; CC0 olduğu için risk düşük, ama köken kaydı temiz olsun.)
+4. Ogg Vorbis + Safari yedeği kararı (§ 7 madde 7) bu dosyalar için de geçerli.
