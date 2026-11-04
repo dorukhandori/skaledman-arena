@@ -6,3 +6,4 @@
 - **Değiştirilmiş efekt:** `water/whirlpool` yerel fork'ta `SY` 0.6 → 0.875 (hibrit çanak oranı); `arac/whirlpool-SY.diff`. MIT gereği değişiklik burada kayıtlı.
 - **Bütçe:** ham 30 fps tam tuval ≈ 2048²'nin 8,1 katı; 12 fps birleşik kutu kırpma 2,28 katı → atlas bölündü. İlk denemede kare sınırı fps'i 3-4'e düşürdü (çok kesik), bırakıldı.
 - Yazı içeren efekt seçilmedi; `--no-actor` ile kukla/karakter gövdesi çıkarılır.
+- **Bekleyen yeniden pişirme (2026-11-04, § 9.2):** reçetede 4 efektin (heavy-landing, ground-slam, poof, collect-burst) paleti ve `secenek` alanı güncellendi; atlas henüz eski. Komutlar: pixelfx `a841596` klonunu `<S>/dl/pixelfx`'e, SY fork'unu `<S>/dl/pixelfx-fork`'a koy, ardından `cd <S> && python3 arac/bake.py <S> recete.json`, `python3 arac/pack.py <S> atlas recete.json` ve `python3 arac/prev2.py atlas onizleme.png`.

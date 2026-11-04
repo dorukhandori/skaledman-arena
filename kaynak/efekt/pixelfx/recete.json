@@ -56,15 +56,26 @@
    "id": "impacts/heavy-landing",
    "ad": "efekt.toz-halka",
    "fps": 12,
-   "palet": null,
-   "paletAdi": "notr",
+   "palet": [
+    "#1E1A14",
+    "#3A3024",
+    "#5E5040",
+    "#8A7458",
+    "#A8987C",
+    "#C2AC86",
+    "#EDE0C8"
+   ],
+   "paletAdi": "toz",
    "actor": false,
    "bg": "none",
    "yazi": false,
    "duzlem": "zemin",
    "hibritNot": "Toz halkaları pixelfx'te ry/rx≈0,17: bizim çanak k_y≈0,85-0,90 ile çatışır. Halka kodla (elips, k_y); sheet'ten yalnız yükselen toz kümeleri.",
    "pisirilenKare": 18,
-   "atlas": "efekt"
+   "atlas": "efekt",
+   "secenek": {
+    "stone": "#6E604C"
+   }
   },
   {
    "id": "impacts/ground-slam",
@@ -83,21 +94,38 @@
    "duzlem": "zemin",
    "hibritNot": "Zemin flaşı ve hilal şok dalgaları yandan basık (ry/rx≈0,15): elips varyant gerekir. Taşlar/toz bulutu hava katmanı olarak kullanılabilir.",
    "pisirilenKare": 36,
-   "atlas": "efekt"
+   "atlas": "efekt",
+   "secenek": {
+    "stone": "#6E604C"
+   }
   },
   {
    "id": "spawn/poof",
    "ad": "efekt.toz-bulut",
    "fps": 12,
-   "palet": null,
-   "paletAdi": "notr",
+   "palet": [
+    "#3A3024",
+    "#6E604C",
+    "#A8987C",
+    "#C2AC86",
+    "#EDE0C8",
+    "#FFFFFF"
+   ],
+   "paletAdi": "toz",
    "actor": false,
    "bg": "none",
    "yazi": false,
    "duzlem": "hava",
    "hibritNot": "Toz bulutu; düzlemden bağımsız.",
    "pisirilenKare": 18,
-   "atlas": "efekt"
+   "atlas": "efekt",
+   "secenek": {
+    "stars": [
+     "#C2AC86",
+     "#EDE0C8",
+     "#FFFFFF"
+    ]
+   }
   },
   {
    "id": "lightning/zap-hit",
@@ -277,13 +305,22 @@
    "id": "pickups/collect-burst",
    "ad": "efekt.enerji-doldu",
    "fps": 12,
-   "palet": null,
-   "paletAdi": "notr",
+   "palet": [
+    "#1E1A14",
+    "#3A3024",
+    "#5E5040",
+    "#8A7458",
+    "#C2AC86",
+    "#EDE0C8",
+    "#F7F1E4",
+    "#FFFFFF"
+   ],
+   "paletAdi": "notr-acik",
    "actor": false,
    "bg": "none",
    "yazi": false,
    "duzlem": "hava",
-   "hibritNot": "Topaç üstünde; hava.",
+   "hibritNot": "Topaç üstünde; hava. Nötr açık rampa (2026-11-04): oyunda element rengiyle tint edilir.",
    "pisirilenKare": 13,
    "atlas": "efekt"
   }

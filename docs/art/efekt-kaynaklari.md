@@ -454,3 +454,33 @@ Maçta en çok 3 atlas yüklenir: ortak + iki elementinki. Toplam PNG 2,93 MB; t
   - `frost-nova`, `fire-ring`, `ground-slam` ve `charge-up` zemin halkaları, § 8.6'da beklendiği gibi **çok basık** (yan görünüş). `fire-ring` son karelerinde yassı koyu yanık lekesi de var. Bu halkalar kodla elipse çevrilmeli ya da yalnız hava öğeleri kullanılmalı.
   - `ground-slam`, `heavy-landing`, `poof` ve `collect-burst` pixelfx'in varsayılan **mor-gri / pembe** paletinde kaldı. `ground-slam`'da `stone: #4a3f69` seçeneği de mor; reçeteye yalnız `palette` verildi. Tasarım diline uymuyor: yeniden pişirmede nötr toz rampası (§ 5.3 Kaya rampası ya da gri-bej) ve `stone` seçeneği verilmeli.
 - **Entegrasyon için (src/ dilimi):** atlaslar `public/efekt/`'e taşınır; Pixi `Spritesheet` JSON doğrudan yüklenir (`animations` → `AnimatedSprite`, kare süresi `meta.devran.<ad>.kareMs`). `scaleMode = "nearest"`.
+
+## 9. 4. tur (2026-11-04 ~23:06 UTC): ağ yeniden denendi, toz paleti hazırlandı
+
+### 9.1 Ağ durumu
+
+Sahip "ağ açıldı" dedi, ancak bu konteynerde değişiklik görünmüyor:
+
+- **curl:** 5 alan adının hepsinde `CONNECT tunnel failed, response 403`. Vekil `connect_rejected` kaydı (policy denial) düştü: kenney.nl, opengameart.org, 00gamedevs.com, bigsoundbank.com, foozlecc.itch.io.
+- **WebFetch:** aynı 5 adres `getaddrinfo ENOTFOUND` verdi.
+- **Açık olanlar:** yalnız github.com ve codeload (pixelfx klonu çalıştı).
+
+**Sonuç:** Görev 1-4 yapılamadı (A satırı doğrulama, Kenney orijinal paket ve sha256 karşılaştırması, BigSoundBank/OGA/Kenney Interface/müzik indirmeleri, 00gamedevs ile itch.io görsel paketleri). Hiçbir satır uydurulmadı; A/K-ayna durumları **değişmedi**. Ağ ayarı büyük olasılıkla yalnız yeni oturuma uygulanıyor.
+
+### 9.2 pixelfx toz paleti (hazırlandı, pişirilmedi)
+
+`recete.json` ve `arac/bake.py` güncellendi. `bake.py` artık reçetedeki `secenek` alanını `--opts`'a ekliyor; eski `kareSiniri` KeyError'ı da giderildi.
+
+| Efekt | Palet | Ek seçenek |
+|---|---|---|
+| `impacts/heavy-landing` | toz-7: `#1E1A14,#3A3024,#5E5040,#8A7458,#A8987C,#C2AC86,#EDE0C8` | `stone: #6E604C` |
+| `impacts/ground-slam` | kaya (değişmedi) | `stone: #6E604C` (eski mor `#4a3f69` yerine) |
+| `spawn/poof` | toz-6: `#3A3024,#6E604C,#A8987C,#C2AC86,#EDE0C8,#FFFFFF` | `stars: #C2AC86,#EDE0C8,#FFFFFF` |
+| `pickups/collect-burst` | nötr açık-8: `#1E1A14 … #FFFFFF` (oyunda element rengiyle tint) | — |
+
+**Pişirilmedi:** Bu oturumda `node tools/render.mjs` (dış kod) otomatik izin denetimince reddedildi; `npm ci` de reddedildi (render için gerekmiyor, esbuild yalnız galeride kullanılıyor). Atlas ve `onizleme.png` **eski haliyle** duruyor (mor/pembe). Yeniden pişirme komutu `kaynak/efekt/pixelfx/KAYNAK.md`'de.
+
+### 9.3 Sahip kararı bekleyenler
+
+- **K1 (ağ):** ortam ayarında Network access → Full, ya da Allowed domains'e şunlar eklenmeli: kenney.nl, opengameart.org, 00gamedevs.com, bigsoundbank.com, itch.io, *.itch.io, img.itch.zone. Ardından **yeni oturum** açılmalı.
+- **K2' (render):** pixelfx render çalıştırma izni Claude Code izin ayarlarına eklenmeli (Bash `node …/tools/render.mjs`) ya da oturum izin modu değiştirilmeli.
