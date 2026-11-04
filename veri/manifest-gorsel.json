@@ -26,22 +26,24 @@
      1024,
      1024
     ],
-    "kare": 45,
-    "bayt": 516616,
+    "kare": 56,
+    "bayt": 524389,
     "efektler": [
-     "ulti-kor"
+     "ulti-kor",
+     "kor-bulut"
     ]
    },
    "efekt-don": {
     "boyut": [
-     1024,
+     2048,
      1024
     ],
-    "kare": 74,
-    "bayt": 419354,
+    "kare": 84,
+    "bayt": 432829,
     "efektler": [
      "don-kirilma",
-     "ulti-don"
+     "ulti-don",
+     "don-parca"
     ]
    },
    "efekt-kaya": {
@@ -91,7 +93,7 @@
     ]
    }
   },
-  "toplamBayt": 2925365,
+  "toplamBayt": 2946613,
   "sinir": [
    2048,
    2048
@@ -694,7 +696,8 @@
     "tarih": "2026-11-04",
     "kare": "32×32 (3×3) ve 64×64 şerit/ızgara",
     "oneri": "Realistic_Blast_default (Kor ağır / Parçalanma), Foam_bubble_explosion (Don / Parçalanma parçaları), Blast_default/blue (çarpışma)",
-    "duzlem": "hava"
+    "duzlem": "hava",
+    "durum": "2 şerit atlasa alındı (2026-11-04, sahip onayı): Realistic_Blast_default → efekt-kor 'kor-bulut', Foam_bubble_explosion → efekt-don 'don-parca' (element rampasına boyandı, arac/harici.py)"
    },
    {
     "klasor": "kaynak/efekt/foozle-pixel-magic/",

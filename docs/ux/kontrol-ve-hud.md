@@ -25,7 +25,7 @@ Tek ilke: **bir elle sür, öbür elle tek tuş.** Sol el WASD + Shift/Space; sa
 | Tab | Geri çek (takım değiştir) | `degistir` | Yalnız stamina < %25 iken; değilse yuva soluk kalır ve ipucu çıkar (§ 7). Menülerde Tab = odak ilerletme |
 | Enter · sol tık | Yeni topacı bırak (takım değişimi sırasında) | `dusus` | Düşüş noktası = imleç (kendi yarı alanında sınırlı) |
 | Esc | Menü (Devam · Ayarlar · Teslim ol) | n/a | Maçı **durdurmaz** |
-| M | Sesi kapat/aç | n/a | |
+| M | Sesi kapat/aç | n/a | Ekranda her zaman görünen ses düğmesiyle (H16) aynı işi yapar |
 | F | Tam ekran | n/a | |
 | Q · E | **Boş**. Yeniden atamada kullanılabilir | n/a | 01 § 1.1'deki eski takım tuşları kalktı (K-6) |
 
@@ -81,6 +81,7 @@ Yazı boyutları (mantıksal px): ad 10 · sayı 10 · tuş rozeti 10 · bekleme
 | H13 | **Telegraf** | Dünya | Rakip yetenek hazırlarken (süre 0,2-0,9 s) | § 2.2 |
 | H14 | **Takım değişimi seçimi** | 240, 380 · 480×96 | Puan sonrası, kaybeden için 4 sn | 3 kart (1/2/3 ya da tıkla); süre çubuğu; 4 sn dolunca sıradaki otomatik. Kazanan için: "Rakip topaç değiştiriyor" bandı |
 | H15 | Antrenman ipucu şeridi | 160, 444 · 640×40 | Yalnız Antrenman | § 4 |
+| H16 | **Ses düğmesi** | 572, 10 · 28×28 (maç dışı ekranlarda sağ üst köşe) | **Her zaman** (menü, lobi, maç, sonuç, Esc menüsü) | Sahip kararı (2026-11-04): ses her ekrandan tek tıkla açılıp kapatılabilmeli. Tık: tüm sesi kapat/aç (M ile aynı). Hoparlör simgesi; kapalıyken üstü çizili, yalnız renge dayanmaz. Üzerine gelince/basılı tutunca **iki kaydırıcı**: Müzik ve Efekt (0-100). Durum tarayıcıda saklanır (`localStorage`, hata olursa varsayılan açık). Müzik varsayılanı düşük (%40). Klavyeyle odaklanabilir, `aria-label` "Sesi kapat" / "Sesi aç" |
 
 ### 2.1 Stamina, yalpalama ve çubuk ilişkisi (tek tablo)
 | Stamina | Topaç (pixel planı § 3.4, 05 § 2.6) | HUD çubuğu |

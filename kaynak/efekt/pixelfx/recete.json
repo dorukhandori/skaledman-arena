@@ -323,6 +323,68 @@
    "hibritNot": "Topaç üstünde; hava. Nötr açık rampa (2026-11-04): oyunda element rengiyle tint edilir.",
    "pisirilenKare": 13,
    "atlas": "efekt"
+  },
+  {
+   "id": "aim/realistic-blast",
+   "ad": "efekt.kor-bulut",
+   "fps": 12,
+   "palet": [
+    "#5A1A10",
+    "#E8452C",
+    "#FF9A5C",
+    "#FFE0B0",
+    "#FFFFFF"
+   ],
+   "paletAdi": "kor",
+   "actor": false,
+   "bg": "none",
+   "yazi": false,
+   "duzlem": "hava",
+   "hibritNot": "Aim Studios Realistic_Blast_default (CC0), 64×64 × 11 kare; parlaklık → Kor rampası. Kor ağır çarpışma / Kor Parçalanma bulutu.",
+   "harici": {
+    "dosya": "aim-explosions/Realistic_Blast_default_64x64.png",
+    "kare": [
+     64,
+     64
+    ],
+    "adet": 11,
+    "lisans": "CC0-1.0",
+    "renkHaritasi": {
+     "2d2c2c": "#3A3430"
+    }
+   },
+   "atlas": "efekt-kor"
+  },
+  {
+   "id": "aim/foam-bubble",
+   "ad": "efekt.don-parca",
+   "fps": 12,
+   "palet": [
+    "#2E6A80",
+    "#9FE3F5",
+    "#DDF7FF",
+    "#FFFFFF"
+   ],
+   "paletAdi": "don",
+   "actor": false,
+   "bg": "none",
+   "yazi": false,
+   "duzlem": "hava",
+   "hibritNot": "Aim Studios Foam_bubble_explosion (CC0), 64×64 × 10 kare; parlaklık → Don rampası. Don çarpışma / Don Parçalanma kırık parçaları.",
+   "harici": {
+    "dosya": "aim-explosions/Foam_bubble_explosion_64x64.png",
+    "kare": [
+     64,
+     64
+    ],
+    "adet": 10,
+    "lisans": "CC0-1.0",
+    "renkHaritasi": {
+     "00ffff": "#2E6A80",
+     "ffffff": "#DDF7FF"
+    }
+   },
+   "atlas": "efekt-don"
   }
  ],
  "kamera": {

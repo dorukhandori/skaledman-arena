@@ -154,8 +154,8 @@
  "toplamBayt": 204716,
  "kayitAdaylari": {
   "aciklama": "Dış kaynaklı kayıt ses adayları (kaynak/efekt/). Oyun bunları henüz yüklemiyor; entegrasyon ayrı dilim. UYARI: araclar/ses-uret.ts bu dosyayı baştan yazar; çalıştırmadan önce bu blok korunmalı (ya da ayrı dosyaya taşınmalı).",
-  "toplamBayt": 134788,
-  "genelToplamBayt": 339504,
+  "toplamBayt": 194841,
+  "genelToplamBayt": 399557,
   "butceBayt": 512000,
   "dosyalar": [
    {
@@ -469,8 +469,26 @@
     "donusturme": "yok (paket dosyası aynen)",
     "tarih": "2026-11-04",
     "durum": "aday; entegre edilmedi (public/ses dışında)"
+   },
+   {
+    "ad": "atari-dongu",
+    "dosya": "kaynak/efekt/muzik-sentez/atari-dongu.ogg",
+    "hedef": "muzik-arena",
+    "olay": "arka plan müziği: basit atari döngüsü (menü + arena, ses düğmesiyle kapatılabilir)",
+    "sureSn": 16.0,
+    "bayt": 60053,
+    "bicim": "Ogg Vorbis 22,05 kHz mono q0",
+    "kaynak": "kendi sentezimiz (kaynak/efekt/muzik-sentez/atari-dongu.py)",
+    "kaynakUrl": "depo",
+    "indirmeUrl": "yok",
+    "lisans": "CC0-1.0",
+    "lisansDosyasi": "yok (bizim üretimimiz)",
+    "atif": "gerekmez",
+    "donusturme": "atari-dongu.py → WAV 22 050 Hz mono (sha256 fc7def01…4afd2404) → ffmpeg -c:a libvorbis -q:a 0 -map_metadata -1",
+    "tarih": "2026-11-04",
+    "durum": "aday; entegre edilmedi. Döngü: 120 BPM, 8 ölçü, Am-F-C-G. Vorbis baş/son boşluğu döngüde tık yapabilir; spike'ta dinlenmeli (§ 5 dönüştürme notu)"
    }
   ],
-  "muzikNotu": "Müzik adayları M1 (152 sn) ve M5 (65,7 sn) CC0 doğrulandı ama bütçeye sığmıyor (M5 Opus 16k mono bile 176 814 B > kalan). İndirilmedi; sahip kararı: efekt-kaynaklari.md § 9.4."
+  "muzikNotu": "Sahip kararı (2026-11-04): lisanslı menü/arena parçaları (M1, M5) sona bırakıldı; şimdilik kendi sentezimiz basit atari döngüsü. Ses her ekranda erişilebilir düğmeyle kapatılabilir (docs/ux/kontrol-ve-hud.md H16)."
  }
 }
