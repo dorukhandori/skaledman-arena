@@ -54,10 +54,11 @@ export function yonCarpani(t: Topac, p: TopacProfili, nx: number, nz: number): n
   return t.dashKalan > 0 ? f * AYAR.kDash : f;
 }
 
-/** kb_i = (1 + kKb·(1 − oran)²) · element alınan çarpanı. */
+/** kb_i = (1 + kKb·(1 − oran)²) · element alınan çarpanı (· 1,5 geri çek sırasında: savunmasız). */
 export function kbCarpani(t: Topac, p: TopacProfili): number {
   const q = 1 - staminaOrani(t, p);
-  return (1 + AYAR.kKb * q * q) * p.sim.kbAlinanCarpani;
+  const kb = (1 + AYAR.kKb * q * q) * p.sim.kbAlinanCarpani;
+  return t.geriCekKalan > 0 ? kb * AYAR.mac.geriCekKb : kb;
 }
 
 /**
@@ -88,6 +89,7 @@ export function topacCarpismasi(d: Dunya): void {
   if (d.temasKilidi > 0) d.temasKilidi--;
   if (!aktifMi(t1) || !aktifMi(t2)) return;
   if (t1.sekmeKalan > 0 || t2.sekmeKalan > 0) return; // havada: çarpışma geçirmez
+  if (t1.koruma > 0 || t2.koruma > 0) return; // giriş koruması: çarpışmaz, hasar almaz (tuning § 10)
   const dx = t2.x - t1.x;
   const dz = t2.z - t1.z;
   const min = AYAR.topacYaricap * 2;

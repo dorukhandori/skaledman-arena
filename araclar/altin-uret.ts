@@ -12,6 +12,11 @@ const GOKTASI: AltinParca = { cekirdek: "kor-goktasi", govde: "ok-govde", disk: 
 const MADEN: AltinParca = { cekirdek: "kaya-maden", govde: "kalkan-govde", disk: "agir-disk", uc: "igne-uc" };
 const YAPAY_SOL: AltinParca = { cekirdek: "kasirga-yapay", govde: "savrulan-govde", disk: "denge-disk", uc: "dengeli-uc", yon: "sol" };
 const DAYANIKLI: AltinParca = { cekirdek: "girdap-maden", govde: "halka-govde", disk: "parlak-disk", uc: "top-uc" };
+const DENGE: AltinParca = { cekirdek: "kasirga-yapay", govde: "savrulan-govde", disk: "denge-disk", uc: "dengeli-uc" };
+const TAKIM_1: AltinParca[] = [GOKTASI, MADEN, DAYANIKLI];
+const TAKIM_2: AltinParca[] = [DENGE, DAYANIKLI, GOKTASI];
+/** Tur fazından başla (geri sayım atlanmış). */
+const TURDAN = { faz: "tur", kalanTick: 0, turNo: 1 } as const;
 
 function sikistir(g: Girdi): SikiGirdi {
   const b = bosGirdi() as unknown as Record<string, unknown>;
@@ -23,7 +28,7 @@ function sikistir(g: Girdi): SikiGirdi {
 const esit = (a: SikiGirdi, b: SikiGirdi): boolean => JSON.stringify(a) === JSON.stringify(b);
 
 /** Girdi üreticisiyle akış kaydı (RLE). */
-function kaydet(s: Omit<AltinSenaryo, "girdiler">, uret: (tick: number, d: ReturnType<typeof senaryoDunyasi>) => [Girdi, Girdi]): AltinSenaryo {
+function kaydet(s: Omit<AltinSenaryo, "girdiler"> & Partial<Pick<AltinSenaryo, "takimlar" | "mac">>, uret: (tick: number, d: ReturnType<typeof senaryoDunyasi>) => [Girdi, Girdi]): AltinSenaryo {
   const d = senaryoDunyasi({ ...s, girdiler: [] });
   const akis: [number, SikiGirdi, SikiGirdi][] = [];
   for (let t = 0; t < s.adim; t++) {
@@ -81,6 +86,25 @@ const senaryolar: AltinSenaryo[] = [
   kaydet({ surum: 1, senaryo: "durma", aciklama: "Rakip az staminayla Sıkı Dönüş'te; erime Durma'ya götürür, ardından 40 adım sönüm.", tohum: 6, profiller: [MADEN, DAYANIKLI], adim: 300,
     baslangic: [{}, { stamina: 3 }] },
     () => { const b = bosGirdi(); b.dinlen = true; return [bosGirdi(), b]; }),
+  // ---- D2 (flint § 2 test 2: ani ölüm, geri çek, dash-çarpışma; tam bot maçı) ----
+  kaydet({ surum: 1, senaryo: "ani-olum", aciklama: "Tam maç kipi, 0-0 iken saat 89 s'den: 90 s'de ani ölüm (R daralır, erime artar), iki kenar botu; ilk bitiş maçı bitirir.", tohum: 12,
+    profiller: [GOKTASI, DENGE], takimlar: [TAKIM_1, TAKIM_2], mac: { ...TURDAN, saat: 5340 }, adim: 2400, baslangic: null },
+    (_t, d) => [botGirdisi(d, 0, "kenar", 31), botGirdisi(d, 1, "dolas", 32)]),
+  kaydet({ surum: 1, senaryo: "geri-cek", aciklama: "Tam maç kipi: oyuncu %20 staminada Tab (degistir 2), 2 s savunmasızken rakip çarpar (kb × 1,5), sonra swap + iniş + giriş koruması.", tohum: 13,
+    profiller: [GOKTASI, DENGE], takimlar: [TAKIM_1, TAKIM_2], mac: TURDAN, adim: 420, baslangic: [{ stamina: 80, x: 0, z: 0 }, { x: 100, z: 10 }] },
+    (t, d) => {
+      const a = bosGirdi();
+      if (t === 0) a.degistir = 2;
+      const b = t < 200 ? bosGirdi() : botGirdisi(d, 1, "dolas", 41);
+      if (t < 30) { b.yonX = -1; b.yonZ = 0; }
+      return [a, b];
+    }),
+  kaydet({ surum: 1, senaryo: "dash-carpisma", aciklama: "Karşılıklı dash çarpışması (iki taraf dash penceresinde, f × kDash), sonra serbest akış.", tohum: 14, profiller: [GOKTASI, DENGE], adim: 300,
+    baslangic: [{ x: -70, z: 0 }, { x: 70, z: 4 }] },
+    (t) => { const a = bosGirdi(); const b = bosGirdi(); a.yonX = 1; b.yonX = -1; a.dash = t === 2; b.dash = t === 2; return [a, b]; }),
+  kaydet({ surum: 1, senaryo: "tam-bot-maci", aciklama: "Tam maç: geri sayım dahil, kademe botları (kenar / dayaniklilik), tur arası seçimleri ve bitti fazı, 7800 adım.", tohum: 15,
+    profiller: [GOKTASI, DENGE], takimlar: [TAKIM_1, TAKIM_2], adim: 7800, baslangic: null },
+    (_t, d) => [botGirdisi(d, 0, "kenar", 51), botGirdisi(d, 1, "dayaniklilik", 52)]),
   kaydet({ surum: 1, senaryo: "berabere", aciklama: "İki aynı topaç aynı adımda Durma: berabere, puan yok.", tohum: 8, profiller: [MADEN, MADEN], adim: 120,
     baslangic: [{ stamina: 1 }, { stamina: 1 }] },
     () => [bosGirdi(), bosGirdi()]),
@@ -90,5 +114,6 @@ for (const s of senaryolar) {
   const r = altinCalistir(s);
   writeFileSync(`test/altin/${s.senaryo}.json`, JSON.stringify(s) + "\n");
   writeFileSync(`test/altin/${s.senaryo}.hash`, r.hash + "\n");
-  console.log(s.senaryo.padEnd(15), r.hash, "tick", r.tick, "sonuç", r.sonuc ? `${r.sonuc.tur}/${r.sonuc.kazanan}@${r.sonuc.tick}` : "-", JSON.stringify(r.olaylar));
+  console.log(s.senaryo.padEnd(15), r.hash, "tick", r.tick, "sonuç", r.sonuc ? `${r.sonuc.tur}/${r.sonuc.kazanan}@${r.sonuc.tick}` : "-",
+    r.macSonucu ? `maç ${r.macSonucu.neden}/${r.macSonucu.kazanan} ${r.macSonucu.puan.join("-")}@${r.macSonucu.tick}` : "", JSON.stringify(r.olaylar));
 }

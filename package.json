@@ -12,7 +12,9 @@
     "lint": "eslint src/paylasilan",
     "altin:uret": "tsx araclar/altin-uret.ts",
     "test:tarayici": "tsx araclar/altin-tarayici.ts",
-    "lab:ekran": "tsx araclar/lab-ekran.ts"
+    "lab:ekran": "tsx araclar/lab-ekran.ts",
+    "mac:ekran": "tsx araclar/mac-ekran.ts",
+    "denge:turnuva": "tsx test/denge/botTurnuvasi.ts"
   },
   "dependencies": {
     "@colyseus/monitor": "^0.18.7",

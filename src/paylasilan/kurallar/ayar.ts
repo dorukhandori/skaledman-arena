@@ -104,10 +104,43 @@ export const AYAR = {
   tikKutleBoleni: 40,
   tikGeriDonus: 0,
 
-  // ---- § 10 maç (D1: yalnız tur kararı) ----
+  // ---- § 10 maç ----
   puan: { durma: 1, ringOut: 2, parcalanma: 2 },
   /** Durma kararından sonra hız sönümü (adım). Salt süs: karar o anda verilmiştir. */
   durmaSonumu: 40,
+  mac: {
+    kazanmaPuani: 3,
+    /** Maç saati, s (puan aralarında durmaz). */
+    macSuresi: 90,
+    /** ux § 3.4: "Hazır" 2 s, sonra 3-2-1 (tuning: geri sayım 3 s). */
+    hazirSure: 2,
+    geriSayim: 3,
+    /** Bitiş sonrası kutlama, s. */
+    kutlama: 1.2,
+    /** Kaybedenin topaç seçim penceresi, s (dolunca sıradaki otomatik). */
+    secimSure: 4,
+    /** Yeni topacın giriş koruması, s (çarpışmaz, hasar almaz; flint #13'ün 24 adımı yerine tuning § 10). */
+    girisKorumasi: 1.0,
+    /** Kazanana + oran · maxStamina (tuning § 6, § 18; H5'te %0/20/40 denenir). */
+    kazananIyilesme: 0.2,
+    /** Ani ölüm: R `aniOlumDaralma` s içinde doğrusal 1,0 → `aniOlumTabanR`; erime × (1 + egim · t). */
+    aniOlumSure: 30,
+    aniOlumDaralma: 20,
+    aniOlumTabanR: 0.6,
+    aniOlumErimeEgim: 0.05,
+    /** Mutlak sınır, s (maç saati). */
+    mutlakSinir: 120,
+    /** Geri çek: stamina < eşik · max, 2,0 s savunmasız (kb × 1,5), bekleme 20 s (tuning § 6, 01 § 2.3). */
+    geriCekEsik: 0.25,
+    geriCekSure: 2.0,
+    geriCekKb: 1.5,
+    geriCekBekleme: 20,
+    /** § 8 uyum: komşu elementten devralan yeni topaç + bu kadar Enerji ile başlar; tavan 3 dilim. */
+    enerjiKomsuDevir: 40,
+    enerjiTavan: 300,
+    /** VARSAYIM (flint #13 "iniş noktası rakipten uzak değilse kaydır"): geri çekte iniş rakipten en az bu kadar uzak. */
+    inisMesafesi: 120,
+  },
 
   // ---- girdi ----
   /** Nişan noktası çanaktan en çok bu kadar taşabilir. */

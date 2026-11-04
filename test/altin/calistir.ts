@@ -1,6 +1,6 @@
 import { type Girdi, bosGirdi } from "../../src/paylasilan/sim/Girdi.ts";
-import { adim, dunyaKur } from "../../src/paylasilan/sim/Dunya.ts";
-import type { Dunya, Topac } from "../../src/paylasilan/sim/durum.ts";
+import { adim, dunyaKur, macDunyasiKur, type TakimProfilleri } from "../../src/paylasilan/sim/Dunya.ts";
+import type { Dunya, MacDurumu, Topac } from "../../src/paylasilan/sim/durum.ts";
 import { Fnv64, dunyaHash } from "../../src/paylasilan/sim/hash.ts";
 import { topacProfiliKur } from "../../src/paylasilan/veri/profil.ts";
 
@@ -22,13 +22,24 @@ export interface AltinSenaryo {
   baslangic: [Partial<Topac>, Partial<Topac>] | null;
   /** girdi akışı, tekrar sayısıyla sıkıştırılmış: [kaç adım, girdi0, girdi1] */
   girdiler: [number, SikiGirdi, SikiGirdi][];
+  /** D2: verilirse tam maç kipi (3'lü takımlar); `profiller` yok sayılır. */
+  takimlar?: [AltinParca[], AltinParca[]];
+  /** D2: maç durumu üzerine yazılan alanlar (ör. geri sayımı atla, saati 90 s'ye yaklaştır). */
+  mac?: Partial<MacDurumu>;
 }
 
-export interface AltinSonuc { hash: string; sonHash: string; tick: number; sonuc: Dunya["mac"]["sonuc"]; carpisma: number; olaylar: Record<string, number> }
+export interface AltinSonuc { hash: string; sonHash: string; tick: number; sonuc: Dunya["mac"]["sonuc"]; macSonucu: Dunya["mac"]["macSonucu"]; carpisma: number; olaylar: Record<string, number> }
+
+const prof = (x: AltinParca) => topacProfiliKur(x.cekirdek, x.govde, x.disk, x.uc, { yon: x.yon });
 
 export function senaryoDunyasi(s: AltinSenaryo): Dunya {
-  const p = s.profiller.map((x) => topacProfiliKur(x.cekirdek, x.govde, x.disk, x.uc, { yon: x.yon })) as [ReturnType<typeof topacProfiliKur>, ReturnType<typeof topacProfiliKur>];
-  const d = dunyaKur(p, s.tohum);
+  let d: Dunya;
+  if (s.takimlar) {
+    d = macDunyasiKur([s.takimlar[0].map(prof) as unknown as TakimProfilleri, s.takimlar[1].map(prof) as unknown as TakimProfilleri], s.tohum);
+    if (s.mac) Object.assign(d.mac, s.mac);
+  } else {
+    d = dunyaKur([prof(s.profiller[0]), prof(s.profiller[1])], s.tohum);
+  }
   if (s.baslangic) s.baslangic.forEach((b, i) => Object.assign(d.topaclar[i]!, b));
   return d;
 }
@@ -56,5 +67,5 @@ export function altinCalistir(s: AltinSenaryo): AltinSonuc {
     h.dunya(d);
     n++;
   }
-  return { hash: h.hex(), sonHash: dunyaHash(d), tick: d.tick, sonuc: d.mac.sonuc, carpisma: olaylar["carpisma"] ?? 0, olaylar };
+  return { hash: h.hex(), sonHash: dunyaHash(d), tick: d.tick, sonuc: d.mac.sonuc, macSonucu: d.mac.macSonucu, carpisma: olaylar["carpisma"] ?? 0, olaylar };
 }

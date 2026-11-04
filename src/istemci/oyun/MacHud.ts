@@ -1,0 +1,392 @@
+import { AYAR } from "../../paylasilan/kurallar/ayar.ts";
+import type { Dunya, Olay, TakimUyesi } from "../../paylasilan/sim/durum.ts";
+import { MAC_ADIM, geriCekAcik } from "../../paylasilan/sim/mac.ts";
+import { staminaOrani } from "../../paylasilan/sim/topac.ts";
+import { elementSvg } from "./elementSimge.ts";
+import { ELEMENT_RENK, KOKEN_RENK } from "./renkler.ts";
+
+// Maç HUD'u (ux § 2: H1-H15, 960×540 mantıksal DOM katmanı; konum ve boyutlar tablodan birebir).
+// Yazı boyutları: ad 10 · sayı 10 · tuş rozeti 10 · bekleme 12 · süre 14 · skor 20 · olay bandı 16.
+// Renk hiçbir bilgiyi tek başına taşımaz: ayraç + tarama + simge, element = silüet, elenen = çarpı.
+// H9 (nişan), H10 (bağlantı), H13 (telegraf) D3/D4 kapsamı; H15 yalnız Antrenman.
+
+const STIL = `
+.mh { position:absolute; left:0; top:0; width:960px; height:540px; transform-origin:0 0; pointer-events:none; font-family:"Nunito Sans",system-ui,sans-serif; color:#f3f1e8; user-select:none; }
+.mh .pn { position:absolute; top:8px; width:288px; height:64px; background:rgba(12,25,29,.9); border:2px solid #050d10; border-radius:8px; box-shadow:inset 0 0 0 1px #24414b; }
+.mh .pn.sol { left:8px; } .mh .pn.sag { left:664px; }
+.mh .pn .s1 { position:absolute; left:6px; right:6px; top:2px; height:14px; display:flex; align-items:center; gap:5px; font-size:10px; font-weight:800; white-space:nowrap; }
+.mh .pn.sag .s1 { flex-direction:row-reverse; }
+.mh .pn .ad { overflow:hidden; text-overflow:ellipsis; }
+.mh .pn .lv { color:#a3b2b6; font-weight:700; }
+.mh .pn .bos { flex:1; }
+.mh .pn .ekip { display:flex; gap:2px; }
+.mh .pn.sag .ekip { order:-1; }
+.mh .bar { position:absolute; left:6px; top:20px; width:272px; height:14px; background:#1b2a30; border:1px solid #050d10; border-radius:3px; overflow:hidden; }
+.mh .bar i { position:absolute; top:0; bottom:0; width:100%; background:#f2e8b0; }
+.mh .pn.sol .bar i { left:0; } .mh .pn.sag .bar i { right:0; }
+.mh .bar i.amber { background:#f2a33a; }
+.mh .bar i.kirmizi { background:repeating-linear-gradient(135deg,#e3350d 0 4px,#9e2207 4px 7px); animation:mhNabiz 1.2s ease-in-out infinite; }
+@keyframes mhNabiz { 50% { filter:brightness(1.5); } }
+.mh .bar u { position:absolute; top:0; bottom:0; width:2px; background:rgba(5,13,16,.9); }
+.mh .bar b { position:absolute; top:0; right:4px; font-size:10px; line-height:13px; font-weight:900; text-shadow:0 0 2px #000,0 1px 0 #000; }
+.mh .pn.sag .bar b { right:auto; left:4px; }
+.mh .bar s { position:absolute; top:0; left:3px; font-size:10px; line-height:13px; font-weight:900; text-decoration:none; display:none; color:#fff; text-shadow:0 1px 0 #000; }
+.mh .pn.sag .bar s { left:auto; right:3px; }
+.mh .en { position:absolute; left:6px; top:40px; display:flex; gap:4px; }
+.mh .pn.sag .en { left:auto; right:6px; flex-direction:row-reverse; }
+.mh .en span { position:relative; width:40px; height:12px; border:1px solid #9fb0b5; border-radius:2px; background:rgba(5,13,16,.5); overflow:hidden; }
+.mh .en span i { position:absolute; left:0; top:0; bottom:0; background:#7fd3ff; }
+.mh .en span.dolu { border-color:#cfeeff; box-shadow:0 0 4px #7fd3ff; }
+.mh .en em { font-style:normal; font-size:10px; font-weight:800; color:#a3b2b6; margin-left:4px; line-height:12px; }
+.mh .ct { position:absolute; left:254px; top:34px; width:24px; height:24px; }
+.mh .pn.sag .ct { left:6px; }
+.mh .ct.titre { animation:mhTitre .12s linear infinite; }
+@keyframes mhTitre { 25% { transform:translateX(-1px); } 75% { transform:translateX(1px); } }
+.mh .skor { position:absolute; left:400px; top:6px; width:160px; height:34px; text-align:center; font:800 20px/30px system-ui; letter-spacing:1px; background:rgba(12,25,29,.9); border:2px solid #050d10; border-radius:8px; }
+.mh .sure { position:absolute; left:432px; top:42px; width:96px; height:22px; text-align:center; font:800 14px/20px system-ui; font-variant-numeric:tabular-nums; background:rgba(12,25,29,.85); border:2px solid #050d10; border-radius:6px; }
+.mh .sure.son { color:#ff5a3a; text-decoration:underline; text-decoration-thickness:2px; }
+.mh .sure.ani { color:#fff; background:#a3260a; letter-spacing:.5px; font-size:12px; }
+.mh .bant { position:absolute; left:240px; top:84px; width:480px; height:36px; text-align:center; font:800 16px/32px system-ui; letter-spacing:1px; background:rgba(5,13,16,.86); border:2px solid #f4cf47; border-radius:8px; opacity:0; transition:opacity .15s; }
+.mh .bant.acik { opacity:1; }
+.mh .gs { position:absolute; left:330px; top:220px; width:300px; height:80px; text-align:center; font:900 48px/80px system-ui; letter-spacing:2px; color:#fff; text-shadow:0 3px 0 #050d10,0 0 12px rgba(0,0,0,.6); opacity:0; }
+.mh .gs.acik { opacity:1; }
+.mh .gs small { font-size:24px; letter-spacing:4px; }
+.mh .yv { position:absolute; top:494px; width:44px; height:44px; background:rgba(12,25,29,.9); border:3px solid #f2e8b0; text-align:center; font-size:10px; font-weight:800; }
+.mh .yv .tus { position:absolute; left:2px; top:1px; font-size:10px; color:#a3b2b6; }
+.mh .yv .ic { position:absolute; inset:9px 4px 4px; font-size:10px; line-height:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.mh .yv.kare { border-radius:3px; }
+.mh .yv.pah { clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px); border-radius:0; }
+.mh .yv.elmas { border-radius:3px; }
+.mh .yv.elmas::before { content:""; position:absolute; left:9px; top:9px; width:20px; height:20px; transform:rotate(45deg); border:2px solid currentColor; opacity:.35; }
+.mh .yv.yuvarlak { border-radius:50%; }
+.mh .yv.yetmez { border-style:dashed; border-color:#8d989e; color:#a3b2b6; }
+.mh .yv.kilit { border-color:#4a5a60; color:#8d989e; background:rgba(5,13,16,.85); }
+.mh .yv.yok { border-color:#2c3d43; color:#4a5a60; background:rgba(5,13,16,.6); }
+.mh .yv .nok { display:flex; gap:3px; margin-top:2px; } .mh .yv .nok b { width:5px; height:5px; border-radius:50%; background:#a3b2b6; }
+.mh .yv.bekle { border-color:#4a5a60; color:#a3b2b6; }
+.mh .yv .k { position:absolute; left:0; right:0; bottom:0; background:rgba(5,13,16,.75); }
+.mh .yv .n { position:relative; font-size:12px; font-weight:900; }
+.mh .tk { position:absolute; top:494px; width:44px; height:44px; background:rgba(12,25,29,.9); border:2px solid #24414b; border-radius:6px; }
+.mh .tk .ik { position:absolute; left:8px; top:5px; }
+.mh .tk .st { position:absolute; left:4px; right:4px; bottom:4px; height:4px; background:#1b2a30; }
+.mh .tk .st i { position:absolute; left:0; top:0; bottom:0; background:#f2e8b0; }
+.mh .tk .st i.amber { background:#f2a33a; } .mh .tk .st i.kirmizi { background:#e3350d; }
+.mh .tk.aktif { border:3px solid #2fb8e8; }
+.mh .tk .ok { position:absolute; left:15px; top:-12px; font-size:10px; color:#2fb8e8; display:none; }
+.mh .tk.aktif .ok { display:block; }
+.mh .tk.elendi { opacity:.45; filter:grayscale(1); }
+.mh .tk .tab { position:absolute; left:4px; top:-14px; padding:0 3px; font-size:10px; font-weight:900; background:#e3350d; color:#fff; border-radius:3px; display:none; }
+.mh .tk.tabhazir .tab { display:block; }
+.mh .tk.tabhazir .ok { display:none; }
+.mh .tk.cekiliyor { animation:mhNabiz .5s linear infinite; }
+.mh .ds { position:absolute; left:240px; top:380px; width:480px; height:96px; padding:6px 8px; background:rgba(5,13,16,.92); border:2px solid #f4cf47; border-radius:8px; display:none; }
+.mh .ds.acik { display:block; }
+.mh .ds h4 { margin:0 0 4px; font:800 11px/14px system-ui; letter-spacing:.5px; }
+.mh .ds .kartlar { display:flex; gap:8px; }
+.mh .ds .kart { position:relative; flex:1; height:50px; padding:4px 6px 4px 26px; border:2px solid #24414b; border-radius:6px; background:#10222a; font-size:10px; font-weight:800; pointer-events:auto; cursor:pointer; }
+.mh .ds .kart .tus { position:absolute; left:4px; top:4px; width:16px; height:16px; border:1px solid #a3b2b6; border-radius:3px; text-align:center; line-height:14px; }
+.mh .ds .kart .ik { position:absolute; left:4px; top:26px; }
+.mh .ds .kart .st { position:absolute; left:26px; right:6px; bottom:5px; height:4px; background:#1b2a30; } .mh .ds .kart .st i { position:absolute; left:0; top:0; bottom:0; background:#f2e8b0; }
+.mh .ds .kart.secildi { border-color:#f4cf47; background:#2a2a14; }
+.mh .ds .kart.elendi { opacity:.35; filter:grayscale(1); cursor:default; }
+.mh .ds .kart.sahada { border-style:dashed; }
+.mh .ds .sc { position:absolute; left:8px; right:8px; bottom:5px; height:5px; background:#1b2a30; border-radius:2px; overflow:hidden; } .mh .ds .sc i { position:absolute; left:0; top:0; bottom:0; background:#f4cf47; }
+.mh .ip { position:absolute; left:160px; top:444px; width:640px; height:40px; display:none; text-align:center; font:700 12px/36px system-ui; background:rgba(5,13,16,.85); border:2px solid #24414b; border-radius:8px; }
+.mh .ip.acik { display:block; }
+.mh .els { display:block; flex:none; }
+`;
+
+function el<K extends keyof HTMLElementTagNameMap>(etiket: K, sinif = "", ust?: HTMLElement, metin = ""): HTMLElementTagNameMap[K] {
+  const e = document.createElement(etiket);
+  if (sinif) e.className = sinif;
+  if (metin) e.textContent = metin;
+  ust?.appendChild(e);
+  return e;
+}
+
+/** Çatlak simgesi: 4 hâl, eşikler tik/burstEsik 0,5 / 0,75 / 0,9 (05 § 3.3, ux H1c). */
+function catlakSvg(oran: number): string {
+  const s = oran >= 0.9 ? 3 : oran >= 0.75 ? 2 : oran >= 0.5 ? 1 : 0;
+  const cizgi = ["", "M12 3 L10 10 L13 13", "M12 3 L10 10 L13 13 M4 15 L10 14 L11 21", "M12 3 L10 10 L13 13 M4 15 L10 14 L11 21 M20 6 L15 12 L21 17 L16 22"][s];
+  const renk = s >= 3 ? "#e3350d" : s >= 1 ? "#f2a33a" : "#8d989e";
+  return `<svg viewBox="0 0 24 24" width="24" height="24" style="opacity:${s === 0 ? 0.45 : 1}" aria-label="Çatlak ${s}/3"><circle cx="12" cy="12" r="10" fill="#3a4246" stroke="${renk}" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="#8d989e"/><path d="${cizgi}" stroke="#fff" stroke-width="1.7" fill="none"/></svg>`;
+}
+
+const BITIS_AD = { durma: "DURMA", ringOut: "RING OUT", parcalanma: "PARÇALANMA", berabere: "BERABERE" } as const;
+const sinifOran = (o: number) => (o < AYAR.kritikEsik ? "kirmizi" : o <= 0.6 ? "amber" : "");
+
+interface Panel { kok: HTMLElement; ik: HTMLElement; ad: HTMLElement; lv: HTMLElement; ekip: HTMLElement; dolgu: HTMLElement; sayi: HTMLElement; unlem: HTMLElement; enerji: HTMLElement[]; enerjiYazi: HTMLElement; ct: HTMLElement }
+
+export class MacHud {
+  readonly kok = el("div", "mh");
+  private stil = el("style");
+  private paneller: [Panel, Panel];
+  private skor = el("div", "skor");
+  private sure = el("div", "sure");
+  private bant = el("div", "bant");
+  private gs = el("div", "gs");
+  private bantKalan = 0;
+  private yuvalar: HTMLElement[] = [];
+  private dash = el("div", "yv kare");
+  private sekme = el("div", "yv kare");
+  private takim: HTMLElement[] = [];
+  private ds = el("div", "ds");
+  private dsBaslik = el("h4");
+  private dsKartlar: HTMLElement[] = [];
+  private dsSure = el("i");
+  readonly ipucu = el("div", "ip");
+  private onbellek = new Map<HTMLElement, string>();
+  private basla = 0;
+  /** H14 kartına tıklama → seçim. */
+  kartSecildi: (uye: number) => void = () => {};
+
+  constructor(ust: HTMLElement, private yerel: number, private adlar: [string, string]) {
+    this.stil.textContent = STIL;
+    document.head.appendChild(this.stil);
+    this.paneller = [this.panel(yerel === 0 ? "sol" : "sag"), this.panel(yerel === 0 ? "sag" : "sol")];
+    this.bant.setAttribute("aria-live", "polite");
+    this.bant.setAttribute("role", "status");
+    this.kok.append(this.skor, this.sure, this.bant, this.gs);
+    // H6 yetenek yuvaları: Yetenek kare, Özel Yetenek pah, Ulti elmas, Parça Tekniği yuvarlak
+    const sekil = ["kare", "pah", "elmas", "yuvarlak"];
+    for (let k = 0; k < 4; k++) {
+      const y = el("div", `yv ${sekil[k]}`, this.kok);
+      y.style.left = `${8 + k * 50}px`;
+      el("span", "tus", y, String(k + 1));
+      el("div", "ic", y);
+      this.yuvalar.push(y);
+    }
+    // H7
+    for (const [r, ad, x] of [[this.dash, "Shift", 428], [this.sekme, "Space", 488]] as const) {
+      r.style.left = `${x}px`;
+      el("div", "k", r);
+      const ic = el("div", "ic", r);
+      el("span", "", ic, ad);
+      el("span", "n", ic);
+      this.kok.appendChild(r);
+    }
+    // H8 takım yuvaları
+    for (let k = 0; k < 3; k++) {
+      const t = el("div", "tk", this.kok);
+      t.style.left = `${796 + k * 50}px`;
+      el("span", "ok", t, "▲");
+      el("span", "tab", t, "Tab");
+      el("span", "ik", t);
+      const st = el("span", "st", t); el("i", "", st);
+      this.takim.push(t);
+    }
+    // H14
+    this.ds.append(this.dsBaslik);
+    const kartlar = el("div", "kartlar", this.ds);
+    for (let k = 0; k < 3; k++) {
+      const kart = el("div", "kart", kartlar);
+      el("span", "tus", kart, String(k + 1));
+      el("span", "ik", kart);
+      el("div", "ad", kart);
+      const st = el("span", "st", kart); el("i", "", st);
+      kart.addEventListener("click", () => this.kartSecildi(k));
+      this.dsKartlar.push(kart);
+    }
+    const sc = el("div", "sc", this.ds); sc.append(this.dsSure);
+    this.kok.append(this.ds, this.ipucu);
+    ust.appendChild(this.kok);
+  }
+
+  private panel(taraf: "sol" | "sag"): Panel {
+    const kok = el("div", `pn ${taraf}`, this.kok);
+    const s1 = el("div", "s1", kok);
+    const ik = el("span", "", s1);
+    const ad = el("span", "ad", s1);
+    const lv = el("span", "lv", s1);
+    el("span", "bos", s1);
+    const ekip = el("span", "ekip", s1);
+    const bar = el("div", "bar", kok);
+    const dolgu = el("i", "", bar);
+    for (const o of [AYAR.kritikEsik, 0.6]) { const u = el("u", "", bar); u.style.left = taraf === "sol" ? `${o * 100}%` : `${(1 - o) * 100}%`; }
+    const sayi = el("b", "", bar);
+    const unlem = el("s", "", bar, "!");
+    const en = el("div", "en", kok);
+    const enerji: HTMLElement[] = [];
+    for (let k = 0; k < 3; k++) { const d = el("span", "", en); el("i", "", d); enerji.push(d); }
+    const enerjiYazi = el("em", "", en);
+    const ct = el("span", "ct", kok);
+    return { kok, ik, ad, lv, ekip, dolgu, sayi, unlem, enerji, enerjiYazi, ct };
+  }
+
+  hizala(x: number, y: number, olcek: number): void {
+    this.kok.style.transform = `translate(${x}px, ${y}px) scale(${olcek})`;
+  }
+
+  private yaz(e: HTMLElement, s: string, html = false): void {
+    if (this.onbellek.get(e) === s) return;
+    this.onbellek.set(e, s);
+    if (html) e.innerHTML = s; else e.textContent = s;
+  }
+
+  /** H5 olay bandı: aynı anda tek band, yeni olay eskinin üstüne biner (1,2-2 sn). */
+  bantGoster(metin: string, sure = 1.6): void {
+    this.bant.textContent = metin;
+    this.bant.classList.add("acik");
+    this.bantKalan = sure;
+  }
+
+  /** Sim olayından band metni (ux § 7 mikro-kopya). */
+  olay(o: Olay, d: Dunya): void {
+    const ben = this.yerel;
+    switch (o.tur) {
+      case "turBitti": {
+        const s = o.sonuc;
+        if (s.tur === "berabere") this.bantGoster("BERABERE · iki topaç da elendi", 2);
+        else this.bantGoster(`${BITIS_AD[s.tur]} +${s.puan} · ${s.kazanan === ben ? "sen" : "rakip"}`, 2);
+        break;
+      }
+      case "aniOlum": this.bantGoster("Ani ölüm", 2); break;
+      case "geriCek": if (o.i !== ben) this.bantGoster("Rakip topaç değiştiriyor", 1.4); break;
+      case "turBasladi": if (o.turNo > 1) this.basla = 0.6; break;
+      case "secim":
+        if (o.i !== ben && d.mac.faz === "turArasi") this.bantGoster("Rakip topaç değiştiriyor", 1.4);
+        break;
+      default: break;
+    }
+  }
+
+  guncelle(d: Dunya, dt: number): void {
+    const m = d.mac;
+    const T = d.takimlar!;
+    // H1 / H2
+    for (let k = 0; k < 2; k++) {
+      const i = k === 0 ? this.yerel : 1 - this.yerel;
+      const p = d.profiller[i]!;
+      const t = d.topaclar[i]!;
+      const pn = this.paneller[k]!;
+      const oran = staminaOrani(t, p);
+      this.yaz(pn.ik, elementSvg(p.element, 14), true);
+      this.yaz(pn.ad, `${this.adlar[k]} · ${ELEMENT_RENK[p.element].ad} ${KOKEN_RENK[p.koken].ad}`);
+      this.yaz(pn.lv, "Lv.2");
+      pn.dolgu.style.width = `${Math.max(0, oran) * 100}%`;
+      const sinif = sinifOran(oran);
+      if (pn.dolgu.className !== sinif) pn.dolgu.className = sinif;
+      pn.unlem.style.display = oran < AYAR.kritikEsik ? "block" : "none";
+      // kendi çubuğunda sayı, rakipte yok (ux H2: kendi sayı, rakip oran)
+      this.yaz(pn.sayi, k === 0 ? `${Math.max(0, Math.round(oran * 100))}%` : "");
+      // H2: rakibin 3 element simgesi, elenen çarpılı (H1'de de kendi takımı H8'de)
+      if (k === 1) this.yaz(pn.ekip, T[i]!.uyeler.map((u) => elementSvg(u.profil.element, 14, { soluk: u.elendi === 1, capraz: u.elendi === 1 })).join(""), true);
+      // Enerji 3 dilim (D2: yalnız devralma; D3'te dolar)
+      const e = t.enerji;
+      for (let s = 0; s < 3; s++) {
+        const dolu = Math.max(0, Math.min(1, (e - s * 100) / 100));
+        const dl = pn.enerji[s]!;
+        (dl.firstElementChild as HTMLElement).style.width = `${dolu * 100}%`;
+        dl.classList.toggle("dolu", dolu >= 1);
+      }
+      this.yaz(pn.enerjiYazi, e >= 300 ? "DOLU" : "");
+      const tikOran = t.tik / p.parametreler.burstEsik;
+      this.yaz(pn.ct, catlakSvg(tikOran), true);
+      pn.ct.classList.toggle("titre", tikOran >= 0.9);
+    }
+    // H3 skor
+    this.yaz(this.skor, `${m.puan[this.yerel]} – ${m.puan[1 - this.yerel]}`);
+    // H4 süre
+    const kalan = Math.max(0, MAC_ADIM.macSuresi - m.saat);
+    if (m.aniOlum) {
+      const ak = Math.max(0, Math.ceil((MAC_ADIM.aniOlum - m.aniOlumTick) / AYAR.adimHz));
+      this.yaz(this.sure, `ANİ ÖLÜM ${ak}`);
+      this.sure.className = "sure ani";
+    } else {
+      const sn = Math.ceil(kalan / AYAR.adimHz);
+      this.yaz(this.sure, `${Math.floor(sn / 60)}:${String(sn % 60).padStart(2, "0")}`);
+      this.sure.className = sn <= 10 && m.faz !== "geriSayim" ? "sure son" : "sure";
+    }
+    // geri sayım: Hazır (2 s) → 3-2-1 → BAŞLA (ortada 48 px)
+    if (m.faz === "geriSayim") {
+      const gecen = MAC_ADIM.geriSayim - m.kalanTick;
+      const metin = gecen < MAC_ADIM.hazir ? "<small>HAZIR</small>" : String(3 - Math.floor((gecen - MAC_ADIM.hazir) / AYAR.adimHz));
+      this.yaz(this.gs, metin, true);
+      this.gs.classList.add("acik");
+      this.basla = 0.5;
+    } else if (this.basla > 0) {
+      this.basla -= dt;
+      this.yaz(this.gs, "BAŞLA");
+      this.gs.classList.toggle("acik", this.basla > 0);
+    } else this.gs.classList.remove("acik");
+
+    const ben = d.topaclar[this.yerel]!;
+    const bp = d.profiller[this.yerel]!;
+    // H6: Enerji yetersiz (1 / 2 dilim), yuva 3 kilitli Lv.4, yuva 4 boş (D3)
+    const yv = this.yuvalar;
+    const enerjiYuva = (y: HTMLElement, dilim: number, ad: string) => {
+      const yeter = ben.enerji >= dilim * 100;
+      y.classList.toggle("yetmez", !yeter);
+      y.title = `${ad}: ${dilim} Enerji dilimi gerekir (D3)`;
+      this.yaz(y.lastElementChild as HTMLElement, `<span class="nok">${"<b></b>".repeat(dilim)}</span>`, true);
+    };
+    enerjiYuva(yv[0]!, 1, "Yetenek");
+    enerjiYuva(yv[1]!, 2, "Özel");
+    yv[2]!.classList.add("kilit");
+    this.yaz(yv[2]!.lastElementChild as HTMLElement, `<svg viewBox="0 0 12 12" width="12" height="12" aria-label="kilitli"><rect x="2" y="5" width="8" height="6" rx="1" fill="#8d989e"/><path d="M4 5V3.6a2 2 0 0 1 4 0V5" fill="none" stroke="#8d989e" stroke-width="1.5"/></svg><span>Lv.4</span>`, true);
+    yv[3]!.classList.add("yok");
+    this.yaz(yv[3]!.lastElementChild as HTMLElement, "—");
+    // H7
+    this.rozet(this.dash, ben.dashBekleme, bp.sim.dashBekleme, ben.stamina - AYAR.eylemStaminaPayi < bp.sim.dashMaliyet);
+    this.rozet(this.sekme, ben.sekmeBekleme, Math.round(AYAR.sekmeBekleme * AYAR.adimHz), ben.stamina - AYAR.eylemStaminaPayi < AYAR.sekmeStamina);
+    // H8
+    const tk = T[this.yerel]!;
+    const tabHazir = geriCekAcik(d, this.yerel);
+    for (let k = 0; k < 3; k++) {
+      const u = tk.uyeler[k]!;
+      const kutu = this.takim[k]!;
+      const aktif = k === tk.aktif;
+      const o = this.uyeOrani(d, this.yerel, k, u);
+      this.yaz(kutu.children[2] as HTMLElement, elementSvg(u.profil.element, 28, { capraz: u.elendi === 1 }), true);
+      const st = kutu.querySelector(".st i") as HTMLElement;
+      st.style.width = `${o * 100}%`;
+      st.className = sinifOran(o);
+      kutu.classList.toggle("aktif", aktif && !u.elendi);
+      kutu.classList.toggle("elendi", u.elendi === 1);
+      kutu.classList.toggle("tabhazir", aktif && tabHazir);
+      kutu.classList.toggle("cekiliyor", aktif && ben.geriCekKalan > 0);
+      kutu.title = `${ELEMENT_RENK[u.profil.element].ad} ${KOKEN_RENK[u.profil.koken].ad}${u.elendi ? " · elendi" : ""}`;
+    }
+    // H14 takım değişimi seçimi (kaybeden için; 1/2/3 ya da tıkla; süre çubuğu)
+    const seciyor = m.faz === "turArasi" && tk.secim === -2;
+    this.ds.classList.toggle("acik", seciyor || (m.faz === "turArasi" && tk.secim >= 0 && tk.uyeler[tk.aktif]!.elendi === 1));
+    if (m.faz === "turArasi") {
+      this.yaz(this.dsBaslik, seciyor ? "Sıradaki topacını seç · 1 · 2 · 3 (süre dolunca sıradaki gelir)" : "Seçildi · hazırlanıyor");
+      for (let k = 0; k < 3; k++) {
+        const u = tk.uyeler[k]!;
+        const kart = this.dsKartlar[k]!;
+        this.yaz(kart.children[1] as HTMLElement, elementSvg(u.profil.element, 18, { capraz: u.elendi === 1 }), true);
+        this.yaz(kart.children[2] as HTMLElement, `${ELEMENT_RENK[u.profil.element].ad} ${KOKEN_RENK[u.profil.koken].ad} · ${u.profil.tip}${u.elendi ? " · elendi" : ""}`);
+        (kart.querySelector(".st i") as HTMLElement).style.width = `${this.uyeOrani(d, this.yerel, k, u) * 100}%`;
+        kart.classList.toggle("elendi", u.elendi === 1);
+        kart.classList.toggle("secildi", tk.secim === k);
+      }
+      const toplam = MAC_ADIM.kutlama + MAC_ADIM.secim;
+      this.dsSure.style.width = `${(m.kalanTick / toplam) * 100}%`;
+    }
+    if (this.bantKalan > 0) {
+      this.bantKalan -= dt;
+      if (this.bantKalan <= 0) this.bant.classList.remove("acik");
+    }
+  }
+
+  private uyeOrani(d: Dunya, i: number, k: number, u: TakimUyesi): number {
+    if (u.elendi) return 0;
+    const tk = d.takimlar![i]!;
+    const s = k === tk.aktif ? d.topaclar[i]!.stamina : u.stamina;
+    return Math.max(0, s / u.profil.maxStamina);
+  }
+
+  private rozet(r: HTMLElement, kalan: number, toplam: number, yetmez: boolean): void {
+    r.classList.toggle("bekle", kalan > 0);
+    r.classList.toggle("yetmez", yetmez);
+    (r.firstElementChild as HTMLElement).style.height = `${toplam > 0 ? (kalan / toplam) * 100 : 0}%`;
+    const sn = kalan / AYAR.adimHz;
+    this.yaz(r.querySelector(".n") as HTMLElement, kalan > 0 ? (sn >= 10 ? sn.toFixed(0) : sn.toFixed(1)) : "");
+  }
+
+  yokEt(): void {
+    this.kok.remove();
+    this.stil.remove();
+  }
+}

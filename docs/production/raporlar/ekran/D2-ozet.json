@@ -1,0 +1,97 @@
+{
+ "tarayici": "153.0.8010.12",
+ "not": "Otomatik oynanış: yerel topaç paylaşılan 'kenar' botuyla sürülür; H14, Esc, Teslim, Tab klavyeyle.",
+ "adres": "http://localhost:5173/?ekran=mac&debug&hiz=2&oto=kenar&tohum=44&takim=0&rakip=1",
+ "maclar": [
+  {
+   "sonuc": {
+    "kazanan": 1,
+    "neden": "puan",
+    "puan": [
+     1,
+     4
+    ],
+    "tick": 4085
+   },
+   "saatSn": 63.083333333333336,
+   "gorulen": {
+    "ringOut": 1,
+    "durma": 1,
+    "parcalanma": 1
+   }
+  },
+  {
+   "sonuc": {
+    "kazanan": 1,
+    "neden": "aniOlum",
+    "puan": [
+     0,
+     2
+    ],
+    "tick": 4910
+   },
+   "saatSn": 76.83333333333333,
+   "gorulen": {
+    "ringOut": 2,
+    "durma": 1,
+    "parcalanma": 1,
+    "berabere": 3
+   }
+  }
+ ],
+ "gorulenBitisler": {
+  "ringOut": 2,
+  "durma": 1,
+  "parcalanma": 1,
+  "berabere": 3
+ },
+ "h14Secim": 2,
+ "aniOlumGoruldu": true,
+ "escMenuAcik": true,
+ "teslim": {
+  "kazanan": 1,
+  "neden": "teslim",
+  "puan": [
+   0,
+   3
+  ],
+  "tick": 732
+ },
+ "tab": {
+  "ipucu": "Geri çekmek için stamina %25'in altında olmalı.",
+  "rozet": true,
+  "cekilirken": 102,
+  "aktifOnce": 0,
+  "aktifSonra": 1,
+  "sayfaKaydirma": 0,
+  "zorlama": "stamina %20'ye debug kancasıyla yazıldı (yalnız bu adım)"
+ },
+ "hatalar": [],
+ "uyarilar": [
+  "[.WebGL-0x115401dd7600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "[.WebGL-0x115401dd7600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ],
+ "ekranlar": [
+  "docs/production/raporlar/ekran/D2-01-hazir.png",
+  "docs/production/raporlar/ekran/D2-02-geri-sayim-3.png",
+  "docs/production/raporlar/ekran/D2-03-basla.png",
+  "docs/production/raporlar/ekran/D2-09-h14-secim.png",
+  "docs/production/raporlar/ekran/D2-05-bitis-ring-out.png",
+  "docs/production/raporlar/ekran/D2-08-puan-bandi.png",
+  "docs/production/raporlar/ekran/D2-04-sure-akisi-1.png",
+  "docs/production/raporlar/ekran/D2-10-geri-cek.png",
+  "docs/production/raporlar/ekran/D2-06-bitis-durma.png",
+  "docs/production/raporlar/ekran/D2-04-sure-akisi-2.png",
+  "docs/production/raporlar/ekran/D2-07-bitis-parcalanma.png",
+  "docs/production/raporlar/ekran/D2-12-sonuc-1.png",
+  "docs/production/raporlar/ekran/D2-11-ani-olum.png",
+  "docs/production/raporlar/ekran/D2-12-sonuc-2.png",
+  "docs/production/raporlar/ekran/D2-13-esc-menu.png",
+  "docs/production/raporlar/ekran/D2-14-teslim-onay.png",
+  "docs/production/raporlar/ekran/D2-15-teslim-basili.png",
+  "docs/production/raporlar/ekran/D2-16-sonuc-teslim.png",
+  "docs/production/raporlar/ekran/D2-17-tab-hazir.png",
+  "docs/production/raporlar/ekran/D2-18-geri-cekiliyor.png",
+  "docs/production/raporlar/ekran/D2-19-geri-cek-sonrasi.png"
+ ]
+}

@@ -1,6 +1,5 @@
 import { Application, Container, Graphics } from "pixi.js";
-import { AYAR } from "../../paylasilan/kurallar/ayar.ts";
-import { SAHNE_RENK } from "./renkler.ts";
+import { KusakArenasi } from "./KusakArenasi.ts";
 import { SusRastgele } from "./SusRastgele.ts";
 
 /** Mantıksal tuval 960×540; arena merkezi (480, 270). 1 sim birimi = 1 mantıksal piksel (axiom karar 3). */
@@ -28,7 +27,10 @@ export class Sahne {
   readonly izKatmani = new Container();
   readonly golgeKatmani = new Container();
   readonly nesneKatmani = new Container();
+  /** çanak dudağı: topacın üstünde (Ring Out'ta kenarın arkasına düşüş, pixel planı § 6.1) */
+  readonly dudakKatmani = new Container();
   readonly efektKatmani = new Container();
+  readonly arena: KusakArenasi;
   /** ekran flaşı: sarsıntıdan etkilenmez */
   readonly ekranKatmani = new Container();
   /** sağda DOM panel için ayrılan CSS piksel */
@@ -44,12 +46,14 @@ export class Sahne {
 
   constructor(private app: Application) {
     const maske = new Graphics().rect(0, 0, SAHNE.genislik, SAHNE.yukseklik).fill(0xffffff);
-    this.dunya.addChild(this.zeminKatmani, this.izKatmani, this.golgeKatmani, this.nesneKatmani, this.efektKatmani);
+    this.dunya.addChild(this.zeminKatmani, this.izKatmani, this.golgeKatmani, this.nesneKatmani, this.dudakKatmani, this.efektKatmani);
     this.dunya.pivot.set(SAHNE.merkezX, SAHNE.merkezY);
     this.dunya.position.set(SAHNE.merkezX, SAHNE.merkezY);
     this.kok.addChild(this.dunya, this.ekranKatmani, maske);
     this.kok.mask = maske;
-    this.zeminCiz();
+    this.arena = new KusakArenasi(SAHNE.merkezX, SAHNE.merkezY, SAHNE.genislik, SAHNE.yukseklik);
+    this.zeminKatmani.addChild(this.arena.zemin);
+    this.dudakKatmani.addChild(this.arena.dudak);
     app.stage.addChild(this.kok);
     this.boyutla(true);
   }
@@ -122,63 +126,6 @@ export class Sahne {
     }
     this.dunya.scale.set(z);
     this.dunya.position.set(SAHNE.merkezX + Math.round(sx), SAHNE.merkezY + Math.round(sy));
-  }
-
-  /** Kuşak Arenası yer tutucu: daire çanak, dış hız şeridi, kenar eğimi halkaları, merkez işareti. */
-  private zeminCiz(): void {
-    const g = new Graphics();
-    const R = AYAR.arenaYaricap;
-    const cx = SAHNE.merkezX;
-    const cy = SAHNE.merkezY;
-    g.rect(0, 0, SAHNE.genislik, SAHNE.yukseklik).fill(SAHNE_RENK.arkaPlan);
-    // tribün bandı (üst): pixel planı C, eğik şerit yer tutucu
-    g.rect(0, 0, SAHNE.genislik, 22).fill(SAHNE_RENK.tribun);
-    for (let x = 6; x < SAHNE.genislik; x += 14) g.rect(x, 6, 6, 8).fill({ color: 0x2a3d45, alpha: 0.9 });
-    // dış dudak ve çanak
-    g.circle(cx, cy, R + 12).fill(SAHNE_RENK.kenar);
-    g.circle(cx, cy, R + 4).stroke({ width: 3, color: SAHNE_RENK.kenarDudak, alpha: 0.85 });
-    g.circle(cx, cy, R).fill(SAHNE_RENK.zemin);
-    // kenar eğimi (0,7R → R): dışa doğru koyulaşan halkalar
-    const egim = AYAR.egimBaslangic * R;
-    const halka = 6;
-    for (let k = 0; k < halka; k++) {
-      g.circle(cx, cy, R - ((R - egim) * k) / halka).fill({ color: SAHNE_RENK.egim, alpha: 0.12 + 0.05 * k });
-    }
-    g.circle(cx, cy, egim).fill(SAHNE_RENK.zemin);
-    // dış hız şeridi (kuşak 0,60R–0,85R): açık bant + kesikli kenarlar
-    const ki = AYAR.kusakIc * R;
-    const kd = AYAR.kusakDis * R;
-    g.circle(cx, cy, kd).stroke({ width: kd - ki, color: SAHNE_RENK.kusak, alpha: 0.35, alignment: 1 });
-    const kesik = (r: number, parca: number) => {
-      for (let i = 0; i < parca; i++) {
-        const a0 = (i / parca) * Math.PI * 2;
-        const a1 = a0 + (Math.PI * 2) / parca / 2;
-        g.moveTo(cx + Math.cos(a0) * r, cy + Math.sin(a0) * r).arc(cx, cy, r, a0, a1).stroke({ width: 1.5, color: SAHNE_RENK.kusakCizgi, alpha: 0.55 });
-      }
-    };
-    kesik(ki, 48);
-    kesik(kd, 64);
-    // hız oku işaretleri kuşakta
-    for (let i = 0; i < 12; i++) {
-      const a = (i / 12) * Math.PI * 2;
-      const rr = (ki + kd) / 2;
-      const x = cx + Math.cos(a) * rr;
-      const y = cy + Math.sin(a) * rr;
-      const tx = -Math.sin(a);
-      const ty = Math.cos(a);
-      g.moveTo(x - tx * 6 - Math.cos(a) * 3, y - ty * 6 - Math.sin(a) * 3).lineTo(x, y).lineTo(x - tx * 6 + Math.cos(a) * 3, y - ty * 6 + Math.sin(a) * 3)
-        .stroke({ width: 1.5, color: SAHNE_RENK.kusakCizgi, alpha: 0.4 });
-    }
-    // merkez (Maden "Kök" alanı 0,35R)
-    g.circle(cx, cy, AYAR.merkezKucukAlan * R).stroke({ width: 1, color: SAHNE_RENK.merkez, alpha: 0.5 });
-    g.circle(cx, cy, 5).fill({ color: SAHNE_RENK.merkez, alpha: 0.8 });
-    // ince ızgara (mesafe yargısı)
-    for (let d = -R; d <= R; d += 60) {
-      const yar = Math.sqrt(Math.max(0, R * R - d * d));
-      g.moveTo(cx + d, cy - yar).lineTo(cx + d, cy + yar).stroke({ width: 1, color: 0xffffff, alpha: 0.03 });
-      g.moveTo(cx - yar, cy + d).lineTo(cx + yar, cy + d).stroke({ width: 1, color: 0xffffff, alpha: 0.03 });
-    }
-    this.zeminKatmani.addChild(g);
   }
 
   yokEt(): void {

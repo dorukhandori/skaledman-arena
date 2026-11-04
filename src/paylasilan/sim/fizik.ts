@@ -7,13 +7,11 @@ import type { Olay, Topac } from "./durum.ts";
 // Hareket (tuning § 3, 05 § 2.2): sürüş ivmesi + Uç deseni (girdi üstüne biner) + kenar eğimi + sürtünme,
 // tavan, entegrasyon; stamina erimesi (§ 6); duvar / Ring Out (§ 2). Yalnız + - * / ve Math.sqrt.
 
-const R = AYAR.arenaYaricap;
+// Çanak yarıçapı R parametredir (ani ölümde daralır, tuning § 10); eğim ve kuşak R ile ölçeklenir.
+// Varsayılan R = AYAR.arenaYaricap: aynı ifadeler aynı float'ı verir (D1 davranışı bit bit korunur).
+const R0 = AYAR.arenaYaricap;
 const r = AYAR.topacYaricap;
-const EGIM_D = AYAR.egimBaslangic * R;
-const EGIM_GENISLIK = R - EGIM_D;
-const KUSAK_IC = AYAR.kusakIc * R;
-const KUSAK_DIS = AYAR.kusakDis * R;
-const MERKEZ = AYAR.merkezKucukAlan * R;
+const MERKEZ = AYAR.merkezKucukAlan * R0;
 const dt = AYAR.dt;
 
 /** Hypot yerine: tek doğru yuvarlanmış sqrt (IEEE), her motorda aynı. */
@@ -21,13 +19,13 @@ export function kok2(x: number, z: number): number {
   return Math.sqrt(x * x + z * z);
 }
 
-export function kusakta(t: Topac): boolean {
+export function kusakta(t: Topac, R: number = R0): boolean {
   const d = kok2(t.x, t.z);
-  return d >= KUSAK_IC && d <= KUSAK_DIS;
+  return d >= AYAR.kusakIc * R && d <= AYAR.kusakDis * R;
 }
 
 /** Sürüş + desen ivmesi; tavanı (vSurus · yorgunluk · kuşak) aşan bileşen uygulanmaz, dış hız bozulmaz. */
-function kendiIvmesi(t: Topac, p: TopacProfili, g: Girdi, tick: number, yorgunluk: number): void {
+function kendiIvmesi(t: Topac, p: TopacProfili, g: Girdi, tick: number, yorgunluk: number, R: number): void {
   if (t.sikiDonus) return; // Sıkı Dönüş: hareket 0 (sürüş ve desen yok)
   const s = p.sim;
   let ax = s.ivme * yorgunluk * g.yonX;
@@ -42,7 +40,7 @@ function kendiIvmesi(t: Topac, p: TopacProfili, g: Girdi, tick: number, yorgunlu
     ax -= s.desenKMerkez * t.x;
     az -= s.desenKMerkez * t.z;
   }
-  const tavan = s.vSurus * yorgunluk * (kusakta(t) ? s.kusakHizCarpani : 1);
+  const tavan = s.vSurus * yorgunluk * (kusakta(t, R) ? s.kusakHizCarpani : 1);
   const v0 = kok2(t.vx, t.vz);
   let nvx = t.vx + ax * dt;
   let nvz = t.vz + az * dt;
@@ -67,12 +65,13 @@ function kendiIvmesi(t: Topac, p: TopacProfili, g: Girdi, tick: number, yorgunlu
 }
 
 /** Bir topacın hareket adımı (çarpışma ve duvar hariç). */
-export function hareketAdimla(t: Topac, p: TopacProfili, g: Girdi, tick: number, yorgunluk: number): void {
-  kendiIvmesi(t, p, g, tick, yorgunluk);
+export function hareketAdimla(t: Topac, p: TopacProfili, g: Girdi, tick: number, yorgunluk: number, R: number = R0): void {
+  kendiIvmesi(t, p, g, tick, yorgunluk, R);
   // kenar eğimi: d > 0,7R'den merkeze, kEgim · ((d − 0,7R)/(0,3R))²
   const d = kok2(t.x, t.z);
-  if (d > EGIM_D) {
-    const q = (d - EGIM_D) / EGIM_GENISLIK;
+  const egimD = AYAR.egimBaslangic * R;
+  if (d > egimD) {
+    const q = (d - egimD) / (R - egimD);
     const a = AYAR.kEgim * q * q;
     t.vx -= (t.x / d) * a * dt;
     t.vz -= (t.z / d) * a * dt;
@@ -98,9 +97,13 @@ export function sinirla(t: Topac): void {
 const KOK_HIZ2 = KOKEN_PASIF.maden.kokHizEsigi * KOKEN_PASIF.maden.kokHizEsigi;
 const KOK_ERIME = KOKEN_PASIF.maden.kokErimeCarpani;
 
-/** Stamina erimesi/s = erime · (sıkı dönüş ? Uç çarpanı : 1) · (Kök ? 0,8 : 1) + kHiz · |v|²/vRef². */
-export function erimeUygula(t: Topac, p: TopacProfili): void {
+/**
+ * Stamina erimesi/s = erime · (sıkı dönüş ? Uç çarpanı : 1) · (Kök ? 0,8 : 1) · aniOlum + kHiz · |v|²/vRef².
+ * `aniOlum`: ani ölüm erime çarpanı (1 + 0,05·t); 1 iken çarpma yapılmaz.
+ */
+export function erimeUygula(t: Topac, p: TopacProfili, aniOlum = 1): void {
   let e = p.sim.erime;
+  if (aniOlum !== 1) e *= aniOlum;
   if (t.sikiDonus) e *= p.sim.sikiDonusCarpani;
   const v2 = t.vx * t.vx + t.vz * t.vz;
   if (p.sim.kok && t.x * t.x + t.z * t.z < MERKEZ * MERKEZ && v2 < KOK_HIZ2) e *= KOK_ERIME;
@@ -111,14 +114,14 @@ export function erimeUygula(t: Topac, p: TopacProfili): void {
  * Duvar: merkez d ≥ R − r iken dışa hız vd. vd ≥ vRO ve d > egimBaslangic → Ring Out (true döner);
  * altında sekme (eDuvar), stamina bedeli kDuvar·vd, vd > 120 ise +duvarTik.
  */
-export function duvarCoz(t: Topac, p: TopacProfili, i: number, tick: number, olaylar: Olay[] | null): boolean {
+export function duvarCoz(t: Topac, p: TopacProfili, i: number, tick: number, olaylar: Olay[] | null, R: number = R0): boolean {
   const sinir = R - r;
   const d = kok2(t.x, t.z);
   if (d < sinir) return false;
   const nx = t.x / d;
   const nz = t.z / d;
   const vd = t.vx * nx + t.vz * nz;
-  if (olaylar && vd >= p.sim.ringOutHizi && d > EGIM_D) return true;
+  if (olaylar && vd >= p.sim.ringOutHizi && d > AYAR.egimBaslangic * R) return true;
   if (vd > 0 && vd < AYAR.duvarOlayHizi) {
     // yavaş temas: normal bileşeni sil, duvar boyunca kay (bedelsiz)
     t.vx -= vd * nx;
@@ -127,8 +130,11 @@ export function duvarCoz(t: Topac, p: TopacProfili, i: number, tick: number, ola
     t.vx -= (1 + AYAR.eDuvar) * vd * nx;
     t.vz -= (1 + AYAR.eDuvar) * vd * nz;
     if (olaylar) {
-      t.stamina -= AYAR.kDuvar * vd;
-      if (vd > AYAR.duvarTikHizi) t.tik += AYAR.duvarTik;
+      // giriş koruması: hasar almaz (tuning § 10)
+      if (t.koruma <= 0) {
+        t.stamina -= AYAR.kDuvar * vd;
+        if (vd > AYAR.duvarTikHizi) t.tik += AYAR.duvarTik;
+      }
       olaylar.push({ tur: "duvar", tick, i, vd, x: nx * R, z: nz * R, nx, nz });
     }
   }

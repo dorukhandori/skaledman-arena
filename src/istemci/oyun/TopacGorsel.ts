@@ -78,6 +78,9 @@ export class TopacGorsel {
   private parlama = new Graphics();
   private cekirdek = new Graphics();
   private flasKatmani = new Graphics();
+  /** H12 çatlak çizgileri (tik/eşik ≥ 0,75; ≥ 0,9 ağır): Disk üzerinde, dönerek */
+  private catlak = new Graphics();
+  private catlakSeviye = -1;
   private parcalar: Parca[] = [];
   private kademe: Kademe | null = null;
   private aci = 0;
@@ -95,7 +98,7 @@ export class TopacGorsel {
     this.govdeKap.addChild(this.sqKap);
     this.sqKap.addChild(this.icKap);
     this.icKap.addChild(this.yalpaKap);
-    this.donen.addChild(this.uc, this.disk, this.bulanikDisk, ...this.hayaletler, this.kanat);
+    this.donen.addChild(this.uc, this.disk, this.bulanikDisk, ...this.hayaletler, this.kanat, this.catlak);
     this.cekirdekKap.addChild(this.cekirdek);
     this.yalpaKap.addChild(this.donen, this.parlamaHalka, this.cekirdekKap, this.parlama, this.flasKatmani);
     this.kok.addChild(this.takimCemberi, this.govdeKap);
@@ -204,6 +207,27 @@ export class TopacGorsel {
     this.squashD = { sx, sy, sure, kalan: sure };
   }
 
+  /** H12: tık oranına göre çatlak çizgileri (ux § 2: tik ≥ 0,75 görünür, ≥ 0,9 ağır). Sayı yok. */
+  catlakAyarla(oran: number): void {
+    const s = oran >= 0.9 ? 2 : oran >= 0.75 ? 1 : 0;
+    if (s === this.catlakSeviye) return;
+    this.catlakSeviye = s;
+    const g = this.catlak.clear();
+    if (s === 0) return;
+    const r = GORSEL.govdeYaricap - 2;
+    const cizgi = (pts: number[]) => {
+      g.poly(pts, false).stroke({ width: 3, color: 0x111111, alpha: 0.85 });
+      g.poly(pts, false).stroke({ width: 1.2, color: 0xffffff, alpha: 0.95 });
+    };
+    cizgi([2, -4, 8, -12, 6, -20, 12, -r]);
+    cizgi([-3, 5, -12, 8, -18, 16, -r + 6, 22]);
+    if (s === 2) {
+      cizgi([4, 6, 14, 10, 18, 4, r, 8]);
+      cizgi([-5, -3, -14, -8, -16, -18, -10, -r + 2]);
+      cizgi([0, 8, 2, 18, -4, r - 2]);
+    }
+  }
+
   /** Beyaz tint flaşı, kare sayısı (05 § 3.2: 2-3 kare). */
   flas(kare: number): void { this.flasKare = Math.max(this.flasKare, kare); }
 
@@ -217,6 +241,7 @@ export class TopacGorsel {
 
   sifirla(): void {
     this.bitisDurum = null;
+    this.catlakAyarla(0);
     for (const p of this.parcalar) p.g.destroy();
     this.parcalar = [];
     this.kok.alpha = 1;

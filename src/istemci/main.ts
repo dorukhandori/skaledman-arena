@@ -1,9 +1,9 @@
 import { Application } from "pixi.js";
 
-// İstemci girişi. Ekran seçimi URL'den: ?ekran=topac-lab (varsayılan; D2'de maç ekranı eklenir).
+// İstemci girişi. Ekran seçimi URL'den: ?ekran=mac (bota karşı tam maç, D2) ya da ?ekran=topac-lab (varsayılan).
 // Her ekran modülü `baslat(baglam)` dışa aktarır ve kendi temizliğini yapar.
 
-export type EkranAdi = "topac-lab";
+export type EkranAdi = "topac-lab" | "mac";
 
 export interface EkranBaglami {
   app: Application;
@@ -13,6 +13,7 @@ export interface EkranBaglami {
 
 const EKRANLAR: Record<EkranAdi, () => Promise<{ baslat: (b: EkranBaglami) => Promise<void> | void }>> = {
   "topac-lab": () => import("./ekranlar/TopacLab.ts"),
+  mac: () => import("./ekranlar/Mac.ts"),
 };
 
 function ekranAdi(): EkranAdi {

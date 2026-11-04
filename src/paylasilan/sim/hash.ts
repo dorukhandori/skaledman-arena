@@ -7,13 +7,15 @@ const FNV_TABAN = 0xcbf29ce484222325n;
 const FNV_ASAL = 0x100000001b3n;
 const MASKE = 0xffffffffffffffffn;
 
-const FAZ_KODU = { tur: 0, turBitti: 1 } as const;
+const FAZ_KODU = { tur: 0, turBitti: 1, geriSayim: 2, turArasi: 3, bitti: 4 } as const;
+const MOD_KODU = { tekTur: 0, mac: 1 } as const;
 const SONUC_KODU = { durma: 0, ringOut: 1, parcalanma: 2, berabere: 3 } as const;
+const NEDEN_KODU = { puan: 0, tukenme: 1, aniOlum: 2, surePuan: 3, sureStamina: 4, surePuanEsitlik: 5, yaziTura: 6, teslim: 7 } as const;
 
 /** Topaç alanları, hash sırası. */
 export const TOPAC_ALANLARI = [
   "x", "z", "vx", "vz", "stamina", "tik", "durum", "dashKalan", "dashBekleme",
-  "sekmeKalan", "sekmeBekleme", "sikiDonus", "sonumKalan", "desenFaz",
+  "sekmeKalan", "sekmeBekleme", "sikiDonus", "sonumKalan", "desenFaz", "koruma", "geriCekKalan", "enerji",
 ] as const satisfies readonly (keyof Topac)[];
 
 /** Durumun sayısal özeti (sabit sıra). */
@@ -23,6 +25,18 @@ export function durumSayilari(d: Dunya): number[] {
   if (so) s.push(1, SONUC_KODU[so.tur], so.kazanan, so.kaybeden, so.puan, so.tick);
   else s.push(0, -1, -1, -1, 0, -1);
   for (const t of d.topaclar) for (const a of TOPAC_ALANLARI) s.push(t[a]);
+  // D2: maç fazı, saat, ani ölüm, çanak, takımlar (sabit sıra)
+  const m = d.mac;
+  s.push(MOD_KODU[m.mod], m.kalanTick, m.kutlamaKalan, m.saat, m.aniOlum, m.aniOlumTick, m.turNo, d.arenaYaricap);
+  const ms = m.macSonucu;
+  if (ms) s.push(1, ms.kazanan, NEDEN_KODU[ms.neden], ms.tick);
+  else s.push(0, -1, -1, -1);
+  if (d.takimlar) {
+    for (const tk of d.takimlar) {
+      s.push(tk.aktif, tk.geriCekHedef, tk.geriCekBekleme, tk.secim, tk.elenen);
+      for (const u of tk.uyeler) s.push(u.stamina, u.tik, u.enerji, u.elendi);
+    }
+  }
   return s;
 }
 

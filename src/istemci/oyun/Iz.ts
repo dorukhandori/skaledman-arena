@@ -39,10 +39,10 @@ export class Iz {
     this.rope.visible = false;
   }
 
-  /** Her kare: yeni konum + 0..1 güç (hız · kademe). */
-  guncelle(x: number, y: number, guc: number): void {
+  /** Her kare: yeni konum + 0..1 güç (hız · kademe). `uzun`: hız şeridinde iz uzar (nokta aralığı büyür). */
+  guncelle(x: number, y: number, guc: number, uzun = false): void {
     const son = this.gecmis[this.gecmis.length - 1];
-    if (!son || Math.hypot(x - son.x, y - son.y) > 2) {
+    if (!son || Math.hypot(x - son.x, y - son.y) > (uzun ? 5 : 2)) {
       this.gecmis.push({ x, y });
       if (this.gecmis.length > IZ_NOKTA) this.gecmis.shift();
     } else {

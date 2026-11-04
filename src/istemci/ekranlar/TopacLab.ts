@@ -3,16 +3,18 @@ import { botGirdisi, type BotKipi } from "../../paylasilan/bot/bot.ts";
 import { AYAR } from "../../paylasilan/kurallar/ayar.ts";
 import { adim, dunyaKur } from "../../paylasilan/sim/Dunya.ts";
 import { TOPAC_DURUM, type Dunya, type Olay } from "../../paylasilan/sim/durum.ts";
-import { kok2 } from "../../paylasilan/sim/fizik.ts";
+import { kok2, kusakta } from "../../paylasilan/sim/fizik.ts";
 import { DASH_PENCERESI_ADIM, aktifMi, staminaOrani } from "../../paylasilan/sim/topac.ts";
 import { BASLANGIC_SETLERI, CEKIRDEKLER, DISKLER, GOVDELER, UCLAR } from "../../paylasilan/veri/katalog.ts";
 import { type TopacProfili, topacProfiliKur } from "../../paylasilan/veri/profil.ts";
 import type { EkranBaglami } from "../main.ts";
+import { takimaYaz, takimlariOku } from "../oyun/takimlar.ts";
 import { Efektler } from "../oyun/Efektler.ts";
 import { OyuncuGirdisi } from "../oyun/Girdi.ts";
 import { Hud } from "../oyun/Hud.ts";
 import { Iz } from "../oyun/Iz.ts";
-import { ELEMENT_RENK, SAHNE_RENK } from "../oyun/renkler.ts";
+import { kenarUyarisiCiz } from "../oyun/KenarUyari.ts";
+import { ELEMENT_RENK } from "../oyun/renkler.ts";
 import { SAHNE, Sahne } from "../oyun/Sahne.ts";
 import { TopacGorsel } from "../oyun/TopacGorsel.ts";
 
@@ -210,7 +212,7 @@ class TopacLab {
     document.head.appendChild(this.stil);
     const p = this.panel;
     el("h2", p, "", "Topaç Lab");
-    el("div", p, "not", "D1 · çevrimdışı · 60 Hz deterministik sim. WASD sür, bota çarp.");
+    el("div", p, "not", "Çevrimdışı · 60 Hz deterministik sim. WASD sür, bota çarp. Tam maç: üst menüde Maç.");
 
     const parcaSecici = (taraf: 0 | 1, baslik: string) => {
       el("h3", p, "", baslik);
@@ -241,6 +243,7 @@ class TopacLab {
       }
     };
     parcaSecici(YEREL, "Senin topacın");
+    this.takimBolumu(p);
     parcaSecici(BOT, "Bot rakip");
     const kipL = el("label", p);
     el("span", kipL, "", "Bot kipi");
@@ -298,6 +301,40 @@ class TopacLab {
     const k = el("div", p, "not");
     k.innerHTML = "<kbd>WASD</kbd>/<kbd>oklar</kbd> sür · <kbd>Shift</kbd> dash · <kbd>Space</kbd> sekme · <kbd>Z</kbd> basılı sıkı dönüş · <kbd>R</kbd> yeni tur. Fare yalnız yetenek yönü (D3).";
     this.b.ustYazi.appendChild(p);
+  }
+
+  /** D2: parça seçimi takım seçimine evrilir. 3 kayıtlı takım (yer tutucu), seçimi bir yuvaya yaz, maça çık. */
+  private takimBolumu(p: HTMLElement): void {
+    el("h3", p, "", "Takım (maç için)");
+    const tl = el("label", p);
+    el("span", tl, "", "Takım");
+    const ts = el("select", tl);
+    const yl = el("label", p);
+    el("span", yl, "", "Yuva");
+    const ys = el("select", yl);
+    for (const k of [0, 1, 2]) { const o = el("option", ys, "", `${k + 1}. topaç`); o.value = String(k); }
+    const ozet = el("div", p, "not");
+    const yenile = () => {
+      const t = takimlariOku();
+      const secili = ts.value || "0";
+      ts.innerHTML = "";
+      t.forEach((x, k) => { const o = el("option", ts, "", x.ad); o.value = String(k); });
+      ts.value = secili;
+      const tk = t[Number(ts.value)]!;
+      ozet.textContent = tk.uyeler.map((u, k) => `${k + 1}) ${CEKIRDEKLER.find((c) => c.id === u.cekirdek)?.ad ?? u.cekirdek}`).join(" · ");
+    };
+    ts.addEventListener("change", yenile);
+    const d = el("div", p, "dugmeler");
+    const yaz = el("button", d, "", "Seçimi yuvaya yaz");
+    yaz.addEventListener("click", () => {
+      const hata = takimaYaz(Number(ts.value), Number(ys.value), this.secim[YEREL]);
+      yenile();
+      if (hata) ozet.textContent = hata;
+      yaz.blur();
+    });
+    const git = el("button", d, "bir", "Bu takımla maça çık");
+    git.addEventListener("click", () => { location.search = `?ekran=mac&takim=${ts.value}`; });
+    yenile();
   }
 
   private profilTablosuYaz(): void {
@@ -364,8 +401,12 @@ class TopacLab {
       g.guncelle(dt, ekran.x, ekran.y, t.durum === TOPAC_DURUM.durma ? 0.02 : oran, t.sekmeKalan > 0, this.efektler.yavas);
       const kademeGucu = g.kademeAdi === "yuksek" ? 1 : g.kademeAdi === "orta" ? 0.6 : 0.25;
       const hiz = kok2(t.vx, t.vz) / p.sim.vSurus;
-      this.izler[i]!.guncelle(ekran.x, ekran.y, aktifMi(t) ? Math.min(1, hiz) * kademeGucu * (t.dashKalan > 0 ? 1.6 : 1) : 0);
+      // hız şeridinde iz uzar (pixel planı § 6.2)
+      const serit = aktifMi(t) && kusakta(t, d.arenaYaricap) ? 1.6 : 1;
+      this.izler[i]!.guncelle(ekran.x, ekran.y, aktifMi(t) ? Math.min(1, hiz * serit) * kademeGucu * (t.dashKalan > 0 ? 1.6 : 1) : 0, serit > 1);
+      g.catlakAyarla(t.tik / p.parametreler.burstEsik);
     });
+    S.arena.guncelle(dt, d.arenaYaricap, d.topaclar.some((t) => aktifMi(t) && kusakta(t, d.arenaYaricap)), 0);
     this.onizleme.forEach((g, j) => g.guncelle(dt, g.kok.x, g.kok.y, KADEME_ONIZLEME[j]!.oran, false));
     this.kenarUyarisiCiz();
     this.hud.guncelle(d, dt);
@@ -377,42 +418,9 @@ class TopacLab {
     this.sayacYazi.textContent = `çarpışma: hafif ${s.hafif} · ağır ${s.agir} · kritik ${s.kritik} · temas ${s.yok}  |  duvar ${s.duvar}  |  Ring Out ${s.ringOut} · Parçalanma ${s.parcalanma} · Durma ${s.durma}  |  parçacık ${this.efektler.parcaciklar.canli}/400  |  ${this.fps.deger.toFixed(0)} fps  |  tık ${d.tick}`;
   }
 
-  /** H11 kenar uyarısı: d > 0,7R soluk amber yay; d > 0,85R ve dışa hız > %70 vRO kırmızı kalın 2 Hz. */
   private kenarUyarisiCiz(): void {
-    const g = this.kenarUyari.clear();
-    const d = this.dunya;
-    const R = AYAR.arenaYaricap;
-    for (const i of [YEREL, BOT]) {
-      const t = d.topaclar[i]!;
-      if (!aktifMi(t)) continue;
-      const m = kok2(t.x, t.z);
-      if (m <= AYAR.egimBaslangic * R) continue;
-      const a = Math.atan2(t.z, t.x);
-      const disa = (t.vx * t.x + t.vz * t.z) / (m || 1);
-      const tehlike = m > AYAR.kusakDis * R && disa > 0.7 * d.profiller[i]!.sim.ringOutHizi;
-      const cx = SAHNE.merkezX, cy = SAHNE.merkezY;
-      const yay = Math.PI / 6;
-      if (i === BOT) {
-        // rakip kenarda: ince kesikli yay ("fırsat")
-        for (let k = 0; k < 4; k++) {
-          const a0 = a - yay + (k * 2 * yay) / 4;
-          g.moveTo(cx + Math.cos(a0) * (R + 6), cy + Math.sin(a0) * (R + 6)).arc(cx, cy, R + 6, a0, a0 + yay / 4);
-        }
-        g.stroke({ width: 2, color: SAHNE_RENK.amber, alpha: 0.7 });
-        continue;
-      }
-      if (tehlike) {
-        const nabiz = 0.6 + 0.4 * Math.abs(Math.sin(performance.now() / 1000 * Math.PI * 2));
-        g.moveTo(cx + Math.cos(a - yay) * (R + 6), cy + Math.sin(a - yay) * (R + 6)).arc(cx, cy, R + 6, a - yay, a + yay).stroke({ width: 6, color: SAHNE_RENK.tehlike, alpha: nabiz });
-        const ux = S_x(t.x), uy = S_y(t.z) - 52;
-        g.poly([ux, uy - 9, ux + 8, uy + 6, ux - 8, uy + 6]).fill({ color: SAHNE_RENK.tehlike, alpha: nabiz });
-        g.rect(ux - 1, uy - 4, 2, 5).fill(0xffffff).rect(ux - 1, uy + 2, 2, 2).fill(0xffffff);
-      } else {
-        g.moveTo(cx + Math.cos(a - yay) * (R + 6), cy + Math.sin(a - yay) * (R + 6)).arc(cx, cy, R + 6, a - yay, a + yay).stroke({ width: 3, color: SAHNE_RENK.amber, alpha: 0.45 });
-      }
-    }
+    kenarUyarisiCiz(this.kenarUyari, this.dunya, YEREL, SAHNE.merkezX, SAHNE.merkezY, performance.now() / 1000);
   }
 }
 
-const S_x = (x: number) => SAHNE.merkezX + x;
-const S_y = (z: number) => SAHNE.merkezY + z;
+

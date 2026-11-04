@@ -22,6 +22,9 @@ export function topacKur(p: TopacProfili, x: number, z: number, desenFaz: number
     sikiDonus: 0,
     sonumKalan: 0,
     desenFaz,
+    koruma: 0,
+    geriCekKalan: 0,
+    enerji: 0,
   };
 }
 
@@ -38,6 +41,7 @@ export function sayaclariIlerlet(t: Topac): void {
   if (t.dashBekleme > 0) t.dashBekleme--;
   if (t.sekmeKalan > 0) t.sekmeKalan--;
   if (t.sekmeBekleme > 0) t.sekmeBekleme--;
+  if (t.koruma > 0) t.koruma--;
 }
 
 /**
