@@ -99,6 +99,7 @@ Bulut oturumunun ağ politikası şu alanları reddetti (curl CONNECT 403, WebFe
 | 3 | 12 Kenney Impact Sounds OGG (CC0, 84 101 B) indirildi | `590a067` | `kaynak/efekt/kenney-impact-sounds/` + LICENSE + KAYNAK.md; `manifest-ses.json` → `kayitAdaylari`; ses toplamı 288 817 B ≤ 500 KB |
 | 4 | pixelfx + pixel-vfx-codex lisans dosyaları, 16 efektlik pişirme reçetesi | `590a067` | `kaynak/efekt/pixelfx/recete.json`, `veri/manifest-gorsel.json` (atlas tahmini %42) |
 | 5 | Krediler | `590a067` | `docs/art/krediler.md` (MIT bildirim metni dahil) |
-| 6 | 3. tur: ağ yeniden denendi (22:48 UTC, hâlâ 403); hibrit kamera için efekt `duzlem` sınıflaması ve elips varyant kuralı | bu commit | `efekt-kaynaklari.md` § 8.6; reçete ve manifest `duzlem`/`hibritNot`/`kamera` alanları |
+| 6 | 3. tur: ağ yeniden denendi (22:48 UTC, hâlâ 403); hibrit kamera için efekt `duzlem` sınıflaması ve elips varyant kuralı | `9ea60d3` | `efekt-kaynaklari.md` § 8.6; reçete ve manifest `duzlem`/`hibritNot`/`kamera` alanları |
+| 7 | **pixelfx pişirme (sahip onayı bu oturumda)**: 16 efekt 12 fps, kare kırpma, 7 atlas (ortak 2048×1024 + 6 element ≤ 1024²), whirlpool SY fork, önizleme | (bu turun commit'i; `efekt-kaynaklari.md` § 8.7) | `kaynak/efekt/pixelfx/atlas/`, `onizleme.png`, `arac/`; manifest-gorsel `pisirildi` alanları |
 
-**Hâlâ açık:** K1 ağ izni bu konteynerde etkin değil (yeni oturum gerekebilir) · K2 render: ana oturum mesajıyla gelen onay bu oturumda izin yerine geçmedi; sahip bu oturumda doğrudan onaylarsa ya da yeni oturumda pişirilir · K3 Kenney: sahip "kullan" dedi (ana oturum aracılığıyla); dosyalar depoda, entegrasyon ayrı dilim · K4-K9 değişmedi.
+**Hâlâ açık:** K1 ağ izni bu konteynerde etkin değil (yeni oturum gerekebilir) · K2 render: sahip bu oturumda onayladı, **yapıldı** (adım 7) · K3 Kenney: sahip "kullan" dedi (ana oturum aracılığıyla); dosyalar depoda, entegrasyon ayrı dilim · K4-K9 değişmedi.

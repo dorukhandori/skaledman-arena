@@ -425,3 +425,32 @@ Kayıtlar: `veri/manifest-ses.json` → `kayitAdaylari` (oyun yüklemiyor), `ver
 - **Zemin dekalleri için elips varyant kuralı:** (1) Şok çemberi, toz halkası, Ulti telegraf halkası (dolan kırmızı halka, referans 08'deki eş merkezli iki halka), Alan Ulti dekalleri **kodla** `ellipse(rx, rx·k_y)` çizilir. Bugünkü kod yolu zaten Graphics; yalnız y ölçeği eklenir, entegrasyon dilimi. (2) Sheet'ten zemin öğesi istenirse efekt **yerel fork**'ta (MIT, değişiklik notuyla) zemin oranı k_y'ye göre yeniden parametrelenip pişirilir: `whirlpool` için `SY` 0,6 → k_y. (3) Pişmiş sheet tam sayı olmayan dikey ölçekle **basıklaştırılmaz**, çünkü pixel ızgarası bozulur (pixel planı § 1.3).
 - Kıvılcım yönü: `hit-spark` `aim` seçeneği çarpışma normalinin **ekran** açısına göre verilir: `(nx, nz·k_y)`, 05 § 3.3 ile aynı çevrim. 8 yön ön pişirme önerisi (§ 6.3) geçerli.
 - Atlas bütçesi değişmez (~%42): zemin öğeleri koddan geleceği için zemin sheet'leri kırpılıp küçülebilir.
+
+### 8.7 Pişirme (2026-11-04, sahip onayı)
+
+- **Komut:** `node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 [--opts '{"palette":[...]}']` (pixelfx `a841596`), sonra kare başına şeffaf kenar kırpma + raf paketleme (`kaynak/efekt/pixelfx/arac/`).
+- **İlk deneme reddedildi:** reçetedeki kare sınırı uzun efektlerde 3-4 fps verdi; § 5.2'deki 12 fps kuralına dönüldü.
+- **Bütçe:** 12 fps'te birleşik kutu kırpmayla tek atlas 2048²'nin 2,28 katı. § 5.2'deki öngörüyle bölündü:
+
+| Atlas | Boyut | Kare | Bayt | Efektler |
+|---|---|---|---|---|
+| `efekt.png` (ortak) | 2048×1024 | 114 | 656 280 | kivilcim, kritik, sekme-iz, toz-halka, zemin-sok, toz-bulut, enerji-doldu |
+| `efekt-kor.png` | 1024² | 45 | 516 616 | ulti-kor |
+| `efekt-don.png` | 1024² | 74 | 419 354 | don-kirilma, ulti-don |
+| `efekt-kaya.png` | 1024² | 39 | 188 952 | ulti-kaya |
+| `efekt-kasirga.png` | 1024×512 | 24 | 362 125 | ulti-kasirga |
+| `efekt-girdap.png` | 1024² | 55 | 518 978 | ulti-girdap, girdap-dekal (SY 0,875 fork) |
+| `efekt-simsek.png` | 1024×512 | 42 | 262 715 | simsek-carpma, telegraf-sarj |
+
+Maçta en çok 3 atlas yüklenir: ortak + iki elementinki. Toplam PNG 2,93 MB; tek maçta ~1,7 MB.
+
+**Önizlemede görülenler** (`kaynak/efekt/pixelfx/onizleme.png`, gözle bakıldı):
+- **Doğru çıkanlar:**
+  - Element paletleri tuttu: Don camgöbeği, Kor turuncu, Kasırga yeşil, Girdap mavi, Kaya bej, Şimşek sarı.
+  - `crit-hit` ve `hit-spark` referans 07'deki sarı-beyaz ışınsal patlamaya yakın.
+  - `tornado` dikey ve hibrit kamerada iyi okunuyor.
+  - `whirlpool` fork'ta daha yuvarlak çıktı (k_y'ye uygun).
+- **Sorunlu çıkanlar:**
+  - `frost-nova`, `fire-ring`, `ground-slam` ve `charge-up` zemin halkaları, § 8.6'da beklendiği gibi **çok basık** (yan görünüş). `fire-ring` son karelerinde yassı koyu yanık lekesi de var. Bu halkalar kodla elipse çevrilmeli ya da yalnız hava öğeleri kullanılmalı.
+  - `ground-slam`, `heavy-landing`, `poof` ve `collect-burst` pixelfx'in varsayılan **mor-gri / pembe** paletinde kaldı. `ground-slam`'da `stone: #4a3f69` seçeneği de mor; reçeteye yalnız `palette` verildi. Tasarım diline uymuyor: yeniden pişirmede nötr toz rampası (§ 5.3 Kaya rampası ya da gri-bej) ve `stone` seçeneği verilmeli.
+- **Entegrasyon için (src/ dilimi):** atlaslar `public/efekt/`'e taşınır; Pixi `Spritesheet` JSON doğrudan yüklenir (`animations` → `AnimatedSprite`, kare süresi `meta.devran.<ad>.kareMs`). `scaleMode = "nearest"`.

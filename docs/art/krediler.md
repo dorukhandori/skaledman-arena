@@ -8,12 +8,13 @@ Kural: yalnız ücretsiz ve lisansı uygun kaynak (CC0 tercih; MIT / CC-BY atıf
 | Varlık | Yazar / kaynak | Lisans | Atıf metni (oyun içi) | Durum |
 |---|---|---|---|---|
 | 12 metal / teneke / plaka / cam / çan vuruş sesi (`kaynak/efekt/kenney-impact-sounds/`) | Kenney, *Impact Sounds* — https://kenney.nl/assets/impact-sounds | CC0 1.0 | "Ses efektleri: Kenney (www.kenney.nl), CC0" | aday, entegre değil; köken GitHub aynası, kenney.nl'den yeniden doğrulanacak |
+| 7 efekt atlası, 16 efekt (`kaynak/efekt/pixelfx/atlas/`) | pixelfx (Patch, Hugo Duprez) | MIT | "Efektler: pixelfx — Patch, Hugo Duprez (MIT)" + aşağıdaki MIT bildirimi | pişirildi, entegre değil |
 
-## Kullanılması planlanan kod kaynaklı efektler (pişirilince eklenecek)
+## Pişirilmiş kod kaynaklı efektler
 
 | Kaynak | Telif | Lisans | Not |
 |---|---|---|---|
-| pixelfx — https://github.com/patch-gg/pixelfx (commit `a841596`) | Copyright (c) 2026 Patch; Copyright (c) 2026 Hugo Duprez (Sprite Fusion, https://www.spritefusion.com/pixel-art-vfx) | MIT | Tam metin `kaynak/efekt/pixelfx/LICENSE`. Pişmiş PNG'lerle birlikte bildirim korunur. Patch Pixel fontu MIT dışı, kullanılmaz |
+| pixelfx — https://github.com/patch-gg/pixelfx (commit `a841596`); 16 efekt pişirildi: `kaynak/efekt/pixelfx/atlas/` (7 atlas), `water/whirlpool` değiştirildi (SY) | Copyright (c) 2026 Patch; Copyright (c) 2026 Hugo Duprez (Sprite Fusion, https://www.spritefusion.com/pixel-art-vfx) | MIT | Tam metin `kaynak/efekt/pixelfx/LICENSE`. Pişmiş PNG'lerle birlikte bildirim korunur. Patch Pixel fontu MIT dışı, kullanılmaz |
 | pixel-vfx-codex — https://github.com/888wing/pixel-vfx-codex (commit `a7f829b`) | Copyright (c) 2026 Pixel VFX Codex contributors; 00GameDevs (@00vchannel); Amir Mushich (pixel-plays) | MIT | Tam metin `kaynak/efekt/pixel-vfx-codex/LICENSE`. 00GameDevs adı oyunda yalnız burada geçer |
 
 ## Kendi üretimimiz
