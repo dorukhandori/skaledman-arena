@@ -46,7 +46,7 @@ export function ayarlar(b: EkranBaglami): void {
   const { kart } = ekranKok(b.ustYazi, "Ayarlar");
   geriDugmesi(kart, b.ben?.girisli ? "atolye" : "karsilama");
   el("h2", "", kart, "Ayarlar");
-  el("label", "", kart, "Metin ölçeği (menüler)");
+  el("label", "", kart, "Metin ölçeği (menüler ve maç HUD'u)");
   const s = el("div", "satir", kart);
   s.setAttribute("role", "radiogroup");
   s.setAttribute("aria-label", "Metin ölçeği");

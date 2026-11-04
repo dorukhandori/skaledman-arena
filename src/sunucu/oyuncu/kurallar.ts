@@ -84,22 +84,61 @@ export interface SahipUye { cekirdek: string; govde: string; disk: string; uc: s
 
 /**
  * Ödünç topaç (nile B-10): sahip olunan Çekirdekler üçe ulaşana kadar boş yuvalar Lv.1 ödünç topaçla dolar.
- * Sunucu belirler: takımda olmayan başlangıç setleri, katalog sırasıyla. Devre dışı (ömrü biten Yapay) Çekirdek boş sayılır.
+ * Sunucu belirler: takımda olmayan başlangıç setleri, katalog sırasıyla. Devre dışı (ömrü biten Yapay) Çekirdek
+ * yuvası her zaman ödünçle dolar (B-27) ve kotayı tüketmez. `kota`: boş yuvaya verilebilecek ödünç sayısı
+ * (`oduncKotasi`: 3 − kullanılabilir Çekirdek); kotayı aşan boş yuva `null` (oynanamaz, ux § 7 "N yuva boş").
  */
-export function oduncDoldur(yuvalar: readonly (SahipUye | null)[]): TakimUyeKodu[] {
-  const dolu = [0, 1, 2].map((k) => {
-    const y = yuvalar[k] ?? null;
-    return y && !y.devreDisi ? y : null;
-  });
+export function takimUyeleri(yuvalar: readonly (SahipUye | null)[], kota = 3): { uyeler: (TakimUyeKodu | null)[]; bos: number } {
+  const ham = [0, 1, 2].map((k) => yuvalar[k] ?? null);
+  const dolu = ham.map((y) => (y && !y.devreDisi ? y : null));
   const kullanilan = new Set(dolu.filter((y): y is SahipUye => !!y).map((y) => y.cekirdek));
   const adaylar = BASLANGIC_SETLERI.filter((s) => !kullanilan.has(s.cekirdek));
   let a = 0;
-  return dolu.map((y): TakimUyeKodu => {
-    if (y && !(kullanilan.has(y.cekirdek) && dolu.filter((z) => z?.cekirdek === y.cekirdek).length > 1 && dolu.indexOf(y) !== dolu.findIndex((z) => z?.cekirdek === y.cekirdek))) {
+  let kalanKota = kota;
+  let bos = 0;
+  const uyeler = dolu.map((y, k): TakimUyeKodu | null => {
+    if (y && dolu.findIndex((z) => z?.cekirdek === y.cekirdek) === k) {
       return { cekirdek: y.cekirdek, govde: y.govde, disk: y.disk, uc: y.uc, seviye: y.seviye, odunc: false, yon: y.yon };
+    }
+    const devreDisi = !!ham[k]?.devreDisi;
+    if (!devreDisi) {
+      if (kalanKota <= 0) { bos++; return null; }
+      kalanKota--;
     }
     const s = adaylar[a++];
     if (!s) throw new Error("ödünç topaç için başlangıç seti kalmadı");
     return { cekirdek: s.cekirdek, govde: s.govde, disk: s.disk, uc: s.uc, seviye: ILERLEME.oduncSeviye, odunc: true, yon: "sag" };
   });
+  return { uyeler, bos };
+}
+
+/** D5 uyumluluğu: tüm boş yuvalar ödünçle (kota 3). */
+export function oduncDoldur(yuvalar: readonly (SahipUye | null)[]): TakimUyeKodu[] {
+  return takimUyeleri(yuvalar, 3).uyeler as TakimUyeKodu[];
+}
+
+// ---- D6: ad değişimi, takım adı ----
+
+export const AD_DEGISIM_GUN = 30;
+
+/**
+ * Ad değişiminin açılmasına kalan gün (0 = şimdi değiştirebilir; ux § 7 "Adı 30 günde bir değiştirebilirsin.").
+ * VARSAYIM: kayıttaki ad bir kez serbestçe değişir (ad_degisim = 0); sonra her değişimden 30 gün sonra.
+ */
+export function adDegisimKalanGun(o: { ad_degisti: number; ad_degisim: number }, simdi: number): number {
+  if (o.ad_degisim === 0) return 0;
+  const kalanMs = o.ad_degisti + AD_DEGISIM_GUN * 86400_000 - simdi;
+  return kalanMs > 0 ? Math.ceil(kalanMs / 86400_000) : 0;
+}
+
+export const TAKIM_AD_EN_COK = 20;
+const TAKIM_AD_DESENI = /^[\p{L}\p{N}][\p{L}\p{N} _.·'-]*$/u;
+
+export function takimAdDogrula(ham: string): { ad: string; hata: AdHatasi | null } {
+  const ad = adTemizle(ham);
+  const n = [...ad].length;
+  if (n < 1 || n > TAKIM_AD_EN_COK) return { ad, hata: "uzunluk" };
+  if (!TAKIM_AD_DESENI.test(ad)) return { ad, hata: "karakter" };
+  if (adUygunsuzMu(ad)) return { ad, hata: "uygunsuz" };
+  return { ad, hata: null };
 }

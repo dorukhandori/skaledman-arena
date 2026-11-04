@@ -97,6 +97,16 @@ export const GOCLER: readonly string[] = [
     PRIMARY KEY (mac_id, cekirdek_id)
   );
   `,
+  // 2: D6 Atölye: Çekirdek Günlüğü defteri, aktif takım, ad değişim sayacı, Çekirdek edinme zamanı
+  `
+  ALTER TABLE cekirdek ADD COLUMN mac_sayisi INTEGER NOT NULL DEFAULT 0;
+  ALTER TABLE cekirdek ADD COLUMN galibiyet INTEGER NOT NULL DEFAULT 0;
+  ALTER TABLE cekirdek ADD COLUMN kriz_galibiyet INTEGER NOT NULL DEFAULT 0;
+  ALTER TABLE cekirdek ADD COLUMN en_uzun_donus_sn INTEGER NOT NULL DEFAULT 0;
+  ALTER TABLE cekirdek ADD COLUMN edinme INTEGER NOT NULL DEFAULT 0;
+  ALTER TABLE oyuncu ADD COLUMN aktif_takim INTEGER NOT NULL DEFAULT 0;
+  ALTER TABLE oyuncu ADD COLUMN ad_degisim INTEGER NOT NULL DEFAULT 0;
+  `,
 ];
 
 /** Göçleri uygula; dönen: uygulanan göç sayısı. */

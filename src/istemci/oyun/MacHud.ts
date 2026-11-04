@@ -7,6 +7,8 @@ import { AYAR as AYAR_ } from "../../paylasilan/kurallar/ayar.ts";
 import { YETENEK_SIM } from "../../paylasilan/veri/yetenekSablon.ts";
 import { elementSvg } from "./elementSimge.ts";
 import { ELEMENT_RENK, KOKEN_RENK } from "./renkler.ts";
+import { metinOlcegiOku } from "../ekranlar/arayuz.ts";
+import { ayarlariOku } from "./Ayarlar.ts";
 
 // Maç HUD'u (ux § 2: H1-H15, 960×540 mantıksal DOM katmanı; konum ve boyutlar tablodan birebir).
 // Yazı boyutları: ad 10 · sayı 10 · tuş rozeti 10 · bekleme 12 · süre 14 · skor 20 · olay bandı 16.
@@ -111,6 +113,33 @@ const STIL = `
 .mh .en span.parilti i { background:#e6f8ff; }
 .mh .en em.ulti { color:#ffb347; text-shadow:0 0 4px #ff8a3d; }
 .mh .bant .els { display:inline-block; vertical-align:-3px; margin-left:6px; }
+.mh .pn > .sayi { position:absolute; top:21px; right:14px; font-size:10px; line-height:13px; font-weight:900; text-shadow:0 0 2px #000,0 1px 0 #000; z-index:1; }
+.mh .pn.sag > .sayi { right:auto; left:14px; }
+/* D6 HUD metin ölçeği (ux § 6.3: %100/125/150; panel yeniden dizilir, çubuklar sabit 272×14, Enerji 40×12, yuvalar 44×44) */
+.mh.o125 .pn { height:78px; } .mh.o150 .pn { height:92px; }
+.mh.o125 .pn .s1 { height:18px; font-size:12.5px; } .mh.o150 .pn .s1 { height:22px; font-size:15px; }
+.mh.o125 .bar { top:24px; } .mh.o150 .bar { top:28px; }
+.mh.o125 .pn > .sayi { top:24px; font-size:12px; line-height:14px; }
+.mh.o150 .pn > .sayi { top:48px; right:44px; font-size:15px; line-height:18px; } .mh.o150 .pn.sag > .sayi { right:auto; left:44px; }
+.mh.o125 .bar s { font-size:12px; } .mh.o150 .bar s { font-size:13px; }
+.mh.o125 .en { top:46px; } .mh.o150 .en { top:50px; }
+.mh.o125 .en em { font-size:12.5px; } .mh.o150 .en em { font-size:15px; }
+.mh.o125 .ct { top:44px; } .mh.o150 .ct { top:46px; left:258px; } .mh.o150 .pn.sag .ct { left:6px; }
+.mh.o125 .skor { font-size:25px; } .mh.o150 .skor { font-size:30px; line-height:31px; height:36px; }
+.mh.o125 .sure { font-size:17.5px; line-height:22px; height:26px; } .mh.o150 .sure { top:44px; font-size:21px; line-height:26px; height:30px; width:110px; left:425px; }
+.mh.o125 .bant { font-size:20px; height:40px; line-height:36px; top:90px; } .mh.o150 .bant { font-size:24px; height:46px; line-height:42px; top:100px; width:560px; left:200px; }
+.mh.o125 .yv .tus, .mh.o125 .yv .ic { font-size:12.5px; } .mh.o150 .yv .tus, .mh.o150 .yv .ic { font-size:15px; line-height:15px; }
+.mh.o125 .yv .n { font-size:15px; } .mh.o150 .yv .n { font-size:18px; }
+.mh.o125 .ya { font-size:10px; top:479px; line-height:12px; } .mh.o150 .ya { font-size:12px; top:476px; line-height:14px; }
+.mh.o125 .tk .tab, .mh.o125 .tk .ok { font-size:12.5px; } .mh.o150 .tk .tab, .mh.o150 .tk .ok { font-size:15px; top:-18px; }
+.mh.o125 .ds { height:110px; top:368px; } .mh.o150 .ds { height:124px; top:356px; }
+.mh.o125 .ds h4 { font-size:13.5px; line-height:17px; } .mh.o150 .ds h4 { font-size:16.5px; line-height:20px; }
+.mh.o125 .ds .kart { font-size:12.5px; height:60px; } .mh.o150 .ds .kart { font-size:15px; height:68px; }
+.mh.o125 .ip { font-size:15px; } .mh.o150 .ip { font-size:18px; }
+/* Yüksek kontrast HUD (ux § 6.3): opak panel, 2 px beyaz çerçeve */
+.mh.kontrast .pn, .mh.kontrast .skor, .mh.kontrast .sure, .mh.kontrast .bant, .mh.kontrast .yv, .mh.kontrast .tk, .mh.kontrast .ds, .mh.kontrast .ip { background:#000; border:2px solid #fff; box-shadow:none; }
+.mh.kontrast .pn .lv, .mh.kontrast .en em, .mh.kontrast .yv .tus, .mh.kontrast .ya { color:#fff; }
+.mh.kontrast .bar { border-color:#fff; } .mh.kontrast .en span { border-color:#fff; }
 `;
 
 function el<K extends keyof HTMLElementTagNameMap>(etiket: K, sinif = "", ust?: HTMLElement, metin = ""): HTMLElementTagNameMap[K] {
@@ -159,6 +188,11 @@ export class MacHud {
   kartSecildi: (uye: number) => void = () => {};
 
   constructor(ust: HTMLElement, private yerel: number, private adlar: [string, string]) {
+    // D6: metin ölçeği (Ayarlar; menülerle aynı) ve yüksek kontrast HUD'a da uygulanır
+    const o = metinOlcegiOku();
+    if (o > 1) this.kok.classList.add(o >= 1.5 ? "o150" : "o125");
+    if (ayarlariOku().kontrast === "acik") this.kok.classList.add("kontrast");
+    this.kok.dataset["olcek"] = String(o);
     this.stil.textContent = STIL;
     document.head.appendChild(this.stil);
     this.paneller = [this.panel(yerel === 0 ? "sol" : "sag"), this.panel(yerel === 0 ? "sag" : "sol")];
@@ -225,7 +259,7 @@ export class MacHud {
     const bar = el("div", "bar", kok);
     const dolgu = el("i", "", bar);
     for (const o of [AYAR.kritikEsik, 0.6]) { const u = el("u", "", bar); u.style.left = taraf === "sol" ? `${o * 100}%` : `${(1 - o) * 100}%`; }
-    const sayi = el("b", "", bar);
+    const sayi = el("b", "sayi", kok);
     const unlem = el("s", "", bar, "!");
     const en = el("div", "en", kok);
     const enerji: HTMLElement[] = [];

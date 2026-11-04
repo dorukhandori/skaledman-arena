@@ -5,11 +5,11 @@ import { bakimKatmani, darEkranDenetle, metinOlcegiUygula, surumDenetle, ustGezi
 // İstemci girişi. Ekran URL'den: ?ekran=<ad>. Varsayılan Karşılama (girişliyse profil → ilk çekirdek → Atölye;
 // ux § 3.1). `#oda=` bağlantısı lobiye açılır (girişsizse Karşılama). Her ekran modülü `baslat(baglam)` verir.
 // D5: karsilama, kayit, giris, profil, ilk-cekirdek, antrenman (misafire açık), atolye (ana ekran), market,
-// basarimlar, ayarlar, lobi; geliştirici: mac (bota karşı), topac-lab.
+// basarimlar, ayarlar, lobi; D6: dene (Atölye'den 30 sn Antrenman), gunluk (Çekirdek Günlüğü); geliştirici: mac, topac-lab.
 
 export type EkranAdi =
   | "karsilama" | "kayit" | "giris" | "profil" | "ilk-cekirdek" | "antrenman" | "atolye" | "market" | "basarimlar" | "ayarlar"
-  | "lobi" | "mac" | "topac-lab";
+  | "lobi" | "mac" | "topac-lab" | "dene" | "gunluk";
 
 export interface EkranBaglami {
   app: Application;
@@ -34,12 +34,14 @@ const EKRANLAR: Record<EkranAdi, () => Promise<Modul>> = {
   lobi: () => import("./ekranlar/Lobi.ts"),
   mac: () => import("./ekranlar/Mac.ts"),
   "topac-lab": () => import("./ekranlar/TopacLab.ts"),
+  dene: () => import("./ekranlar/Dene.ts"),
+  gunluk: () => import("./ekranlar/Gunluk.ts"),
 };
 
 /** Giriş isteyen ekranlar (misafir yalnız Karşılama / Kayıt / Giriş / Antrenman / Ayarlar). */
-const GIRIS_GEREKIR = new Set<EkranAdi>(["profil", "ilk-cekirdek", "atolye", "market", "basarimlar", "lobi"]);
+const GIRIS_GEREKIR = new Set<EkranAdi>(["profil", "ilk-cekirdek", "atolye", "market", "basarimlar", "lobi", "dene", "gunluk"]);
 /** Pixi gerekmeyen menü ekranları */
-const CANVASSIZ = new Set<EkranAdi>(["karsilama", "kayit", "giris", "profil", "atolye", "market", "basarimlar", "ayarlar"]);
+const CANVASSIZ = new Set<EkranAdi>(["karsilama", "kayit", "giris", "profil", "atolye", "market", "basarimlar", "ayarlar", "gunluk"]);
 
 function ekranAdi(): EkranAdi {
   const istenen = new URLSearchParams(location.search).get("ekran");

@@ -73,7 +73,7 @@ class LobiEkrani {
   kod = "";
   private rakipBulunduBitis = 0;
   private sonFaz = -1;
-  private secilenTakim: string;
+  private secilenTakim = "0";
   private zamanlayici = 0;
 
   private ben: Girisli;
@@ -84,7 +84,9 @@ class LobiEkrani {
     document.head.appendChild(this.stil);
     b.ustYazi.appendChild(this.kok);
     const takimlar = this.ben.takimlar;
-    this.secilenTakim = oku(TAKIM_ANAHTAR) ?? takimlar[0]?.id ?? "0";
+    // D6: varsayılan Atölye'deki aktif takım (oynanabilir takımlar sunucudan; eksik takım listelenmez)
+    if (!takimlar.length) { git("atolye"); return; }
+    this.secilenTakim = (this.ben.aktifTakim && takimlar.some((t) => t.id === this.ben.aktifTakim) ? this.ben.aktifTakim : null) ?? oku(TAKIM_ANAHTAR) ?? takimlar[0]?.id ?? "0";
     if (!takimlar.some((t) => t.id === this.secilenTakim)) this.secilenTakim = takimlar[0]?.id ?? "0";
     this.giris();
     (window as unknown as { __lobi: LobiEkrani }).__lobi = this;

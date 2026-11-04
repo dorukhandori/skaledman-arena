@@ -9,7 +9,7 @@ import {
 } from "../../ag/protokol.ts";
 import type { Olay } from "../../paylasilan/sim/durum.ts";
 import { dunyaHash } from "../../paylasilan/sim/hash.ts";
-import { BASLANGIC_TAKIMLARI, takimKoduYaz } from "../../paylasilan/veri/takimlar.ts";
+import { BASLANGIC_TAKIMLARI } from "../../paylasilan/veri/takimlar.ts";
 import { takimStaminaOrani } from "../../paylasilan/sim/mac.ts";
 import { staminaOrani } from "../../paylasilan/sim/topac.ts";
 import { ILERLEME } from "../../paylasilan/kurallar/ilerleme.ts";
@@ -17,8 +17,9 @@ import { type GirdiKaynagi, MacYonetimi } from "../mac/MacYonetimi.ts";
 import { kodAc, kodKapat, yeniKod } from "../odaKayit.ts";
 import { biletTuket, kokenIzinli } from "../kimlik.ts";
 import { type TakimYuvasi, depo } from "../db/depo.ts";
-import { oduncDoldur } from "../oyuncu/kurallar.ts";
 import { macSonuYaz } from "../oyuncu/macSonu.ts";
+import { DonusSayaci } from "../oyuncu/defter.ts";
+import { sunucuTakimlari } from "../oyuncu/takim.ts";
 import { GirdiSema, OdaSema, type OdaS, OyuncuSema, type OyuncuS } from "./sema.ts";
 import { dunyayiYaz } from "./semaYaz.ts";
 import { olcumKaydet } from "../olcum.ts";
@@ -32,13 +33,16 @@ import { olcumKaydet } from "../olcum.ts";
 interface KullaniciVerisi { i: number }
 /** Katılan: kayıtlı oyuncu (SQLite) ya da Antrenman misafiri (oyuncuId null). */
 interface OdaTakimi { id: string; kod: string; yuvalar: (TakimYuvasi | null)[] }
-interface Kimlik { oyuncuId: number | null; ad: string; takimlar: OdaTakimi[] }
+interface Kimlik { oyuncuId: number | null; ad: string; takimlar: OdaTakimi[]; aktifTakim: string }
 
 const HATA = { surum: 4101, katalog: 4102, kimlik: 4103, koken: 4104, sema: 4105, takim: 4106, ayni: 4107 } as const;
 
-/** Oyuncunun kayıtlı takımları → oda takımları (boş yuvalar ödünçle dolu kod). */
+/**
+ * Oyuncunun OYNANABİLİR kayıtlı takımları → oda takımları (boş yuvalar ödünç kotasıyla dolu kod; ömrü biten Yapay
+ * yuvası otomatik ödünç, nile B-27). Kotayı aşan boş yuvası olan takım (ux § 7 "N yuva boş") odaya alınmaz.
+ */
 export function odaTakimlari(oyuncuId: number): OdaTakimi[] {
-  return depo().takimlar(oyuncuId).map((t) => ({ id: String(t.takimNo), kod: takimKoduYaz(oduncDoldur(t.yuvalar)), yuvalar: t.yuvalar }));
+  return sunucuTakimlari(depo(), oyuncuId).filter((t) => t.kod).map((t) => ({ id: String(t.takimNo), kod: t.kod!, yuvalar: t.yuvalar }));
 }
 
 type GirdiS = InstanceType<typeof GirdiSema>;
@@ -68,7 +72,7 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
     // misafir yalnız Antrenman'a girer (tide O-1 b); oda kodu / hızlı maç bilet ister
     if (!k.data.bilet) {
       if (k.data.mod !== "antrenman") throw new ServerError(HATA.kimlik, "kimlik");
-      return { oyuncuId: null, ad: "Misafir", takimlar: [] };
+      return { oyuncuId: null, ad: "Misafir", takimlar: [], aktifTakim: "" };
     }
     const b = biletTuket(k.data.bilet);
     if ("hata" in b) throw new ServerError(HATA.kimlik, `kimlik:${b.hata}`);
@@ -77,7 +81,7 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
     if (this.oyuncuIdleri.includes(oy.id)) throw new ServerError(HATA.ayni, "ayni");
     const takimlar = odaTakimlari(oy.id);
     if (!takimlar.length) throw new ServerError(HATA.takim, "takim");
-    return { oyuncuId: oy.id, ad: oy.ad, takimlar };
+    return { oyuncuId: oy.id, ad: oy.ad, takimlar, aktifTakim: String(oy.aktif_takim) };
   }
 
   /** katılan oyuncuların kimlikleri (aynı hesap iki koltuğa oturamaz) ve takımları */
@@ -87,6 +91,7 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
   private macId = "";
   private macBaslangic = 0;
   private macYuvalari: [(TakimYuvasi | null)[], (TakimYuvasi | null)[]] = [[], []];
+  private donus = new DonusSayaci();
 
   onCreate(options: unknown): void {
     const o = KatilmaSema.safeParse(options);
@@ -145,8 +150,8 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
     p.ad = auth.ad;
     this.oyuncuIdleri[i] = auth.oyuncuId;
     this.odaTakimlari[i] = auth.takimlar;
-    // son kullanılan takım (istemci hatırlar) ya da ilk takım; misafir: başlangıç takımı
-    const t = auth.takimlar.find((x) => x.id === options.takimId) ?? auth.takimlar[0];
+    // istemcinin istediği takım, yoksa Atölye'de seçilen aktif takım (D6), yoksa ilk oynanabilir; misafir: başlangıç takımı
+    const t = auth.takimlar.find((x) => x.id === options.takimId) ?? auth.takimlar.find((x) => x.id === auth.aktifTakim) ?? auth.takimlar[0];
     p.takimId = t ? t.kod : BASLANGIC_TAKIMLARI[0]!.id;
     p.takimNo = t ? t.id : "";
     p.bagli = true;
@@ -238,6 +243,8 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
   private secimBaslat(): void {
     const s = this.state;
     this.bekleZamanlayici?.clear();
+    // D6: rövanşta takımlar SQLite'tan tazelenir (önceki maçın XP'si seviye atlattıysa yeni yuva kapısı, ömür, yön)
+    if (s.faz === ODA_FAZI.bitti) this.takimlariTazele();
     s.faz = ODA_FAZI.secim;
     s.secimKalan = SECIM_SN;
     s.beklemeKalan = 0;
@@ -246,11 +253,30 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
     this.broadcastPatch();
   }
 
+  private takimlariTazele(): void {
+    for (let i = 0; i < 2; i++) {
+      const id = this.oyuncuIdleri[i];
+      if (id === null || id === undefined) continue;
+      try {
+        const yeni = odaTakimlari(id);
+        if (!yeni.length) continue;
+        this.odaTakimlari[i] = yeni;
+        const p = this.oyuncu(i);
+        const t = yeni.find((x) => x.id === p.takimNo) ?? yeni[0]!;
+        p.takimId = t.kod;
+        p.takimNo = t.id;
+      } catch (e) {
+        console.error(`[mac ${this.roomId}] takım tazelenemedi`, e);
+      }
+    }
+  }
+
   private macBaslat(): void {
     const s = this.state;
     const takimlar: [string, string] = [this.oyuncu(0).takimId, this.oyuncu(1).takimId];
     this.yon = new MacYonetimi({ takimlar, tohum: randomInt(1, 0x7fffffff), bot: [this.oyuncu(0).bot, this.oyuncu(1).bot] });
     this.krizGordu = [false, false];
+    this.donus = new DonusSayaci();
     this.macId = randomUUID();
     this.macBaslangic = Date.now();
     // XP için maç başındaki sahip olunan yuvalar (seçilen takımın)
@@ -284,6 +310,7 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
     if (s.faz === ODA_FAZI.mac && y) {
       const k: [GirdiKaynagi | null, GirdiKaynagi | null] = [this.kaynak(0), this.kaynak(1)];
       const r = y.adimla(k);
+      if (r.adimAtti) this.donus.adim(y.dunya);
       // krizden galibiyet (tuning § 14): sahadaki topaç stamina < %25 gördü mü
       for (let i = 0; i < 2; i++) {
         if (!this.krizGordu[i] && y.dunya.mac.faz === "tur" && staminaOrani(y.dunya.topaclar[i]!, y.dunya.profiller[i]!) < ILERLEME.krizEsik) this.krizGordu[i] = true;
@@ -345,6 +372,7 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
         takimKodlari: [this.oyuncu(0).takimId, this.oyuncu(1).takimId], yuvalar: this.macYuvalari, sonuc: ms,
         sureSn: y.dunya.mac.saat / SIM_HZ, krizGordu: this.krizGordu,
         kalanStaminaOrani: [takimStaminaOrani(y.dunya, 0), takimStaminaOrani(y.dunya, 1)], katalogOzeti: KATALOG_OZETI, baslangic: this.macBaslangic,
+        enUzunDonusSn: this.donus.saniye(), kararma: [y.dunya.kararma[0], y.dunya.kararma[1]],
       });
       for (let i = 0; i < 2; i++) {
         const c = this.istemciler[i];

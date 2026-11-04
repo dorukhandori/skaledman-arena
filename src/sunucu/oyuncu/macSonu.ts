@@ -36,6 +36,10 @@ export interface MacSonuGirdisi {
   kalanStaminaOrani: readonly [number, number];
   katalogOzeti: string;
   baslangic: number;
+  /** D6 defter: yuva (takım sırası) başına bu maçtaki en uzun kesintisiz dönüş (sn) */
+  enUzunDonusSn?: readonly [readonly number[], readonly number[]];
+  /** D6 defter: oyuncu başına maçtaki Kararma artışı (Karanlık Kara yetenekleri; sim `d.kararma`) */
+  kararma?: readonly [number, number];
 }
 
 export function sonucTuru(s: MacSonucu, i: number): MacSonuTuru {
@@ -57,7 +61,10 @@ export function oduller(g: MacSonuGirdisi, i: number): { satirlar: OdulSatiri[];
   const tur = sonucTuru(g.sonuc, i);
   const satirlar: OdulSatiri[] = [];
   const yazim: XpYazimi[] = [];
-  for (const y of g.yuvalar[i] ?? []) {
+  const sayildi = tur !== "iptal";
+  const yuvalar = g.yuvalar[i] ?? [];
+  for (let k = 0; k < yuvalar.length; k++) {
+    const y = yuvalar[k];
     if (!y || y.devreDisi) continue;
     const t = cekirdekBul(y.cekirdek);
     const x = macXp({ sonuc: tur, krizGordu: g.krizGordu[i]!, kalanStaminaOrani: g.kalanStaminaOrani[i]!, yapay: t.koken === "yapay", oda: g.mod === "oda" });
@@ -69,7 +76,13 @@ export function oduller(g: MacSonuGirdisi, i: number): { satirlar: OdulSatiri[];
       cekirdekId: y.cekirdekId, tanimId: y.cekirdek, ad: t.ad, seviyeOnce: y.seviye, seviye, xpOnce: y.tecrube, xp, kazanc: x.toplam,
       alt: a.alt, ust: a.ust, yeniYetenek: seviye > y.seviye ? yeniYetenekAdi(y.cekirdek, seviye) : null, omur,
     });
-    yazim.push({ cekirdekId: y.cekirdekId, kazanc: x.toplam, tecrube: xp, seviye, omur });
+    yazim.push({
+      cekirdekId: y.cekirdekId, kazanc: x.toplam, tecrube: xp, seviye, omur,
+      mac: sayildi ? 1 : 0, galibiyet: tur === "galibiyet" ? 1 : 0, krizGalibiyet: tur === "galibiyet" && g.krizGordu[i] ? 1 : 0,
+      donusSn: sayildi ? (g.enUzunDonusSn?.[i]?.[k] ?? 0) : 0,
+      // VARSAYIM: sim Kararma'yı oyuncu başına sayar; takımdaki Karanlık Çekirdeklere yazılır
+      kararma: sayildi && t.koken === "karanlik" ? (g.kararma?.[i] ?? 0) : 0,
+    });
   }
   return { satirlar, yazim };
 }

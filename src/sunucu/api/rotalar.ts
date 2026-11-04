@@ -1,4 +1,3 @@
-import type { IncomingMessage, ServerResponse } from "node:http";
 import { z } from "zod";
 import { PROTOKOL_SURUMU } from "../../ag/protokol.ts";
 import { KATALOG_OZETI } from "../../ag/katalog.ts";
@@ -6,22 +5,22 @@ import { ELEMENT_CARKI } from "../../paylasilan/kurallar/ayar.ts";
 import { seviyeAraligi } from "../../paylasilan/kurallar/ilerleme.ts";
 import { cekirdekBul } from "../../paylasilan/veri/katalog.ts";
 import { type Depo, depo } from "../db/depo.ts";
+import { type Istek, type Uygulama, type Yanit, govdeOku, ip, kokenTamam, oturumId, oturumdakiOyuncu, yaz } from "./ortak.ts";
+import { atolyeRotalariKur } from "./atolye.ts";
+
+export type { Istek, Uygulama, Yanit };
+export { oturumdakiOyuncu };
 import {
-  BILET_SN, OTURUM_CEREZI, OTURUM_GUN, biletUret, cerezBasligi, cerezleriCoz, denemeIzinli, kimlikModu, kokenIzinli,
-  oturumCereziCoz, oturumCereziDegeri, sahteDogrula, sifreDogrula, sifreHashle, yeniOturumId,
+  BILET_SN, OTURUM_CEREZI, OTURUM_GUN, biletUret, cerezBasligi, denemeIzinli, kimlikModu, oturumCereziDegeri, sahteDogrula,
+  sifreDogrula, sifreHashle, yeniOturumId,
 } from "../kimlik.ts";
-import { adAnahtari, adDogrula, oduncDoldur, sifreDogrula as sifreKurali, takimEksigi } from "../oyuncu/kurallar.ts";
+import { adAnahtari, adDogrula, sifreDogrula as sifreKurali } from "../oyuncu/kurallar.ts";
+import { sunucuTakimlari } from "../oyuncu/takim.ts";
+import type { TakimUyeKodu } from "../../paylasilan/veri/takimlar.ts";
 import { acikOdaSayisi } from "../odaKayit.ts";
 
 // REST uçları (docs/tech/backend.md). Express 5 (Colyseus `defineServer.express`) üstünde; express tipleri kurulu
 // değil, yalnız kullandığımız yüzey. Tüm yazımlar sunucuda; istemci hiçbir sayaç/Altın/XP göndermez.
-
-export type Istek = IncomingMessage & { params: Record<string, string | undefined>; query: Record<string, unknown>; body?: unknown };
-export type Yanit = ServerResponse & { json(v: unknown): void; status(k: number): Yanit; set(k: string, v: string): void };
-export interface Uygulama {
-  get(yol: string, f: (q: Istek, r: Yanit) => void | Promise<void>): void;
-  post(yol: string, f: (q: Istek, r: Yanit) => void | Promise<void>): void;
-}
 
 export const AMBLEMLER = ELEMENT_CARKI; // arma: 6 element simgesi (US-1.2)
 export const RENKLER = ["#f4cf47", "#e3350d", "#2fb8e8", "#7fe3a0", "#c58bff", "#f2a33a"] as const;
@@ -32,55 +31,10 @@ const GirisSema = z.object({ ad: z.string().max(64), sifre: z.string().max(256) 
 const ProfilSema = z.object({ arma: z.enum(AMBLEMLER as unknown as [string, ...string[]]), renk: z.enum(RENKLER), destekKanali: z.string().trim().max(25).regex(/^[A-Za-z0-9_]*$/).optional() });
 const IlkCekirdekSema = z.object({ set: z.string().max(20) });
 
-async function govdeOku(q: Istek): Promise<unknown> {
-  if (q.body && typeof q.body === "object") return q.body;
-  const parcalar: Buffer[] = [];
-  let boy = 0;
-  for await (const p of q as AsyncIterable<Buffer>) {
-    boy += p.length;
-    if (boy > 16 * 1024) throw new Error("govde");
-    parcalar.push(p);
-  }
-  const metin = Buffer.concat(parcalar).toString("utf8");
-  return metin ? JSON.parse(metin) : {};
-}
-
-function ip(q: Istek): string {
-  if (process.env.GUVENILIR_VEKIL === "1") {
-    const h = q.headers["cf-connecting-ip"] ?? q.headers["x-forwarded-for"];
-    const v = Array.isArray(h) ? h[0] : h;
-    if (v) return v.split(",")[0]!.trim();
-  }
-  return q.socket.remoteAddress ?? "?";
-}
-
-function oturumId(q: Istek): string | null {
-  return oturumCereziCoz(cerezleriCoz(q.headers.cookie)[OTURUM_CEREZI]);
-}
-
-/** Geçerli oturumun oyuncusu. */
-export function oturumdakiOyuncu(q: Istek, d: Depo = depo()): number | null {
-  const id = oturumId(q);
-  return id ? d.oturumOyuncusu(id, Date.now()) : null;
-}
-
 function oturumAc(r: Yanit, oyuncuId: number, d: Depo): void {
   const id = yeniOturumId();
   d.oturumAc(id, oyuncuId, Date.now() + OTURUM_GUN * 86400_000);
   r.setHeader("Set-Cookie", cerezBasligi(OTURUM_CEREZI, oturumCereziDegeri(id), OTURUM_GUN * 86400));
-}
-
-/** Yazım uçları: Origin izinli olmalı (CSRF; SameSite=Lax'a ek). */
-function kokenTamam(q: Istek, r: Yanit): boolean {
-  const o = q.headers.origin;
-  if (kokenIzinli(typeof o === "string" ? o : null)) return true;
-  r.status(403).json({ hata: "koken" });
-  return false;
-}
-
-function yaz(r: Yanit, kod: number, v: unknown): void {
-  r.setHeader("Cache-Control", "no-store");
-  r.status(kod).json(v);
 }
 
 /** Oturumdaki oyuncunun tam görünümü (`/api/ben`). */
@@ -93,11 +47,10 @@ export function benGorunumu(d: Depo, oyuncuId: number) {
     const a = seviyeAraligi(c.seviye);
     return { id: c.id, tanimId: c.tanim_id, ad: t.ad, element: t.element, koken: t.koken, seviye: c.seviye, tecrube: c.tecrube, alt: a.alt, ust: a.ust, omur: c.omur, yon: c.yon };
   });
-  const takimlar = d.takimlar(oyuncuId).map((t) => {
-    const eksikHam = takimEksigi(t.yuvalar.map((y) => (y && !y.devreDisi ? y.cekirdek : null)));
-    const uyeler = oduncDoldur(t.yuvalar);
-    return { id: String(t.takimNo), ad: t.ad, uyeler, eksik: takimEksigi(uyeler.map((u) => u.cekirdek)), bos: eksikHam };
-  });
+  // D6: yalnız oynanabilir takımlar (Lobi, Antrenman); düzenleme görünümü /api/atolye
+  const takimlar = sunucuTakimlari(d, oyuncuId).filter((t) => t.oynanabilir).map((t) => ({
+    id: String(t.takimNo), ad: t.ad, uyeler: t.uyeler as TakimUyeKodu[], eksik: 0, bos: 0,
+  }));
   return {
     girisli: true as const,
     protokol: PROTOKOL_SURUMU,
@@ -105,6 +58,7 @@ export function benGorunumu(d: Depo, oyuncuId: number) {
     oyuncu: { id: o.id, ad: o.ad, arma: o.arma, renk: o.renk, destekKanali: o.destek_kanali, profilTamam: o.arma !== null },
     cekirdekler,
     takimlar,
+    aktifTakim: String(o.aktif_takim),
     basarimlar,
     marketAcik: basarimlar.includes(ILK_DEVIR),
   };
@@ -217,4 +171,6 @@ export function rotalariKur(app: Uygulama): void {
     if (id === null) { yaz(r, 401, { hata: "oturum" }); return; }
     yaz(r, 200, { bilet: biletUret(id), sn: BILET_SN });
   });
+
+  atolyeRotalariKur(app);
 }

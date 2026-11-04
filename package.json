@@ -20,7 +20,8 @@
     "ag:matris": "tsx araclar/ag-matris.ts",
     "ag:ekran": "tsx araclar/ag-ekran.ts",
     "ag:simulator": "tsx araclar/ag-simulatoru.ts",
-    "d5:akis": "tsx araclar/d5-akis.ts"
+    "d5:akis": "tsx araclar/d5-akis.ts",
+    "d6:akis": "tsx araclar/d6-akis.ts"
   },
   "dependencies": {
     "@colyseus/monitor": "0.18.7",

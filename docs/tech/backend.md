@@ -1,6 +1,6 @@
 # Devran backend: kimlik, oturum, oda bileti, SQLite, API
 
-**Tarih:** 2026-11-04 (D5) · **Şapka:** `@vault` · Kod: `src/sunucu/` · Testler: `test/kimlik.test.ts`, `test/db.test.ts`, `test/api.test.ts`.
+**Tarih:** 2026-11-04 (D5; D6 Atölye eki) · **Şapka:** `@vault` · Kod: `src/sunucu/` · Testler: `test/kimlik.test.ts`, `test/db.test.ts`, `test/api.test.ts`.
 Bağlı: axiom § 2 #19 (şema), #22 (kimlik), #24 (silme ucu D8); `netcode.md` (oda); tuning § 14, § 17 (XP, Yapay ömrü).
 
 > **Sahip kararı (2026-11-04):** Kick OAuth en sona bırakıldı (D8 sonrası ayrı dilim). D5'te kimlik **oyuncu adı + şifre**.
@@ -18,6 +18,12 @@ Bağlı: axiom § 2 #19 (şema), #22 (kimlik), #24 (silme ucu D8); `netcode.md` 
 | `src/sunucu/db/sema.ts`, `depo.ts` | Göçler (`PRAGMA user_version`) ve veri erişimi. **better-sqlite3 yalnız burada** (eslint yalıtımı) |
 | `src/paylasilan/kurallar/ilerleme.ts` | XP/seviye/ömür sayıları ve saf hesap (istemci gösterir, sunucu yazar) |
 | `src/paylasilan/veri/takimlar.ts` | Kayıtlı takım kodu `cekirdek:govde:disk:uc:seviye:odunc:yon` × 3 (`|`) |
+| `src/sunucu/api/ortak.ts` | D6: REST ortak yardımcılar (gövde, Origin, oturum, `yazimGirisi`) |
+| `src/sunucu/api/atolye.ts` | D6: Atölye uçları (envanter/takım/ad/yön/aktif takım + geliştirme uçları) |
+| `src/sunucu/oyuncu/takim.ts` | D6: kayıtlı takımın sunucu görünümü (ödünç kotası, oynanabilirlik, maç kodu) — `/api/ben`, `/api/atolye`, MacOdasi tek yol |
+| `src/sunucu/oyuncu/defter.ts` | D6: maç içi en uzun dönüş sayacı (Çekirdek Günlüğü) |
+| `src/paylasilan/kurallar/atolye.ts` | D6: saf takım kuralı (`takimDegerlendir`), parça takma/çakışma, envanter görünürlüğü |
+| `src/paylasilan/veri/cubuklar.ts` | D6: 6 Atölye çubuğu (tide C-1), katalog aralığına göre 0-100 |
 
 ## 2. Kimlik
 
@@ -56,7 +62,26 @@ Bağlı: axiom § 2 #19 (şema), #22 (kimlik), #24 (silme ucu D8); `netcode.md` 
 | `POST /api/bilet` | çerez + Origin | — | `{bilet, sn: 60}` |
 | `GET /api/oda/:kod` | — | — | `{durum: acik·dolu·suresiDoldu·yok}` |
 
-İstemci hiçbir sayaç, Altın ya da XP göndermez. Gövde ≤ 16 KB, `zod` ile doğrulanır; hatalı gövde 400 `bicim`.
+**D6 Atölye uçları** (`src/sunucu/api/atolye.ts`; hepsi çerez, yazımlar + Origin; istemci yalnız örnek kimliği gönderir):
+
+| Uç | Girdi | Çıktı / hata |
+|---|---|---|
+| `GET /api/atolye` | — | `{oyuncu (+adKalanGun), aktifTakim, cekirdekler (+defter, ciftYon, devreDisi), parcalar, takimlar (yuvalar = örnek kimlikleri, degerlendirme, oynanabilir, uyeler, cubuklar sunucuda), basarimIlerleme, takimTavani, gelistirme}` |
+| `PUT /api/takim/:sira` | `{ad?, yuvalar: [{cekirdek, govde, disk, uc} kimlik\|null] × 3}` | 200 `{atolye}` · 400 `sahipDegil·yanlisTur·ayniCekirdek·parcaTekrar·parcaEksik·cekirdekYok` (+ `yuva`, `tur`) · 404 `yok` · 400 `sira` |
+| `POST /api/takim` | `{ad?}` | 201 `{takimNo, atolye}` (yuvalar boş) · 409 `dolu` (3 takım) |
+| `PATCH /api/takim/:sira` | `{ad}` (1-20, filtre) | 200 · 400 `ad-uzunluk·ad-karakter·ad-uygunsuz` |
+| `PATCH /api/aktif-takim` | `{takimNo}` | 200 (maça girişte varsayılan takım) · 404 |
+| `PATCH /api/cekirdek/:id` | `{yon: sag·sol}` | 200 · 400 `yonSabit` (yalnız çift yönlü Yapay) · 404 |
+| `PATCH /api/ad` | `{ad}` | 200 · 400 `uzunluk·karakter·uygunsuz·ayni` · 409 `sure` (+`kalanGun`) · 409 `alinmis` |
+| `POST /api/profil` | (D5, düzenlemede de) arma/renk/destek | 200 |
+| `POST /api/gelistirme/parca-ver` | `{tanim}` | 201 (Çekirdek → Lv.1 satırı) — **yalnız NODE_ENV≠production ve geri döngü adresi**, yoksa 404 |
+| `POST /api/gelistirme/xp-ver` | `{cekirdekId, xp ±5000}` | 200 `{seviye, tecrube}` — aynı kapı |
+
+Takım kuralı (paylaşılan `takimDegerlendir`, istemci aynısını anında gösterir): yuva ya tamamen boş ya da Çekirdek + Gövde +
+Disk + Uç; sahiplik; tür/yuva; 3 farklı Çekirdek (örnek ve tanım); bir parça takımda tek topaçta. **Ödünç kotası** =
+3 − kullanılabilir Çekirdek sayısı: boş yuvalar kota kadar ödünçle dolar, aşan boş yuva takımı oynanamaz yapar (ux § 7
+"Takımda 3 farklı Çekirdek olmalı. N yuva boş."). Ömrü biten Yapay yuvası kota dışı ödünçle dolar (B-27). Ad değişimi:
+kayıttan sonraki ilk değişim serbest, sonra `ad_degisti`'den 30 gün. İstemci hiçbir sayaç, Altın ya da XP göndermez. Gövde ≤ 16 KB, `zod` ile doğrulanır; hatalı gövde 400 `bicim`.
 
 ## 4. SQLite şeması (göç 1)
 
@@ -76,6 +101,12 @@ basarim(oyuncu_id, basarim_id, ilerleme, tamam, PK(oyuncu_id, basarim_id))   -- 
 mac(id PK uuid, mod, a, b, kazanan (oyuncu id), puan "3-1", sure sn, bitis_nedeni, katalog_ozeti, baslangic ms, takim_a, takim_b)
 cekirdek_xp(mac_id → mac, cekirdek_id, kazanc, PK(mac_id, cekirdek_id))   -- XP günlüğü (idempotentlik)
 ```
+
+**Göç 2 (D6):** `cekirdek` + `mac_sayisi`, `galibiyet`, `kriz_galibiyet`, `en_uzun_donus_sn`, `edinme`; `oyuncu` +
+`aktif_takim`, `ad_degisim` (hepsi `DEFAULT 0`, `ALTER TABLE ADD COLUMN`; D5 veritabanı açılışta yerinde göç eder).
+Defter maç sonunda `macYaz` işleminde (aynı `mac.id` ikinci kez yazılmaz): sayılan maçta +1, galibiyet, krizden galibiyet,
+`MAX(en_uzun_donus_sn)` (sahada kesintisiz süre, `DonusSayaci`), Kararma (oyuncu başı sim sayacı takımdaki Karanlık
+Çekirdeklere). Rövanşta oda takımları SQLite'tan tazelenir (seviye atlayan Çekirdek yeni yuva kapısıyla girer).
 
 Doldurulan (D5): `oyuncu`, `oturum`, `cekirdek`, `parca`, `takim`, `basarim` (ilk-devir), `mac`, `cekirdek_xp`. `altin_defteri` D7.
 
