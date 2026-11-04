@@ -560,7 +560,30 @@ kenney.nl otomatik istemciyi reddediyor (§ 9.1). Paket OGA'da ve kenney.itch.io
 
 ### 9.8 Sahip kararı bekleyenler
 
-- **K10 müzik bütçesi:** § 9.4'teki (a), (b) ya da (c).
+- ~~K10 müzik bütçesi~~ → **karar verildi** (§ 9.9).
 - **K12 elle indirme:** Yalnız Kenney Impact zip'i (kenney.nl otomatik istemciyi reddediyor; tarayıcıdan).
-- **K14 Aim/Foozle seçimi:** § 9.5 önerisi (Aim 2 sheet Parçalanma/Don için, Foozle yedek) onaylanırsa ortak atlasa eklenir.
+- ~~K14 Aim seçimi~~ → **eklendi** (§ 9.9).
 - **K13 G17 Ragnapixel (CC-BY 4.0):** Yalnız ücretsiz demo kullanılabilir; gerekli mi?
+
+### 9.9 Sahip kararları uygulandı (2026-11-04, ~23:55 UTC)
+
+**Aim şeritleri atlasta.** `kaynak/efekt/pixelfx/arac/harici.py` şeridi element rampasına boyar: kaynaktaki benzersiz renkler parlaklık sırasına göre rampaya eşit dağıtılır, gerekirse `renkHaritasi` ile elle düzeltilir. Sonra `pack.py` paketler.
+
+| Efekt adı | Kaynak | Atlas | Kare | Renk |
+|---|---|---|---|---|
+| `kor-bulut` | Aim `Realistic_Blast_default` (CC0) | `efekt-kor.png` (1024², 524 389 B) | 11 @ 12 fps, 64×64 | Kor rampası; duman `#3A3430` |
+| `don-parca` | Aim `Foam_bubble_explosion` (CC0) | `efekt-don.png` (**2048×1024**, 432 829 B) | 10 @ 12 fps, 64×64 | dolgu `#DDF7FF`, kontur `#2E6A80` |
+
+- `efekt-don` raf paketlemede 1024²'yi aştı ve 2048×1024 oldu; hâlâ ≤ 2048².
+- Toplam atlas PNG: 2 946 613 B.
+- Diğer 5 atlas bayt bayt aynı.
+
+**Müzik.** Lisanslı parçalar (M1, M5) sona bırakıldı. Yerine kendi sentezimiz `kaynak/efekt/muzik-sentez/atari-dongu.ogg` geldi: 16 sn, 120 BPM, 60 053 B, CC0.
+- **Ses toplamı:** 399 557 B ≤ 512 000 (kalan 112 443 B).
+
+**Ses düğmesi şartı.** Ses her ekranda tek tıkla kapatılıp açılabilmeli. `docs/ux/kontrol-ve-hud.md` § 2'ye **H16** satırı eklendi:
+- Her zaman görünen hoparlör düğmesi; M tuşuyla aynı işi yapar.
+- Müzik ve Efekt için iki kaydırıcı; müzik varsayılanı %40.
+- Durum `localStorage`'da saklanır.
+
+Uygulama src/ dilimine aittir (`@glyph` / `@byte`).

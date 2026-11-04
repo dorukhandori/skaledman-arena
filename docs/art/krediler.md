@@ -12,7 +12,7 @@ Kural: yalnız ücretsiz ve lisansı uygun kaynak (CC0 tercih; MIT / CC-BY atıf
 | Cam kırılma sesi (`kaynak/efekt/oga-glass-break/`) | Till Behrend — https://opengameart.org/content/glass-break | CC0 1.0 | "Cam kırılma: Till Behrend (OpenGameArt), CC0" | aday, entegre değil; mono OGG |
 | 2 buz kırılma sesi (`kaynak/efekt/oga-ice-shatter/`) | IgnasD — https://opengameart.org/content/ice-breakingshattering | CC0 1.0 | "Buz kırılma: IgnasD (OpenGameArt), CC0" | aday, entegre değil; 22 kHz OGG |
 | UI tık + onay (`kaynak/efekt/kenney-interface-sounds/`) | Kenney, *Interface Sounds* — https://opengameart.org/content/interface-sounds | CC0 1.0 | "Arayüz sesleri: Kenney (www.kenney.nl), CC0" | aday, entegre değil; dosyalar aynen, Kenney `License.txt` dahil |
-| 9 patlama sprite sheet'i (`kaynak/efekt/aim-explosions/`) | Aim studios — https://aim-studios.itch.io/explosions-pixel-art | CC0 1.0 | "Patlama efektleri: Aim studios (CC0)" | aday, atlasa alınmadı |
+| 9 patlama sprite sheet'i (`kaynak/efekt/aim-explosions/`) | Aim studios — https://aim-studios.itch.io/explosions-pixel-art | CC0 1.0 | "Patlama efektleri: Aim studios (CC0)" | 2 şerit element rengine boyanıp atlasa alındı (`efekt-kor` kor-bulut, `efekt-don` don-parca); entegre değil |
 | Büyü efektleri sheet'i (`kaynak/efekt/foozle-pixel-magic/`) | lordfitoi, Foozle dağıtımı — https://foozlecc.itch.io/pixel-magic-sprite-effects | CC0 1.0 | "Büyü efektleri: Foozle / lordfitoi (CC0)" | yedek havuz, atlasa alınmadı |
 | 7 efekt atlası, 16 efekt (`kaynak/efekt/pixelfx/atlas/`) | pixelfx (Patch, Hugo Duprez) | MIT | "Efektler: pixelfx — Patch, Hugo Duprez (MIT)" + aşağıdaki MIT bildirimi | pişirildi, entegre değil |
 
@@ -28,6 +28,7 @@ Kural: yalnız ücretsiz ve lisansı uygun kaynak (CC0 tercih; MIT / CC-BY atıf
 | Varlık | Araç | Lisans |
 |---|---|---|
 | 16 sentez ses (`public/ses/*.wav`) | `araclar/ses-uret.ts` | CC0 (bizim) |
+| Atari arka plan döngüsü (`kaynak/efekt/muzik-sentez/atari-dongu.ogg`) | `kaynak/efekt/muzik-sentez/atari-dongu.py` | CC0 (bizim) |
 
 ## MIT bildirimi (oyun içi krediler sayfasına eklenecek metin)
 
