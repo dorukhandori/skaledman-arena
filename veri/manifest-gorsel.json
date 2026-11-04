@@ -681,5 +681,32 @@
   "k_y": "≈0,85-0,90 (tasarim-dili K-1 C; kesin değer Sahne'de belirlenecek)",
   "kural": "duzlem=hava olan sheet'ler doğrudan; duzlem=zemin olanlarda halka/dekal kodla elips (rx, rx·k_y) çizilir ya da sheet k_y'ye göre yeniden parametrelenerek (yerel fork) pişirilir. Pişmiş sheet asla tam sayı olmayan ölçekle basıklaştırılmaz (pixel ızgarası).",
   "pixelfxKamerasi": "yan görünüş (platform oyunu): zemin elipsleri ry/rx ≈ 0,15-0,6; bizim çanaktan çok daha basık"
+ },
+ "kayitAdaylari": {
+  "aciklama": "Dış kaynaklı sprite sheet adayları (kaynak/efekt/). Atlasa alınmadı; entegrasyon ayrı dilim. Değerlendirme: ilgili KAYNAK.md ve efekt-kaynaklari.md § 9.5.",
+  "dosyalar": [
+   {
+    "klasor": "kaynak/efekt/aim-explosions/",
+    "kaynak": "Aim studios, Explosions - Pixel Art",
+    "kaynakUrl": "https://aim-studios.itch.io/explosions-pixel-art",
+    "lisans": "CC0-1.0",
+    "atif": "gerekmez; kredilere 'Aim studios (CC0)'",
+    "tarih": "2026-11-04",
+    "kare": "32×32 (3×3) ve 64×64 şerit/ızgara",
+    "oneri": "Realistic_Blast_default (Kor ağır / Parçalanma), Foam_bubble_explosion (Don / Parçalanma parçaları), Blast_default/blue (çarpışma)",
+    "duzlem": "hava"
+   },
+   {
+    "klasor": "kaynak/efekt/foozle-pixel-magic/",
+    "kaynak": "Foozle (lordfitoi), Pixel Magic Effects 1.0",
+    "kaynakUrl": "https://foozlecc.itch.io/pixel-magic-sprite-effects",
+    "lisans": "CC0-1.0",
+    "atif": "gerekmez; kredilere 'Foozle / lordfitoi (CC0)'",
+    "tarih": "2026-11-04",
+    "kare": "64×64 (sayfa 32×32 diyor: yalnız ikonlar)",
+    "oneri": "yedek havuz: Explosion, Tornado, Earth_Spike; mermi/yan görünüş kareleri kullanılmaz",
+    "duzlem": "hava/dikey"
+   }
+  ]
  }
 }

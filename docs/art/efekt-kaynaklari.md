@@ -31,7 +31,7 @@ Lisans sütunu: **CC0** = atıf gerekmez · **MIT** = kod/varlıkla birlikte tel
 | G4 | Sprite Fusion pixel-art VFX (Hugo Duprez) | https://www.spritefusion.com/pixel-art-vfx | pixelfx'in temel aldığı açık kaynak efektler | kod | MIT (pixelfx NOTICE.md'de: "Copyright (c) 2026 Hugo Duprez, MIT License") | **K** (sayfa: "open source under the MIT license") | pixelfx onları zaten içeriyor; ayrıca almaya gerek yok |
 | G5 | **Kenney Particle Pack** | https://kenney.nl/assets/particle-pack · OGA https://opengameart.org/node/85611 | 80 parçacık / ışık çerezi sprite'ı (kıvılcım, duman, ateş, büyü, elektrik) | ayrı PNG + tilesheet | **CC0** | **K** (OGA, yükleyen Kenney: "License(s): CC0"; kenney.nl otomatik istemciyi reddediyor) | Yüksek çözünürlüklü yumuşak dokular, **pixel değil**: yalnız linear karışımlı parlama/iz katmanı için (pixel planı § 1.3 "bulanık katmanlar linear" izni). İkincil |
 | G6 | Kenney Smoke Particles | (OGA "smoke particle assets") | 77 duman, 5 stil | PNG | CC0 | A (OGA sayfası bu turda aranmadı) | Aynı not: pixel değil; Parçalanma toz bulutu için ancak küçültülüp eşiklenirse |
-| G7 | **Foozle "Pixel Magic Effects"** | https://foozlecc.itch.io/pixel-magic-sprite-effects | 2 ateş, 2 su, 2 toprak, 2 rüzgâr büyüsü + portal + patlama | PNG sheet | **CC0** (arama özetinde: "free to use and modify for all projects, including commercial") | **K** (CC0 1.0; 32×32, 10 büyü + ikon; § 9.2) | Kor/Girdap/Kaya/Kasırga elementlerine 4/6 kapsama; buz ve şimşek yok. Kare 32×32 (sayfada yazılı) |
+| G7 | **Foozle "Pixel Magic Effects"** | https://foozlecc.itch.io/pixel-magic-sprite-effects | 2 ateş, 2 su, 2 toprak, 2 rüzgâr büyüsü + portal + patlama | PNG sheet | **CC0** (arama özetinde: "free to use and modify for all projects, including commercial") | **K** (CC0 1.0; 32×32, 10 büyü + ikon; § 9.2) | Kor/Girdap/Kaya/Kasırga elementlerine 4/6 kapsama; buz ve şimşek yok. Animasyon kareleri **64×64** (sayfadaki 32×32 ikonlar); indirildi, § 9.5 |
 | G8 | **Aim Studios "Explosions - Pixel Art"** | https://aim-studios.itch.io/explosions-pixel-art | 5 tür patlama, 9 sheet, 32×32 kareler (default, blue…) | PNG sheet | **CC0** (sayfa özetinde "LICENSE: CC0 License") | **K** (CC0; 9 sheet, 32×32 + 64×64; § 9.2) | 32 px: topacın yarısı; hafif/ağır çarpışma patlaması ve Parçalanma için ideal ölçek |
 | G9 | Reactorcore "Explosion Spriteanim Sheet Minipack" | https://reactorcore.itch.io/explosion-spriteanim-sheet-minipack | 10 sheet, 16 kare (4×4), çoğu 32×32 | PNG | **dikkat**: CC0 yalnız bir yorumcunun iddiası, sayfada yazmıyor | **dikkat** (sayfada/meta veride lisans yok; yalnız yazarın yorumu "CC0") | Lisans sayfada görülene dek **kullanma** |
 | G10 | OGA "Radial lightning effect" (13rice) | https://opengameart.org/content/radial-lightning-effect | ışınsal kıvılcım sheet'i + pikselleştirilmiş tilesheet | PNG | CC0, ama sayfa 13rice'a atıf **rica ediyor** | **K** (CC0; "Attribution appreciated to 13rice") | Şimşek çarpışması / karşıt element kıvılcımı. CC0 olsa da kredilere yazılır |
@@ -520,14 +520,21 @@ Efektlerden sonra kalan ~168 KiB, en küçük denemeye (M5 Opus 16k) bile yetmiy
 
 M1'in 152 sn'lik parçası kesilerek kısaltılamaz; döngü yapısı buna izin vermiyor.
 
-### 9.5 Görsel paketler (G7, G8)
+### 9.5 Görsel paketler (G7, G8): indirildi (sahip izniyle)
 
-- **Lisans:** İkisi de CC0 doğrulandı. İndirme, izin denetiminde kaldı (§ 9.1).
-- **Hibrit kamera değerlendirmesi** (sayfa bilgisinden; dosya görülmedi):
-  - G8 32×32 / 64×64 patlamalar **hava** öğesi, eğik çanakta yön sorunu yok. Ağır çarpışma ve Parçalanma için uygun ölçek.
-  - G7'nin 32×32 büyüleri yandan bakış (mermi/mızrak). Yalnız patlama ve portal kareleri işe yarayabilir.
-  - Atlas etkisi küçük: 32 px kareler 2048²'nin %1'inden az.
-- **Sahip için:** İki paketi tarayıcıdan indirip (itch "Download Now" → "No thanks, just take me to the downloads") `kaynak/efekt/foozle-pixel-magic/` ve `kaynak/efekt/aim-explosions/` altına koyarsan değerlendirmeyi tamamlarım.
+Sahip "her şeyi çalıştırabilirsin" dedi. itch ücretsiz ("Name your own price", 0 $) indirme akışı betikle izlendi: `download_url` → indirme sayfası → `file/<id>`. İmzalı bağlantılar 60 sn geçerli.
+
+| Paket | Klasör | İçerik | Kare | Değerlendirme (hibrit kamera, gözle) |
+|---|---|---|---|---|
+| G8 Aim Studios | `kaynak/efekt/aim-explosions/` | 9 PNG, ~51 KB | 32 px (3×3) ve 64 px şeritler | **Uygun (hava):** `Realistic_Blast_default` (11 kare: yıldız → turuncu bulut → duman), Kor ağır çarpışma / Parçalanma · `Foam_bubble_explosion` (10 kare, camgöbeği parçalar), Don / Parçalanma kırıkları · `Blast_*` 32 px, çarpışma. **Uymaz:** yeşil ve macenta varyantlar. Kontur yok, doygun; element rampasına göre yeniden renklendirilmeli |
+| G7 Foozle | `kaynak/efekt/foozle-pixel-magic/` | birleşik sheet 640×832 + ikonlar + Readme | **64×64** (sayfadaki "32x32" yalnız ikonlar) | **Yedek havuz:** Explosion, Tornado, Earth_Spike (dikey, okunur). **Kullanılmaz:** Fire_Ball, Water, Wind, Molten_Spear (yandan mermi), Rocks (yandan, basık), Portal (mor). Koyu konturlu RPG stili, pixelfx'ten kalın çizgili: birlikte kullanılırsa stil farkı belirgin olur |
+
+**Atlas etkisi:** Önerilen seçim (Aim 3 sheet + Foozle 3 sütun) ortak atlasa sığar; 2048²'nin < %5'i. Atlasa henüz alınmadı; `veri/manifest-gorsel.json` → `kayitAdaylari`.
+
+**Sanat yönetmeni önerisi:**
+- Birincil efekt dili pixelfx olarak kalır.
+- Aim `Realistic_Blast_default` ve `Foam_bubble_explosion`, Parçalanma için pixelfx'te olmayan "dolu bulut" ve "kırık parça" katmanını verir. Element rampasına yeniden renklendirilerek eklenmesini öneririm.
+- Foozle yalnız yedek.
 
 ### 9.6 Kenney Impact Sounds orijinal karşılaştırma
 
@@ -554,5 +561,6 @@ kenney.nl otomatik istemciyi reddediyor (§ 9.1). Paket OGA'da ve kenney.itch.io
 ### 9.8 Sahip kararı bekleyenler
 
 - **K10 müzik bütçesi:** § 9.4'teki (a), (b) ya da (c).
-- **K12 elle indirme:** Foozle, Aim Studios ve Kenney Impact zip'leri (tarayıcıdan).
+- **K12 elle indirme:** Yalnız Kenney Impact zip'i (kenney.nl otomatik istemciyi reddediyor; tarayıcıdan).
+- **K14 Aim/Foozle seçimi:** § 9.5 önerisi (Aim 2 sheet Parçalanma/Don için, Foozle yedek) onaylanırsa ortak atlasa eklenir.
 - **K13 G17 Ragnapixel (CC-BY 4.0):** Yalnız ücretsiz demo kullanılabilir; gerekli mi?
