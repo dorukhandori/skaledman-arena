@@ -434,7 +434,7 @@ Kayıtlar: `veri/manifest-ses.json` → `kayitAdaylari` (oyun yüklemiyor), `ver
 
 | Atlas | Boyut | Kare | Bayt | Efektler |
 |---|---|---|---|---|
-| `efekt.png` (ortak) | 2048×1024 | 114 | 656 280 | kivilcim, kritik, sekme-iz, toz-halka, zemin-sok, toz-bulut, enerji-doldu |
+| `efekt.png` (ortak) | 2048×1024 | 114 | 656 625 (§ 9.7 yeniden pişirme) | kivilcim, kritik, sekme-iz, toz-halka, zemin-sok, toz-bulut, enerji-doldu |
 | `efekt-kor.png` | 1024² | 45 | 516 616 | ulti-kor |
 | `efekt-don.png` | 1024² | 74 | 419 354 | don-kirilma, ulti-don |
 | `efekt-kaya.png` | 1024² | 39 | 188 952 | ulti-kaya |
@@ -535,7 +535,7 @@ kenney.nl otomatik istemciyi reddediyor (§ 9.1). Paket OGA'da ve kenney.itch.io
 - **Dolaylı kanıt:** Aynı yazarın OGA'daki Interface Sounds zip'inde Kenney'nin `License.txt` şablonu var ("License: (Creative Commons Zero, CC0)"). Impact paketinin kendi `License.txt`'si alınamadı; **uydurulmadı**.
 - **Sahip için:** kenney.nl/assets/impact-sounds'tan zip'i tarayıcıdan indirip depoya (ya da sohbete) koyarsan karşılaştırırım.
 
-### 9.7 pixelfx toz paleti (hazır, pişirilmedi)
+### 9.7 pixelfx toz paleti (pişirildi, sahip izniyle)
 
 `recete.json` ve `arac/bake.py` güncellendi: `secenek` alanı `--opts`'a ekleniyor; eski `kareSiniri` KeyError'ı giderildi.
 
@@ -546,11 +546,13 @@ kenney.nl otomatik istemciyi reddediyor (§ 9.1). Paket OGA'da ve kenney.itch.io
 | `spawn/poof` | toz-6: `#3A3024,#6E604C,#A8987C,#C2AC86,#EDE0C8,#FFFFFF` | `stars: #C2AC86,#EDE0C8,#FFFFFF` |
 | `pickups/collect-burst` | nötr açık-8 `#1E1A14 … #FFFFFF` (oyunda element rengiyle tint) | — |
 
-`node tools/render.mjs` (dış kod) bu oturumda otomatik izin denetimince reddedildi. Atlas ve `onizleme.png` hâlâ eski (mor/pembe). Komutlar `kaynak/efekt/pixelfx/KAYNAK.md`'de.
+**Pişirme (sahip "her şeyi çalıştırabilirsin" dedi):** 16 efektin hepsi yeniden render edildi (`arac/bake.py`, `pack.py`, `prev2.py`). Çıktı deterministik: 6 element atlası bayt bayt aynı çıktı; yalnız `efekt.png` + `efekt.json` değişti (656 280 → 656 625 B). Önizlemede gözle bakıldı:
+- `toz-halka` (heavy-landing) ve `toz-bulut` (poof) bej-gri toz; yıldızlar krem.
+- `zemin-sok` (ground-slam) taşları ve dumanı sıcak gri; mor yok.
+- `enerji-doldu` (collect-burst) beyaz-krem; oyunda element rengiyle tint edilecek.
 
 ### 9.8 Sahip kararı bekleyenler
 
 - **K10 müzik bütçesi:** § 9.4'teki (a), (b) ya da (c).
-- **K11 pixelfx render izni:** Bash `node …/tools/render.mjs` için izin kuralı ya da izin modu.
 - **K12 elle indirme:** Foozle, Aim Studios ve Kenney Impact zip'leri (tarayıcıdan).
 - **K13 G17 Ragnapixel (CC-BY 4.0):** Yalnız ücretsiz demo kullanılabilir; gerekli mi?
