@@ -1,7 +1,7 @@
-import { Room, type Client } from "@colyseus/core";
+import { Room, type Client } from "colyseus";
 import { schema, t, type SchemaType } from "@colyseus/schema";
 
-// İskelet oda (F0). Durum şeması ve girdi tanımı F1'de src/paylasilan/Durum.ts'e taşınır.
+// İskelet oda. Yetkili maç odası D4'te `MacOdasi.ts` olarak gelir (defineInput, setFixedTimestep 60 Hz, tahmin A).
 export const ArenaDurumu = schema({
   faz: t.string(),
   oyuncuSayisi: t.uint8(),

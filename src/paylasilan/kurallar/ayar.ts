@@ -1,96 +1,139 @@
-// Ayar tablosu (tuning). Kaynak: oyun-konsepti § 11.
-// Sayılar yalnız burada ve hamleler.ts / botlar.ts tablolarında durur; kodda sihirli sayı yok.
-// Paylaşılan kod: DOM yok, Node yok.
+// Devran sim sabitleri. TEK OTORİTE: docs/design/tuning.md (anahtar adları oradaki gibi).
+// Parça başına sayılar burada DEĞİL, veri/parcalar.json'dadır (src/paylasilan/veri/). Kodda sihirli sayı yok:
+// yeni bir sabit gerekirse önce tuning.md'ye, sonra buraya girer. Paylaşılan kod: DOM yok, Node yok.
+// Birimler: uzunluk = birim (1 birim = 1 mantıksal piksel, 960×540), hız = birim/s, süre = s.
+
+export type ElementAdi = "kor" | "kasirga" | "simsek" | "girdap" | "kaya" | "don";
+export type KokenAdi = "goktasi" | "maden" | "yapay" | "karanlik";
 
 export const AYAR = {
+  // ---- § 1 sabit adım ve genel ----
   /** Sabit simülasyon adımı (K-6: 60 Hz). */
   dt: 1 / 60,
-  /** Render karesi başına en çok simülasyon adımı (spiral of death koruması). */
+  adimHz: 60,
+  /** Render karesi başına en çok simülasyon adımı (spiral of death koruması; istemci). */
   enFazlaAdimKare: 6,
+  vMutlak: 700,
+  /** Coulomb sürtünmesi, br/s². */
+  sabitSurtunme: 20,
+  /** yorgunlukCarpani = taban + egim · stamina/max */
+  yorgunluk: { taban: 0.5, egim: 0.5 },
+  /** Aynı çiftte darbe kilidi (adım). 0,10 s. */
+  temasKilidi: 6,
 
-  /** İlk arena: İskeletler Diyarı (sahip: "ilk arenamız 'iskeletler diyarı' olacak"). Gerekçeler arenalar/iskeletler-diyari.md. */
-  saha: {
-    id: "iskeletler-diyari",
-    ad: "İskeletler Diyarı",
-    yariGenislik: 380,
-    derinlik: 480,
-    govdeYaricap: 14,
-    /** Doğum noktaları: yon = SpriteCollab satırı (2 sağ, 6 sol). */
-    dogum: [
-      { x: -110, z: 120, yon: 2 },
-      { x: 110, z: 120, yon: 6 },
-    ],
-    /** x'te ayna simetrik; büyük kafatası doğum hattını keser, omurgalar uzun ışına siper. */
-    engeller: [
-      { tur: "dikdortgen", gorsel: "kafatasi", x: 0, z: 120, yariGenislik: 24, yariDerinlik: 26 },
-      { tur: "dikdortgen", gorsel: "omurga", x: -230, z: 340, yariGenislik: 16, yariDerinlik: 70 },
-      { tur: "dikdortgen", gorsel: "omurga", x: 230, z: 340, yariGenislik: 16, yariDerinlik: 70 },
-      { tur: "dikdortgen", gorsel: "uyluk", x: 0, z: 330, yariGenislik: 52, yariDerinlik: 10 },
-      { tur: "daire", gorsel: "yerKafatasi", x: -115, z: 250, yaricap: 16 },
-      { tur: "daire", gorsel: "yerKafatasi", x: 115, z: 250, yaricap: 16 },
-      { tur: "dikdortgen", gorsel: "mezarTasi", x: -310, z: 170, yariGenislik: 12, yariDerinlik: 9 },
-      { tur: "dikdortgen", gorsel: "mezarTasi", x: 310, z: 170, yariGenislik: 12, yariDerinlik: 9 },
-    ],
+  // ---- § 2 arena ----
+  topacYaricap: 30,
+  arenaYaricap: 240,
+  /** Maden "Kök" için merkez: d < oran · R. */
+  merkezKucukAlan: 0.35,
+  kusakIc: 0.6,
+  kusakDis: 0.85,
+  kusakHizCarpani: 1.25,
+  egimBaslangic: 0.7,
+  kEgim: 700,
+  eDuvar: 0.5,
+  kDuvar: 0.08,
+  duvarTik: 0.15,
+  /** duvarTik yalnız dışa hız bundan büyükse. */
+  duvarTikHizi: 120,
+  /** VARSAYIM (tuning'de yok): dışa hız bunun altındaysa sekme/bedel/olay yok, topaç duvar boyunca kayar.
+   *  Gerekçe: kenara doğru sürmeye devam eden topaç her adım "çarpıp" saniyede ~90 stamina kaybediyordu. */
+  duvarOlayHizi: 40,
+  /** Varsayılan vRO; Uç verisi kendi `ringOutHizi`nı taşır. */
+  ringOutHizi: 200,
+  dogum: [
+    { x: -130, z: 0 },
+    { x: 130, z: 0 },
+  ],
+
+  // ---- § 3 Uç desenleri ----
+  desen: {
+    cicek: { Ad: 250, omegaD: 2.0, kMerkez: 0 },
+    merkezci: { Ad: 0, omegaD: 0, kMerkez: 2.0 },
+    dengeli: { Ad: 100, omegaD: 1.5, kMerkez: 0.8 },
+    kusak: { Ad: 100, omegaD: 1.5, kMerkez: 0.8 },
+    cakili: { Ad: 0, omegaD: 0, kMerkez: 0 },
   },
 
-  /** Hız = taban · (katsayiTaban + katsayiEgim · hiz / bolen)  (105..195 birim/s). */
-  hiz: { taban: 150, katsayiTaban: 0.7, katsayiEgim: 0.6, bolen: 130 },
-  dash: { sure: 0.15, mesafe: 60, bekleme: 10, dokunulmaz: 0.12 },
-  /** Telegraf (aviso) süreleri, saniye. */
-  telegraf: { anlik: 0.08, kisa: 0.2, uzun: 0.45 },
+  // ---- § 4 dash, sekme, sıkı dönüş ----
+  dashHiziEki: 300,
+  dashPenceresi: 0.25,
+  kDash: 1.3,
+  dashBekleme: 4.0,
+  sekmeSure: 0.3,
+  sekmeBekleme: 2.5,
+  sekmeStamina: 8,
+  /** Eylem stamina'yı 0'a indiremez: bedel > stamina − pay ise reddedilir (flint #20). */
+  eylemStaminaPayi: 5,
 
-  knockback: 40,
-  hitStun: 0.22,
-  /** true: sersemleten vuruş yürüyen telegrafı/atılışı keser. */
-  hitKeser: true,
+  // ---- § 5 çarpışma ----
+  kKb: 1.2,
+  fOn: 1.0,
+  fYan: 0.6,
+  fArka: 0.3,
+  /** Bundan yavaş topaç "hızsız" sayılır (f = fArka). */
+  hizsizEsik: 1,
+  alfaOnTaban: 30,
+  alfaOnKanat: 10,
+  alfaOnEnFazla: 80,
+  /** Kanat bonusu (ön çarpanı 1,5 − 0,1·kanat). tuning § 5: sim'de test edilmedi, varsayılan KAPALI. */
+  kanatOnBonusu: { acik: false, taban: 1.5, kanatBasina: 0.1 },
+  /** s = saldiri/ref, sv = savunma/ref. */
+  statReferans: 50,
+  kH: 0.006,
+  kGeriOran: 0.25,
+  tekVurusTavani: 0.3,
+  /** Temas eşikleri (yalnız his; sim'e etkisi yok), vn br/s. */
+  temasEsik: { hafif: 80, agir: 260, kritik: 420 },
+  kEsit: 0.06,
+  kEsitEnFazla: 20,
+  /** Kütle referansı (05/flint): oranlar 10 birim kütleye göre okunur. Formüllerde doğrudan kullanılmaz. */
+  kutleReferans: 10,
 
-  /**
-   * Genel hasar çarpanı. 1 = formül aynen (bot-bot medyan maç 3,1 s);
-   * F0 varsayılanı 0,2: 80 bot-bot maçta medyan 13,9 s (p10 7,4 / p90 22,0), insan maçı daha uzun sürer.
-   * Ölçüm 2026-11-01, normal bot. `?hasar=` ile geçersiz kılınır. Denge kararı economy-designer'ındır (SA-6).
-   */
-  hasarCarpani: 0.2,
+  // ---- § 6 stamina ----
+  staminaTaban: 300,
+  kHiz: 2.0,
+  vRef: 260,
+  kritikEsik: 0.25,
+  /** Yalpa (salt görsel) başlangıcı. */
+  yalpaBaslangic: 0.4,
 
-  seviye: 50,
-  iv: 31,
-  ev: 0,
-  stab: 1.5,
-  /** Etkinlik budaması: çarpan > 1 → superEtkili, 0 < çarpan < 1 → azEtkili. */
-  superEtkili: 1.5,
-  azEtkili: 2 / 3,
-  yanikFizikselCarpani: 0.5,
+  // ---- § 7 tık ----
+  kTik: 1 / 5000,
+  tikTavan: 1.2,
+  tikKutleBoleni: 40,
+  tikGeriDonus: 0,
 
-  yanik: { sure: 6, aralik: 1.5, kesir: 1 / 16 },
-  felc: { sure: 5, hizCarpani: 0.5, aralik: 1, olasilikTakilma: 0.25, takilma: 0.5 },
-  /** Vuruşta durum ihtimali (tip → durum). Elektrik/yanık bağışıklıkları durumlar.ts'te. */
-  durumSansi: {
-    FIRE: { tur: "yanik", olasilik: 0.1 },
-    ELECTRIC: { tur: "felc", olasilik: 0.1 },
-  },
-  /** Stat kademesi (analiz § 3): çarpan = ana seri çarpanının karekökü, değişim 8 s sonra düşer, ±6 tavan. */
-  kademe: { karekok: true, sure: 8, tavan: 6 },
+  // ---- § 10 maç (D1: yalnız tur kararı) ----
+  puan: { durma: 1, ringOut: 2, parcalanma: 2 },
+  /** Durma kararından sonra hız sönümü (adım). Salt süs: karar o anda verilmiştir. */
+  durmaSonumu: 40,
 
-  /**
-   * Zıplama (analiz `curvas`): 0,5 s parabol, 22 birim tepe, enerji 1/3 (0..1, 0,4/s dolar).
-   * `bekleme` 0,5 s referans değer; inişten sayılması ajan yorumu (tuning.md).
-   */
-  zipla: { sure: 0.5, yukseklik: 22, bekleme: 0.5, maliyet: 1 / 3, enerjiDolum: 0.4 },
-  /**
-   * Z dinlenme. Referansta PP/şarj dolumu; bizde şarj yok, karşılığı ajan önerisi (tuning.md, sahip onayı bekler):
-   * dinlenirken hareket yok, cooldown'lar `cooldownHizi` kat, enerji `enerjiHizi` kat hızlı dolar.
-   */
-  dinlen: { cooldownHizi: 2, enerjiHizi: 3 },
-  /**
-   * Takım (analiz `capas`/`arena`): geri çekilme 0,4 + boşluk 0,5 + çıkış 0,25 s, sonra 2 s bekleme; KO sonrası 5 s seçim.
-   * `dususMenzili`: düşüş noktası mevcut konumdan en çok bu kadar uzakta (ajan tahmini). `cikisItme` = `empujeSalida`.
-   */
-  takim: { boyut: 3, geri: 0.4, bosluk: 0.5, cikis: 0.25, bekleme: 2, koSecim: 5, dususMenzili: 160, cikisItme: 14 },
-
-  mac: { sure: 90 },
-  /** Girdi sanitize sınırı: nişan dünya noktası bu kadar saha dışına çıkabilir. */
-  nisanTasma: 200,
-  /** Ölü dövüşçünün solma süresi (yalnız görsel). */
-  koSolma: 1.2,
+  // ---- girdi ----
+  /** Nişan noktası çanaktan en çok bu kadar taşabilir. */
+  nisanTasma: 120,
+  yuvaSayisi: 4,
+  takimBoyutu: 3,
 } as const;
 
-export type DurumTuru = "yanik" | "felc";
+/** § 12 element eğilim çarpanları (her zaman biner; tipe güç vermez). */
+export const ELEMENT_EGILIM: Record<ElementAdi, {
+  ivme: number; kusakEk: number; surtunme: number; dashEki: number; dashBekleme: number; erime: number; kutle: number; kbAlinan: number;
+}> = {
+  kor: { ivme: 1.08, kusakEk: 0.1, surtunme: 1, dashEki: 1, dashBekleme: 1, erime: 1, kutle: 1, kbAlinan: 1 },
+  kasirga: { ivme: 1, kusakEk: 0, surtunme: 0.9, dashEki: 1.05, dashBekleme: 1, erime: 1, kutle: 1, kbAlinan: 1 },
+  simsek: { ivme: 1.04, kusakEk: 0, surtunme: 1, dashEki: 1, dashBekleme: 0.8, erime: 1, kutle: 1, kbAlinan: 1 },
+  girdap: { ivme: 1, kusakEk: 0, surtunme: 1, dashEki: 1, dashBekleme: 1, erime: 0.92, kutle: 1, kbAlinan: 1 },
+  kaya: { ivme: 0.92, kusakEk: 0, surtunme: 1, dashEki: 1, dashBekleme: 1, erime: 1, kutle: 1.06, kbAlinan: 0.92 },
+  don: { ivme: 0.95, kusakEk: 0, surtunme: 0.8, dashEki: 1, dashBekleme: 1, erime: 0.96, kutle: 1, kbAlinan: 1 },
+};
+
+/** Çark sırası (§ 12): komşu = ±1, karşıt = +3. */
+export const ELEMENT_CARKI: readonly ElementAdi[] = ["kor", "kasirga", "simsek", "girdap", "kaya", "don"];
+
+/** § 11 köken pasiflerinin sim'deki kısmı (Kriz Alevi Enerji'ye ait, D3). */
+export const KOKEN_PASIF = {
+  maden: { kokErimeCarpani: 0.8, kokHizEsigi: 40, ivme: 0.9 },
+  yapay: { erime: 1.1 },
+  karanlik: { erime: 1.35, emisOran: 0.2, emisEnFazla: 12, emisZitOran: 0.4, emisZitEnFazla: 20 },
+} as const;

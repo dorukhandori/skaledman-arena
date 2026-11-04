@@ -6,11 +6,7 @@ dist/
 *.sqlite
 *.sqlite-journal
 .DS_Store
-veri/spritecollab-tracker.json
 .cache/
-public/fusion/*/
-!public/fusion/.gitkeep
-public/fusion/liste.json
 
 # Claude Code / ajan dosyaları yerelde kalır, depoya girmez
 .claude/

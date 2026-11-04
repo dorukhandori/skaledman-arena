@@ -1,349 +1,299 @@
-import { Container, Graphics, Text } from "pixi.js";
-import { parcaEngel } from "../../paylasilan/sim/carpisma.ts";
+import { Graphics } from "pixi.js";
 import { AYAR } from "../../paylasilan/kurallar/ayar.ts";
 import type { Dunya, Olay } from "../../paylasilan/sim/durum.ts";
-import { TIP_RENK } from "./renkler.ts";
-import type { Sahne } from "./Sahne.ts";
+import { HIS, type Siddet, siddetBul } from "./his.ts";
+import { Parcaciklar } from "./Parcaciklar.ts";
+import { ELEMENT_RENK, renkKaristir } from "./renkler.ts";
+import { SAHNE, type Sahne } from "./Sahne.ts";
+import { SusRastgele } from "./SusRastgele.ts";
+import type { TopacGorsel } from "./TopacGorsel.ts";
 
-// Hamle efektleri: Graphics + havuz. Sim olaylarından ve durum listelerinden (mermi, alan) beslenir.
-// Telegraf (aviso) okunaklılığı önceliklidir: kırmızı gölge hazırlık boyunca belirginleşir.
+// Sim olayı → his (05 § 3): sim `adim` sonunda `olaylar`'a koyar, burada okunur. Hiçbiri sim'e geri yazmaz.
+// Görsel hitstop: çarpışan topaçların RENDER konumu bekler, sim akmaya devam eder; bitince kritik sönümlü yetişme.
 
-type Nokta = [number, number];
+interface Sok { g: Graphics; t: number; sure: number; x: number; y: number; r0: number; r1: number; renk: number; renk2: number | null; kalinlik: number }
+interface KonumDurumu { hold: { x: number; y: number } | null; kalanMs: number; nx: number; ny: number; x: number; y: number; ilk: boolean }
 
-const EFEKT = {
-  telegrafRengi: 0xe3350d,
-  koniSure: 0.15,
-  isinSure: 0.12,
-  pokeSure: 0.1,
-  patlamaSure: 0.28,
-  vurusSure: 0.22,
-  tozSure: 0.35,
-  yaziSure: 0.85,
-  yaziYukselme: 38,
-  mermiIzUzunlugu: 6,
-  mermiYuksekligi: 22,
-  isinYuksekligi: 34,
-  yaySegment: 14,
-  kesikUzunluk: 8,
-  tozAraligi: 3,
-} as const;
-
-interface Zamanli {
-  g: Graphics;
-  gecen: number;
-  sure: number;
-  ciz: (g: Graphics, t: number) => void;
-}
-interface MermiGorseli { g: Graphics; iz: Nokta[] }
-
-function yelpaze(ox: number, oz: number, dx: number, dz: number, r: number, yayDerece: number): Nokta[] {
-  const ort = Math.atan2(dz, dx);
-  const yari = (yayDerece * Math.PI) / 360;
-  const pts: Nokta[] = [[ox, oz]];
-  for (let i = 0; i <= EFEKT.yaySegment; i++) {
-    const a = ort - yari + (2 * yari * i) / EFEKT.yaySegment;
-    pts.push([ox + Math.cos(a) * r, oz + Math.sin(a) * r]);
-  }
-  return pts;
-}
-
-function serit(ox: number, oz: number, dx: number, dz: number, uzunluk: number, genislik: number): Nokta[] {
-  const px = -dz * (genislik / 2);
-  const pz = dx * (genislik / 2);
-  const bx = ox + dx * uzunluk;
-  const bz = oz + dz * uzunluk;
-  return [[ox + px, oz + pz], [bx + px, bz + pz], [bx - px, bz - pz], [ox - px, oz - pz]];
+export interface HisAyarlari {
+  sarsinti: number; // 1 / 0,5 / 0
+  flas: "normal" | "azaltilmis" | "kapali";
+  hitstop: number; // 1 / 0,5 / 0
+  parcacik: number; // 1 / 0,4
 }
 
 export class Efektler {
-  private zamanlilar: Zamanli[] = [];
-  private telegraflar = new Map<number, Zamanli>();
-  private alanlar = new Map<number, Graphics>();
-  private mermiler = new Map<number, MermiGorseli>();
-  private havuz: Graphics[] = [];
-  private yaziHavuzu: Text[] = [];
-  private yazilar: { t: Text; gecen: number; y0: number }[] = [];
+  readonly parcaciklar = new Parcaciklar();
+  private soklar: Sok[] = [];
+  private ekranFlas = new Graphics();
+  private flasKalanMs = 0;
+  private flasAlfa = 0;
+  private flasZamanlari: number[] = [];
+  private saat = 0;
+  private sonHitstop = -1e9;
+  private yavasKalanMs = 0;
+  private konumlar: KonumDurumu[] = [];
+  private rng = new SusRastgele(0xe7f);
+  readonly sayac = { yok: 0, hafif: 0, agir: 0, kritik: 0, duvar: 0, ringOut: 0, parcalanma: 0, durma: 0, dash: 0, sekme: 0, zitElement: 0, ekranFlas: 0, ekranFlasReddi: 0 };
+  ayar: HisAyarlari = { sarsinti: 1, flas: "normal", hitstop: 1, parcacik: 1 };
 
-  constructor(private sahne: Sahne) {}
-
-  private nokta(x: number, z: number, yukseklik = 0): Nokta {
-    return [this.sahne.ekranX(x), this.sahne.zEkranY(z) - yukseklik];
+  constructor(private sahne: Sahne, private gorseller: () => readonly TopacGorsel[]) {
+    sahne.efektKatmani.addChild(this.parcaciklar.kap);
+    this.ekranFlas.rect(0, 0, SAHNE.genislik, SAHNE.yukseklik).fill(0xffffff);
+    this.ekranFlas.alpha = 0;
+    sahne.ekranKatmani.addChild(this.ekranFlas);
+    for (let i = 0; i < 2; i++) this.konumlar.push(Efektler.bosKonum());
   }
 
-  private duz(pts: Nokta[], yukseklik = 0): number[] {
-    return pts.flatMap(([x, z]) => this.nokta(x, z, yukseklik));
+  private static bosKonum(): KonumDurumu {
+    return { hold: null, kalanMs: 0, nx: 0, ny: 0, x: 0, y: 0, ilk: true };
   }
 
-  private elips(g: Graphics, x: number, z: number, yaricap: number): Graphics {
-    const [sx, sy] = this.nokta(x, z);
-    return g.ellipse(sx, sy, yaricap, yaricap * this.sahne.zOrani);
+  /** Efekt saati çarpanı (Parçalanma yavaş çekimi). */
+  get yavas(): number { return this.yavasKalanMs > 0 ? HIS.yavasCekim.carpan : 1; }
+
+  hitstopVar(i: number): boolean { return (this.konumlar[i]?.kalanMs ?? 0) > 0; }
+
+  temizle(): void {
+    this.parcaciklar.temizle();
+    for (const s of this.soklar) s.g.destroy();
+    this.soklar = [];
+    this.flasKalanMs = 0;
+    this.ekranFlas.alpha = 0;
+    this.yavasKalanMs = 0;
+    this.konumlar = [Efektler.bosKonum(), Efektler.bosKonum()];
   }
 
-  private grafik(katman: Container): Graphics {
-    const g = this.havuz.pop() ?? new Graphics();
-    g.visible = true;
-    katman.addChild(g);
-    return g;
+  /**
+   * Görsel konum: hitstop sırasında son konumda bekler (±1 px dik titreme); sonra sim konumuna τ = 60 ms
+   * kritik sönümlü yaklaşma. Fark vMutlak·hitstop'u aşarsa atlar (axiom #32).
+   */
+  konum(i: number, hedefX: number, hedefY: number, dt: number): { x: number; y: number } {
+    const k = this.konumlar[i]!;
+    if (k.ilk) { k.ilk = false; k.x = hedefX; k.y = hedefY; }
+    if (k.kalanMs > 0 && k.hold) {
+      k.kalanMs -= dt * 1000;
+      const tit = (this.rng.sayi() < 0.5 ? -1 : 1) * HIS.hitstopTitremePx;
+      return { x: k.hold.x - k.ny * tit, y: k.hold.y + k.nx * tit };
+    }
+    k.hold = null;
+    const dx = k.x - hedefX;
+    const dy = k.y - hedefY;
+    const atla = (AYAR.vMutlak * HIS.hitstopMs.bitisTavan) / 1000;
+    if (!Number.isFinite(dx + dy) || Math.hypot(dx, dy) > atla || dt <= 0) { k.x = hedefX; k.y = hedefY; return { x: k.x, y: k.y }; }
+    // kritik sönümlü yaklaşımın kare hızından bağımsız, koşulsuz kararlı biçimi: (1 + t/τ)·e^(−t/τ) çarpanı
+    const t = dt / (HIS.yetismeTauMs / 1000);
+    const c = (1 + t) * Math.exp(-t);
+    k.x = hedefX + dx * c;
+    k.y = hedefY + dy * c;
+    if (Math.hypot(k.x - hedefX, k.y - hedefY) < 0.25) { k.x = hedefX; k.y = hedefY; }
+    return { x: k.x, y: k.y };
   }
 
-  private ekle(katman: Container, sure: number, ciz: Zamanli["ciz"]): Zamanli {
-    const z: Zamanli = { g: this.grafik(katman), gecen: 0, sure, ciz };
-    this.zamanlilar.push(z);
-    return z;
+  private hitstop(i: number, ms: number, nx: number, ny: number, bitis: boolean, kritik: boolean): number {
+    let m = ms * this.ayar.hitstop;
+    if (m <= 0) return 0;
+    const tavan = bitis ? HIS.hitstopMs.bitisTavan : HIS.hitstopMs.tavan;
+    m = Math.min(m, tavan);
+    if (!bitis && !kritik && this.saat - this.sonHitstop < HIS.hitstopPencereMs / 1000) m *= HIS.hitstopPencereCarpani;
+    const k = this.konumlar[i]!;
+    k.hold = { x: k.x, y: k.y };
+    k.kalanMs = Math.max(k.kalanMs, m);
+    k.nx = nx; k.ny = ny;
+    this.sonHitstop = this.saat;
+    return m;
   }
 
-  private birak(g: Graphics): void {
-    g.clear();
-    g.visible = false;
-    g.removeFromParent();
-    g.zIndex = 0;
-    this.havuz.push(g);
+  private ekranFlasi(alfa: number, ms: number): void {
+    if (this.ayar.flas === "kapali") return;
+    const a = Math.min(HIS.ekranFlasAlfaTavani, this.ayar.flas === "azaltilmis" ? Math.min(alfa, 0.1) : alfa);
+    this.flasZamanlari = this.flasZamanlari.filter((t) => this.saat - t < 1);
+    if (this.flasZamanlari.length >= HIS.ekranFlasSaniyedeEnCok) { this.sayac.ekranFlasReddi++; return; }
+    this.flasZamanlari.push(this.saat);
+    this.flasAlfa = a;
+    this.flasKalanMs = Math.max(HIS.ekranFlasEnAzMs, ms);
+    this.sayac.ekranFlas++;
   }
 
-  // ---- olaylar ----------------------------------------------------------------------------
+  private sok(x: number, y: number, r0: number, r1: number, ms: number, renk: number, renk2: number | null = null, kalinlik = 3): void {
+    if (this.soklar.length >= 12) this.soklar.shift()!.g.destroy();
+    const g = new Graphics();
+    this.sahne.efektKatmani.addChild(g);
+    this.soklar.push({ g, t: 0, sure: ms / 1000, x, y, r0, r1, renk, renk2, kalinlik });
+  }
+
+  private kivilcim(x: number, y: number, nx: number, ny: number, n: number, renkler: readonly number[], hiz: [number, number], koni = 0.9): void {
+    const adet = Math.round(n * this.ayar.parcacik);
+    for (let k = 0; k < adet; k++) {
+      const yon = k % 2 === 0 ? 1 : -1;
+      const a = Math.atan2(ny * yon, nx * yon) + this.rng.isaretli() * koni;
+      const v = this.rng.aralik(hiz[0], hiz[1]);
+      const renk = renkler[k % renkler.length] as number;
+      this.parcaciklar.ekle(x, y, Math.cos(a) * v, Math.sin(a) * v, this.rng.aralik(0.22, 0.45), renk, this.rng.sayi() < 0.35 ? 3 : 2, 4);
+    }
+  }
+
+  private toz(x: number, y: number, n: number, renk: number, yaricap = 0): void {
+    const adet = Math.round(n * this.ayar.parcacik);
+    for (let k = 0; k < adet; k++) {
+      const a = this.rng.aralik(0, Math.PI * 2);
+      const v = this.rng.aralik(20, 70);
+      this.parcaciklar.ekle(x + Math.cos(a) * yaricap, y + Math.sin(a) * yaricap, Math.cos(a) * v, Math.sin(a) * v, this.rng.aralik(0.4, 0.8), renk, 3, 2);
+    }
+  }
 
   olay(o: Olay, d: Dunya): void {
+    const S = this.sahne;
+    const g = this.gorseller();
     switch (o.tur) {
-      case "hamleBasladi": this.telegrafBaslat(o); break;
-      case "hamleIptal": this.telegrafKaldir(o.kim); break;
-      case "hamleCikti": this.hamleCikti(o); break;
-      case "alanPatladi": this.alanPatla(o); break;
-      case "mermiBitti": this.vurusPatlamasi(o.x, o.z, TIP_RENK[o.tip], o.vurdu ? 1 : 0.6); break;
-      case "vurdu": this.vurdu(o, d); break;
-      case "kacildi": this.yaziCikar("DODGE", o.x, o.z, 0xeef2f5, 16); break;
-      case "durum": {
-        const dv = d.dovusculer[o.kime];
-        if (dv) this.yaziCikar(o.durum === "yanik" ? "burn!" : "paralyzed!", dv.x, dv.z, o.durum === "yanik" ? TIP_RENK.FIRE : TIP_RENK.ELECTRIC, 16);
+      case "carpisma": {
+        const dash = o.taraflar[0].dash || o.taraflar[1].dash;
+        const sd: Siddet = siddetBul(o.vn, dash);
+        this.sayac[sd]++;
+        if (o.zitElement) this.sayac.zitElement++;
+        const x = S.ekranX(o.x);
+        const y = S.ekranY(o.z);
+        const r0 = ELEMENT_RENK[o.taraflar[0].element];
+        const r1 = ELEMENT_RENK[o.taraflar[1].element];
+        if (sd === "yok") { this.toz(x, y, 2, 0x9aa8ad); return; }
+        // hitstop
+        let ms: number = HIS.hitstopMs[sd];
+        if (o.zitElement) ms += HIS.hitstopMs.zitEk;
+        if (dash) ms = Math.max(HIS.hitstopMs.dashTaban, ms) + HIS.hitstopMs.dashEk;
+        this.hitstop(0, ms, o.nx, o.nz, false, sd === "kritik");
+        this.hitstop(1, ms, o.nx, o.nz, false, sd === "kritik");
+        // sarsıntı (ilk 2 kare normal boyunca)
+        let px: number = dash ? Math.max(HIS.sarsintiPx.dash, HIS.sarsintiPx[sd]) : HIS.sarsintiPx[sd];
+        if (o.zitElement) px *= HIS.zitSarsintiCarpani;
+        S.sars(Math.sqrt(px / SAHNE.sarsintiTavan) * Math.sqrt(this.ayar.sarsinti), o.nx, o.nz);
+        // flaş: topaç tint, kritikte tam ekran
+        g[0]?.flas(HIS.tintKare[sd]);
+        g[1]?.flas(HIS.tintKare[sd]);
+        if (sd === "kritik") this.ekranFlasi(HIS.ekranFlas.kritik[0], HIS.ekranFlas.kritik[1]);
+        // squash/stretch normal ekseninde
+        const [sx, sy] = dash && sd !== "hafif" ? HIS.squash.dash : HIS.squash[sd];
+        const sure = HIS.squashMs[sd] / 1000;
+        g[0]?.squash(o.nx, o.nz, sx, sy, sure);
+        g[1]?.squash(o.nx, o.nz, sx, sy, sure);
+        // kıvılcım: element renkleri (yarı yarı), karşıtta iki renkli çift çember
+        const n = Math.round(HIS.parcacik[sd] * (o.zitElement ? HIS.zitParcacikCarpani : 1));
+        const hiz: [number, number] = sd === "kritik" ? [220, 520] : sd === "agir" ? [160, 400] : [110, 260];
+        this.kivilcim(x, y, o.nx, o.nz, n, [r0.acik, r1.acik, 0xffffff, r0.vurgu, r1.vurgu], hiz);
+        if (sd !== "hafif") {
+          const sure2 = sd === "kritik" ? HIS.sok.kritikMs : HIS.sok.agirMs;
+          this.sok(x, y, 6, sd === "kritik" ? 56 : 40, sure2, renkKaristir(r0.orta, r1.orta, 0.5), o.zitElement ? r1.orta : null, 3);
+          if (sd === "kritik") this.sok(x, y, 2, 36, sure2 * 0.8, 0xffffff, null, 2);
+          const z = sd === "kritik" ? HIS.zoom.kritik : HIS.zoom.agir;
+          S.zoomDarbesi(z[0], z[1]);
+        }
+        if (o.zitElement) this.sok(x, y, 4, 30, 200, r0.orta, r1.orta, 4);
+        if (dash) { this.sok(x, y, 10, 70, 240, 0xffffff, null, 2); S.zoomDarbesi(HIS.zoom.dash[0], HIS.zoom.dash[1]); }
+        break;
+      }
+      case "duvar": {
+        this.sayac.duvar++;
+        const x = S.ekranX(o.x);
+        const y = S.ekranY(o.z);
+        const ms = o.vd > HIS.esik.agir ? 33 : o.vd > HIS.esik.hafif ? 16 : 0;
+        if (ms > 0) this.hitstop(o.i, ms, o.nx, o.nz, false, false);
+        S.sars(Math.sqrt(HIS.sarsintiPx.duvar / SAHNE.sarsintiTavan) * Math.sqrt(this.ayar.sarsinti) * Math.min(1, o.vd / HIS.esik.agir + 0.4), o.nx, o.nz, true);
+        g[o.i]?.squash(o.nx, o.nz, HIS.squash.duvar[0], HIS.squash.duvar[1], HIS.squashMs.duvar / 1000);
+        // duvar boyunca çizgi parçacıklar (teğet)
+        const adet = Math.round(HIS.parcacik.duvar * Math.min(1.25, o.vd / 200) * this.ayar.parcacik);
+        for (let k = 0; k < adet; k++) {
+          const yon = k % 2 === 0 ? 1 : -1;
+          const v = this.rng.aralik(60, 180);
+          this.parcaciklar.ekle(x, y, -o.nz * v * yon - o.nx * 30, o.nx * v * yon - o.nz * 30, this.rng.aralik(0.2, 0.4), 0xcfe0e5, 2, 4);
+        }
+        this.sok(x, y, 4, 18, 120, 0xcfe0e5, null, 2);
         break;
       }
       case "dash": {
-        const dv = d.dovusculer[o.kim];
-        if (dv) this.toz(dv.x, dv.z);
+        this.sayac.dash++;
+        const t = d.topaclar[o.i]!;
+        const x = S.ekranX(t.x);
+        const y = S.ekranY(t.z);
+        const renk = ELEMENT_RENK[d.profiller[o.i]!.element].acik;
+        for (let k = 0; k < HIS.parcacik.dash; k++) {
+          const v = this.rng.aralik(80, 160);
+          const a = Math.atan2(-o.dz, -o.dx) + this.rng.isaretli() * 0.5;
+          this.parcaciklar.ekle(x, y, Math.cos(a) * v, Math.sin(a) * v, 0.25, renk, 2, 5);
+        }
         break;
       }
-      case "ko": {
-        const dv = d.dovusculer[o.kim];
-        if (dv) { this.vurusPatlamasi(dv.x, dv.z, 0xffffff, 2); this.sahne.sars(5, 0.25); }
+      case "sekme": {
+        this.sayac.sekme++;
+        const t = d.topaclar[o.i]!;
+        this.toz(S.ekranX(t.x), S.ekranY(t.z), 6, 0x9aa8ad, 24);
         break;
       }
-      case "fin": break;
-    }
-  }
-
-  private telegrafBaslat(o: Extract<Olay, { tur: "hamleBasladi" }>): void {
-    this.telegrafKaldir(o.kim);
-    let sekil: Nokta[] | null = null;
-    if (o.aile === "koni" || o.aile === "poke") sekil = yelpaze(o.x, o.z, o.yonX, o.yonZ, o.menzil, o.yay);
-    else if (o.aile === "isin") {
-      const t = parcaEngel(this.sahne.arena, o.x, o.z, o.x + o.yonX * o.menzil, o.z + o.yonZ * o.menzil);
-      sekil = serit(o.x, o.z, o.yonX, o.yonZ, t === null ? o.menzil : o.menzil * t, o.kalinlik);
-    } else if (o.aile === "embestida") sekil = serit(o.x, o.z, o.yonX, o.yonZ, o.mesafe, 2 * this.sahne.arena.govdeYaricap);
-    if (!sekil) return;
-    const pts = sekil;
-    const duz = this.duz(pts);
-    const t = this.ekle(this.sahne.zeminKatmani, o.aviso, (g, p) => {
-      g.poly(duz).fill({ color: EFEKT.telegrafRengi, alpha: 0.18 + 0.34 * p }).stroke({ width: 2, color: EFEKT.telegrafRengi, alpha: 0.5 + 0.5 * p });
-    });
-    this.telegraflar.set(o.kim, t);
-  }
-
-  private telegrafKaldir(kim: number): void {
-    const t = this.telegraflar.get(kim);
-    if (t) { t.gecen = t.sure; this.telegraflar.delete(kim); }
-  }
-
-  private hamleCikti(o: Extract<Olay, { tur: "hamleCikti" }>): void {
-    this.telegrafKaldir(o.kim);
-    const renk = TIP_RENK[o.tip];
-    switch (o.aile) {
-      case "poke": {
-        const duz = this.duz(yelpaze(o.x, o.z, o.yonX, o.yonZ, o.menzil, o.yay));
-        this.ekle(this.sahne.zeminKatmani, EFEKT.pokeSure, (g, t) => { g.poly(duz).fill({ color: renk, alpha: 0.5 * (1 - t) }).stroke({ width: 3, color: 0xffffff, alpha: 1 - t }); });
+      case "ringOut": {
+        this.sayac.ringOut++;
+        const x = S.ekranX(o.x);
+        const y = S.ekranY(o.z);
+        const u = Math.hypot(o.vx, o.vz) || 1;
+        this.hitstop(o.i, 133, o.vx / u, o.vz / u, true, true);
+        S.sars(Math.sqrt(HIS.sarsintiPx.ringOut / SAHNE.sarsintiTavan) * Math.sqrt(this.ayar.sarsinti), o.vx / u, o.vz / u);
+        this.ekranFlasi(HIS.ekranFlas.ringOut[0], HIS.ekranFlas.ringOut[1]);
+        this.toz(x + (o.vx / u) * 20, y + (o.vz / u) * 20, HIS.parcacik.ringOut, 0xb9c6ca, 8);
+        this.sok(x, y, 10, 70, HIS.sok.ringOutMs, ELEMENT_RENK[d.profiller[o.i]!.element].orta);
+        S.zoomDarbesi(HIS.zoom.ringOut[0], HIS.zoom.ringOut[1]);
+        g[o.i]?.bitis("ringOut", o.vx, o.vz);
         break;
       }
-      case "koni": {
-        const duz = this.duz(yelpaze(o.x, o.z, o.yonX, o.yonZ, o.menzil, o.yay));
-        this.ekle(this.sahne.zeminKatmani, EFEKT.koniSure, (g, t) => { g.poly(duz).fill({ color: renk, alpha: 0.65 * (1 - t) }).stroke({ width: 2, color: 0xffffff, alpha: 0.8 * (1 - t) }); });
+      case "parcalandi": {
+        this.sayac.parcalanma++;
+        const x = S.ekranX(o.x);
+        const y = S.ekranY(o.z);
+        const el = ELEMENT_RENK[d.profiller[o.i]!.element];
+        this.hitstop(o.i, HIS.hitstopMs.bitisTavan, 1, 0, true, true);
+        S.sars(Math.sqrt(HIS.sarsintiPx.parcalanma / SAHNE.sarsintiTavan) * Math.sqrt(this.ayar.sarsinti));
+        this.ekranFlasi(HIS.ekranFlas.parcalanma[0], HIS.ekranFlas.parcalanma[1]);
+        this.kivilcim(x, y, 1, 0, HIS.parcacik.parcalanma, [el.orta, el.acik, 0xffffff, el.vurgu], [120, 420], Math.PI);
+        this.toz(x, y, 12, 0xb9c6ca, 14);
+        this.sok(x, y, 8, 90, HIS.sok.parcalanmaMs, el.orta, 0xffffff, 4);
+        S.zoomDarbesi(HIS.zoom.parcalanma[0], HIS.zoom.parcalanma[1]);
+        this.yavasKalanMs = HIS.yavasCekim.ms;
+        g[o.i]?.bitis("parcalanma", o.vx, o.vz);
         break;
       }
-      case "isin": {
-        const a = this.nokta(o.x, o.z, EFEKT.isinYuksekligi);
-        const b = this.nokta(o.x + o.yonX * o.menzil, o.z + o.yonZ * o.menzil, EFEKT.isinYuksekligi);
-        const kalin = Math.max(6, o.kalinlik);
-        this.ekle(this.sahne.ustKatman, EFEKT.isinSure, (g, t) => {
-          g.moveTo(a[0], a[1]).lineTo(b[0], b[1]).stroke({ width: kalin * (1 - 0.4 * t), color: renk, alpha: 0.9 * (1 - t), cap: "round" });
-          g.moveTo(a[0], a[1]).lineTo(b[0], b[1]).stroke({ width: kalin * 0.35, color: 0xffffff, alpha: 1 - t, cap: "round" });
-        });
+      case "durma": {
+        this.sayac.durma++;
+        const x = S.ekranX(o.x);
+        const y = S.ekranY(o.z);
+        this.toz(x, y, HIS.parcacik.durma, 0xb9c6ca, 26);
+        this.sok(x, y, 26, 40, 500, 0x9aa8ad, null, 2);
+        S.zoomDarbesi(HIS.zoom.durma[0], HIS.zoom.durma[1]);
+        g[o.i]?.bitis("durma", 0, 0);
         break;
       }
-      case "mermi": {
-        this.vurusPatlamasi(o.x + o.yonX * 18, o.z + o.yonZ * 18, renk, 0.5);
+      case "turBitti":
         break;
-      }
-      case "embestida": this.toz(o.x, o.z); break;
-      case "alan": this.vurusPatlamasi(o.x, o.z, renk, 0.4); break;
     }
   }
 
-  private alanPatla(o: Extract<Olay, { tur: "alanPatladi" }>): void {
-    const renk = TIP_RENK[o.tip];
-    const a = this.alanlar.get(o.id);
-    if (a) { this.birak(a); this.alanlar.delete(o.id); }
-    this.ekle(this.sahne.zeminKatmani, EFEKT.patlamaSure, (g, t) => {
-      this.elips(g, o.x, o.z, o.yaricap * (0.6 + 0.4 * t)).fill({ color: renk, alpha: 0.55 * (1 - t) });
-      this.elips(g, o.x, o.z, o.yaricap * (0.6 + 0.4 * t)).stroke({ width: 4 * (1 - t) + 1, color: 0xffffff, alpha: 1 - t });
-    });
-    this.sahne.sars(3, 0.15);
-  }
-
-  private vurdu(o: Extract<Olay, { tur: "vurdu" }>, d: Dunya): void {
-    const dv = d.dovusculer[o.kime];
-    if (!dv) return;
-    if (o.durum === "yanik") { this.yaziCikar(String(o.hasar), dv.x, dv.z, TIP_RENK.FIRE, 16); return; }
-    if (o.hasar === 0) { this.yaziCikar("immune!", dv.x, dv.z, 0xaab4bb, 16); return; }
-    this.vurusPatlamasi(dv.x, dv.z, TIP_RENK[o.tip], 1);
-    this.sahne.sars(2, 0.08);
-    const etk = o.etkinlik;
-    const renk = etk > 1 ? 0xf4cf47 : etk < 1 ? 0x8fb4c8 : 0xffffff;
-    this.yaziCikar(String(o.hasar), dv.x, dv.z, renk, etk === 1 ? 22 : 26, 0);
-    if (etk > 1) this.yaziCikar("super!", dv.x, dv.z, 0xf4cf47, 15, 22);
-    else if (etk < 1) this.yaziCikar("resisted!", dv.x, dv.z, 0x8fb4c8, 15, 22);
-  }
-
-  /** Parlayan halka + kıvılcımlar (vuruş, mermi sonu, KO). */
-  private vurusPatlamasi(x: number, z: number, renk: number, boy: number): void {
-    const olcek = this.sahne.nesneOlcegi(z);
-    const yuk = 30 * olcek * 2;
-    const kivilcim = 7;
-    this.ekle(this.sahne.ustKatman, EFEKT.vurusSure * Math.max(1, boy * 0.7), (g, t) => {
-      const [sx, sy] = this.nokta(x, z, yuk * 0.5);
-      const r = (10 + 26 * t) * boy * olcek * 1.4;
-      g.circle(sx, sy, r).stroke({ width: 3 * (1 - t) + 1, color: renk, alpha: 1 - t });
-      g.circle(sx, sy, r * 0.45).fill({ color: 0xffffff, alpha: 0.8 * (1 - t) });
-      for (let i = 0; i < kivilcim; i++) {
-        const a = (i / kivilcim) * Math.PI * 2 + x;
-        g.moveTo(sx + Math.cos(a) * r * 0.7, sy + Math.sin(a) * r * 0.7).lineTo(sx + Math.cos(a) * r * 1.3, sy + Math.sin(a) * r * 1.3).stroke({ width: 2, color: renk, alpha: 1 - t });
-      }
-    });
-  }
-
-  /** Embestida ve dash tozu. */
-  private toz(x: number, z: number): void {
-    this.ekle(this.sahne.zeminKatmani, EFEKT.tozSure, (g, t) => {
-      for (let i = 0; i < 3; i++) this.elips(g, x + (i - 1) * 10, z + 2, 8 + 14 * t).fill({ color: 0xd8c9a0, alpha: 0.4 * (1 - t) });
-    });
-  }
-
-  private yaziCikar(metin: string, x: number, z: number, renk: number, boyut: number, ofset = 0): void {
-    const t = this.yaziHavuzu.pop() ?? new Text({ text: "", style: { fontFamily: "Jersey 15, monospace", fontSize: 20, fill: 0xffffff, stroke: { color: 0x050d10, width: 4 }, align: "center" } });
-    t.text = metin;
-    t.style.fontSize = boyut;
-    t.style.fill = renk;
-    t.anchor.set(0.5);
-    t.alpha = 1;
-    this.sahne.ustKatman.addChild(t);
-    const p = this.nokta(x, z, 64 * this.sahne.nesneOlcegi(z) + 8);
-    t.position.set(p[0], p[1] - ofset);
-    t.visible = true;
-    this.yazilar.push({ t, gecen: 0, y0: p[1] - ofset });
-  }
-
-  // ---- her karede -----------------------------------------------------------------------------
-
-  /** @param alfa  son sim adımı ile önceki arasındaki kesir (0..1), mermi ara değerlemesi için */
-  guncelle(dt: number, d: Dunya, alfa: number): void {
-    for (let i = this.zamanlilar.length - 1; i >= 0; i--) {
-      const z = this.zamanlilar[i]!;
-      z.gecen += dt;
-      z.g.clear();
-      if (z.gecen >= z.sure) { this.birak(z.g); this.zamanlilar.splice(i, 1); continue; }
-      z.ciz(z.g, z.gecen / z.sure);
+  /** Her kare; `dt` gerçek saniye. */
+  guncelle(dt: number): void {
+    this.saat += dt;
+    const ydt = dt * this.yavas;
+    if (this.yavasKalanMs > 0) this.yavasKalanMs = Math.max(0, this.yavasKalanMs - dt * 1000);
+    // hitstop sırasında parçacıklar yaşlanmaz (05 § 3.3: "yaşları dondurulur")
+    const donuk = this.hitstopVar(0) || this.hitstopVar(1);
+    this.parcaciklar.guncelle(donuk ? ydt * 0.15 : ydt);
+    for (const s of this.soklar) {
+      s.t += ydt;
+      const t = Math.min(1, s.t / s.sure);
+      const r = s.r0 + (s.r1 - s.r0) * (1 - (1 - t) * (1 - t));
+      const a = 1 - t;
+      s.g.clear().circle(s.x, s.y, r).stroke({ width: s.kalinlik, color: s.renk, alpha: a });
+      if (s.renk2 !== null) s.g.circle(s.x, s.y, r * 0.72).stroke({ width: s.kalinlik, color: s.renk2, alpha: a });
     }
-    this.alanlariCiz(d);
-    this.mermileriCiz(d, alfa);
-    this.yazilariGuncelle(dt);
-    if (d.tick % EFEKT.tozAraligi === 0) {
-      for (const dv of d.dovusculer) if (dv.hamle?.evre === "atilis") this.toz(dv.x, dv.z);
+    for (let i = this.soklar.length - 1; i >= 0; i--) {
+      const s = this.soklar[i]!;
+      if (s.t >= s.sure) { s.g.destroy(); this.soklar.splice(i, 1); }
     }
-  }
-
-  private alanlariCiz(d: Dunya): void {
-    const var_ = new Set<number>();
-    for (const a of d.alanlar) {
-      var_.add(a.id);
-      let g = this.alanlar.get(a.id);
-      if (!g) { g = this.grafik(this.sahne.zeminKatmani); this.alanlar.set(a.id, g); }
-      const ilerleme = 1 - a.kalan / a.toplam;
-      g.clear();
-      this.elips(g, a.x, a.z, a.yaricap).fill({ color: EFEKT.telegrafRengi, alpha: 0.1 });
-      this.elips(g, a.x, a.z, a.yaricap * ilerleme).fill({ color: EFEKT.telegrafRengi, alpha: 0.18 + 0.3 * ilerleme });
-      this.elips(g, a.x, a.z, a.yaricap).stroke({ width: 2, color: EFEKT.telegrafRengi, alpha: 0.5 + 0.4 * ilerleme });
-    }
-    for (const [id, g] of this.alanlar) {
-      if (!var_.has(id)) { this.birak(g); this.alanlar.delete(id); }
-    }
-  }
-
-  private mermileriCiz(d: Dunya, alfa: number): void {
-    const var_ = new Set<number>();
-    for (const m of d.mermiler) {
-      var_.add(m.id);
-      let v = this.mermiler.get(m.id);
-      if (!v) { v = { g: this.grafik(this.sahne.nesneKatmani), iz: [] }; this.mermiler.set(m.id, v); }
-      // son adımın başına geri extrapolasyon: ekranda alfa kadar ilerlemiş görünür
-      const x = m.x - m.vx * AYAR.dt * (1 - alfa);
-      const z = m.z - m.vz * AYAR.dt * (1 - alfa);
-      if (v.iz.length === 0 || v.iz[v.iz.length - 1]![0] !== x) v.iz.push([x, z]);
-      if (v.iz.length > EFEKT.mermiIzUzunlugu) v.iz.shift();
-      const renk = TIP_RENK[m.tip];
-      const olcek = this.sahne.nesneOlcegi(z);
-      const g = v.g;
-      g.clear();
-      const [gx, gy] = this.nokta(x, z);
-      g.position.set(0, 0);
-      g.zIndex = z;
-      this.elips(g, x, z, m.yaricap * 0.9).fill({ color: 0x000000, alpha: 0.25 });
-      const yuk = EFEKT.mermiYuksekligi * olcek * 2;
-      v.iz.forEach(([ix, iz], i) => {
-        const [px, py] = this.nokta(ix, iz, yuk);
-        const k = (i + 1) / v.iz.length;
-        g.circle(px, py, m.yaricap * olcek * 2.2 * k * 0.8).fill({ color: renk, alpha: 0.4 * k });
-      });
-      g.circle(gx, gy - yuk, m.yaricap * olcek * 2.4).fill(renk).stroke({ width: 2, color: 0xffffff, alpha: 0.8 });
-      g.circle(gx, gy - yuk, m.yaricap * olcek * 1.0).fill({ color: 0xffffff, alpha: 0.85 });
-    }
-    for (const [id, v] of this.mermiler) {
-      if (!var_.has(id)) { this.birak(v.g); this.mermiler.delete(id); }
-    }
-  }
-
-  private yazilariGuncelle(dt: number): void {
-    for (let i = this.yazilar.length - 1; i >= 0; i--) {
-      const y = this.yazilar[i]!;
-      y.gecen += dt;
-      const t = y.gecen / EFEKT.yaziSure;
-      if (t >= 1) {
-        y.t.removeFromParent();
-        y.t.visible = false;
-        this.yaziHavuzu.push(y.t);
-        this.yazilar.splice(i, 1);
-        continue;
-      }
-      y.t.y = y.y0 - EFEKT.yaziYukselme * t;
-      y.t.alpha = t < 0.6 ? 1 : 1 - (t - 0.6) / 0.4;
-    }
-  }
-
-  /** Yeni maç: bütün efektleri sil. */
-  temizle(): void {
-    for (const z of this.zamanlilar) this.birak(z.g);
-    this.zamanlilar = [];
-    this.telegraflar.clear();
-    for (const g of this.alanlar.values()) this.birak(g);
-    this.alanlar.clear();
-    for (const v of this.mermiler.values()) this.birak(v.g);
-    this.mermiler.clear();
-    for (const y of this.yazilar) { y.t.removeFromParent(); this.yaziHavuzu.push(y.t); }
-    this.yazilar = [];
+    if (this.flasKalanMs > 0) {
+      this.flasKalanMs -= dt * 1000;
+      this.ekranFlas.alpha = this.flasKalanMs > 0 ? this.flasAlfa : 0;
+    } else this.ekranFlas.alpha = 0;
   }
 }

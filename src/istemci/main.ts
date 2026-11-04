@@ -1,46 +1,35 @@
 import { Application } from "pixi.js";
 
-// İstemci girişi. Ekran seçimi URL'den: ?ekran=arena | lab
-// Her ekran modülü `baslat(app, kok)` dışa aktarır ve kendi temizliğini yapar.
+// İstemci girişi. Ekran seçimi URL'den: ?ekran=topac-lab (varsayılan; D2'de maç ekranı eklenir).
+// Her ekran modülü `baslat(baglam)` dışa aktarır ve kendi temizliğini yapar.
 
-export type EkranAdi = "arena" | "lab";
+export type EkranAdi = "topac-lab";
 
 export interface EkranBaglami {
   app: Application;
   kok: HTMLElement; // #sahne
-  ustYazi: HTMLElement; // DOM üst katmanı (HUD metinleri, düğmeler)
+  ustYazi: HTMLElement; // DOM üst katmanı (HUD, panel)
 }
 
 const EKRANLAR: Record<EkranAdi, () => Promise<{ baslat: (b: EkranBaglami) => Promise<void> | void }>> = {
-  arena: () => import("./ekranlar/Arena.ts"),
-  lab: () => import("./ekranlar/BirlestirmeLab.ts"),
+  "topac-lab": () => import("./ekranlar/TopacLab.ts"),
 };
 
 function ekranAdi(): EkranAdi {
   const istenen = new URLSearchParams(location.search).get("ekran");
-  return istenen === "lab" ? "lab" : "arena";
+  return istenen && istenen in EKRANLAR ? (istenen as EkranAdi) : "topac-lab";
 }
 
 async function ana() {
   const kok = document.getElementById("sahne")!;
   const ustYazi = document.getElementById("ustYazi")!;
   const ad = ekranAdi();
-
   for (const a of document.querySelectorAll<HTMLAnchorElement>("#menu a")) {
-    a.toggleAttribute("aria-current", a.getAttribute("href") === `?ekran=${ad}`);
-    if (a.hasAttribute("aria-current")) a.setAttribute("aria-current", "page");
+    if (a.getAttribute("href") === `?ekran=${ad}`) a.setAttribute("aria-current", "page");
   }
-
   const app = new Application();
-  await app.init({
-    resizeTo: kok,
-    background: 0x0c191d,
-    antialias: false,
-    roundPixels: true,
-    preference: "webgl",
-  });
+  await app.init({ resizeTo: kok, background: 0x0b1418, antialias: false, roundPixels: true, preference: "webgl" });
   kok.insertBefore(app.canvas, ustYazi);
-
   const modul = await EKRANLAR[ad]();
   await modul.baslat({ app, kok, ustYazi });
 }

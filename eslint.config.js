@@ -16,6 +16,12 @@ const YASAK_GLOBALLER = [
   "globalThis", "self", "global",
 ].map((name) => ({ name, message: `src/paylasilan'da yasak: '${name}' (DOM/Node/zaman/ağ). Deterministik, saf kod yaz.` }));
 
+/** Sim'de yasak Math işlevleri (yaklaşık sonuç: ECMAScript bit kesinliği istemez). */
+const YASAK_MATH = [
+  "hypot", "sin", "cos", "tan", "asin", "acos", "atan", "atan2", "sinh", "cosh", "tanh", "asinh", "acosh", "atanh",
+  "pow", "exp", "expm1", "log", "log1p", "log2", "log10", "cbrt",
+];
+
 const YASAK_ICE_AKTARIMLAR = {
   paths: [
     { name: "fs" }, { name: "path" }, { name: "os" }, { name: "crypto" }, { name: "child_process" },
@@ -46,6 +52,13 @@ export default tseslint.config(
         { object: "crypto", property: "getRandomValues", message: "Tohumlu üreteci kullan." },
         { object: "crypto", property: "randomUUID", message: "Tohumlu üreteci kullan." },
         { object: "globalThis", property: "Math", message: "globalThis üzerinden kaçış yok." },
+        // Determinizm sözleşmesi (tuning.md § 3, flint § 2, axiom karar 1): yalnız + - * / ve Math.sqrt,
+        // abs/min/max/floor/trunc/sign/imul. Yaklaşık (motorlar arası son bit farkı verebilen) işlevler yasak.
+        ...YASAK_MATH.map((property) => ({
+          object: "Math", property,
+          message: `Math.${property} sim'de yasak (motorlar arası bit farkı). Karekök için Math.sqrt, trig için kurallar/sinTablo.ts.`,
+        })),
+        { object: "Math", property: "fround", message: "fround kullanılmaz (ADR-004 yazılmadı; sim saf float64)." },
       ],
       "no-restricted-syntax": [
         "error",
@@ -55,6 +68,12 @@ export default tseslint.config(
         { selector: "MemberExpression[object.name='Math'][property.value='random']", message: "Math['random'] yasak." },
         { selector: "MemberExpression[object.name='Intl']", message: "Intl yerel ayara bağlıdır, benzetimde yasak." },
         { selector: "CallExpression[callee.property.name=/^toLocale/]", message: "Yerel ayara bağlı çağrı yasak." },
+        { selector: "BinaryExpression[operator='**']", message: "** yasak (pow ile aynı: yaklaşık). Kare için x * x yaz." },
+        { selector: "AssignmentExpression[operator='**=']", message: "**= yasak. x = x * x yaz." },
+        { selector: `MemberExpression[object.name='Math'][property.value=/^(${YASAK_MATH.join("|")})$/]`, message: "Math['...'] ile yasak işlev çağrılamaz." },
+        { selector: "CallExpression[callee.property.name='sort'][arguments.length=0]", message: "Karşılaştırıcısız sort yasak (motorlar arası sıra); (a, b) => ... ver." },
+        { selector: "CallExpression[callee.property.name='toSorted'][arguments.length=0]", message: "Karşılaştırıcısız toSorted yasak." },
+        { selector: "ForInStatement", message: "for..in sırası nesne anahtar sırasına bağlı; dizi ya da sabit anahtar listesi kullan." },
       ],
       "no-restricted-imports": ["error", YASAK_ICE_AKTARIMLAR],
     },

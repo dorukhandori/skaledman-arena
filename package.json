@@ -1,18 +1,18 @@
 {
-  "name": "skaledman-arena",
+  "name": "devran",
   "private": true,
   "type": "module",
   "version": "0.0.1",
-  "description": "Skaledman fusion kartlarıyla gerçek zamanlı 1v1 arena. Kâr amaçsız hayran projesi.",
+  "description": "Devran: özgün, gerçek zamanlı 1v1 dönen topaç dövüşü (tarayıcı). Kâr amaçsız.",
   "scripts": {
     "dev": "vite",
     "build": "vite build --app",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "birlestir": "tsx araclar/fusion-birlestir.ts",
-    "veri:kapsama": "tsx araclar/spritecollab-kapsama.ts",
     "lint": "eslint src/paylasilan",
-    "veri:cek": "tsx araclar/veri-cek.ts"
+    "altin:uret": "tsx araclar/altin-uret.ts",
+    "test:tarayici": "tsx araclar/altin-tarayici.ts",
+    "lab:ekran": "tsx araclar/lab-ekran.ts"
   },
   "dependencies": {
     "@colyseus/monitor": "^0.18.7",
