@@ -62,10 +62,32 @@ def glb_yukle(yol):
     return ana, img
 
 
+def pca_ekseni(co):
+    """En az varyans doğrultusu (yassı parçada dönme ekseni). Bir dünya eksenine 3°'den yakınsa o eksen adı, değilse vektör."""
+    m = co - co.mean(axis=0)
+    deger, vektor = np.linalg.eigh(m.T @ m)
+    v = vektor[:, int(np.argmin(deger))]
+    i = int(np.argmax(np.abs(v)))
+    if abs(v[i]) > math.cos(math.radians(3)):
+        return "xyz"[i], None
+    return "pca", v * np.sign(v[i])
+
+
 def eksene_cevir(co, eksen, ters):
-    """co: (N,3). Dönme eksenini +Z yap; ters ise alt/üst değişir."""
+    """co: (N,3). Dönme eksenini +Z yap; ters ise alt/üst değişir. auto: PCA, dünya eksenine yakınsa o eksen."""
     if eksen == "auto":
-        eksen = "xyz"[int(np.argmin(co.max(axis=0) - co.min(axis=0)))]
+        eksen, v = pca_ekseni(co)
+        if eksen == "pca":
+            # v'yi +Z'ye çeviren dönme (Rodrigues)
+            z = np.array([0.0, 0.0, 1.0])
+            k = np.cross(v, z)
+            sn, cs = np.linalg.norm(k), float(v @ z)
+            K = np.array([[0, -k[2], k[1]], [k[2], 0, -k[0]], [-k[1], k[0], 0]]) / max(sn, 1e-9)
+            R = np.eye(3) + sn * K + (1 - cs) * (K @ K)
+            co = co @ R.T
+            if ters:
+                co = co * np.array([1.0, -1.0, -1.0])
+            return co, "pca(%.2f,%.2f,%.2f)" % tuple(v)
     if eksen == "x":
         co = co[:, [1, 2, 0]]
     elif eksen == "y":
@@ -158,13 +180,32 @@ def yuz_ozellik(me, doku):
     return renk, np.hypot(mer[:, 0], mer[:, 1]), mer[:, 2]
 
 
+def renk_tonu(renk):
+    """RGB (N,3) 0..1 -> HSV tonu 0..1."""
+    mx, mn = renk.max(axis=1), renk.min(axis=1)
+    d = np.maximum(mx - mn, 1e-6)
+    r_, g_, b_ = renk[:, 0], renk[:, 1], renk[:, 2]
+    h = np.where(mx == r_, ((g_ - b_) / d) % 6, np.where(mx == g_, (b_ - r_) / d + 2, (r_ - g_) / d + 4))
+    return (h / 6.0) % 1.0
+
+
 def sinif_sec(tur, kural, renk, r, z, R):
     lum = renk @ np.array([0.3, 0.59, 0.11])
     mx, mn = renk.max(axis=1), renk.min(axis=1)
     sat = (mx - mn) / np.maximum(mx, 1e-4)
     kirmizi = (renk[:, 0] > renk[:, 1] * 1.6) & (sat > 0.35)
     S = TR.SINIF
-    if tur == "govde":
+    if tur == "govde" and kural.get("renkli"):
+        # Parti 2+: konseptte boya mat kırmızı istendi; renkten sınıf (koyu gölge kıvrımları boyada kalır), göbek her zaman metal
+        ton = renk_tonu(renk)
+        c = np.full(len(r), S["metal"])
+        c = np.where(((sat > 0.28) & ((ton < 0.06) | (ton > 0.93))) | (lum < 0.22), S["boya"], c)
+        if kural.get("altin"):
+            c = np.where((sat > 0.3) & (ton >= 0.07) & (ton <= 0.18), S["altin"], c)
+        if kural.get("beyaz"):
+            c = np.where((lum > 0.78) & (sat < 0.18), S["beyaz"], c)
+        c = np.where(r < kural.get("gobekR", 11.5), S["metal"], c)
+    elif tur == "govde":
         c = np.where(r < kural.get("gobekR", 11.5), S["metal"], S["boya"])
         if kural.get("altinSirt"):
             c = np.where((sat > 0.35) & (renk[:, 0] > renk[:, 2] * 1.4) & ~kirmizi, S["altin"], c)
@@ -200,8 +241,8 @@ def parca_kur(p):
     me.vertices.foreach_get("co", co)
     co, eksen = eksene_cevir(co.reshape(-1, 3), p.get("eksen", "auto"), p.get("ters", False))
     mn, mx = co.min(axis=0), co.max(axis=0)
-    co[:, 0] -= (mn[0] + mx[0]) / 2
-    co[:, 1] -= (mn[1] + mx[1]) / 2
+    # dönme ekseni = köşe ağırlık merkezi (n katlı parçada eksen üstünde; bbox merkezi tek n'de kayık: Sivri %17, Ok %9)
+    co[:, :2] -= co[:, :2].mean(axis=0)
     H = p["hedef"]
     Rm = float(np.hypot(co[:, 0], co[:, 1]).max())
     co[:, :2] *= H["R"] / Rm

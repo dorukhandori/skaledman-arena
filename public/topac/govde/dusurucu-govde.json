@@ -1,0 +1,35 @@
+{
+ "surum": 2,
+ "parcaId": "dusurucu-govde",
+ "tur": "govde",
+ "kare": [
+  76,
+  76
+ ],
+ "capa": [
+  38,
+  60
+ ],
+ "birim": 1.0119409026512851,
+ "yukselti": 45,
+ "simetri": 2,
+ "periyotKare": 8,
+ "diskKare": 3,
+ "yonler": [
+  "s",
+  "l"
+ ],
+ "boyalar": [
+  "kor",
+  "kasirga",
+  "simsek",
+  "girdap",
+  "kaya",
+  "don"
+ ],
+ "ustZ": 26.4,
+ "disYaricap": 33,
+ "kaynak": "gemini-3.1-flash-image + tripo v3.1-20260211 + blender 5.2 (simetrik dilim) + topac-uret pişirici",
+ "tarih": "2026-11-05",
+ "bayt": 163303
+}

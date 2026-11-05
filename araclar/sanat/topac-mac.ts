@@ -28,8 +28,16 @@ const CIKTI = join(KOK, "public", "topac");
 /** Parça başına Mac ayarı: eksen (auto = bbox'ın en ince ekseni), ters (alt/üst), sınıf kuralları. Parti 2-3 buraya eklenir. */
 const MAC: Record<string, { eksen?: "auto" | "x" | "y" | "z"; ters?: boolean; kural?: Record<string, number | boolean> }> = {
   "ok-govde": { kural: { gobekR: 11.5 } },
+  // Parti 2: konsept boyası mat kırmızı, sınıf renkten (renkli)
+  "kalkan-govde": { kural: { renkli: true } },
+  "savrulan-govde": { kural: { renkli: true } }, // 2. model (yassı konsept); ilki art-source glb/savrulan-govde-1.glb
+  "halka-govde": { kural: { renkli: true } },
+  "ayaz-govde": { kural: { renkli: true } },
+  "dusurucu-govde": { kural: { renkli: true, altin: true } },
+  "sivri-govde": { kural: { renkli: true, altin: true } },
+  "izli-govde": { kural: { renkli: true, beyaz: true } },
   "hafif-disk": {},
-  "duz-uc": {},
+  "duz-uc": { eksen: "z" }, // koni: PCA güvenilmez (yassı değil)
   "kor-goktasi": {},
 };
 
@@ -224,6 +232,23 @@ async function levhaYaz(set: Record<Tur, Onizleme>, diskUstZ: number, ikonIdler:
     .png().toFile(join(KOK, "docs/art/topac-mac-kiyas.png"));
 }
 
+/** Gövde levhası: her Gövde, setin Disk/Uç/Çekirdeğiyle, katalog Element boyasında: keskin 0-3, bulanık 0, disk 0, sol 0. */
+async function govdeLevhasi(govdeler: [string, Onizleme][], set: Record<Tur, Onizleme>, diskUstZ: number, katalog: Map<string, KatalogParca>): Promise<void> {
+  const W = SANAT.kareW, H = SANAT.kareH, tile = W + 4, sutun = 7;
+  const tw = sutun * tile, th = govdeler.length * tile;
+  const levha = new Uint8ClampedArray(tw * th * 4);
+  for (let i = 0; i < tw * th; i++) { levha[i * 4] = 0x4a; levha[i * 4 + 1] = 0x46; levha[i * 4 + 2] = 0x42; levha[i * 4 + 3] = 255; }
+  govdeler.forEach(([id, o], ri) => {
+    const boya = katalog.get(id)?.element ?? "kor";
+    const s2 = { ...set, govde: o };
+    const kareler = [0, 1, 2, 3].map((f) => birlestir(s2, diskUstZ, boya, 0, f, "s"));
+    kareler.push(birlestir(s2, diskUstZ, boya, 1, 0, "s"), birlestir(s2, diskUstZ, boya, 2, 0, "s"), birlestir(s2, diskUstZ, boya, 0, 0, "l"));
+    kareler.forEach((k, ci) => yapistir(levha, tw, k, W, H, ci * tile + 2, ri * tile + 2));
+  });
+  await sharp(Buffer.from(levha.buffer), { raw: { width: tw, height: th, channels: 4 } }).resize(tw * 3, th * 3, { kernel: "nearest" }).png()
+    .toFile(join(KOK, "docs/art/topac-mac-govdeler.png"));
+}
+
 // ------------------------------------------------------------------ liste metaları
 
 /** Üretilen kimlikleri veri/topac-gorsel.json `bicimB` ve veri/topac-model.json `glb` listelerine ekler (sıra katalog sırası). */
@@ -255,13 +280,15 @@ async function main(): Promise<void> {
     return;
   }
   const set: Partial<Record<Tur, Onizleme>> = {};
+  const govdeler: [string, Onizleme][] = [];
   let diskUstZ: number = SANAT.govdeTabanZ;
   for (const id of idler) {
     const spec = specler[id]!;
     const { onizleme } = await parcaPisir(id, spec, katalog.get(id), { ham: HAM, yaz: false });
     const bayt = await bicimBYaz(id, spec, onizleme);
     console.log(`biçim B: ${id} (${(bayt / 1024).toFixed(1)} KB)`);
-    set[spec.tur] = onizleme;
+    if (spec.tur === "govde") govdeler.push([id, onizleme]);
+    if (spec.tur !== "govde" || id === "ok-govde" || !set.govde) set[spec.tur] = onizleme;
     if (spec.tur === "disk") diskUstZ = ustOlcu(spec).ustZ;
     if (!arg.includes("--ikon-yok") && existsSync(join(KAYNAK, "ikon-ham", `${id}.png`))) await ikonUret(id, spec.tur, katalog.get(id));
   }
@@ -269,6 +296,7 @@ async function main(): Promise<void> {
   if (set.govde && set.disk && set.uc && set.cekirdek) {
     await levhaYaz(set as Record<Tur, Onizleme>, diskUstZ, idler);
     console.log("levha: docs/art/topac-mac-onizleme.png, kıyas: docs/art/topac-mac-kiyas.png");
+    if (govdeler.length > 1) { await govdeLevhasi(govdeler, set as Record<Tur, Onizleme>, diskUstZ, katalog); console.log("gövde levhası: docs/art/topac-mac-govdeler.png"); }
   }
 }
 

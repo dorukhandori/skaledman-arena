@@ -41,3 +41,28 @@ her kimliğin dosyası var. `__pycache__/` `.gitignore`'a (d8 varlık taraması 
 - GLB'ler 350-380 KB (19 000 üçgen); yalnız Atölye'de seçili parça için iner. 27 parça ≈ 10 MB.
 - Yerel Playwright: proje bağımlılığı yok; `test:tarayici` Mac'te global `playwright` + "chrome" kanalı shim'iyle koştu
   (önbellekteki Chromium 1194 kurulumu bozuk: framework eksik).
+
+## Parti 2: kalan 7 Gövde
+
+Kalkan, Savrulan, Halka, Ayaz, Düşürücü, Sivri, İz. Gövde levhası `docs/art/topac-mac-govdeler.png` (her Gövde Parti 1'in
+Disk/Uç/Çekirdeğiyle, katalog Element boyasında: keskin 0-3, bulanık 0, bulanık disk 0, sol 0).
+
+**Hat değişiklikleri:**
+- **Konsept boyası mat kırmızı, sınıf renkten** (`MAC` tablosunda `renkli`): kırmızı = boya, gri/çelik = metal, altın = altin
+  (Düşürücü, Sivri), beyaz = beyaz (İz yüzgeçleri), göbek yarıçapı her zaman metal. Gri boya çelikten ayrılamıyordu (Kalkan'ın
+  metal kenar bandı). Çıktı rengi yine `ELEMENT_RENK` rampasından; Parti 1 yolu (Ok Gövde, yalnız yarıçap) aynı.
+- **Eksen PCA** (en az varyans doğrultusu; dünya eksenine 3°'den yakınsa o eksen). Tripo Sivri/Ayaz/Düşürücü'yü 10-15° eğik kurmuştu.
+  Düz Uç koni olduğu için PCA güvenilmez: `eksen: "z"` sabit.
+- **Merkez = köşe ağırlık merkezi** (önce bbox merkeziydi). Tek n'li parçada bbox merkezi göbekten kayık: Sivri %17, Ok Gövde %9
+  (≈ 3 birim). Simetrik dilim yanlış noktada dönüyordu; Sivri küçük ve eğik çıkıyordu. **Ok Gövde de bu düzeltmeyle yeniden pişti**
+  (göbek artık eş merkezli; GLB de yenilendi). Disk, Uç ve Göktaşı da az kaydı (bbox ile ağırlık merkezi tam çakışmıyordu) ve aynı
+  hatla yeniden pişti.
+
+**Değerlendirme:** Halka (Girdap) referans 07'nin eş merkezli sırtlı diskine en yakın parça. Kalkan, Düşürücü, Sivri, Ayaz okunur.
+İz'de beyaz yüzgeçler görünür. **Savrulan en zayıf:** ilk model kancaları yüksek duvar yaptı (76 px'de yumru); yassı konseptle ikinci
+model (+40 kredi) kancaları silüette ayırıyor, ama sabit Gövde yüksekliğine (z 16-32) uzatıldığı için ortası davul gibi. Doğal
+yükseklik denendi, reddedildi: Çekirdek sabit yükseklikte çizildiği için kaide üstünde yüzüyordu. İlk model `art-source` içinde
+`glb/savrulan-govde-1.glb` olarak duruyor.
+
+**Çalışma zamanı** (`ekran/MAC-P2-*`, Sivri Gövde seti): atlas sprite kipinde, biçim B istekleri 29, konsol hatası 0. Kapılar:
+`npm test` 480 · `lint` · `typecheck` · `build` · `krediler:uret` yeşil · `test:tarayici` Node = Chrome bit bit aynı.

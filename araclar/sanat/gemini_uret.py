@@ -77,33 +77,90 @@ TOPAC = ("High-quality 16-bit pixel art game sprite of a single mechanical spinn
          "frame, its rotation axis vertical. Original design, no logos, no text, no brand or toy-line styling, no animal, bird, "
          "dragon or wing shapes. Perfectly flat uniform solid magenta (#FF00FF) background edge to edge, no gradient, no ground, "
          "no cast shadow, no border. Square image. Part: ")
-TOPAC_TRIPO = ("Clean stylized 3D game asset concept render of a single mechanical spinning-top part, a solid machined object, "
-               "three-quarter view from above (camera about 40 degrees above the horizon), rotation axis vertical, centered, "
-               "chunky readable shapes with crisp bevels, hand-painted texture look, even soft studio lighting, plain flat "
-               "pure white background, no ground, no shadow, no text, no logo. Original design, no animal, bird, dragon or "
-               "wing shapes. {sim} Part: ")
-# (n, ikon tarifi (katalog Element rengi), Tripo tarifi (Gövde orta gri: palet takası § 4))
+# Tripo konsepti (Parti 1 ikinci turda kalibre edildi: "EXACTLY N" vurgusu, yukarıdan ~50°, tek parça). Gemini sayıyı her zaman
+# tutturmaz; Blender simetrik dilimi fazla/eksik kanadı ayıklar ama dilim içindeki biçim doğru olmalı: iki varyant (-a/-b) üretilir,
+# gözle seçilen <id>.png'ye kopyalanır. Parti 2'den itibaren Gövde boyası MAT KIRMIZI istenir: pişirici sınıfı renkten seçer
+# (kırmızı = boya, gri/çelik = metal, altın = altin, beyaz = beyaz); çıktı rengi zaten ELEMENT_RENK rampasından gelir.
+TOPAC_TRIPO = ("Clean stylized 3D game asset concept render of ONE single isolated machined part, seen from above at about 50 "
+               "degrees, rotation axis vertical, centered, filling 70 percent of the frame, chunky readable shapes with crisp "
+               "bevels, hand-painted texture look, even soft studio lighting, plain flat pure white background, no ground, no "
+               "shadow, no text, no logo, no other parts. Original design, no animal, bird, dragon or wing shapes. ")
+# (n, ikon tarifi (katalog Element rengi), Tripo tarifi)
 TOPAC_PARCA = {
  "ok-govde": (3,
   "the attack ring of a spinning top: a thick round disc body with three broad arrowhead blades swept back, a raised ridge "
   "along each blade, two concentric engraved grooves, a polished steel hub ring in the center with an empty socket, painted "
   "glowing ember orange enamel.",
-  "the attack ring of a spinning top: a thick round disc body with three broad arrowhead blades swept back clockwise, a "
-  "raised ridge along each blade, two concentric engraved grooves on the top face, a polished steel hub ring in the center "
-  "with an empty round socket, the blades and body painted in plain medium grey enamel, the hub bright steel."),
+  "A flat round attack ring with EXACTLY THREE (3) identical broad arrowhead-shaped blades spaced 120 degrees apart, "
+  "each blade swept back clockwise like a triangular arrow tip pointing along the rim, a raised ridge along each blade, two "
+  "concentric engraved grooves on the flat top face, a round polished steel hub ring in the center with an empty round socket. "
+  "Blades and body in plain matte medium grey enamel, the hub bright steel. Count: 3 blades only."),
  "hafif-disk": (7,
   "a thin polished steel weight disc for a spinning top with seven small square lock tabs around its rim and one raised "
   "ring on top, brushed metal.",
-  "a thin flat polished steel weight disc (a washer-like ring with a large center hole) for a spinning top with seven small "
-  "square lock tabs around its outer rim and one raised ring on its top face, brushed dark steel."),
+  "A thin flat steel ring disc (washer shape with a large round center hole) with EXACTLY SEVEN (7) identical small "
+  "square tabs evenly spaced around its outer rim, 7 tabs only, and one raised ring on its top face. Brushed dark steel."),
  "duz-uc": (6,
   "the tip of a spinning top: a short dark gunmetal cone with six ribs ending in a wide flat rubber foot.",
-  "the tip of a spinning top: a short dark gunmetal cone, widest at the top, with six vertical ribs, narrowing down to a "
-  "wide flat black rubber foot at the bottom."),
+  "The bottom tip of a spinning top: a short wide cylinder-cone of dark gunmetal with EXACTLY SIX (6) thick vertical "
+  "ribs evenly spaced around it, 6 ribs only, and at the bottom a wide flat black rubber foot disc that is wider than the cone. "
+  "Short and squat."),
  "kor-goktasi": (6,
   "a small six-faceted glowing ember-red gemstone set in a gold bezel ring, the core of a spinning top.",
-  "a small six-faceted pyramid-shaped ember-red gemstone set in a thick round gold bezel ring, seen from above, the core "
-  "cap of a spinning top."),
+  "A small round gem cap, only this single small part: a thick round gold bezel ring (flat circle) holding a low "
+  "six-sided (hexagonal) pyramid-cut ember-red gemstone, 6 facets, nothing else attached, no blades, no stand."),
+ # ---- Parti 2: kalan 7 Gövde (boya mat kırmızı; göbek çelik, boş yuva)
+ "kalkan-govde": (6,
+  "the defense ring of a spinning top: an almost circular thick disc with six shallow rounded lobes, a thick polished steel "
+  "outer rim band like a shield edge, six short raised radial ribs on the top face, a steel hub ring with an empty socket, "
+  "painted sandstone amber-brown enamel.",
+  "A heavy almost circular defense ring with EXACTLY SIX (6) shallow rounded lobes around its edge, 6 lobes only, a thick "
+  "bright polished steel outer rim band wrapping the whole edge like a shield rim, six short raised radial ribs on the flat "
+  "top face, a round bright steel hub ring in the center with an empty round socket. Body painted matte brick red enamel, "
+  "rim band and hub bright steel."),
+ "savrulan-govde": (4,
+  "the balance ring of a spinning top: a round disc body with four curled hook-shaped blades, curved ridges on each blade "
+  "flowing backwards, one engraved groove ring, a polished steel hub ring with an empty socket, painted mint teal enamel.",
+  # 2. tur: ilk model kancaları yüksek duvar yaptı (76 px'de yumru); yassı disk + alçak kanca sırtı
+  "A LOW FLAT round balance ring, a thick flat disc no taller than a coin stack, with EXACTLY FOUR (4) identical curled "
+  "hook-shaped blades spaced 90 degrees apart that stick out flat from the rim in the same plane as the disc (not raised, not "
+  "vertical walls), each blade curling counter-clockwise like a flat hook, a low curved ridge along each blade, one engraved "
+  "groove ring on the flat top face, a round bright steel hub ring in the center with an empty round socket. Body and blades "
+  "painted matte brick red enamel, hub bright steel. Count: 4 blades only."),
+ "halka-govde": (6,
+  "the stamina ring of a spinning top: a flat perfectly round ring with six small notches on its outer edge, a wide sunken "
+  "groove inside and a tall raised outer ring, a polished steel hub ring with an empty socket, painted deep ocean blue enamel.",
+  "A flat perfectly round stamina ring with EXACTLY SIX (6) small V-shaped notches evenly spaced on its outer edge, 6 notches "
+  "only, a wide sunken channel on the top face and a tall raised round outer ring, a round bright steel hub ring in the "
+  "center with an empty round socket. Body painted matte brick red enamel, hub bright steel."),
+ "ayaz-govde": (4,
+  "the stamina ring of a spinning top: a round heavy weight ring with four low bumps, its top face cut into eight flat "
+  "crystal facets like cut ice, a polished steel hub ring with an empty socket, painted icy pale cyan enamel.",
+  "A round heavy stamina ring with EXACTLY FOUR (4) low rounded bumps evenly spaced on its edge, 4 bumps only, its top face "
+  "cut into eight flat angular facets like a cut crystal, a round bright steel hub ring in the center with an empty round "
+  "socket. Body painted matte brick red enamel, hub bright steel."),
+ "dusurucu-govde": (2,
+  "the attack ring of a spinning top: a small round disc body with two large curved wedge blades like sickles on opposite "
+  "sides, a gold stripe along the ridge of each blade, a polished steel hub ring with an empty socket, painted glowing ember "
+  "orange enamel.",
+  "A compact round attack ring with EXACTLY TWO (2) large curved wedge blades on opposite sides, 180 degrees apart, each "
+  "shaped like a sickle sweeping clockwise (a tool shape, not an animal), a raised gold stripe along the ridge of each blade, "
+  "a round bright steel hub ring in the center with an empty round socket. Body and blades painted matte brick red enamel, "
+  "stripes gold, hub bright steel. Count: 2 blades only."),
+ "sivri-govde": (3,
+  "the attack ring of a spinning top: a round disc body with three long sharp spikes, small rounded fillers between the "
+  "spikes, a gold stripe along the ridge of each spike, a polished steel hub ring with an empty socket, painted electric "
+  "yellow enamel.",
+  "A round attack ring with EXACTLY THREE (3) long sharp pointed spikes spaced 120 degrees apart, slightly swept clockwise, "
+  "small rounded filler bumps between the spikes, a raised gold stripe along the ridge of each spike, a round bright steel "
+  "hub ring in the center with an empty round socket. Body and spikes painted matte brick red enamel, stripes gold, hub "
+  "bright steel. Count: 3 spikes only."),
+ "izli-govde": (4,
+  "the balance ring of a spinning top: a round disc body with four long slanted blades and eight small notches on the rim, "
+  "eight thin white fins on the top face, a polished steel hub ring with an empty socket, painted mint teal enamel.",
+  "A round balance ring with EXACTLY FOUR (4) long slanted blades spaced 90 degrees apart swept clockwise, eight small notches "
+  "on the rim, eight thin raised pure white fins radiating on the top face, a round bright steel hub ring in the center with "
+  "an empty round socket. Body and blades painted matte brick red enamel, fins white, hub bright steel. Count: 4 blades only."),
 }
 TOPAC_KOK = KOK + "/topac"
 TOPAC_KAYIT = TOPAC_KOK + "/manifest.jsonl"
@@ -173,8 +230,8 @@ def isler(gruplar):
         if "topac-ikon" in gruplar or f"topac:{pid}" in gruplar:
             out.append((f"topac-ikon:{pid}", TOPAC + ikon, f"{TOPAC_KOK}/ikon-ham/{pid}.png", "1:1", ()))
         if "topac-tripo" in gruplar or f"topac-tripo:{pid}" in gruplar:
-            sim = f"Perfectly radially symmetric around the vertical axis with {n} identical repeating features."
-            out.append((f"topac-tripo:{pid}", TOPAC_TRIPO.format(sim=sim) + tripo, f"{TOPAC_KOK}/tripo/{pid}.png", "1:1", ()))
+            for v in ("a", "b"):
+                out.append((f"topac-tripo:{pid}-{v}", TOPAC_TRIPO + tripo, f"{TOPAC_KOK}/tripo/{pid}-{v}.png", "1:1", ()))
     return out
 
 
