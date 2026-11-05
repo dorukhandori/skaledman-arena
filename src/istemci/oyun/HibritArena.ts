@@ -291,7 +291,7 @@ export class HibritArena implements ArenaCizimi {
       const zy = (j + 0.5 - g.cy) / g.ry;
       const r = Math.hypot(zx, zy);
       const id = slabId[p]!;
-      let v = 5.2 + tonAl(id) + (gurultu(i, j, 6, 1) - 0.5) * 1.3 + (gurultu(i, j, 2, 2) - 0.5) * 0.6;
+      let v = 5.6 + tonAl(id) + (gurultu(i, j, 6, 1) - 0.5) * 1.3 + (gurultu(i, j, 2, 2) - 0.5) * 0.6;
       // çukur (merkez 0,35R): koyu, uzak iç kenarı açık (görünen eğim), yakın kenarı gölge
       if (r < AYAR.merkezKucukAlan) {
         v -= 0.9;
@@ -376,10 +376,10 @@ export class HibritArena implements ArenaCizimi {
     const nabiz = 0.85 + 0.15 * Math.sin(this.zaman * Math.PI * 2 * 0.5);
     const p = (0.75 + 0.35 * this.parilti) * nabiz;
     const h = this.halka.clear();
-    h.circle(cx, cy, kd).stroke({ width: 14, color: ARENA_HIBRIT_RENK.hale, alpha: 0.12 * p });
-    h.circle(cx, cy, kd).stroke({ width: 8, color: ARENA_HIBRIT_RENK.hale, alpha: 0.22 * p });
-    h.circle(cx, cy, kd).stroke({ width: 4, color: ARENA_HIBRIT_RENK.halka, alpha: 0.75 * p });
-    h.circle(cx, cy, kd).stroke({ width: 2, color: ARENA_HIBRIT_RENK.halkaCekirdek, alpha: 0.9 * p });
+    h.circle(cx, cy, kd).stroke({ width: 26, color: ARENA_HIBRIT_RENK.hale, alpha: 0.1 * p });
+    h.circle(cx, cy, kd).stroke({ width: 14, color: ARENA_HIBRIT_RENK.hale, alpha: 0.2 * p });
+    h.circle(cx, cy, kd).stroke({ width: 7, color: ARENA_HIBRIT_RENK.halka, alpha: 0.8 * p });
+    h.circle(cx, cy, kd).stroke({ width: 3, color: ARENA_HIBRIT_RENK.halkaCekirdek, alpha: 0.95 * p });
     h.circle(cx, cy, ki).stroke({ width: 3, color: ARENA_HIBRIT_RENK.hale, alpha: 0.16 * p });
     // hız şeridi: kuşak bandında dönen kısa krem çizgiler ("burada hızlanıyorsun", pixel planı § 6.2)
     const s = this.serit.clear();
