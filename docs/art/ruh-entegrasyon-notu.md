@@ -35,3 +35,7 @@ Dal: `devran-sanat` (origin/devran-kod `d360444` üstüne rebase). Tasarım `doc
 ## Açık
 - `/api/ben` son maç sonucu yok: Pergel `ring-out` ipucu çalışmaz (Paca SA #17).
 - Ata rig/gerçek kükreme (Tripo ~390 kredi): sahip onayı olmadan başlatılmaz (SA #18).
+
+## Entegre edildi (2026-11-05, `devran-kod`)
+Birleşti (`e8a5dd2`, `45d242a`); ayrıntı `docs/production/raporlar/SANAT-ENTEGRASYON.md`. Entegrasyonda değişenler: `onYukle` artık tembel (maç başında sayfa inmez; Ulti Enerjisi yarıda o elementin `-holo` + `-holo-k` sayfası, Takım Enerjisi yarıda üç üyeninki); Takım Ultisi bayrak kapalıyken üç Ata hologramı (ortada çağıranınki); Ata ad bandı kaldırıldı, unvan HUD'un tek Ulti bandında ("ULTİ · <ad> · <unvan>", alt-orta, `MacHud .bant.asagi`); `?debug&ruhportre=1` bayrağı yalnız doğrulama için açar; Pergel Kuşak Taşı stili ve Ayarlar › İpuçları (Açık/Kapalı).
+

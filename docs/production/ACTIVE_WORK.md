@@ -16,6 +16,7 @@ Her oturum işe başlamadan önce `git pull`, bu dosyayı oku, satırını ekle,
 
 ## Son kapanan işler
 
+- 2026-11-05 · baş geliştirici (entegrasyon, Claude Code) · `devran-sanat` → `devran-kod` birleştirme, `RuhGorsel.ts` (hologram + tembel yükleme + Takım Ultisi), `MacHud.ts` (tek Ulti bandı), `src/istemci/bilgic/` (Kuşak Taşı stili, azalan sıklık), `Ayarlar.ts` (İpuçları), krediler + manifest · rapor `docs/production/raporlar/SANAT-ENTEGRASYON.md`
 - 2026-11-05 · @nile (Claude Code) + @glyph (alt ajan) · `src/istemci/oyun/RuhGorsel.ts`, `YetenekGorsel.ts`, `src/istemci/bilgic/`, `Atolye.ts`, `Ayarlar.ts`, `veri/{ruhlar,ipuclari}.json`, `public/{ruh,bilgic}/`, `araclar/sanat/`, docs 06 + bilgic-pergel · kutsal canavar belirmesi ve Pergel ipucu karakteri (Paca SA #13-18)
 
 - 2026-11-01 · @vault (alt ajan) · `eslint.config.js`, `araclar/veri-cek.ts`, `test/veri-cek.test.ts`, `docs/tech/veri-cekimi.md` · `src/paylasilan` lint kapısı + saatlik Skaledman çekimi
