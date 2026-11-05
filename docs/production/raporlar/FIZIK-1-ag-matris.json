@@ -1,0 +1,314 @@
+{
+ "N0": {
+  "profil": "N0",
+  "not": "temel",
+  "kod": "ZDAXPHXQ",
+  "macSureSn": 82.149,
+  "sonuc": {
+   "kazanan": 1,
+   "neden": "puan",
+   "puan": [
+    2,
+    3
+   ]
+  },
+  "tick": 4938,
+  "A": {
+   "wireHash": "83/83",
+   "wireSapma": 0,
+   "yenidenOynatma": "82/82 son eşit",
+   "yenidenOynatmaSapma": 0,
+   "uzlasma": {
+    "yokSay": 1279,
+    "yumusak": 89,
+    "buyuk": 7,
+    "darbeYumusak": 0,
+    "deneyYumusak": 6,
+    "sicrama": 1
+   },
+   "buyukPer10": 2.1875,
+   "sicramaPer10": 0.3125,
+   "gorunurSicrama": 1,
+   "gorunurPer10": 0.3125,
+   "carpismalar": 32,
+   "varis": {
+    "n": 32,
+    "ort": 1.9375,
+    "p50": 2,
+    "p95": 3,
+    "enFazla": 3
+   },
+   "isleme": {
+    "n": 32,
+    "ort": 16.875,
+    "p50": 14,
+    "p95": 36,
+    "enFazla": 36
+   },
+   "rtt": {
+    "n": 83,
+    "ort": 13.132530120481928,
+    "p50": 11,
+    "p95": 20,
+    "enFazla": 87
+   },
+   "hayalet": 0,
+   "ayirma": 86,
+   "yenidenOynatmaEnFazla": 1,
+   "yamalar": 1768,
+   "kopma": 0
+  },
+  "B": {
+   "wireHash": "83/83",
+   "wireSapma": 0,
+   "yenidenOynatma": "82/82 son eşit",
+   "yenidenOynatmaSapma": 0,
+   "uzlasma": {
+    "yokSay": 1073,
+    "yumusak": 296,
+    "buyuk": 6,
+    "darbeYumusak": 0,
+    "deneyYumusak": 5,
+    "sicrama": 1
+   },
+   "buyukPer10": 1.875,
+   "sicramaPer10": 0.3125,
+   "gorunurSicrama": 1,
+   "gorunurPer10": 0.3125,
+   "carpismalar": 32,
+   "varis": {
+    "n": 32,
+    "ort": 1.9375,
+    "p50": 2,
+    "p95": 3,
+    "enFazla": 3
+   },
+   "isleme": {
+    "n": 32,
+    "ort": 14.28125,
+    "p50": 12,
+    "p95": 32,
+    "enFazla": 33
+   },
+   "rtt": {
+    "n": 83,
+    "ort": 15.409638554216867,
+    "p50": 13,
+    "p95": 16,
+    "enFazla": 171
+   },
+   "hayalet": 0,
+   "ayirma": 44,
+   "yenidenOynatmaEnFazla": 1,
+   "yamalar": 1753,
+   "kopma": 0
+  },
+  "sunucu": {
+   "oda": "ZDAXPHXQ",
+   "adim": 4938,
+   "p50": 0.06282099999953061,
+   "p95": 0.12605099999927916,
+   "p99": 0.2704470000026049,
+   "enFazla": 2.053912000003038,
+   "odaP50": 0.1289600000018254,
+   "odaP95": 0.5508620000036899,
+   "odaP99": 1.0471729999990202,
+   "seyirci": 0,
+   "sayac": {
+    "birlestirme": 0,
+    "borc": 575,
+    "tasima": 579,
+    "notr": 0,
+    "dondurma": 0,
+    "hukmen": 0
+   },
+   "tick": 4938,
+   "sonHash": "a19c9b5b2b74b668"
+  },
+  "bantA": [
+   {
+    "yol": "/rMaj0bkZB/ZDAXPHXQ?sessionId=PL183uM9i",
+    "sureMs": 84263,
+    "asagiBayt": 325765,
+    "yukariBayt": 71636,
+    "asagiCerceve": 1997,
+    "yukariCerceve": 5025,
+    "kayipCerceve": 0,
+    "asagiKBs": 3.775439787480863,
+    "yukariKBs": 0.8302224137521806
+   }
+  ],
+  "bantB": [
+   {
+    "yol": "/rMaj0bkZB/ZDAXPHXQ?sessionId=UwZrLragA",
+    "sureMs": 83538,
+    "asagiBayt": 325100,
+    "yukariBayt": 71305,
+    "asagiCerceve": 1981,
+    "yukariCerceve": 5022,
+    "kayipCerceve": 0,
+    "asagiKBs": 3.8004317645861767,
+    "yukariKBs": 0.8335582496887645
+   }
+  ],
+  "konsolHata": [],
+  "adimA": 4987,
+  "adimB": 4985
+ },
+ "N1": {
+  "profil": "N1",
+  "not": "iyi",
+  "kod": "ACXZBMMZ",
+  "macSureSn": 57.509,
+  "sonuc": {
+   "kazanan": 0,
+   "neden": "puan",
+   "puan": [
+    3,
+    0
+   ]
+  },
+  "tick": 3462,
+  "A": {
+   "wireHash": "58/58",
+   "wireSapma": 0,
+   "yenidenOynatma": "57/57 son eşit",
+   "yenidenOynatmaSapma": 0,
+   "uzlasma": {
+    "yokSay": 773,
+    "yumusak": 162,
+    "buyuk": 13,
+    "darbeYumusak": 1,
+    "deneyYumusak": 10,
+    "sicrama": 2
+   },
+   "buyukPer10": 6.5,
+   "sicramaPer10": 1,
+   "gorunurSicrama": 1,
+   "gorunurPer10": 0.5,
+   "carpismalar": 20,
+   "varis": {
+    "n": 20,
+    "ort": 42,
+    "p50": 43,
+    "p95": 46,
+    "enFazla": 46
+   },
+   "isleme": {
+    "n": 20,
+    "ort": 57.35,
+    "p50": 60,
+    "p95": 73,
+    "enFazla": 73
+   },
+   "rtt": {
+    "n": 58,
+    "ort": 91.51724137931035,
+    "p50": 91,
+    "p95": 94,
+    "enFazla": 100
+   },
+   "hayalet": 0,
+   "ayirma": 60,
+   "yenidenOynatmaEnFazla": 6,
+   "yamalar": 1198,
+   "kopma": 0
+  },
+  "B": {
+   "wireHash": "58/58",
+   "wireSapma": 0,
+   "yenidenOynatma": "57/57 son eşit",
+   "yenidenOynatmaSapma": 0,
+   "uzlasma": {
+    "yokSay": 754,
+    "yumusak": 172,
+    "buyuk": 22,
+    "darbeYumusak": 1,
+    "deneyYumusak": 20,
+    "sicrama": 1
+   },
+   "buyukPer10": 11,
+   "sicramaPer10": 0.5,
+   "gorunurSicrama": 0,
+   "gorunurPer10": 0,
+   "carpismalar": 20,
+   "varis": {
+    "n": 20,
+    "ort": 41.15,
+    "p50": 42,
+    "p95": 45,
+    "enFazla": 45
+   },
+   "isleme": {
+    "n": 20,
+    "ort": 58.15,
+    "p50": 60,
+    "p95": 74,
+    "enFazla": 74
+   },
+   "rtt": {
+    "n": 58,
+    "ort": 92.87931034482759,
+    "p50": 91,
+    "p95": 95,
+    "enFazla": 203
+   },
+   "hayalet": 0,
+   "ayirma": 78,
+   "yenidenOynatmaEnFazla": 6,
+   "yamalar": 1178,
+   "kopma": 0
+  },
+  "sunucu": {
+   "oda": "ACXZBMMZ",
+   "adim": 3462,
+   "p50": 0.056087000004481524,
+   "p95": 0.1012159999954747,
+   "p99": 0.25933400000212714,
+   "enFazla": 2.412665999989258,
+   "odaP50": 0.1155680000083521,
+   "odaP95": 0.4494940000004135,
+   "odaP99": 0.8937880000012228,
+   "seyirci": 0,
+   "sayac": {
+    "birlestirme": 0,
+    "borc": 870,
+    "tasima": 882,
+    "notr": 0,
+    "dondurma": 0,
+    "hukmen": 0
+   },
+   "tick": 3462,
+   "sonHash": "f4f614a28abf9245"
+  },
+  "bantA": [
+   {
+    "yol": "/rMaj0bkZB/ACXZBMMZ?sessionId=UQE4suW61",
+    "sureMs": 60168,
+    "asagiBayt": 229720,
+    "yukariBayt": 50366,
+    "asagiCerceve": 1375,
+    "yukariCerceve": 3525,
+    "kayipCerceve": 0,
+    "asagiKBs": 3.728492512631299,
+    "yukariKBs": 0.8174701980288526
+   }
+  ],
+  "bantB": [
+   {
+    "yol": "/rMaj0bkZB/ACXZBMMZ?sessionId=9GinA51NM",
+    "sureMs": 59221,
+    "asagiBayt": 229285,
+    "yukariBayt": 50839,
+    "asagiCerceve": 1354,
+    "yukariCerceve": 3524,
+    "kayipCerceve": 0,
+    "asagiKBs": 3.780941436525895,
+    "yukariKBs": 0.8383421579760558
+   }
+  ],
+  "konsolHata": [],
+  "adimA": 3511,
+  "adimB": 3511
+ }
+}

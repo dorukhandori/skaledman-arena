@@ -30,10 +30,12 @@ Birimler: uzunluk = birim (arena mantıksal piksel, 960x540 ekranda 1 birim = 1 
 | `kusakHizCarpani` | 1,25 (Kuşak Ucu 1,40) | Sürüş tavanına çarpan; 260 -> 325 br/s, `vRO`'yu aşar: şeritte kenar ölümcül |
 | `egimBaslangic` | 0,70 R = 168 br | 05 § 2.2 |
 | `kEgim` | 700 br/s² (kenarda tam) | Kenarda ivme 238 br/s² (d=210); sürüş ivmesi 400-900 olduğundan kaçılabilir ama yavaşlatır |
+| `canakEgimi` | **50 br/s²** tüm yarıçapta merkeze (d ≥ `canakYumusak` sabit, içeride doğrusal); kenar eğimiyle toplanmaz, **büyüğü** alınır. **SAPMA (FIZIK-1):** önce yok | Girdisiz topaç da merkeze süzülür ve rakibe çarpar (sahip şartı); Coulomb 20'yi yener, en yavaş Uç ivmesinin (İğne 400) %12,5'i: sürüş belirleyici kalır (§ 20 FIZIK-1) |
+| `canakYumusak` | 40 br | Merkezde titreme olmasın diye doğrusal bölge (merkezde 0) |
 | `eDuvar` | 0,5 | Duvar sekmesi; 05 § 2.5 |
 | `kDuvar` | 0,08 stamina / (br/s) | 200 br/s çarpma = 16 stamina (~%4) |
 | `duvarTik` | +0,15 tık birimi (vd > 120 br/s ise) | Duvara çarpmak kilide hafif yük |
-| `ringOutHizi` (`vRO`) | **265 br/s** (hepsinde; Uç tablosunda ayrı alan, ileride Top Uç düşer). **SAPMA (DENGE-2):** önce 200 | 05 adayı 220; DENGE-2 ölçümüyle H1 bandına (%25-35) çekildi (§ 20 DENGE-2) |
+| `ringOutHizi` (`vRO`) | **250 br/s** (hepsinde; Uç tablosunda ayrı alan, ileride Top Uç düşer). **SAPMA (FIZIK-1):** önce 265; **SAPMA (DENGE-2):** önce 200 | 05 adayı 220; DENGE-2 ölçümüyle H1 bandına (%25-35) çekildi (§ 20 DENGE-2) |
 | Ring Out koşulu | merkez d >= R - r **ve** dışa hız >= `vRO` **ve** d > `egimBaslangic` | 05 § 2.5 |
 | `dogum` | (-130, 0) ve (+130, 0) | R'nin %54'ü; ilk temas ~1,2 s |
 
@@ -84,6 +86,7 @@ Sıra ve notasyon 05 § 2.3-2.4: `n` normal, `vn` yaklaşma hızı, `m_i = kutle
 |---|---|
 | Darbe | `J = (1 + e) · Ş`, `e` = iki Uç `esneklik` ortalaması |
 | Hız değişimi | `v1 -= (J/m1)·n·kb1`, `v2 += (J/m2)·n·kb2` |
+| Sekme (`ayrilmaHizi`) | darbeden sonra `(v2 - v1)·n` en az **90 br/s**; eksik kalan kütle oranıyla iki tarafa (`m2/(m1+m2)`, `m1/(m1+m2)`), momentum korunur, hasar/tık `Ş`'den (değişmez). **SAPMA (FIZIK-1):** önce yok (ayrılma = `e·vn·kb`, yavaş temasta yapışık titreşim) |
 | `kb_i` | `1 + kKb · (1 - stamina_i/maxStamina)²`, **`kKb` = 1,2** |
 | Yön çarpanı `f` | ön 1,0 · yan `fYan`=0,6 · arka/hızsız `fArka`=0,3 (dash penceresinde x `kDash`) |
 | Ön açı | `alfaOn = 30° + 10°·kanat` (en çok 80°), cos² ile karşılaştır; kanat bonusu ön çarpanı `1,5 - 0,1·kanat`. **Sim'de test edilmedi** (sabit 36,9° kullanıldı); ilk turnuvada aç/kapa |
@@ -135,7 +138,7 @@ Bulgu: kütle böleni ve `tikTavan` olmadan Kale `burstEsik`=10 olsa da 70/80 tu
 |---|---|---|
 | `dilim` | 100 puan | |
 | `metreDilim` | 2 (ilk sürüm), 3 (sezon 2, Ulti) | **BOŞLUK #7:** Ulti ilk sürümde kapalı (K-7) |
-| `pasifDolum` | 1,5 puan/s | Metre hiç durmasın |
+| `pasifDolum` | **1,8** puan/s. **SAPMA (FIZIK-1):** önce 1,5 | Metre hiç durmasın; sekme yapışık mikro-çarpışmaları (her biri en az 3 puan) kaldırınca kaybolan Enerjiyi telafi eder |
 | Çarpışma (vuran ve vurulan ayrı) | `clamp(8 · Ş/4000, 3, 12)` puan | Hafif ~3, ağır ~7, kritik 12 |
 | Hasar alma | `50 · H_alinan/maxStamina` puan | %10 stamina kaybı = 5 puan; geri dönüş dengesi |
 | Risk: kuşakta | 2,0 puan/s | |
@@ -396,6 +399,33 @@ Sonuç (önce → sonra; ayrıntı raporda):
 | Takım Ultisi / maç (3×500) | 0,68 | 0,55 | |
 
 **H1 (Ring Out) DENGE-2 ölçümü:** `vRO` 250 / 260 / 265 / 270 (bu turun verisiyle, tohum 1/2/3 × 500 maç): %27,9-38,2 / 26,7-36,0 / 25,8-35,4 / 24,5-33,9 (toplam %34,1 / 32,4 / 31,4 / 30,1); 265 seçildi (iki uç tohum banda en yakın). Tohumlar arası ~10 puanlık fark havuzdan: Top Uç ve Hafif Disk'li topaçlar kayıplarının yarısından çoğunu Ring Out'la, İğne Uç %4-10'unu veriyor. `kEgim` değişmedi.
+
+### FIZIK-1 (2026-11-05): çanak eğimi + sekme (ölçüm: `docs/production/raporlar/FIZIK-1.md`)
+Sahip: "topaçlar tuşa basmadan birbirine çarpmıyor; her zaman vurabilmeli, çarpışınca sekme/yalpa olmalı". Teşhis (ölçüm, girdisiz 90 s, 6×6 Uç × 20 tohum): çarpışmasız koşu 249/720 (İğne'li her eşleşme ve Düz × Düz'ün yarısı 0), merkezci/dengeli eşleşmelerde dakikada 200-450 "çarpışma" ama yalnız 6-8 ayrılma (yapışık titreşim). Sim değişikliğine yetki verildi; altın senaryolar bilinçle yeniden kaydedildi.
+
+| # | Değişiklik | Önce | Sonra | |
+|---|---|---|---|---|
+| 1 | `canakEgimi` / `canakYumusak` (§ 2, `fizik.ts hareketAdimla`, tahmin aynı kod) | yok | 50 br/s² / 40 br; kenar eğimiyle büyüğü | **SAPMA** |
+| 2 | `ayrilmaHizi` (§ 5, `carpisma.ts`) | yok | 90 br/s | **SAPMA** |
+| 3 | `ringOutHizi` (6 Uç + varsayılan) | 265 | 250 | **SAPMA** |
+| 4 | `enerji.pasifDolum` | 1,5 | 1,8 | **SAPMA** |
+| 5 | Katalog özeti (`src/ag/katalog.ts`) | yalnız veri JSON | + `AYAR`, `ELEMENT_EGILIM`, `KOKEN_PASIF` | sürüm kapısı |
+
+| Ölçüm | Önce | Sonra | Hedef |
+|---|---|---|---|
+| Girdisiz tek tur (720 koşu): çarpışmasız koşu / ilk çarpışma ≤ 15 s | 249 / 471 | **0 / 720** | ≥ 1 çarpışma ilk 10-15 s |
+| Girdisiz: ilk çarpışma medyan / p90 / en geç (İğne × İğne) | 2,5 / 4,4 s / hiç | 2,2 / 4,7 / 11,4 s | |
+| Girdisiz: çarpışma/dk · ayrılma/koşu (yapışma göstergesi) | 85,9 · 5,7 (80 çarpışmaya) | 31,6 · 22,2 (22,7 çarpışmaya) | çarpış-ayrıl-çarp |
+| Bot turnuvası 3×1 000: Ring Out tohum 1/2/3 | %25,7 / 33,8 / 35,6 | **%25,2 / 34,2 / 34,1** | %25-35 |
+| Bant (20 build) | 19 / 20 / 20 | **20 / 20 / 20** | ≥ 19/20 |
+| Ulti görülen maç 3×1 000 (3×500) | %35 / 36 / 46 (%40 / 41 / 50) | %33 / 35 / 43 (%39 / 39 / 46) | DENGE-2 ~%44 |
+| Takım Ultisi görülen maç 3×1 000 | %39 / 38 / 33 | %40 / 40 / 35 | |
+| Berabere (eşzamanlı) 3×1 000 | %7,7 / 6,8 / 6,5 | %8,0 / 6,9 / 6,2 | |
+| Maç süresi p90 3×1 000 | 81,8 / 77,3 / 74,0 s | 80,7 / 72,9 / 72,3 s | ≤ 90 |
+| Ayrı temas/dk (bot) | 19,2-20,6 | 22,1-23,6 | |
+| `qa:bot` 500: Ring Out / berabere / Ulti / Takım Ultisi | %29,1 / 5,1 / 32,0 / 31,6 | %28,8 / 7,4 / 30,2 / 34,2 | |
+
+Denendi, bırakıldı: `canakEgimi` 30 (İğne × İğne ilk çarpışma > 15 s), 40 (17,5 s), 60 (Ring Out tohum 1 %22,6); çanak + kenar eğimini toplamak (Ring Out'a etkisi ölçülemeyecek kadar küçük, büyüğü daha temiz); Enerji telafisi için `carpismaEnAz` 4-5 (Takım Ultisi %38'e fırladı), `pasifDolum` 2,0 (Ring Out tohum 2 %35,9). Çanak eğimi tek başına Ring Out'u ~4 puan düşürüyor (tohum 1 %26,5 → %21,9): topaçlar merkezde toplanıyor; `vRO` 250 telafi ediyor.
 
 ## 21. Veri şemaları (veri dosyalarında yorum yok)
 
