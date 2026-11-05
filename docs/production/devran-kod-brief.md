@@ -35,3 +35,9 @@ D1'i bitir ve gerçek çalışma zamanında doğrula (preview + ekran görüntü
 
 ## Sayılar: tek otorite `docs/design/tuning.md` + `veri/*.json` (2026-11-04 19:30 eklendi)
 Balance Designer yazdı; bu brief'teki ve 05'teki sayılarla çelişirse **tuning.md kazanır**. Bilinen farklar: arena yarıçapı 240 (220 değil), topaç yarıçapı 30 (28 değil); stamina hasarı oran yerine `sqrt(oran)`; `kH`=0,006; tık için tur başına tavan 1,2 ve `40/kutle` böleni; kütle referansı 10. Veri: `veri/parcalar.json` (8 Gövde, 5 Disk, 6 Uç, 8 Çekirdek + 3 başlangıç seti), `basarimlar.json` (46), `ruhlar.json` (21), `yetenekler.json` (29). JSON şemaları tuning.md § 21'de; zod şemalarını `src/paylasilan/veri/` altında bunlardan türet. Açık denge hipotezleri tuning.md § 20 (Ring Out payı ölçülemedi: kenarı hedefleyen bot gerekir); D2'de `test/denge/botTurnuvasi.ts` kur.
+
+## Haberleşme: paralel oturumlardan gelecek varlıklar (2026-11-05 eklendi)
+Bu dala başka oturumlar da push ediyor; her `git pull --rebase` sonrası şunlara bak:
+- **Ruh avatarları (kutsal canavarlar) ve rehber karakter:** ayrı bir masaüstü oturumu çiziyor. Beklenen yer: `public/ruhlar/<ruh-id>/<belirme|bosta|vurus>-<kare>.png` ve `public/rehber/*.png`; meta `veri/ruh-avatarlari.json` (ruh id → dosyalar, boyut, kare süreleri). Geldiğinde ulti belirme yer tutucusunu bununla değiştir (`docs/art/topac-pixel-plani.md` § 4 spec: 192×192, 4 belirme + 4 boşta + 1 vuruş, yarı saydam). Gelmediyse yer tutucu kalır, bekleme.
+- **Referans görseller:** `docs/design/beyblade/gorunum/` (README'de belge eşlemesi; çelişkide belge kazanır).
+- Bu oturuma doğrudan mesaj ulaşmıyor; sahip isterse claude.ai'den yazar. Rapor dosyaların (`docs/production/raporlar/D*.md`) ana oturumun tek haber kaynağı: her dilimde "paralel oturumlardan beklenen/alınan" satırı ekle.
