@@ -171,7 +171,7 @@ try {
   await goruntu(a, "profil");
   await tikla(a, "[data-eylem=basla]");
   // 5. İlk Çekirdek
-  await bekleKosul(a, `!!document.querySelector("[data-eylem=sec-maden]")`, 20000);
+  await bekleKosul(a, `!!document.querySelector("[data-ck=maden]")`, 20000);
   await bekle(2500);
   await goruntu(a, "ilk-cekirdek");
   await tikla(a, "[data-ck=maden]");
@@ -190,7 +190,7 @@ try {
   await tikla(b, "[data-eylem=kayit-ol]");
   await bekleKosul(b, `!!document.querySelector("[data-eylem=basla]")`, 20000);
   await tikla(b, "[data-eylem=basla]");
-  await bekleKosul(b, `!!document.querySelector("[data-eylem=sec-yapay]")`, 20000);
+  await bekleKosul(b, `!!document.querySelector("[data-ck=yapay]")`, 20000);
   await tikla(b, "[data-ck=yapay]");
   await tikla(b, "[data-eylem=sec]");
   await bekleKosul(b, `!!(window.__egitim)`, 30000);

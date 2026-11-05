@@ -40,7 +40,7 @@ const STIL = `
 .at .kutu { min-width:0; }
 .at h3 { margin:0 0 calc(4 * var(--p)); font:400 var(--y-16)/.75 var(--font-etiket); color:var(--gold); letter-spacing:0; }
 .at h3.k-plaka { font:400 var(--y-20)/1 var(--font-baslik); letter-spacing:var(--yp); color:var(--ink); margin:0 0 calc(4 * var(--p)); max-width:100%; overflow:hidden; text-overflow:ellipsis; }
-.at .sekmeler { display:flex; gap:calc(2 * var(--p)); margin-bottom:calc(4 * var(--p)); }
+.at .sekmeler { display:grid; grid-template-columns:1fr 1fr; gap:calc(2 * var(--p)); margin-bottom:calc(4 * var(--p)); }
 .at .sekmeler button { flex:1 1 0; min-width:0; min-height:calc(18 * var(--p)); padding:calc(2 * var(--p)); cursor:pointer; border:var(--p) solid var(--harc); border-radius:0;
   background:var(--panel-0); color:var(--soluk); font:400 var(--y-16)/.75 var(--font-etiket); text-transform:uppercase; box-shadow:inset 0 0 0 var(--p) #3a3f55, var(--odak-g, 0 0 0 0 transparent); }
 .at .sekmeler button[aria-selected=true] { color:var(--ink); background:var(--hucre); box-shadow:inset 0 0 0 var(--p) var(--gold), var(--odak-g, 0 0 0 0 transparent); }
@@ -137,8 +137,8 @@ const STIL = `
   background:var(--hucre); color:var(--ink); font:400 var(--y-16)/.75 var(--font-etiket); text-transform:uppercase; box-shadow:inset 0 0 0 var(--p) #3a3f55, var(--odak-g, 0 0 0 0 transparent); }
 .at .kayitli button[aria-current=true] { box-shadow:inset 0 0 0 var(--p) var(--gold), var(--odak-g, 0 0 0 0 transparent); }
 .at .kayitli small { color:var(--soluk); font-size:var(--y-16); }
-.at .adsatir { display:flex; gap:calc(2 * var(--p)); margin:calc(2 * var(--p)) 0; }
-.at .adsatir input { flex:1; min-width:0; }
+.at .adsatir { display:flex; flex-direction:column; align-items:flex-start; gap:calc(2 * var(--p)); margin:calc(2 * var(--p)) 0; }
+.at .adsatir input { width:100%; }
 .at .eylemler { display:flex; gap:calc(3 * var(--p)); flex-wrap:wrap; margin-top:calc(4 * var(--p)); }
 .at .eylemler .k-dugme.ana { min-width:0; min-height:calc(20 * var(--p)); font-size:var(--y-20); letter-spacing:var(--yp); padding:calc(3 * var(--p)) calc(8 * var(--p)) calc(6 * var(--p)); }
 .at .durumSatiri { min-height:calc(10 * var(--p)); color:var(--yesil); margin-top:calc(3 * var(--p)); text-transform:uppercase; }

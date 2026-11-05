@@ -23,10 +23,10 @@ const TIP_AD: Record<string, string> = { saldirgan: "Saldırgan", kale: "Kale", 
 
 const STIL = `
 .ic .k-govde { padding-top:calc(8 * var(--p)); }
-.ic .kart.ic-kart { width:100%; max-width:calc(560 * var(--p)); padding:0; border:0; border-image:none; background:none; }
+.ic .kart.ic-kart { flex:0 1 auto; min-height:0; width:100%; max-width:calc(560 * var(--p)); padding:0; border:0; border-image:none; background:none; }
 .ic .ust-not { text-align:center; color:var(--soluk); text-transform:uppercase; margin:0 0 calc(6 * var(--p)); }
 .ic .kartlar { display:grid; grid-template-columns:repeat(3, 1fr); gap:calc(16 * var(--p)); }
-.ic .ck { position:relative; display:flex; flex-direction:column; align-items:center; gap:calc(3 * var(--p)); padding:calc(6 * var(--p)) calc(6 * var(--p)) calc(6 * var(--p));
+.ic .ck { position:relative; display:flex; flex-direction:column; align-items:center; gap:calc(2 * var(--p)); padding:calc(6 * var(--p)) calc(6 * var(--p)) calc(6 * var(--p));
   background:#0e0d12; box-shadow:inset 0 0 0 var(--p) var(--harc), inset 0 0 0 calc(2 * var(--p)) #1e1b24; text-transform:uppercase; }
 .ic .ck.secili::before { content:""; position:absolute; inset:calc(-5 * var(--p)); pointer-events:none; --c:var(--gold); --u:calc(8 * var(--p)); --k:var(--p);
   background:linear-gradient(var(--c),var(--c)) 0 0 / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 0 0 / var(--k) var(--u) no-repeat, linear-gradient(var(--c),var(--c)) 100% 0 / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 100% 0 / var(--k) var(--u) no-repeat,
@@ -35,7 +35,7 @@ const STIL = `
   background:var(--panel); box-shadow:inset 0 0 0 var(--p) var(--harc), inset 0 0 0 calc(2 * var(--p)) var(--turuncu); font:400 var(--y-20)/1 var(--font-baslik); letter-spacing:var(--yp); }
 .ic .ck.secili h3 { box-shadow:inset 0 0 0 var(--p) var(--harc), inset 0 0 0 calc(2 * var(--p)) var(--gold); }
 .ic .ck .kk { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
-.ic canvas.onz { order:0; width:calc(64 * var(--p)); height:calc(32 * var(--p)); background:var(--panel-0); box-shadow:inset 0 0 0 var(--p) var(--bronz); image-rendering:pixelated; }
+.ic canvas.onz { order:0; width:calc(56 * var(--p)); height:calc(24 * var(--p)); background:var(--panel-0); box-shadow:inset 0 0 0 var(--p) var(--bronz); image-rendering:pixelated; }
 .ic .ck.secili canvas.onz { box-shadow:inset 0 0 0 var(--p) var(--gold); }
 .ic .kure-yer { order:1; display:flex; flex-direction:column; align-items:center; margin-top:0; }
 .ic .kure-yer .k-kaide { width:calc(62 * var(--p)); margin-top:calc(-3 * var(--p)); }
@@ -47,7 +47,7 @@ const STIL = `
 .ic .bos { order:8; min-height:calc(12 * var(--p)); }
 .ic .ck { cursor:pointer; }
 .ic .ck:focus-visible { outline:calc(2 * var(--p)) solid #fff; outline-offset:calc(2 * var(--p)); }
-.ic .sec-satir { display:flex; justify-content:center; margin-top:calc(4 * var(--p)); }
+.ic .sec-satir { display:flex; flex-direction:column; align-items:center; gap:calc(4 * var(--p)); }
 .ic .ck button { order:4; }
 .ic .ck button.k-dugme { min-height:calc(18 * var(--p)); font-size:var(--y-20); letter-spacing:var(--yp); padding:calc(2 * var(--p)) calc(10 * var(--p)) calc(4 * var(--p)); min-width:0; }
 .ic .alt-yazi { text-align:center; color:var(--soluk); text-transform:uppercase; margin-top:calc(4 * var(--p)); }
@@ -123,7 +123,8 @@ export function baslat(b: EkranBaglami): void {
   const ben = b.ben;
   if (!ben?.girisli) { git("karsilama"); return; }
   if (ben.cekirdekler.length) { git("atolye"); return; }
-  const { kok, kart, lento } = ekranKok(b.ustYazi, "İlk Çekirdek", { yer: "tapinak", cuzdan: false });
+  const { kok, kart, lento, govde } = ekranKok(b.ustYazi, "İlk Çekirdek", { yer: "tapinak", cuzdan: false });
+  govde.style.gap = "calc(4 * var(--p))";
   kok.classList.add("ic");
   lento.style.justifyContent = "center";
   kart.className = "kart ic-kart";
@@ -198,8 +199,11 @@ export function baslat(b: EkranBaglami): void {
   });
   izgara.setAttribute("role", "radiogroup");
   izgara.setAttribute("aria-label", "İlk Çekirdek");
-  el("div", "alt-yazi k-e16", kart, "Seçmediğin ikisi Market'te");
-  const secS = el("div", "sec-satir", kart);
+
+  // SEÇ kartın dışında (gövdede): kart kendi içinde kayarsa bile ana düğme her zaman görünür
+  const secS = el("div", "sec-satir");
+  kart.after(secS);
+  el("div", "alt-yazi k-e16", secS, "Seçmediğin ikisi Market'te");
   const secD = el("button", "k-dugme ana", secS, "Seç");
   secD.type = "button";
   secD.dataset["eylem"] = "sec";

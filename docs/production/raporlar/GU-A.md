@@ -55,3 +55,67 @@ Pixel topaç / parça / küre / Çekirdek illüstrasyonu yer tutucuları yordams
 3. **VS alt bandı (Sıra · Stil rozetleri):** veri sunucuda yok. Yalnız Dereceli açıldığında mı gösterilsin?
 4. **720p yoğunluğu:** Atölye, İlk Çekirdek ve Profil 1280×720'de kayıyor. Metin kısaltma (sadelik S-2) mı, ikinci kat mı?
 5. **Maç çerçevesi ölçeği:** sonuç ve HUD'un 960×540 çerçevesi tam sayı ölçeğe (`--o`) geçirilsin mi? Paralel HUD oturumuyla birlikte karar verilmeli.
+
+## 4. İkinci tur (2026-11-05): "referanstaki gibi ve menüler sade olsun"
+
+**Sahip cevapları (koordinatör üzerinden):** (1) takım seçimi işlevi aynı kalır; (2) Atölye Takım paneli **sağda** kalır (referans 03 maketten üstün, `menu-tasarim-arastirma.md` § 9.1'e not düşüldü); (3) VS rozet bandı yalnız Dereceli açık ve veri varken (bugün veri yok, çizilmiyor); (4) 720p: metin kısalt, bilgi ikinci kata, iç listeler kendi içinde kayar; **sayfa kayması ve kesilen metin yok**; (5) maç çerçevesi ölçeği bu turun dışında.
+
+### 4.1 Ne değişti
+- **Ölçek:** `--o = floor(min(W/640, H/360))` (1280×720 ×2, 1920×1080 ×3, 2560×1440 ×4). Böylece mantıksal alan her çözünürlükte ≥ 640×360 ve yerleşim aynı kalıyor. Eski hedef 480×270 (1080p'de ×4) yoğun ekranlarda sayfayı kaydırıyordu. § 6.5'teki mantıksal ölçüler geçerli.
+- **Atölye (sadelik § 2.1):**
+  - Dört filtre tek **FİLTRE** düğmesinin arkasında (etkin filtre sayısı + Temizle). Seçenekler BÜYÜK HARF pixel yazıda.
+  - Parça kartı: ikon + ad (satır kırılır, kesilmez) + tek kısa durum (sikke + fiyat / SENDE / "1. TOPAÇ" / 3/10 / ???). Tam metin ipucunda ve ARIA'da.
+  - Orta sütun (blueprint): plaka ad, önizleme, 4 parça satırı (etiket + tam ad, kırılır).
+  - Çubuk sütunu: 6 çubuk (0 değeri boş çubuk, sayı okunur), "TİP: KALE" ("yakın tip" kalktı), tek satır uyum ("Uyum: Enerji +%10" / "! Uyumsuz: Enerji yavaş"), DENE · 30 SN ve AYRINTI.
+  - **Ayrıntı** (ikinci kat): Uç deseni, dönüş yönü, Yapay yön seçimi, Dene rakibi, parça çıkar.
+  - Sağdaki Takım paneli: "TAKIM 1 ▾" menüsü (ad, kayıtlı takımlar, Aktif yap, Yeni takım), 3 yuva kartı, KAYDET (ikincil). Element çarkı kalktı; üç kendi Çekirdeği hazırsa **TAKIM ULTİSİ** rozeti çıkıyor (araçlar için `data-cark` korundu).
+  - Lento: AYARLAR · **DAHA FAZLA ▾** (oyuncu adı başlıkta; Çekirdek Günlüğü, Profil; Topaç Lab yalnız `?gelistir=1`) · ÇIKIŞ · Altın yuvası. Lentoda taş üstünde metin kalmadı.
+  - Geliştirme paneli (Parça ver, +100 XP) yalnız `?gelistir=1` ile görünüyor (S-10). Tek ana eylem OYNA; MARKET ve BAŞARIMLAR ikincil.
+- **İlk Çekirdek (§ 2.2):** kart = seçim (radyo, ok tuşları); tek **SEÇ** alt ortada ve kartın dışında, her zaman görünür. Yetenek satırı ipucuna ve ARIA'ya taşındı. Yapay notu "30 maç ömür" oldu.
+- **Profil (§ 2.9):** renk adları ARIA'da; destek kanalı "Destek kanalı ▾" ile açılıyor.
+- **Ayarlar:** maç ayarları iki sütun. **Krediler, Gizlilik, Günlük:** uzun içerik panelin içinde kayar, sayfa kaymaz. Tablolar sarılıyor; yatay kayma yok.
+- **Kontrast (≥ 4,5:1):**
+  - Soluk açıklama (`.yt`) `#A49C8C` oldu.
+  - Kilitli/gizli metin için yeni jeton `--kilitli-yazi #9A93A8`; sekme sayaçları da soluk tona çekildi.
+  - Bronz plaka ve VS plaka dokusu koyulaştırıldı (mürekkep / `#8F6538` = 4,8).
+  - Günün parçası metni mürekkep rengi; klavye ipuçları (ENTER/ESC) koyu yonga üstünde.
+  - Seçili Günlük satırı mürekkep rengi; yer tutucu metin `#9A93A8`.
+- **Sonuç:** başarım listesi ve bitiş tablosu kendi içinde kayıyor. Gelir dökümü katmanı artık kesilmiyor.
+
+### 4.2 Denetim (Playwright, 1280×720 DPR 2 ve 1920×1080 DPR 1)
+Betik her ekranda dört şeyi ölçtü:
+- sayfa kayması (kök `scrollHeight > clientHeight`);
+- kesilen metin (`overflow: hidden/clip` ya da ellipsis altında taşan metin, metin taşan kutu, yatay kayma);
+- görünüm dışına taşan metin;
+- kontrast (metin rengi / ilk opak arka plan < 4,5).
+
+Ölçülen ekranlar: Oyna, Lobi (oda), Aranıyor, bot teklifi, Oda, VS, Takım seçimi, Sonuç, Atölye (+ Gövde sekmesi + üç ikinci kat açık), Market (+ onay), Başarımlar, Günlük, Ayarlar, Profil (yeni ve düzenle), İlk Çekirdek, Karşılama, Kayıt, Giriş, Krediler, Gizlilik.
+
+**Sonuç:** her iki çözünürlükte **sayfa kayması 0, kesilen metin 0, görünüm dışı metin 0, kontrast hatası 0**. Bilinçli istisnalar:
+1. Çentikli mod düğmelerinde süs pseudo-öğesi kutuyu aşıyor; metin değil.
+2. Maç HUD öğeleri (`.ya` yuva adı, `.mh` skor): sonuç katmanının altında kalıyor ve `src/istemci/oyun/**` alanında (dokunulmadı).
+
+İç kaydırma kalan yerler bilinçli: Atölye envanter ve takım listeleri, Sonuç başarım listesi ve tablo, Krediler, Gizlilik, Günlük.
+
+`araclar/d5-akis.ts` ve `araclar/d6-akis.ts` gerçek tarayıcıda baştan sona geçti (hata 0, konsol hatası 0). d6 ikinci kat panellerini kendisi açıyor (`ikinciKat` yardımcısı); d5 İlk Çekirdek'te kartı + SEÇ'i, Profil'de "Destek kanalı"nı tıklıyor.
+
+**Görüntüler:** `docs/production/raporlar/ekran/GU-A2-*.png`, 35 dosya. 1280×720 DPR 2: tüm ekranlar. `*-1080p.png` (1920×1080): Atölye (+ ikinci kat), Oyna, Market, Başarımlar, İlk Çekirdek, Profil, VS, Takım, Oda, Sonuç.
+
+### 4.3 Güncel uyum puanı (0–5)
+| Ekran | 1. tur | 2. tur | Not |
+|---|---|---|---|
+| Atölye | 3 | **4** | Referans 03 düzeni (envanter · blueprint + 6 çubuk · Takım sağda), ikinci katlar, kesik yok; orta önizleme hâlâ `oyun/TopacOnizleme` |
+| İlk Çekirdek | 3,5 | **4** | Tek SEÇ, sığıyor; önizleme küçük |
+| Profil | 3,5 | **4** | Sığıyor; 6 renk (kasıtlı) |
+| Sonuç | 3,5 | **3,5** | Kesik yok; maç çerçevesi ölçeği kararı ayrı (5) |
+| Takım seçimi | 3,5 | **3,5** | İşlev kararı (1) gereği takım kartı |
+| Günlük, Ayarlar, Krediler, Gizlilik | 3,5 | **4** | Sayfa kayması yok, içerik panelde kayar |
+| Oyna, Lobi, VS, Oda, Market, Başarımlar, Kimlik | 4 | **4** | Kontrast düzeltmeleri |
+| Aranıyor | 4,5 | **4,5** | — |
+
+### 4.4 Kalan farklar
+- Atölye orta önizlemesi patlatılmış blueprint değil (paralel oturumun `TopacOnizleme` bileşeni).
+- Parça, topaç ve kalkan ikonları yordamsal yer tutucu.
+- Para yığını ve ruh silueti hâlâ SVG.
+- VS rozet bandı veri gelene kadar yok.
+- Sonuç maç çerçevesinde kesirli ölçek kullanıyor (karar 5 gereği dokunulmadı).
