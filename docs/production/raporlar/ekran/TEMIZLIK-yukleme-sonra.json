@@ -1,12 +1,12 @@
 {
  "sorgu": "ekran=mac&debug&tohum=21&takim=0&rakip=1&bot=kukla",
- "toplamKB": 1610.6,
- "gzipTahminKB": 745,
+ "toplamKB": 1621,
+ "gzipTahminKB": 749.6,
  "varlikKB": 533,
  "kumeKB": {
   "diger": 3.2,
   "yazi": 109.4,
-  "kod": 1074.5,
+  "kod": 1084.8,
   "ses": 365.3,
   "efekt": 31.6,
   "topac": 26.7

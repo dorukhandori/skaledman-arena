@@ -51,6 +51,26 @@ const ikonlarHazir = (s, ms = 20000) => s.waitForFunction(() => {
   return b === 0 && document.querySelectorAll("[data-ikon3b-hazir]").length > 0;
 }, null, { timeout: ms }).then(() => true).catch(() => false);
 
+/** Hızlı maç → 30 sn sonra "Bot ile oyna" → takım seçimi → maç (sunucu botu). `oto`: yerel topacı paylaşılan bot sürer. */
+async function botMaci(s, oto) {
+  await s.goto(`${TABAN}?ekran=lobi${oto ? `&oto=${oto}` : ""}`);
+  await s.waitForFunction(() => !!window.__lobi, null, { timeout: 20000 });
+  await s.click("[data-mod=hizli]").catch(() => {});
+  await s.click("[data-eylem=hizli]");
+  await s.waitForFunction(() => document.querySelector("[data-oneri]")?.dataset.asama === "botTeklif", null, { timeout: 70000 });
+  await s.click("[data-eylem=bot]");
+  try {
+    await s.waitForFunction(() => !!document.querySelector("[data-eylem=hazir]") || !!(window.__lobi && window.__lobi.macEkrani), null, { timeout: 90000 });
+    await s.click("[data-eylem=hazir]", { timeout: 3000 }).catch(() => {});
+    await s.waitForFunction(() => !!(window.__lobi && window.__lobi.macEkrani), null, { timeout: 60000 });
+  } catch (e) {
+    await s.screenshot({ path: `${KLASOR}/hata-botmaci.png` });
+    log("botMaci hata:", await s.evaluate(() => ({ asama: window.__lobi?.asama, metin: document.body.innerText.slice(0, 400) })));
+    throw e;
+  }
+}
+const sonucAcik = (s) => s.evaluate(() => !!(window.__lobi && window.__lobi.macEkrani && window.__lobi.macEkrani.sonucAcik));
+
 (async () => {
   tar = await chromium.launch({ args: ["--use-gl=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] });
   const s = await sayfa("A");
@@ -117,6 +137,84 @@ const ikonlarHazir = (s, ms = 20000) => s.waitForFunction(() => {
     const y = await s.evaluate(() => { const r = document.querySelector(".g3-tuval").getBoundingClientRect(); return [r.width, r.height, window.__atolye.sahne.cizerTuru]; });
     kayit.boyutWebgl = g; kayit.boyutYedek = y;
     await foto(s, "atolye-yedek");
+  }
+  if (ister("ringout")) {
+    // yeni hesap; Atölye'ye bir kez girilir (Pergel "ilk ziyaret" görülür), sonra girdisiz (pasif) topaçla sunucu botuna
+    // karşı gerçek maç: bot topacı itip ring out ile kazanır. Sonra /api/ben sonMac ve Atölye'de Pergel ring-out ipucu.
+    const r = await sayfa("R");
+    await hesap(r, `Halka ${ek}`, "goktasi");
+    await r.goto(`${TABAN}?ekran=atolye`);
+    await bekle(2500);
+    let deneme = 0, ben = null;
+    while (deneme++ < 3) {
+      await botMaci(r, null);
+      log("ringout: maç başladı", deneme);
+      const t0 = Date.now();
+      while (!(await sonucAcik(r)) && Date.now() - t0 < 400000) await bekle(1000);
+      ben = (await api(r, "GET", "/api/ben")).veri.sonMac;
+      log("ringout: sonMac", JSON.stringify(ben));
+      if (ben?.ringOutKayip) break;
+    }
+    kayit.ringoutSonMac = ben;
+    await r.goto(`${TABAN}?ekran=atolye`);
+    await r.waitForFunction(() => !!window.__atolye, null, { timeout: 30000 });
+    const ok = await r.waitForFunction(() => /kenara yakın/i.test(document.querySelector(".pergel")?.textContent ?? ""), null, { timeout: 15000 }).then(() => true).catch(() => false);
+    kayit.ringoutIpucu = ok ? await r.evaluate(() => document.querySelector(".pergel").textContent) : null;
+    await foto(r, "pergel-ringout");
+    await r.context().close();
+  }
+  if (ister("ulti")) {
+    // yeni hesap, Yapay set (Kasırga Döküm). Lv.3 (Ulti yuvası; geliştirme ucu xp-ver ile, sim'e yazım yok), gerçek bot
+    // maçı, yerel topacı paylaşılan bot sürer (?oto=dolas) ve Enerji 3 dilim olunca Ulti'yi kendisi kullanır.
+    const u = await sayfa("U");
+    await hesap(u, `Yel ${ek}`, "yapay");
+    const at = (await api(u, "GET", "/api/atolye")).veri;
+    const c = at.cekirdekler[0];
+    kayit.ultiXp = (await api(u, "POST", "/api/gelistirme/xp-ver", { cekirdekId: c.id, xp: 700 })).veri;
+    // 1) Antrenman: hesabın kayıtlı takımı ve seviyesiyle (Lv.3 Kasırga Döküm). Eğitimin 4. adımında (Yetenek) Enerji oyun
+    //    kuralıyla dolu tutulur; oyuncu fareyi rakibe tutup 3'e basar → gerçek Ata Savruğu (sim'e yazım yok).
+    await u.goto(`${TABAN}?ekran=antrenman`);
+    await u.waitForFunction(() => !!window.__egitim, null, { timeout: 30000 });
+    await u.mouse.click(640, 300);
+    await u.waitForFunction(() => window.__egitim.adim >= 3, null, { timeout: 120000 }).catch(() => {});
+    kayit.antrenmanAdim = await u.evaluate(() => window.__egitim.adim);
+    const m = (kod) => u.evaluate((k) => (new Function("mac", `return (${k})(mac)`))(window.__egitim.mac), kod);
+    kayit.antrenmanProfil = await m("(mac) => ({ el: mac.dunya.profiller[mac.yerel].element, cekirdek: mac.dunya.profiller[mac.yerel].parcalar.cekirdek, yuva: mac.dunya.profiller[mac.yerel].yetenekler, seviye: mac.dunya.seviye, enerji: mac.dunya.topaclar[mac.yerel].enerji })");
+    log("ulti antrenman:", JSON.stringify(kayit.antrenmanProfil));
+    for (let k = 0; k < 6 && !kayit.ultiAn; k++) {
+      const p = await m("(mac) => { const t = mac.dunya.topaclar[1 - mac.yerel]; return mac.ekranNoktasi(t.x, t.z); }");
+      await u.mouse.move(p.x, p.y);
+      await u.keyboard.down("3"); await bekle(120); await u.keyboard.up("3");
+      const t0 = Date.now();
+      while (Date.now() - t0 < 2500) {
+        const d = await m("(mac) => ({ ata: mac.yetenekGorsel.ruh.sayac.ata, ulti: mac.efektler.sayac.ulti, en: mac.dunya.topaclar[mac.yerel].enerji })");
+        if (d.ata > 0) { await bekle(500); await foto(u, "kasirga-ulti"); kayit.ultiAn = { yol: "antrenman", ...d }; break; }
+        await bekle(50);
+      }
+    }
+    let deneme = 0;
+    while (deneme++ < 2 && !kayit.ultiAn) {
+      await botMaci(u, "dolas");
+      log("ulti: maç başladı", deneme);
+      const t0 = Date.now();
+      let enCok = 0;
+      while (Date.now() - t0 < 400000) {
+        const d = await u.evaluate(() => { const m = window.__lobi?.macEkrani; if (!m) return null; return { ulti: m.efektler.sayac.ulti, telegraf: m.efektler.sayac.telegraf, en: m.dunya.topaclar[m.yerel].enerji, el: m.dunya.profiller[m.yerel].element, yuva: m.dunya.profiller[m.yerel].yetenekler, son: m.sonucAcik, ruh: m.yetenekGorsel?.ruh?.sayac ? { ...m.yetenekGorsel.ruh.sayac } : null }; }).catch(() => null);
+        if (!d) break;
+        enCok = Math.max(enCok, d.en);
+        if (d.ruh && d.ruh.ata > 0 && !kayit.ultiAn) {
+          await bekle(450);
+          await foto(u, "kasirga-ulti");
+          kayit.ultiAn = d;
+        }
+        if (d.son) break;
+        await bekle(60);
+      }
+      kayit[`ultiMac${deneme}`] = { enCokEnerji: enCok };
+      log("ulti: maç bitti", deneme, enCok, !!kayit.ultiAn);
+      if (!kayit.ultiAn) { while (!(await sonucAcik(u))) await bekle(500); }
+    }
+    await u.context().close();
   }
   fs.writeFileSync(`${KLASOR}/TEMIZLIK-ozet.json`, JSON.stringify({ ...kayit, hatalar }, null, 1));
   log("hatalar:", hatalar.length, hatalar.slice(0, 10));

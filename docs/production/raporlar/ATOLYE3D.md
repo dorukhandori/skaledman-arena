@@ -88,10 +88,10 @@ Envanter, takım, API ve Pergel mantığı korundu. Mevcut `data-*` seçicilerin
 1. **Parça ayrıntısı:** referanstaki parçalar elle çizilmiş, girintili ve parlak metal ayrıntılı. Bizimkiler parametrik ve yalın. Mac hattının GLB'leri gelince (§ 6) aynı görüntüleyici onları çizecek.
 2. **Kırmızı X yok.** Atölye ana ekran (ux § 3.2). Yerinde ÇIKIŞ ve DAHA FAZLA duruyor.
 3. **8 çubuk yerine 6** (tide C-1 kararı). Takım kartı mini çubukları 3 tane (SAL/SAV/STA); referansta HIZ/GÜÇ/AT ve sayı sütunu var.
-4. **Izgara doluluğu:** referansta 5 satır var. Bizde sekme başına 5–8 parça, alt kısım boş kalıyor.
+4. **Izgara doluluğu:** referansta 5 satır var. Bizde sekme başına 5–8 parça, alt kısım boş kalıyor. → **Çözüldü (TEMIZLIK #7b):** 5 satıra soluk yer tutucu + "Market'ten al" ipucu hücresi.
 5. **◄ ve "geri" anlamı:** ◄ süs. Atölye'den geri gidilecek ekran yok.
-6. **Birleşik görünümde etiketler** üst üste binmesin diye en az 15 px aralıkla itiliyor; çizgiler katmanın tam hizasına değil yakınına iniyor.
-7. **Yedek görünüm** atlas karelerini ×1 ölçekte çiziyor (alana sığdırma); WebGL görünümünden küçük.
+6. **Birleşik görünümde etiketler** üst üste binmesin diye en az 15 px aralıkla itiliyor; çizgiler katmanın tam hizasına değil yakınına iniyor. → **Çözüldü (TEMIZLIK #7a):** dirsekli çizgi katman hizasına iner.
+7. **Yedek görünüm** atlas karelerini ×1 ölçekte çiziyor (alana sığdırma); WebGL görünümünden küçük. → **Çözüldü (TEMIZLIK #7c):** WebGL boyuna en yakın tam sayı ölçek.
 
 ## 6. GLB yükleme sözleşmesi (Mac hattı)
 

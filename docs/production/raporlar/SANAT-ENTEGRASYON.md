@@ -96,9 +96,9 @@ Ulti yaklaşınca element başına: 138 KB (Şimşek) – 464 KB (Girdap), ortal
 
 ## 10. Sahip kararı bekleyenler
 
-1. **Kasırga Ulti'si başlangıç parçalarında yok** (`kasirga-yapay` Ulti yuvası boş; Ata Savruğu'nun ruhu `sarmalbaykus`'a bağlı Çekirdek kataloğda yok). Kasırga oyuncusu Yel Vatozu'nu hiç görmez. Veri/denge kararı.
-2. Efekt atlasları (1,37 MB) maç ilk yükleme hedefini (1,5 MB) tek başına zorluyor: element atlaslarını da tembel yükleme ya da WebP önerisi (efekt oturumu).
-3. `public/ruh/ata/<element>.png` renkli kaynak sayfalar (1,38 MB) çalışma anında kullanılmıyor ama `public/` altında dağıtılıyor: `kaynak/` ya da `art-source/` altına taşınması önerilir (sanat oturumunun hattı `hologram.py` buradan okuyor; o oturum taşımalı).
+1. **Kasırga Ulti'si başlangıç parçalarında yok** (`kasirga-yapay` Ulti yuvası boş; Ata Savruğu'nun ruhu `sarmalbaykus`'a bağlı Çekirdek kataloğda yok). Kasırga oyuncusu Yel Vatozu'nu hiç görmez. Veri/denge kararı. → **Çözüldü (TEMIZLIK #1, 2026-11-05):** Döküm Sarmalbaykuş → Ata Savruğu.
+2. Efekt atlasları (1,37 MB) maç ilk yükleme hedefini (1,5 MB) tek başına zorluyor: element atlaslarını da tembel yükleme ya da WebP önerisi (efekt oturumu). → **Çözüldü (TEMIZLIK #2):** palet PNG + tembel; maç ilk yükleme varlıkları 533 KB.
+3. `public/ruh/ata/<element>.png` renkli kaynak sayfalar (1,38 MB) çalışma anında kullanılmıyor ama `public/` altında dağıtılıyor: `kaynak/` ya da `art-source/` altına taşınması önerilir (sanat oturumunun hattı `hologram.py` buradan okuyor; o oturum taşımalı). → **Çözüldü (TEMIZLIK #3):** `kaynak/ruh/ata/`, betik yolları güncel.
 4. Yapay zekâ çıktılarının hizmet koşulları (Gemini, Tripo ücretli plan) ticari kullanım için sahip tarafından doğrulanmalı (krediler satırında not var).
 5. Portre bayrağı (`RUH_PORTRE_OZEL_YETENEK`) sonraki sürümde açılacak mı (kapalı başlıyor; açıkken çalıştığı doğrulandı).
 6. Uyum farkı (canavar boyu ~%30 vs referans ~%45): hologramın büyütülmesi HUD payıyla çatışıyor; sahip görsel tercihi.
@@ -106,4 +106,4 @@ Ulti yaklaşınca element başına: 138 KB (Şimşek) – 464 KB (Girdap), ortal
 ## 11. Paralel oturumlardan beklenen / alınan
 
 - **Alınan:** `origin/devran-sanat` 99dfb40, f42388c, 8c78235, 297f286 (ilk birleştirme) ve b925e37 (hologram, ikinci birleştirme); brief 641d31f yönlendirmesi uygulandı. Aynı sürede `devran-kod`'a gelen ART-1 (27c3e01, f1fb83d: topaç atlas yükleyicisi) ve GU-A2 (d9921e8) ile çakışma yok; birlikte doğrulandı.
-- **Beklenen:** sanat oturumundan Kasırga Ulti/Çekirdek kararı (§ 10.1), renkli kaynak sayfaların `public/` dışına taşınması (§ 10.3), varsa Ata rig/gerçek kükreme (Tripo, SA #18; sahip onayı olmadan başlatılmaz). `/api/ben` son maç sonucu (Pergel `ring-out`, SA #17) hâlâ yok.
+- **Beklenen:** sanat oturumundan Kasırga Ulti/Çekirdek kararı (§ 10.1), renkli kaynak sayfaların `public/` dışına taşınması (§ 10.3), varsa Ata rig/gerçek kükreme (Tripo, SA #18; sahip onayı olmadan başlatılmaz). `/api/ben` son maç sonucu (Pergel `ring-out`, SA #17) hâlâ yok. → **Hepsi TEMIZLIK'te kapandı** (`docs/production/raporlar/TEMIZLIK.md`).
