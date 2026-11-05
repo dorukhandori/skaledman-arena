@@ -33,7 +33,7 @@ Tek ilke: **bir elle sür, öbür elle tek tuş.** Sol el WASD + Shift/Space; sa
 - **Fare = yetenek yönü, sürüş yönü değil.** Sürüşü fareye vermek, fareyi hiç kullanmamış izleyici için iki işi tek ele yükler; ayrıca R05 § 1c: doğrudan WASD sürüşü bu kitlenin tanıdığı model.
 - **Sol/sağ tık ayrı yetenek.** Yalnız fareyi seven oyuncu 1 ve 2'ye ulaşmadan iki yeteneği kullanır. Sağ tıkın eski "basılı tut = nişan" anlamı (01) 1-4 tuşlarıyla birleştirildi: tek kural, her yerde aynı.
 - **Ateşleme bırakma anında.** Girdi gecikmesi pencerede ~80 ms artar, bunun karşılığında yanlış basışlar iptal edilebilir. Telegraf süreleri (0,2-0,9 s) bunu kaldırır; `@relay` onayı gerekir.
-- **Gamepad yok** (ilk sürüm). Gamepad API ve ikinci düzen F3 sonrası değerlendirilir; `Girdi` şeması buna hazırdır. **Mobil dokunmatik yok** (sahip onayına kadar kapsam dışı).
+- **Gamepad yok** (ilk sürüm). Gamepad API ve ikinci düzen F3 sonrası değerlendirilir; `Girdi` şeması buna hazırdır. ~~Mobil dokunmatik yok~~ → **MOBIL-1 (2026-11-05, sahip isteği):** telefonda yatay dokunmatik düzen var: dinamik joystick, oto-nişan + sürükleyerek ezme, sağ alt kavis (Dash · Sekme · Yetenek 1-2 · Ulti · Takım Ultisi), Menü/Ses/GERİ ÇEK; ayrıntı ve kararlar `docs/production/raporlar/MOBIL-1.md`. Masaüstü klavye/fare düzeni aynen.
 - Q/E boş: iki ek tuşu ileride "Yetenek 4 alternatifi" gibi kullanmak serbest; şimdi icat edilmiyor.
 
 ### 1.2 Yeniden atama (Ayarlar › Kontroller)

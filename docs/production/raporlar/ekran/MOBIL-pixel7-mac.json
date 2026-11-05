@@ -1,0 +1,585 @@
+{
+ "cihaz": {
+  "ad": "Pixel 7",
+  "w": 915,
+  "h": 412,
+  "guvenli": {
+   "top": 0,
+   "left": 0,
+   "right": 0,
+   "bottom": 0
+  }
+ },
+ "guvenliAlanEmulasyonu": {
+  "top": 0,
+  "left": 0,
+  "right": 0,
+  "bottom": 0
+ },
+ "yerlesim": {
+  "gorunum": [
+   915,
+   412
+  ],
+  "katman": [
+   0,
+   0,
+   915,
+   412
+  ],
+  "hud": [
+   {
+    "ad": "panel-sol",
+    "x0": 97,
+    "y0": 6,
+    "x1": 317,
+    "y1": 55,
+    "w": 220,
+    "h": 49
+   },
+   {
+    "ad": "panel-sag",
+    "x0": 598,
+    "y0": 6,
+    "x1": 817,
+    "y1": 55,
+    "w": 220,
+    "h": 49
+   },
+   {
+    "ad": "skor",
+    "x0": 396,
+    "y0": 3,
+    "x1": 518,
+    "y1": 32,
+    "w": 122,
+    "h": 29
+   },
+   {
+    "ad": "sure",
+    "x0": 421,
+    "y0": 34,
+    "x1": 494,
+    "y1": 50,
+    "w": 73,
+    "h": 17
+   },
+   {
+    "ad": "takim-1",
+    "x0": 97,
+    "y0": 64,
+    "x1": 131,
+    "y1": 98,
+    "w": 34,
+    "h": 34
+   },
+   {
+    "ad": "takim-2",
+    "x0": 135,
+    "y0": 64,
+    "x1": 169,
+    "y1": 98,
+    "w": 34,
+    "h": 34
+   },
+   {
+    "ad": "takim-3",
+    "x0": 173,
+    "y0": 64,
+    "x1": 207,
+    "y1": 98,
+    "w": 34,
+    "h": 34
+   }
+  ],
+  "dugme": [
+   {
+    "ad": "yetenek-1",
+    "x0": 735,
+    "y0": 274,
+    "x1": 791,
+    "y1": 330,
+    "w": 56,
+    "h": 56
+   },
+   {
+    "ad": "yetenek-2",
+    "x0": 783,
+    "y0": 229,
+    "x1": 839,
+    "y1": 285,
+    "w": 56,
+    "h": 56
+   },
+   {
+    "ad": "ulti",
+    "x0": 845,
+    "y0": 213,
+    "x1": 905,
+    "y1": 273,
+    "w": 60,
+    "h": 60
+   },
+   {
+    "ad": "takim-ultisi",
+    "x0": 712,
+    "y0": 202,
+    "x1": 768,
+    "y1": 258,
+    "w": 56,
+    "h": 56
+   },
+   {
+    "ad": "dash",
+    "x0": 833,
+    "y0": 330,
+    "x1": 905,
+    "y1": 402,
+    "w": 72,
+    "h": 72
+   },
+   {
+    "ad": "sekme",
+    "x0": 718,
+    "y0": 338,
+    "x1": 774,
+    "y1": 394,
+    "w": 56,
+    "h": 56
+   },
+   {
+    "ad": "Menü",
+    "x0": 345,
+    "y0": 3,
+    "x1": 389,
+    "y1": 47,
+    "w": 44,
+    "h": 44
+   },
+   {
+    "ad": "Sesi kapat",
+    "x0": 525,
+    "y0": 3,
+    "x1": 569,
+    "y1": 47,
+    "w": 44,
+    "h": 44
+   }
+  ],
+  "cakisma": [],
+  "disari": [],
+  "kucuk": []
+ },
+ "bas": {
+  "x": -130,
+  "z": -88,
+  "rakip": [
+   122,
+   0
+  ],
+  "dashKalan": 0,
+  "sekmeKalan": 0,
+  "faz": "tur",
+  "sayac": {
+   "joy": 0,
+   "dash": 0,
+   "sekme": 0,
+   "yetenek": 0,
+   "iptal": 0,
+   "ezme": 0,
+   "cokluDokunus": 0
+  },
+  "yon": {
+   "x": 0,
+   "z": 0
+  },
+  "nisan": [
+   122,
+   0
+  ],
+  "ezme": false,
+  "yetenekKullanimi": {},
+  "iptal": 0,
+  "basili": -1,
+  "ses": {
+   "bagli": false,
+   "baglam": "running"
+  }
+ },
+ "cokluDokunusDash": {
+  "x": -45,
+  "z": -204,
+  "rakip": [
+   116,
+   0
+  ],
+  "dashKalan": 9,
+  "sekmeKalan": 0,
+  "faz": "tur",
+  "sayac": {
+   "joy": 1,
+   "dash": 1,
+   "sekme": 0,
+   "yetenek": 0,
+   "iptal": 0,
+   "ezme": 0,
+   "cokluDokunus": 1
+  },
+  "yon": {
+   "x": 0,
+   "z": -1
+  },
+  "nisan": [
+   116,
+   0
+  ],
+  "ezme": false,
+  "yetenekKullanimi": {},
+  "iptal": 0,
+  "basili": -1,
+  "ses": {
+   "bagli": true,
+   "baglam": "running"
+  }
+ },
+ "joystickSag": {
+  "x": -101,
+  "z": 0,
+  "rakip": [
+   93,
+   -3
+  ],
+  "dashKalan": 0,
+  "sekmeKalan": 0,
+  "faz": "tur",
+  "sayac": {
+   "joy": 2,
+   "dash": 1,
+   "sekme": 0,
+   "yetenek": 0,
+   "iptal": 0,
+   "ezme": 0,
+   "cokluDokunus": 1
+  },
+  "yon": {
+   "x": 1,
+   "z": 0
+  },
+  "nisan": [
+   93,
+   -3
+  ],
+  "ezme": false,
+  "yetenekKullanimi": {},
+  "iptal": 0,
+  "basili": -1,
+  "ses": {
+   "bagli": true,
+   "baglam": "running"
+  }
+ },
+ "oluBolge": {
+  "x": 0,
+  "z": 0
+ },
+ "joystickYukari": {
+  "x": 0,
+  "z": -1
+ },
+ "sekme": {
+  "x": -32,
+  "z": -7,
+  "rakip": [
+   33,
+   -40
+  ],
+  "dashKalan": 0,
+  "sekmeKalan": 11,
+  "faz": "tur",
+  "sayac": {
+   "joy": 2,
+   "dash": 1,
+   "sekme": 1,
+   "yetenek": 0,
+   "iptal": 0,
+   "ezme": 0,
+   "cokluDokunus": 1
+  },
+  "yon": {
+   "x": 0,
+   "z": 0
+  },
+  "nisan": [
+   33,
+   -40
+  ],
+  "ezme": false,
+  "yetenekKullanimi": {},
+  "iptal": 0,
+  "basili": -1,
+  "ses": {
+   "bagli": true,
+   "baglam": "running"
+  }
+ },
+ "yetenek1Basili": {
+  "x": -25,
+  "z": -5,
+  "rakip": [
+   43,
+   -52
+  ],
+  "dashKalan": 0,
+  "sekmeKalan": 0,
+  "faz": "tur",
+  "sayac": {
+   "joy": 2,
+   "dash": 1,
+   "sekme": 1,
+   "yetenek": 0,
+   "iptal": 0,
+   "ezme": 0,
+   "cokluDokunus": 1
+  },
+  "yon": {
+   "x": 0,
+   "z": 0
+  },
+  "nisan": [
+   43,
+   -52
+  ],
+  "ezme": false,
+  "yetenekKullanimi": {},
+  "iptal": 0,
+  "basili": 0,
+  "ses": {
+   "bagli": true,
+   "baglam": "running"
+  }
+ },
+ "yetenek1Atildi": {
+  "x": -22,
+  "z": -5,
+  "rakip": [
+   61,
+   -26
+  ],
+  "dashKalan": 0,
+  "sekmeKalan": 0,
+  "faz": "tur",
+  "sayac": {
+   "joy": 2,
+   "dash": 1,
+   "sekme": 1,
+   "yetenek": 1,
+   "iptal": 0,
+   "ezme": 0,
+   "cokluDokunus": 1
+  },
+  "yon": {
+   "x": 0,
+   "z": 0
+  },
+  "nisan": [
+   61,
+   -26
+  ],
+  "ezme": false,
+  "yetenekKullanimi": {
+   "sen:kaya-sogugu": 1
+  },
+  "iptal": 0,
+  "basili": -1,
+  "ses": {
+   "bagli": true,
+   "baglam": "running"
+  }
+ },
+ "nisanEzme": {
+  "x": -18,
+  "z": -4,
+  "rakip": [
+   41,
+   47
+  ],
+  "dashKalan": 0,
+  "sekmeKalan": 0,
+  "faz": "tur",
+  "sayac": {
+   "joy": 3,
+   "dash": 1,
+   "sekme": 1,
+   "yetenek": 1,
+   "iptal": 0,
+   "ezme": 1,
+   "cokluDokunus": 2
+  },
+  "yon": {
+   "x": 0,
+   "z": 0
+  },
+  "nisan": [
+   -161,
+   -50
+  ],
+  "ezme": true,
+  "yetenekKullanimi": {
+   "sen:kaya-sogugu": 1
+  },
+  "iptal": 0,
+  "basili": -1,
+  "ses": {
+   "bagli": true,
+   "baglam": "running"
+  }
+ },
+ "nisanEzmeSonrasi": {
+  "x": -17,
+  "z": -4,
+  "rakip": [
+   1,
+   61
+  ],
+  "dashKalan": 0,
+  "sekmeKalan": 0,
+  "faz": "tur",
+  "sayac": {
+   "joy": 3,
+   "dash": 1,
+   "sekme": 1,
+   "yetenek": 1,
+   "iptal": 0,
+   "ezme": 1,
+   "cokluDokunus": 2
+  },
+  "yon": {
+   "x": 0,
+   "z": 0
+  },
+  "nisan": [
+   1,
+   61
+  ],
+  "ezme": false,
+  "yetenekKullanimi": {
+   "sen:kaya-sogugu": 1
+  },
+  "iptal": 0,
+  "basili": -1,
+  "ses": {
+   "bagli": true,
+   "baglam": "running"
+  }
+ },
+ "yetenek2Iptal": {
+  "x": -14,
+  "z": -13,
+  "rakip": [
+   -43,
+   51
+  ],
+  "dashKalan": 0,
+  "sekmeKalan": 0,
+  "faz": "tur",
+  "sayac": {
+   "joy": 3,
+   "dash": 1,
+   "sekme": 1,
+   "yetenek": 1,
+   "iptal": 1,
+   "ezme": 1,
+   "cokluDokunus": 2
+  },
+  "yon": {
+   "x": 0,
+   "z": 0
+  },
+  "nisan": [
+   -133,
+   -99
+  ],
+  "ezme": true,
+  "yetenekKullanimi": {
+   "sen:kaya-sogugu": 1
+  },
+  "iptal": 1,
+  "basili": -1,
+  "ses": {
+   "bagli": true,
+   "baglam": "running"
+  }
+ },
+ "yetenek2SurukleAt": {
+  "x": 7,
+  "z": -21,
+  "rakip": [
+   -64,
+   -11
+  ],
+  "dashKalan": 0,
+  "sekmeKalan": 0,
+  "faz": "tur",
+  "sayac": {
+   "joy": 3,
+   "dash": 1,
+   "sekme": 1,
+   "yetenek": 2,
+   "iptal": 1,
+   "ezme": 1,
+   "cokluDokunus": 2
+  },
+  "yon": {
+   "x": 0,
+   "z": 0
+  },
+  "nisan": [
+   -146,
+   15
+  ],
+  "ezme": true,
+  "yetenekKullanimi": {
+   "sen:kaya-sogugu": 1,
+   "sen:yontu-siperi": 1
+  },
+  "iptal": 1,
+  "basili": -1,
+  "ses": {
+   "bagli": true,
+   "baglam": "running"
+  }
+ },
+ "menu": {
+  "acik": true,
+  "dugmeler": [
+   "Devam 201×43",
+   "Ayarlar 201×44",
+   "Tam ekran 201×44",
+   "Teslim ol 201×44"
+  ]
+ },
+ "dikey": {
+  "gorunur": true,
+  "metin": "CİHAZI YATAY ÇEVİR Devran yatay ekranda oynanır."
+ },
+ "yatayaDonus": "none",
+ "konsolHatalari": [],
+ "kontrol": {
+  "joystickSurus": true,
+  "oluBolge": true,
+  "joystickYukari": true,
+  "cokluDokunus": true,
+  "sekme": true,
+  "yetenekOtoNisan": true,
+  "nisanEzme": true,
+  "iptal": true,
+  "surukleAt": true,
+  "sesKilidi": true,
+  "menu": true,
+  "dikeyOrtu": true,
+  "cakismaYok": true,
+  "ekranDisiYok": true,
+  "hedef44": true,
+  "konsolTemiz": true
+ }
+}

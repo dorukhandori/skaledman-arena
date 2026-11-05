@@ -1,0 +1,298 @@
+{
+ "cihaz": {
+  "ad": "iPhone 14/15",
+  "w": 844,
+  "h": 390,
+  "ua": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+ },
+ "ekranlar": {
+  "01-karsilama": {
+   "url": "",
+   "olcek": "1",
+   "yaziOlcek": "1.5",
+   "sayfaKaydirma": 0,
+   "disari": [],
+   "kirpik": [],
+   "binen": [],
+   "olculenHedef": 5,
+   "kismenGorunur": 0,
+   "kucukHedef": [],
+   "kucukHedefSayisi": 0,
+   "kucukYazi": [],
+   "kucukYaziSayisi": 0,
+   "dikeyOrtu": "none"
+  },
+  "02-kayit": {
+   "url": "?ekran=kayit",
+   "olcek": "1",
+   "yaziOlcek": "1.5",
+   "sayfaKaydirma": 0,
+   "disari": [],
+   "kirpik": [],
+   "binen": [],
+   "olculenHedef": 4,
+   "kismenGorunur": 0,
+   "kucukHedef": [],
+   "kucukHedefSayisi": 0,
+   "kucukYazi": [
+    "button.geri.k-geri \"◄ Geri\" 0px Arial"
+   ],
+   "kucukYaziSayisi": 1,
+   "dikeyOrtu": "none"
+  },
+  "03-giris": {
+   "url": "?ekran=giris",
+   "olcek": "1",
+   "yaziOlcek": "1.5",
+   "sayfaKaydirma": 0,
+   "disari": [],
+   "kirpik": [],
+   "binen": [],
+   "olculenHedef": 5,
+   "kismenGorunur": 0,
+   "kucukHedef": [],
+   "kucukHedefSayisi": 0,
+   "kucukYazi": [
+    "button.geri.k-geri \"◄ Geri\" 0px Arial"
+   ],
+   "kucukYaziSayisi": 1,
+   "dikeyOrtu": "none"
+  },
+  "04-ilk-cekirdek": {
+   "url": "?ekran=ilk-cekirdek",
+   "olcek": "1",
+   "yaziOlcek": "1.5",
+   "sayfaKaydirma": 0,
+   "disari": [],
+   "kirpik": [],
+   "binen": [
+    "section.ck \"KAYA MADEN MADEN · KAYA · KALE · LV.2 SA\" ⟷ button.k-dugme.ana[eylem=sec] \"SEÇ\""
+   ],
+   "olculenHedef": 1,
+   "kismenGorunur": 3,
+   "kucukHedef": [],
+   "kucukHedefSayisi": 0,
+   "kucukYazi": [],
+   "kucukYaziSayisi": 0,
+   "dikeyOrtu": "none"
+  },
+  "10-atolye": {
+   "url": "?ekran=atolye",
+   "olcek": "1",
+   "yaziOlcek": "1.5",
+   "sayfaKaydirma": 0,
+   "disari": [],
+   "kirpik": [],
+   "binen": [
+    "canvas.g3-tuval \"3B topaç: ÇEKİRDEK Kor Göktaşı, GÖVDE Ok\" ⟷ button.g3-etiket \"ÇEKİRDEK KOR GÖKTAŞI\"",
+    "canvas.g3-tuval \"3B topaç: ÇEKİRDEK Kor Göktaşı, GÖVDE Ok\" ⟷ button.g3-etiket \"GÖVDE OK GÖVDE\"",
+    "canvas.g3-tuval \"3B topaç: ÇEKİRDEK Kor Göktaşı, GÖVDE Ok\" ⟷ button.g3-etiket \"DİSK HAFİF DİSK\"",
+    "canvas.g3-tuval \"3B topaç: ÇEKİRDEK Kor Göktaşı, GÖVDE Ok\" ⟷ button.k-dugme.kucuk[eylem=birlestir] \"BİRLEŞTİR\"",
+    "button.g3-etiket \"UÇ DÜZ UÇ\" ⟷ button.k-dugme[eylem=basarimlar] \"BAŞARIMLAR\"",
+    "button.g3-etiket \"UÇ DÜZ UÇ\" ⟷ button.k-dugme[eylem=dene] \"DENE · 30 SN\"",
+    "button.k-dugme[eylem=market] \"MARKET\" ⟷ button.p-rozet \"Pergel'e sor (H)\"",
+    "button.k-dugme[eylem=basarimlar] \"BAŞARIMLAR\" ⟷ button.k-dugme.kucuk.p-dugme \"TAMAM\""
+   ],
+   "olculenHedef": 24,
+   "kismenGorunur": 6,
+   "kucukHedef": [
+    "button.pc.kilitli \"KUŞAK 0/20\" görsel 50×65 isabet 35×66"
+   ],
+   "kucukHedefSayisi": 1,
+   "kucukYazi": [],
+   "kucukYaziSayisi": 0,
+   "dikeyOrtu": "none"
+  },
+  "11-market": {
+   "url": "?ekran=market",
+   "olcek": "1",
+   "yaziOlcek": "1.5",
+   "sayfaKaydirma": 0,
+   "disari": [],
+   "kirpik": [],
+   "binen": [],
+   "olculenHedef": 29,
+   "kismenGorunur": 1,
+   "kucukHedef": [],
+   "kucukHedefSayisi": 0,
+   "kucukYazi": [],
+   "kucukYaziSayisi": 0,
+   "dikeyOrtu": "none"
+  },
+  "12-basarimlar": {
+   "url": "?ekran=basarimlar",
+   "olcek": "1",
+   "yaziOlcek": "1.5",
+   "sayfaKaydirma": 0,
+   "disari": [],
+   "kirpik": [],
+   "binen": [],
+   "olculenHedef": 18,
+   "kismenGorunur": 1,
+   "kucukHedef": [],
+   "kucukHedefSayisi": 0,
+   "kucukYazi": [],
+   "kucukYaziSayisi": 0,
+   "dikeyOrtu": "none"
+  },
+  "13-lobi": {
+   "url": "?ekran=lobi",
+   "olcek": "1",
+   "yaziOlcek": "1.5",
+   "sayfaKaydirma": 0,
+   "disari": [],
+   "kirpik": [],
+   "binen": [],
+   "olculenHedef": 6,
+   "kismenGorunur": 0,
+   "kucukHedef": [],
+   "kucukHedefSayisi": 0,
+   "kucukYazi": [],
+   "kucukYaziSayisi": 0,
+   "dikeyOrtu": "none"
+  },
+  "14-profil": {
+   "url": "?ekran=profil",
+   "olcek": "1",
+   "yaziOlcek": "1.5",
+   "sayfaKaydirma": 0,
+   "disari": [],
+   "kirpik": [],
+   "binen": [],
+   "olculenHedef": 15,
+   "kismenGorunur": 0,
+   "kucukHedef": [],
+   "kucukHedefSayisi": 0,
+   "kucukYazi": [
+    "button.geri.k-geri \"◄ Geri\" 0px Arial"
+   ],
+   "kucukYaziSayisi": 1,
+   "dikeyOrtu": "none"
+  },
+  "15-ayarlar": {
+   "url": "?ekran=ayarlar",
+   "olcek": "1",
+   "yaziOlcek": "1.5",
+   "sayfaKaydirma": 0,
+   "disari": [],
+   "kirpik": [],
+   "binen": [],
+   "olculenHedef": 10,
+   "kismenGorunur": 2,
+   "kucukHedef": [],
+   "kucukHedefSayisi": 0,
+   "kucukYazi": [],
+   "kucukYaziSayisi": 0,
+   "dikeyOrtu": "none"
+  },
+  "16-gunluk": {
+   "url": "?ekran=gunluk",
+   "olcek": "1",
+   "yaziOlcek": "1.5",
+   "sayfaKaydirma": 0,
+   "disari": [],
+   "kirpik": [],
+   "binen": [],
+   "olculenHedef": 3,
+   "kismenGorunur": 0,
+   "kucukHedef": [],
+   "kucukHedefSayisi": 0,
+   "kucukYazi": [],
+   "kucukYaziSayisi": 0,
+   "dikeyOrtu": "none"
+  },
+  "17-lobi-oda": {
+   "url": "?ekran=lobi",
+   "olcek": "1",
+   "yaziOlcek": "1.5",
+   "sayfaKaydirma": 0,
+   "disari": [],
+   "kirpik": [],
+   "binen": [],
+   "olculenHedef": 7,
+   "kismenGorunur": 0,
+   "kucukHedef": [],
+   "kucukHedefSayisi": 0,
+   "kucukYazi": [],
+   "kucukYaziSayisi": 0,
+   "dikeyOrtu": "none"
+  },
+  "90-dikey-ortu": {
+   "url": "?ekran=atolye",
+   "olcek": "1",
+   "yaziOlcek": "1.5",
+   "sayfaKaydirma": 0,
+   "disari": [
+    "h3 \"TAKIM\" [418,49,482,79]",
+    "button.k-dugme.kucuk.takim-adi[eylem=takim-menu] \"TAKIM 1 ▾\" [400,81,500,125]",
+    "button.k-dugme.kucuk \"▲\" [403,207,447,251]",
+    "button.k-dugme.kucuk \"▼\" [453,207,497,251]",
+    "span \"SAL\" [423,162,450,176]",
+    "span \"SAV\" [423,177,450,190]",
+    "span \"STA\" [423,191,450,205]",
+    "span \"SAL\" [423,290,450,304]",
+    "span \"SAV\" [423,305,450,318]",
+    "span \"STA\" [423,319,450,333]"
+   ],
+   "kirpik": [],
+   "binen": [
+    "canvas.g3-tuval \"3B topaç: ÇEKİRDEK Kor Göktaşı, GÖVDE Ok\" ⟷ button.g3-etiket \"ÇEKİRDEK KOR GÖKTAŞI\"",
+    "canvas.g3-tuval \"3B topaç: ÇEKİRDEK Kor Göktaşı, GÖVDE Ok\" ⟷ button.g3-etiket \"GÖVDE OK GÖVDE\"",
+    "canvas.g3-tuval \"3B topaç: ÇEKİRDEK Kor Göktaşı, GÖVDE Ok\" ⟷ button.g3-etiket \"DİSK HAFİF DİSK\"",
+    "button.k-dugme.kucuk[eylem=ayrinti] \"AYRINTI\" ⟷ button.k-dugme.kucuk.p-dugme \"TAMAM\"",
+    "button.k-dugme[eylem=market] \"MARKET\" ⟷ button.p-rozet \"Pergel'e sor (H)\"",
+    "button.k-dugme.ana.oyna[eylem=oyna] \"OYNA\" ⟷ button.k-dugme.kucuk.p-dugme \"TAMAM\""
+   ],
+   "olculenHedef": 0,
+   "kismenGorunur": 0,
+   "kucukHedef": [],
+   "kucukHedefSayisi": 0,
+   "kucukYazi": [],
+   "kucukYaziSayisi": 0,
+   "dikeyOrtu": "flex"
+  }
+ },
+ "kayit": 201,
+ "profil": 200,
+ "ilk": 201,
+ "egitim": 200,
+ "dokunma": {
+  "atolye3bDondurme": {
+   "once": 0,
+   "sonra": 71.99999999999989,
+   "degisti": true
+  },
+  "parcaKarti": 20,
+  "basarimKaydirma": {
+   "kaydirilacakYok": true
+  },
+  "marketKaydirma": {
+   "kaydirilacakYok": true
+  },
+  "ayarKaydirma": {
+   "kap": "kart k-panel genis",
+   "once": 0,
+   "sonra": 191,
+   "kaydi": true,
+   "sayfaKaymadi": true
+  },
+  "odaKoduOdak": {
+   "odakta": "INPUT",
+   "inputmode": "text",
+   "autocapitalize": "characters"
+  },
+  "odaKoduKarolar": "ABCD"
+ },
+ "kodAlani": [
+  {
+   "ad": "",
+   "inputmode": "text",
+   "autocapitalize": "characters",
+   "autocomplete": "off",
+   "enterkeyhint": "go",
+   "spellcheck": false,
+   "font": "24px"
+  }
+ ],
+ "konsol": []
+}

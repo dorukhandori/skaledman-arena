@@ -21,7 +21,7 @@ Sahip 2026-11-01: **referans şema**.
 - F0'da uygulanan: WASD/oklar, 1–4 + tekerlek, sağ tuş nişan/bırak, sol tık = seçili yuvayı nişan yönüne at (kolaylık), Shift dash. Zıplama, Tab takım değiştirme ve Z dinlenme F2'de (takım sistemiyle).
 - Yuva doldurma: yuva 1–2 kartın iki saldırısı, yuva 3 tipe göre temel vuruş, yuva 4 seviye/açılış kuralıyla sonra (`docs/design/oyun-konsepti.md` § 11–12).
 - Girdi şeması (`Girdi`): hareket vektörü, nişan **dünya noktası** (açı değil), seçili yuva, ateş, dash; sunucuda `sanitize` ile kırpılır.
-- Dokunmatik ve gamepad F3 sonrası; 960×540 koordinatlı düzen referans.
+- Dokunmatik ve gamepad F3 sonrası; 960×540 koordinatlı düzen referans. **Güncelleme (MOBIL-1, 2026-11-05):** dokunmatik düzen eklendi (`src/istemci/oyun/DokunmatikKontrol.ts`, `dokunmatik.ts`); `Girdi` şeması ve ağ protokolü değişmedi, analog `yonX/yonZ` joystick'ten gelir. Gamepad hâlâ sonra.
 
 Not (2026-11-06, `@axiom`): "Kartın iki saldırısı" yuva eşlemesi ve `docs/design/oyun-konsepti.md` atfı Skaledman/Pokémon
 çağına aittir; proje 2026-11-04'te özgün Devran oldu ([ADR-006](ADR-006-devran-donusumu.md)). Kontrol şeması kararı geçerli;

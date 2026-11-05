@@ -60,6 +60,9 @@ html[data-telefon] .at .tkart .ok { justify-content: center; gap: 6px; }
 html[data-telefon] .at .tkart .ok button { width: 44px; height: 44px; min-width: 44px; font-size: 18px; }
 /* Oyna / Lobi: mod sütunu yazı ×1,5'e göre */
 html[data-telefon] .lobi .lb-govde { grid-template-columns: 170px 1fr; }
+/* Takım seçimi: oyuncu adları ×1,5 yazıda yan sütuna sığsın */
+html[data-telefon] .lobi .lb-secim { grid-template-columns: 124px minmax(0, 1fr) 124px; }
+html[data-telefon] .lobi .lb-secim > * { min-width: 0; overflow-wrap: anywhere; }
 /* Karşılama / Kayıt / Giriş: süs illüstrasyonu gizli, form tam yükseklik (mobil klavye açıkken alan az) */
 html[data-telefon] .kml .kml-sol { display: none; }
 html[data-telefon] .kml .kart { flex-basis: 440px; }
