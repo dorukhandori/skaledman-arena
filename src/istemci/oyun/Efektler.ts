@@ -1,6 +1,7 @@
 import { Graphics } from "pixi.js";
 import { AYAR } from "../../paylasilan/kurallar/ayar.ts";
 import type { Dunya, Olay } from "../../paylasilan/sim/durum.ts";
+import { type AtlasAdi, efektAtlasYukle, efektSprite } from "./EfektAtlas.ts";
 import { HIS, type Siddet, siddetBul } from "./his.ts";
 import { Parcaciklar } from "./Parcaciklar.ts";
 import { ELEMENT_RENK, renkKaristir } from "./renkler.ts";
@@ -12,6 +13,8 @@ import type { TopacCizimi } from "./cizimTurleri.ts";
 // Görsel hitstop: çarpışan topaçların RENDER konumu bekler, sim akmaya devam eder; bitince kritik sönümlü yetişme.
 
 interface Sok { g: Graphics; t: number; sure: number; x: number; y: number; r0: number; r1: number; renk: number; renk2: number | null; kalinlik: number }
+interface Yildiz { x: number; y: number; t: number; sure: number; r: number; n: number; aci: number; renk: number }
+interface HizCizgisi { x: number; y: number; dx: number; dy: number; t: number; sure: number; renk: number; uz: number }
 interface KonumDurumu { hold: { x: number; y: number } | null; kalanMs: number; nx: number; ny: number; x: number; y: number; ilk: boolean }
 
 export interface HisAyarlari {
@@ -38,12 +41,20 @@ export class Efektler {
   private yavasKalanMs = 0;
   private konumlar: KonumDurumu[] = [];
   private rng = new SusRastgele(0xe7f);
+  /** GU-04: ışınsal yıldız patlaması + takım/element renkli hız çizgileri (referans 07), yalnız hibrit */
+  private yildizlar: Yildiz[] = [];
+  private cizgiler: HizCizgisi[] = [];
+  private hizG = new Graphics();
+  private atlasElementleri = "";
+  /** pişmiş atlas kullanım sayacı (doğrulama) */
+  readonly atlasSayac: Record<string, number> = {};
   readonly sayac = { yok: 0, hafif: 0, agir: 0, kritik: 0, duvar: 0, ringOut: 0, parcalanma: 0, durma: 0, dash: 0, sekme: 0, zitElement: 0, ekranFlas: 0, ekranFlasReddi: 0, telegraf: 0, ulti: 0, enerjiDoldu: 0, yetenekVurus: 0, zincir: 0, kontra: 0, engel: 0 };
   ayar: HisAyarlari = { sarsinti: 1, flas: "normal", hitstop: 1, parcacik: 1, yavasZoom: true };
   sesKanca: SesKancasi = () => {};
 
   constructor(private sahne: Sahne, private gorseller: () => readonly TopacCizimi[]) {
-    sahne.efektKatmani.addChild(this.parcaciklar.kap);
+    sahne.efektKatmani.addChild(this.hizG, this.parcaciklar.kap);
+    if (sahne.hibrit) void efektAtlasYukle("efekt");
     this.ekranFlas.rect(0, 0, SAHNE.genislik, SAHNE.yukseklik).fill(0xffffff);
     this.ekranFlas.alpha = 0;
     sahne.ekranKatmani.addChild(this.ekranFlas);
@@ -61,6 +72,9 @@ export class Efektler {
 
   temizle(): void {
     this.parcaciklar.temizle();
+    this.yildizlar = [];
+    this.cizgiler = [];
+    this.hizG.clear();
     for (const s of this.soklar) s.g.destroy();
     this.soklar = [];
     this.flasKalanMs = 0;
@@ -155,9 +169,59 @@ export class Efektler {
     }
   }
 
+  /** Topaç gövde yüksekliğinde (hava) efekt noktası: hibritte temas noktası zeminden yukarı. */
+  private hava(y: number): number { return this.sahne.hibrit ? y - 24 : y; }
+
+  /** Maçtaki elementlerin atlaslarını yükle (ortak + iki topaç; efekt-kaynaklari § 8.7). */
+  private atlasHazirla(d: Dunya): void {
+    if (!this.sahne.hibrit) return;
+    const anahtar = d.profiller.map((p) => p.element).join(",");
+    if (anahtar === this.atlasElementleri) return;
+    this.atlasElementleri = anahtar;
+    for (const p of d.profiller) void efektAtlasYukle(`efekt-${p.element}` as AtlasAdi);
+  }
+
+  /** Pişmiş sheet'i (hava düzlemi) oynat; atlas yoksa false (yordamsal yedek kalır). Atlas pikseli = sanat pikseli. */
+  private sheet(ad: AtlasAdi, anim: string, x: number, y: number, ayna = false, carpan = 1): boolean {
+    if (!this.sahne.hibrit) return false;
+    const s = efektSprite(ad, anim);
+    if (!s) return false;
+    const o = (2 / this.sahne.yakinlik) * carpan;
+    // patlama merkezini temas noktasına oturt (pişirme pivotu aktörün ayağı; önizlemeden ölçüldü)
+    const MERKEZ: Record<string, [number, number]> = { kritik: [0.39, 0.6], kivilcim: [0.33, 0.62] };
+    const m = MERKEZ[anim];
+    if (m) s.anchor.set(m[0], m[1]);
+    s.position.set(Math.round(x), Math.round(y));
+    s.scale.set(ayna ? -o : o, o);
+    this.sahne.efektKatmani.addChild(s);
+    this.atlasSayac[anim] = (this.atlasSayac[anim] ?? 0) + 1;
+    return true;
+  }
+
+  /** Işınsal yıldız patlaması (referans 07 temas noktası). */
+  private yildiz(x: number, y: number, r: number, n: number, sure: number, renk = 0xfff3b0): void {
+    if (!this.sahne.hibrit) return;
+    if (this.yildizlar.length > 8) this.yildizlar.shift();
+    this.yildizlar.push({ x, y, t: 0, sure, r, n, aci: this.rng.aralik(0, Math.PI), renk });
+  }
+
+  /** Topacın arkasında kısa hız çizgileri, kendi renginde (referans 07 kırmızı/mavi çizgiler). */
+  private hizCizgileri(x: number, y: number, dx: number, dy: number, renk: number, adet: number, uz: number): void {
+    if (!this.sahne.hibrit) return;
+    const u = Math.hypot(dx, dy) || 1;
+    for (let k = 0; k < adet; k++) {
+      const yan = (k - (adet - 1) / 2) * 7 + this.rng.isaretli() * 2;
+      const px = x - (dy / u) * yan + (dx / u) * this.rng.aralik(18, 30);
+      const py = y + (dx / u) * yan * 0.62 + (dy / u) * this.rng.aralik(18, 30);
+      if (this.cizgiler.length > 40) this.cizgiler.shift();
+      this.cizgiler.push({ x: px, y: py, dx: dx / u, dy: dy / u, t: 0, sure: 0.22 + this.rng.aralik(0, 0.08), renk, uz: uz * this.rng.aralik(0.7, 1.2) });
+    }
+  }
+
   olay(o: Olay, d: Dunya): void {
     const S = this.sahne;
     const g = this.gorseller();
+    this.atlasHazirla(d);
     switch (o.tur) {
       case "carpisma": {
         const dash = o.taraflar[0].dash || o.taraflar[1].dash;
@@ -192,7 +256,21 @@ export class Efektler {
         // kıvılcım: element renkleri (yarı yarı), karşıtta iki renkli çift çember
         const n = Math.round(HIS.parcacik[sd] * (o.zitElement ? HIS.zitParcacikCarpani : 1));
         const hiz: [number, number] = sd === "kritik" ? [220, 520] : sd === "agir" ? [160, 400] : [110, 260];
-        this.kivilcim(x, y, o.nx, o.nz, n, [r0.acik, r1.acik, 0xffffff, r0.vurgu, r1.vurgu], hiz);
+        const hy = this.hava(y);
+        this.kivilcim(x, hy, o.nx, o.nz, n, [r0.acik, r1.acik, 0xffffff, r0.vurgu, r1.vurgu], hiz);
+        // GU-04: yıldız patlaması + iki yanda topaçların renginde hız çizgileri; ağır/kritikte pişmiş kıvılcım sheet'i
+        const e = S.ekranYon(o.nx, o.nz);
+        this.yildiz(x, hy, sd === "kritik" ? 34 : sd === "agir" ? 24 : 13, sd === "hafif" ? 6 : 10, sd === "kritik" ? 0.2 : 0.14);
+        const ta = d.topaclar[0]!;
+        const tb = d.topaclar[1]!;
+        if (sd !== "hafif" || dash) {
+          const adet = sd === "kritik" ? 4 : 3;
+          this.hizCizgileri(S.ekranX(ta.x), this.hava(S.ekranY(ta.z)), S.ekranX(ta.x) - x, S.ekranY(ta.z) - y, o.zitElement ? r0.orta : r0.acik, adet, 26);
+          this.hizCizgileri(S.ekranX(tb.x), this.hava(S.ekranY(tb.z)), S.ekranX(tb.x) - x, S.ekranY(tb.z) - y, o.zitElement ? r1.orta : r1.acik, adet, 26);
+        }
+        if (sd === "kritik") this.sheet("efekt", "kritik", x, hy, e.x < 0);
+        else if (sd === "agir") this.sheet("efekt", "kivilcim", x, hy, e.x < 0);
+        if (sd !== "hafif" && (o.taraflar[0].element === "simsek" || o.taraflar[1].element === "simsek")) this.sheet("efekt-simsek", "simsek-carpma", x, hy, e.x < 0, 0.6);
         if (sd !== "hafif") {
           const sure2 = sd === "kritik" ? HIS.sok.kritikMs : HIS.sok.agirMs;
           this.sok(x, y, 6, sd === "kritik" ? 56 : 40, sure2, renkKaristir(r0.orta, r1.orta, 0.5), o.zitElement ? r1.orta : null, 3);
@@ -256,6 +334,8 @@ export class Efektler {
         this.toz(x + (o.vx / u) * 20, y + (o.vz / u) * 20 * S.k, HIS.parcacik.ringOut, 0xb9c6ca, 8);
         this.sok(x, y, 10, 70, HIS.sok.ringOutMs, ELEMENT_RENK[d.profiller[o.i]!.element].orta);
         this.zoom(HIS.zoom.ringOut[0], HIS.zoom.ringOut[1]);
+        this.sheet("efekt", "toz-bulut", x + (o.vx / u) * 22, y + (o.vz / u) * 22 * S.k);
+        this.yildiz(x, this.hava(y), 30, 10, 0.18, ELEMENT_RENK[d.profiller[o.i]!.element].vurgu);
         g[o.i]?.bitis("ringOut", o.vx, o.vz);
         break;
       }
@@ -272,6 +352,12 @@ export class Efektler {
         this.toz(x, y, 12, 0xb9c6ca, 14);
         this.sok(x, y, 8, 90, HIS.sok.parcalanmaMs, el.orta, 0xffffff, 4);
         this.zoom(HIS.zoom.parcalanma[0], HIS.zoom.parcalanma[1]);
+        this.yildiz(x, this.hava(y), 44, 12, 0.24);
+        this.sheet("efekt", "toz-bulut", x, y + 4, false, 1);
+        { const pe = d.profiller[o.i]!.element;
+          if (pe === "don") this.sheet("efekt-don", "don-kirilma", x, y);
+          else if (pe === "kor") this.sheet("efekt-kor", "kor-bulut", x, this.hava(y));
+          else this.sheet("efekt", "kritik", x, this.hava(y)); }
         if (this.ayar.yavasZoom !== false) this.yavasKalanMs = HIS.yavasCekim.ms;
         g[o.i]?.bitis("parcalanma", o.vx, o.vz);
         break;
@@ -283,6 +369,7 @@ export class Efektler {
         const y = S.ekranY(o.z);
         this.toz(x, y, HIS.parcacik.durma, 0xb9c6ca, 26);
         this.sok(x, y, 26, 40, 500, 0x9aa8ad, null, 2);
+        this.sheet("efekt", "toz-bulut", x + 10, y + 2, false, 0.5);
         this.zoom(HIS.zoom.durma[0], HIS.zoom.durma[1]);
         g[o.i]?.bitis("durma", 0, 0);
         break;
@@ -316,6 +403,13 @@ export class Efektler {
         const cy = S.ekranY(o.z);
         this.kivilcim(cx, cy, 1, 0, 36, [el.orta, el.acik, el.vurgu, 0xffffff], [120, 420], Math.PI);
         this.sok(S.ekranX(d.topaclar[o.i]!.x), S.ekranY(d.topaclar[o.i]!.z), 20, 200, 420, el.orta, el.acik, 4);
+        { // Ulti element sheet'i (hava öğeleri; zemin halkaları kodla elips)
+          const pe = d.profiller[o.i]!.element;
+          const ULTI: Record<string, [AtlasAdi, string]> = { kor: ["efekt-kor", "kor-bulut"], don: ["efekt-don", "don-parca"], kaya: ["efekt-kaya", "ulti-kaya"], kasirga: ["efekt-kasirga", "ulti-kasirga"], girdap: ["efekt-girdap", "ulti-girdap"], simsek: ["efekt-simsek", "simsek-carpma"] };
+          const [ad, an] = ULTI[pe]!;
+          this.sheet(ad, an, cx, pe === "kaya" || pe === "kasirga" ? cy + 8 : this.hava(cy));
+          this.yildiz(cx, this.hava(cy), 40, 12, 0.22, el.vurgu);
+        }
         this.zoom(0.05, 0.3);
         break;
       }
@@ -367,6 +461,7 @@ export class Efektler {
         const y = S.ekranY(t.z);
         const el = ELEMENT_RENK[d.profiller[o.i]!.element];
         this.sok(x, y, 30, 44, 300, el.acik, null, 2);
+        this.sheet("efekt", "enerji-doldu", x, this.hava(y) + 6);
         const adet = Math.round(8 * this.ayar.parcacik);
         for (let k = 0; k < adet; k++) this.parcaciklar.ekle(x + this.rng.isaretli() * 18, y + this.rng.isaretli() * 8, this.rng.isaretli() * 12, -this.rng.aralik(50, 110), this.rng.aralik(0.4, 0.7), el.vurgu, 2, 1);
         break;
@@ -389,6 +484,28 @@ export class Efektler {
     // hitstop sırasında parçacıklar yaşlanmaz (05 § 3.3: "yaşları dondurulur")
     const donuk = this.hitstopVar(0) || this.hitstopVar(1);
     this.parcaciklar.guncelle(donuk ? ydt * 0.15 : ydt);
+    const h = this.hizG.clear();
+    for (const y of this.yildizlar) {
+      y.t += ydt;
+      const t = Math.min(1, y.t / y.sure);
+      const r = y.r * (0.55 + 0.45 * t);
+      const a = 1 - t * t;
+      for (let k = 0; k < y.n; k++) {
+        const aci = y.aci + (k / y.n) * Math.PI * 2;
+        const uz = r * (k % 2 ? 0.55 : 1);
+        const c = Math.cos(aci), si = Math.sin(aci);
+        h.poly([y.x + c * uz, y.y + si * uz, y.x - si * 2.2, y.y + c * 2.2, y.x + si * 2.2, y.y - c * 2.2]).fill({ color: k % 2 ? 0xffc23d : y.renk, alpha: a });
+      }
+      h.circle(y.x, y.y, 6 * (1 - t) + 2).fill({ color: 0xffffff, alpha: a });
+    }
+    this.yildizlar = this.yildizlar.filter((y) => y.t < y.sure);
+    for (const c of this.cizgiler) {
+      c.t += ydt;
+      const t = Math.min(1, c.t / c.sure);
+      const bas = 6 + 26 * t;
+      h.moveTo(c.x + c.dx * bas, c.y + c.dy * bas).lineTo(c.x + c.dx * (bas + c.uz * (1 - t)), c.y + c.dy * (bas + c.uz * (1 - t))).stroke({ width: 3, color: c.renk, alpha: 1 - t });
+    }
+    this.cizgiler = this.cizgiler.filter((c) => c.t < c.sure);
     for (const s of this.soklar) {
       s.t += ydt;
       const t = Math.min(1, s.t / s.sure);

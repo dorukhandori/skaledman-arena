@@ -153,7 +153,7 @@
  ],
  "toplamBayt": 204716,
  "kayitAdaylari": {
-  "aciklama": "Dış kaynaklı kayıt ses adayları (kaynak/efekt/). Oyun bunları henüz yüklemiyor; entegrasyon ayrı dilim. UYARI: araclar/ses-uret.ts bu dosyayı baştan yazar; çalıştırmadan önce bu blok korunmalı (ya da ayrı dosyaya taşınmalı).",
+  "aciklama": "Dış kaynaklı kayıt ses adayları (kaynak/efekt/). GU-B (2026-11-05): public/ses/kayit/ altına kopyalandı ve Ses.ts sentez tabanın üstüne katman olarak çalıyor (sentez yedeği korunur). UYARI: araclar/ses-uret.ts bu dosyayı baştan yazar; çalıştırmadan önce bu blok korunmalı (ya da ayrı dosyaya taşınmalı).",
   "toplamBayt": 194841,
   "genelToplamBayt": 399557,
   "butceBayt": 512000,
@@ -173,7 +173,8 @@
     "lisansDosyasi": "kaynak/efekt/kenney-impact-sounds/LICENSE",
     "atif": "Kenney (www.kenney.nl), CC0 1.0 — atıf gerekmez, kredilere yazılır",
     "tarih": "2026-11-04",
-    "durum": "aday; entegre edilmedi (public/ses dışında). Asıl sayfa kenney.nl bu oturumda engelli: köken ayna üzerinden, kenney.nl'den yeniden doğrulanacak"
+    "durum": "entegre (GU-B): sentez tabanın üstüne katman; Ses.ts KAYIT_KATMANI",
+    "oyunDosyasi": "ses/kayit/impact_metal_light_000.ogg"
    },
    {
     "ad": "impact_metal_light_002",
@@ -190,7 +191,8 @@
     "lisansDosyasi": "kaynak/efekt/kenney-impact-sounds/LICENSE",
     "atif": "Kenney (www.kenney.nl), CC0 1.0 — atıf gerekmez, kredilere yazılır",
     "tarih": "2026-11-04",
-    "durum": "aday; entegre edilmedi (public/ses dışında). Asıl sayfa kenney.nl bu oturumda engelli: köken ayna üzerinden, kenney.nl'den yeniden doğrulanacak"
+    "durum": "entegre (GU-B): sentez tabanın üstüne katman; Ses.ts KAYIT_KATMANI",
+    "oyunDosyasi": "ses/kayit/impact_metal_light_002.ogg"
    },
    {
     "ad": "impact_metal_light_004",
@@ -207,7 +209,8 @@
     "lisansDosyasi": "kaynak/efekt/kenney-impact-sounds/LICENSE",
     "atif": "Kenney (www.kenney.nl), CC0 1.0 — atıf gerekmez, kredilere yazılır",
     "tarih": "2026-11-04",
-    "durum": "aday; entegre edilmedi (public/ses dışında). Asıl sayfa kenney.nl bu oturumda engelli: köken ayna üzerinden, kenney.nl'den yeniden doğrulanacak"
+    "durum": "entegre (GU-B): sentez tabanın üstüne katman; Ses.ts KAYIT_KATMANI",
+    "oyunDosyasi": "ses/kayit/impact_metal_light_004.ogg"
    },
    {
     "ad": "impact_metal_medium_001",
@@ -224,7 +227,8 @@
     "lisansDosyasi": "kaynak/efekt/kenney-impact-sounds/LICENSE",
     "atif": "Kenney (www.kenney.nl), CC0 1.0 — atıf gerekmez, kredilere yazılır",
     "tarih": "2026-11-04",
-    "durum": "aday; entegre edilmedi (public/ses dışında). Asıl sayfa kenney.nl bu oturumda engelli: köken ayna üzerinden, kenney.nl'den yeniden doğrulanacak"
+    "durum": "entegre (GU-B): sentez tabanın üstüne katman; Ses.ts KAYIT_KATMANI",
+    "oyunDosyasi": "ses/kayit/impact_metal_medium_001.ogg"
    },
    {
     "ad": "impact_metal_medium_002",
@@ -241,7 +245,8 @@
     "lisansDosyasi": "kaynak/efekt/kenney-impact-sounds/LICENSE",
     "atif": "Kenney (www.kenney.nl), CC0 1.0 — atıf gerekmez, kredilere yazılır",
     "tarih": "2026-11-04",
-    "durum": "aday; entegre edilmedi (public/ses dışında). Asıl sayfa kenney.nl bu oturumda engelli: köken ayna üzerinden, kenney.nl'den yeniden doğrulanacak"
+    "durum": "entegre (GU-B): sentez tabanın üstüne katman; Ses.ts KAYIT_KATMANI",
+    "oyunDosyasi": "ses/kayit/impact_metal_medium_002.ogg"
    },
    {
     "ad": "impact_metal_heavy_000",
@@ -258,7 +263,8 @@
     "lisansDosyasi": "kaynak/efekt/kenney-impact-sounds/LICENSE",
     "atif": "Kenney (www.kenney.nl), CC0 1.0 — atıf gerekmez, kredilere yazılır",
     "tarih": "2026-11-04",
-    "durum": "aday; entegre edilmedi (public/ses dışında). Asıl sayfa kenney.nl bu oturumda engelli: köken ayna üzerinden, kenney.nl'den yeniden doğrulanacak"
+    "durum": "entegre (GU-B): sentez tabanın üstüne katman; Ses.ts KAYIT_KATMANI",
+    "oyunDosyasi": "ses/kayit/impact_metal_heavy_000.ogg"
    },
    {
     "ad": "impact_metal_heavy_003",
@@ -275,7 +281,8 @@
     "lisansDosyasi": "kaynak/efekt/kenney-impact-sounds/LICENSE",
     "atif": "Kenney (www.kenney.nl), CC0 1.0 — atıf gerekmez, kredilere yazılır",
     "tarih": "2026-11-04",
-    "durum": "aday; entegre edilmedi (public/ses dışında). Asıl sayfa kenney.nl bu oturumda engelli: köken ayna üzerinden, kenney.nl'den yeniden doğrulanacak"
+    "durum": "entegre (GU-B): sentez tabanın üstüne katman; Ses.ts KAYIT_KATMANI",
+    "oyunDosyasi": "ses/kayit/impact_metal_heavy_003.ogg"
    },
    {
     "ad": "impact_tin_medium_002",
@@ -292,7 +299,8 @@
     "lisansDosyasi": "kaynak/efekt/kenney-impact-sounds/LICENSE",
     "atif": "Kenney (www.kenney.nl), CC0 1.0 — atıf gerekmez, kredilere yazılır",
     "tarih": "2026-11-04",
-    "durum": "aday; entegre edilmedi (public/ses dışında). Asıl sayfa kenney.nl bu oturumda engelli: köken ayna üzerinden, kenney.nl'den yeniden doğrulanacak"
+    "durum": "entegre (GU-B): sentez tabanın üstüne katman; Ses.ts KAYIT_KATMANI",
+    "oyunDosyasi": "ses/kayit/impact_tin_medium_002.ogg"
    },
    {
     "ad": "impact_plate_heavy_001",
@@ -309,7 +317,8 @@
     "lisansDosyasi": "kaynak/efekt/kenney-impact-sounds/LICENSE",
     "atif": "Kenney (www.kenney.nl), CC0 1.0 — atıf gerekmez, kredilere yazılır",
     "tarih": "2026-11-04",
-    "durum": "aday; entegre edilmedi (public/ses dışında). Asıl sayfa kenney.nl bu oturumda engelli: köken ayna üzerinden, kenney.nl'den yeniden doğrulanacak"
+    "durum": "entegre (GU-B): sentez tabanın üstüne katman; Ses.ts KAYIT_KATMANI",
+    "oyunDosyasi": "ses/kayit/impact_plate_heavy_001.ogg"
    },
    {
     "ad": "impact_glass_heavy_001",
@@ -326,7 +335,8 @@
     "lisansDosyasi": "kaynak/efekt/kenney-impact-sounds/LICENSE",
     "atif": "Kenney (www.kenney.nl), CC0 1.0 — atıf gerekmez, kredilere yazılır",
     "tarih": "2026-11-04",
-    "durum": "aday; entegre edilmedi (public/ses dışında). Asıl sayfa kenney.nl bu oturumda engelli: köken ayna üzerinden, kenney.nl'den yeniden doğrulanacak"
+    "durum": "entegre (GU-B): sentez tabanın üstüne katman; Ses.ts KAYIT_KATMANI",
+    "oyunDosyasi": "ses/kayit/impact_glass_heavy_001.ogg"
    },
    {
     "ad": "impact_glass_heavy_004",
@@ -343,7 +353,8 @@
     "lisansDosyasi": "kaynak/efekt/kenney-impact-sounds/LICENSE",
     "atif": "Kenney (www.kenney.nl), CC0 1.0 — atıf gerekmez, kredilere yazılır",
     "tarih": "2026-11-04",
-    "durum": "aday; entegre edilmedi (public/ses dışında). Asıl sayfa kenney.nl bu oturumda engelli: köken ayna üzerinden, kenney.nl'den yeniden doğrulanacak"
+    "durum": "entegre (GU-B): sentez tabanın üstüne katman; Ses.ts KAYIT_KATMANI",
+    "oyunDosyasi": "ses/kayit/impact_glass_heavy_004.ogg"
    },
    {
     "ad": "impact_bell_heavy_004",
@@ -360,7 +371,8 @@
     "lisansDosyasi": "kaynak/efekt/kenney-impact-sounds/LICENSE",
     "atif": "Kenney (www.kenney.nl), CC0 1.0 — atıf gerekmez, kredilere yazılır",
     "tarih": "2026-11-04",
-    "durum": "aday; entegre edilmedi (public/ses dışında). Asıl sayfa kenney.nl bu oturumda engelli: köken ayna üzerinden, kenney.nl'den yeniden doğrulanacak"
+    "durum": "entegre (GU-B): sentez tabanın üstüne katman; Ses.ts KAYIT_KATMANI",
+    "oyunDosyasi": "ses/kayit/impact_bell_heavy_004.ogg"
    },
    {
     "ad": "bsb-2700-coin-spinning-durma",
@@ -378,7 +390,8 @@
     "atif": "Joseph Sardin, BigSoundBank — CC0, atıf gerekmez, kredilere yazılır",
     "donusturme": "FLAC 48 kHz stereo 14,58 sn → 12,60-13,95 sn kırpıldı, 40/150 ms sönüm, ffmpeg -ac 1 -ar 22050 -c:a libvorbis -q:a 2 -map_metadata -1",
     "tarih": "2026-11-04",
-    "durum": "aday; entegre edilmedi (public/ses dışında)"
+    "durum": "entegre (GU-B): sentez tabanın üstüne katman; Ses.ts KAYIT_KATMANI",
+    "oyunDosyasi": "ses/kayit/bsb-2700-coin-spinning-durma.ogg"
    },
    {
     "ad": "glass_breaking",
@@ -396,7 +409,8 @@
     "atif": "Till Behrend (OGA) — CC0, atıf gerekmez, kredilere yazılır",
     "donusturme": "WAV 44,1 kHz stereo → ffmpeg -ac 1 -ar 22050 -c:a libvorbis -q:a 2 -map_metadata -1",
     "tarih": "2026-11-04",
-    "durum": "aday; entegre edilmedi (public/ses dışında)"
+    "durum": "entegre (GU-B): sentez tabanın üstüne katman; Ses.ts KAYIT_KATMANI",
+    "oyunDosyasi": "ses/kayit/glass_breaking.ogg"
    },
    {
     "ad": "LedasLuzta",
@@ -414,7 +428,8 @@
     "atif": "IgnasD (OGA) — CC0, atıf gerekmez, kredilere yazılır",
     "donusturme": "OGG 44,1 kHz mono → ffmpeg -ac 1 -ar 22050 -c:a libvorbis -q:a 2 -map_metadata -1",
     "tarih": "2026-11-04",
-    "durum": "aday; entegre edilmedi (public/ses dışında)"
+    "durum": "entegre (GU-B): sentez tabanın üstüne katman; Ses.ts KAYIT_KATMANI",
+    "oyunDosyasi": "ses/kayit/LedasLuzta.ogg"
    },
    {
     "ad": "LedasLuzta4",
@@ -432,7 +447,8 @@
     "atif": "IgnasD (OGA) — CC0, atıf gerekmez, kredilere yazılır",
     "donusturme": "OGG 44,1 kHz mono → ffmpeg -ac 1 -ar 22050 -c:a libvorbis -q:a 2 -map_metadata -1",
     "tarih": "2026-11-04",
-    "durum": "aday; entegre edilmedi (public/ses dışında)"
+    "durum": "entegre (GU-B): sentez tabanın üstüne katman; Ses.ts KAYIT_KATMANI",
+    "oyunDosyasi": "ses/kayit/LedasLuzta4.ogg"
    },
    {
     "ad": "click_001",
@@ -450,7 +466,8 @@
     "atif": "Kenney (www.kenney.nl) — CC0, atıf gerekmez, kredilere yazılır",
     "donusturme": "yok (paket dosyası aynen)",
     "tarih": "2026-11-04",
-    "durum": "aday; entegre edilmedi (public/ses dışında)"
+    "durum": "entegre (GU-B): sentez tabanın üstüne katman; Ses.ts KAYIT_KATMANI",
+    "oyunDosyasi": "ses/kayit/click_001.ogg"
    },
    {
     "ad": "confirmation_001",
@@ -468,7 +485,8 @@
     "atif": "Kenney (www.kenney.nl) — CC0, atıf gerekmez, kredilere yazılır",
     "donusturme": "yok (paket dosyası aynen)",
     "tarih": "2026-11-04",
-    "durum": "aday; entegre edilmedi (public/ses dışında)"
+    "durum": "entegre (GU-B): sentez tabanın üstüne katman; Ses.ts KAYIT_KATMANI",
+    "oyunDosyasi": "ses/kayit/confirmation_001.ogg"
    },
    {
     "ad": "atari-dongu",
@@ -486,7 +504,8 @@
     "atif": "gerekmez",
     "donusturme": "atari-dongu.py → WAV 22 050 Hz mono (sha256 fc7def01…4afd2404) → ffmpeg -c:a libvorbis -q:a 0 -map_metadata -1",
     "tarih": "2026-11-04",
-    "durum": "aday; entegre edilmedi. Döngü: 120 BPM, 8 ölçü, Am-F-C-G. Vorbis baş/son boşluğu döngüde tık yapabilir; spike'ta dinlenmeli (§ 5 dönüştürme notu)"
+    "durum": "entegre (GU-B): sentez tabanın üstüne katman; Ses.ts KAYIT_KATMANI",
+    "oyunDosyasi": "ses/kayit/atari-dongu.ogg"
    }
   ],
   "muzikNotu": "Sahip kararı (2026-11-04): lisanslı menü/arena parçaları (M1, M5) sona bırakıldı; şimdilik kendi sentezimiz basit atari döngüsü. Ses her ekranda erişilebilir düğmeyle kapatılabilir (docs/ux/kontrol-ve-hud.md H16)."
