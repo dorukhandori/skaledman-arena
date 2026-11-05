@@ -1,0 +1,319 @@
+{
+  "not": "Otomatik oynanış (betik klavye; çevrimiçi maçta paylaşılan bot). İnsan play pass değil.",
+  "hesap-maden": [
+    201,
+    200,
+    201,
+    201,
+    201,
+    201,
+    201,
+    201
+  ],
+  "hesap-yapay": [
+    201,
+    200,
+    201
+  ],
+  "atolyeIlk": {
+    "oyna": "true",
+    "neden": "Takımda 3 farklı Çekirdek olmalı. 1 yuva boş.",
+    "yuvalar": [
+      "tkart sahip",
+      "tkart odunc",
+      "tkart bos"
+    ]
+  },
+  "cekirdekSekmesi": [
+    "kor-goktasi:sahip:Sende",
+    "kaya-maden:sahip:Sende",
+    "kasirga-yapay:market:Market'te · 100 Altın",
+    "simsek-goktasi:kilitli:Kilitli: Şimşek Ustası 0/10",
+    "girdap-maden:market:Market'te · 2000 Altın",
+    "sabir-tasi:kilitli:Kilitli: Sabır 0/5",
+    "kor-kalbi:gizli:Gizli parça",
+    "kul-cekirdegi:gizli:Gizli parça"
+  ],
+  "govdeKilitli": [
+    "Ayaz Gövde. 2000 Altın. Kilitli: Don Ustası 0/10.",
+    "Düşürücü Gövde. 4000 Altın. Kilitli: Düşürücü 0/10.",
+    "Sivri Gövde. 4000 Altın. Kilitli: Kırıcı 0/10.",
+    "İz Gövde. 4000 Altın. Kilitli: Alan Ustası 0/3."
+  ],
+  "bosSekme": "Burada henüz parça yok. Market'ten alabilir ya da başarımla açabilirsin.",
+  "klavyeSekme": "uc",
+  "ucDegisimi": {
+    "once": {
+      "saldiri": 0,
+      "savunma": 100,
+      "agirlik": 100,
+      "stamina": 26,
+      "hiz": 0,
+      "saglamlik": 100
+    },
+    "sonra": {
+      "saldiri": 0,
+      "savunma": 100,
+      "agirlik": 100,
+      "stamina": 22,
+      "hiz": 82,
+      "saglamlik": 75
+    },
+    "fark": {
+      "saldiri": "",
+      "savunma": "",
+      "agirlik": "",
+      "stamina": "−4",
+      "hiz": "+82",
+      "saglamlik": "−25"
+    },
+    "etiket": [
+      "Uç: Çiçek deseni",
+      "Yön: Sağa döner"
+    ]
+  },
+  "uyumUyari": "Enerji dolumu yavaşlar. Kor Gövde, Kaya Çekirdeğe uzak (×0,80).",
+  "uyumGeri": "ayni",
+  "dene-duz": {
+    "olcum": {
+      "turSn": 30,
+      "enYuksekHiz": 292.39994421578206,
+      "ivme": 455.1343579088618,
+      "ivmeOrnek": 16,
+      "kayma": 154.3983069359275,
+      "kaymaOrnek": 15,
+      "carpisma": 4,
+      "yol": 4935.673505937933,
+      "staminaYuzde": 38
+    },
+    "gercekSn": 88
+  },
+  "deneSonrasiTaslak": {
+    "taslak": [
+      {
+        "cekirdek": 18,
+        "govde": 57,
+        "disk": 58,
+        "uc": 60
+      },
+      {
+        "cekirdek": null,
+        "govde": null,
+        "disk": null,
+        "uc": null
+      },
+      {
+        "cekirdek": null,
+        "govde": null,
+        "disk": null,
+        "uc": null
+      }
+    ],
+    "degisti": true,
+    "takimNo": 0,
+    "uyari": "",
+    "neden": "Takımda 3 farklı Çekirdek olmalı. 1 yuva boş.",
+    "uc": "Düz Uç"
+  },
+  "dene-igne": {
+    "olcum": {
+      "turSn": 30,
+      "enYuksekHiz": 86.47095456648714,
+      "ivme": 133.243012253642,
+      "ivmeOrnek": 16,
+      "kayma": 18.34457013212246,
+      "kaymaOrnek": 15,
+      "carpisma": 0,
+      "yol": 911.4576049656607,
+      "staminaYuzde": 65
+    },
+    "gercekSn": 87
+  },
+  "deneFark": {
+    "duz": {
+      "turSn": 30,
+      "enYuksekHiz": 292.39994421578206,
+      "ivme": 455.1343579088618,
+      "ivmeOrnek": 16,
+      "kayma": 154.3983069359275,
+      "kaymaOrnek": 15,
+      "carpisma": 4,
+      "yol": 4935.673505937933,
+      "staminaYuzde": 38
+    },
+    "igne": {
+      "turSn": 30,
+      "enYuksekHiz": 86.47095456648714,
+      "ivme": 133.243012253642,
+      "ivmeOrnek": 16,
+      "kayma": 18.34457013212246,
+      "kaymaOrnek": 15,
+      "carpisma": 0,
+      "yol": 911.4576049656607,
+      "staminaYuzde": 65
+    }
+  },
+  "cakisma": {
+    "uyari": "İğne Uç 1. topaçtan çıkarıldı: bir parça aynı anda tek topaçta olur. 1. topaçta Uç eksik.",
+    "neden": "1. topaçta Uç eksik. Envanterden bir Uç tak.",
+    "oyna": "true"
+  },
+  "takimTaslak": {
+    "taslak": [
+      {
+        "cekirdek": 18,
+        "govde": 57,
+        "disk": 58,
+        "uc": 59
+      },
+      {
+        "cekirdek": 19,
+        "govde": 62,
+        "disk": 63,
+        "uc": 60
+      },
+      {
+        "cekirdek": null,
+        "govde": null,
+        "disk": null,
+        "uc": null
+      }
+    ],
+    "degisti": true,
+    "takimNo": 0,
+    "uyari": "",
+    "neden": "Kaydedilmemiş değişiklik: OYNA önce kaydeder."
+  },
+  "surukleSonrasi": [
+    "1. Kasırga Döküm",
+    "2. Kor Göktaşı",
+    "3. Kaya Maden"
+  ],
+  "klavyeSirasi": [
+    "1. Kaya Maden",
+    "2. Kasırga Döküm",
+    "3. Kor Göktaşı"
+  ],
+  "kaydet": {
+    "durum": "Kaya ve Kor kaydedildi.",
+    "cark": "kaya,kasirga,kor",
+    "oyna": null
+  },
+  "ikinciTakim": {
+    "kayitli": [
+      "Kaya ve Koraktif · hazır",
+      "Deneme Takımıeksik"
+    ],
+    "neden": "Takımda 3 farklı Çekirdek olmalı. 2 yuva boş."
+  },
+  "yapayYon": {
+    "sol": "true",
+    "etiket": "Yön: Sola döner (çift yön)"
+  },
+  "gunlukLv2": {
+    "sev": "Lv.2",
+    "sonraki": "Sonraki: Lv.3 (700 XP): Özel Yetenek Yontu Siperi, Ulti ve ruh silueti.",
+    "yet": [
+      "Yetenek:1",
+      "Özel Yetenek:0",
+      "Ulti:0"
+    ]
+  },
+  "xpVer": {
+    "ok": true,
+    "seviye": 2,
+    "tecrube": 695
+  },
+  "bKontrast": "acik",
+  "odaKodu": "YUJBSWAE",
+  "takimSecimi": {
+    "takimlar": [
+      "Kaya ve KorKayaKasırgaKor1 ödünç topaç"
+    ],
+    "secili": "Kaya ve KorKayaKasırgaKor1 ödünç topaç",
+    "rakip": "Rakip: Berk raxz KasırgaKorKaya"
+  },
+  "mac1Kilit": {
+    "seviye": 2,
+    "yuvaSiniflari": [
+      "yv kare",
+      "yv pah",
+      "yv elmas"
+    ]
+  },
+  "sonuc1": {
+    "baslik": "YENİLGİ",
+    "odul": "Kaya Maden\nLv.3 · +13 XP\n708 XP · tavan\nSeviye atladı! Yeni: Yontu Siperi\nKor Göktaşı\nLv.1 · +13 XP\n13 / 150 XP"
+  },
+  "mac2Kilit": {
+    "seviye": 3,
+    "yuvaSiniflari": [
+      "yv kare yetmez",
+      "yv pah yetmez",
+      "yv elmas yetmez"
+    ],
+    "hudOlcek": "1.5",
+    "hudSinif": "mh o150"
+  },
+  "mac2Yetenek": [
+    0,
+    0,
+    0
+  ],
+  "sonuc2": {
+    "baslik": "ZAFER",
+    "metin": "ZAFER\n3 – 0\nRakip: Berk raxz · İlk 3 puan · 50 sn\nBitiş\tPuan\n1. DURMA · sen\t+1\n2. RING OUT · sen\t+2\nAltın\n+100 Altın yer tutucu\nÇekirdek kartı\nKaya Maden\nLv.3 · +45 XP\n753 XP · tavan\nKor Göktaşı\nLv.1 · +45 XP\n58 / 150 XP\nBaşarım\nilerleme D7'de yer tutucu\nYetenek kullanımı\nYetenek 0 · Özel 0 · Ulti 0\nSpace / Enter: atla · Enter: Tekrar\nRövanş\nAtölye"
+  },
+  "yeniYetenekRozeti": [
+    "Kaya1. Kaya MadenYeni yetenek açıldıLv.3▲▼"
+  ],
+  "gunlukLv3": {
+    "sev": "Lv.3",
+    "xp": "Tecrübe 753 XP · tavan Lv.3 (ilk sürüm)",
+    "defter": [
+      "mac=2",
+      "galibiyet=1",
+      "kriz=1",
+      "donus=38 sn"
+    ],
+    "yet": [
+      "Yetenek:1",
+      "Özel Yetenek:1",
+      "Ulti:1"
+    ]
+  },
+  "adDegisim1": "Adın artık Ayla raxz Yeni.",
+  "adDegisim2": "Adı 30 günde bir değiştirebilirsin. 30 gün sonra tekrar deneyebilirsin.",
+  "konsolHatalari": [],
+  "konsolHamHatalar": [
+    "A: Failed to load resource: the server responded with a status of 409 (Conflict)"
+  ],
+  "cekilen": [
+    "docs/production/raporlar/ekran/D6-atolye-genel.png",
+    "docs/production/raporlar/ekran/D6-kilitli-gizli.png",
+    "docs/production/raporlar/ekran/D6-envanter-filtre.png",
+    "docs/production/raporlar/ekran/D6-bos-sekme.png",
+    "docs/production/raporlar/ekran/D6-cubuk-once.png",
+    "docs/production/raporlar/ekran/D6-cubuk-sonra.png",
+    "docs/production/raporlar/ekran/D6-uyum-uyari.png",
+    "docs/production/raporlar/ekran/D6-dene-duz.png",
+    "docs/production/raporlar/ekran/D6-dene-sonuc.png",
+    "docs/production/raporlar/ekran/D6-cakisma-uyari.png",
+    "docs/production/raporlar/ekran/D6-takim-paneli.png",
+    "docs/production/raporlar/ekran/D6-kayitli-takimlar.png",
+    "docs/production/raporlar/ekran/D6-yapay-yon.png",
+    "docs/production/raporlar/ekran/D6-gunluk-lv2.png",
+    "docs/production/raporlar/ekran/D6-m1-mac-A.png",
+    "docs/production/raporlar/ekran/D6-sonuc-lv3.png",
+    "docs/production/raporlar/ekran/D6-hud-150.png",
+    "docs/production/raporlar/ekran/D6-hud-kontrast.png",
+    "docs/production/raporlar/ekran/D6-sonuc-2.png",
+    "docs/production/raporlar/ekran/D6-atolye-yeni-yetenek.png",
+    "docs/production/raporlar/ekran/D6-gunluk-lv3.png",
+    "docs/production/raporlar/ekran/D6-ad-hata.png"
+  ],
+  "hesaplar": [
+    "Ayla raxz",
+    "Berk raxz"
+  ]
+}

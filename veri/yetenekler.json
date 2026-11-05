@@ -1,0 +1,839 @@
+{
+ "surum": 1,
+ "yetenekler": [
+  {
+   "id": "kor-atilisi",
+   "ad": "Kor Atılışı",
+   "kademe": 1,
+   "element": "kor",
+   "tur": "hucum",
+   "tipUyumu": "saldirgan",
+   "telegrafSn": 0.2,
+   "sureSn": 0.45,
+   "beklemeSn": 6,
+   "enerjiDilimi": 1,
+   "etki": {
+    "hizCarpani": 1.0,
+    "itme": 180,
+    "hasarKatsayisi": 1.5,
+    "yaricap": 0,
+    "atilisHizi": 520,
+    "iz": true
+   },
+   "bedel": {
+    "staminaYuzde": 5,
+    "kilitSn": 0,
+    "kendiHizCarpani": 1.0,
+    "ek": null
+   },
+   "kaynak": "00-4.7",
+   "eksikTamamlama": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "zincir-kivilcim",
+   "ad": "Zincir Kıvılcım",
+   "kademe": 1,
+   "element": "simsek",
+   "tur": "hucum",
+   "tipUyumu": "saldirgan",
+   "telegrafSn": 0.3,
+   "sureSn": 0.6,
+   "beklemeSn": 6,
+   "enerjiDilimi": 1,
+   "etki": {
+    "hizCarpani": 1.0,
+    "itme": 0,
+    "hasarKatsayisi": 1.0,
+    "yaricap": 90,
+    "zincirSayisi": 1,
+    "zincirStaminaYuzde": 3
+   },
+   "bedel": {
+    "staminaYuzde": 0,
+    "kilitSn": 0,
+    "kendiHizCarpani": 1.0,
+    "ek": null
+   },
+   "kaynak": "00-4.7",
+   "eksikTamamlama": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "buz-zirhi",
+   "ad": "Buz Zırhı",
+   "kademe": 1,
+   "element": "don",
+   "tur": "savunma",
+   "tipUyumu": "kale",
+   "telegrafSn": 0.2,
+   "sureSn": 1.2,
+   "beklemeSn": 6,
+   "enerjiDilimi": 1,
+   "etki": {
+    "hizCarpani": 0.0,
+    "itme": 0,
+    "hasarKatsayisi": 0,
+    "yaricap": 0,
+    "kbCarpani": 0.0,
+    "hasarAlmaCarpani": 0.8
+   },
+   "bedel": {
+    "staminaYuzde": 0,
+    "kilitSn": 1.2,
+    "kendiHizCarpani": 0.0,
+    "ek": null
+   },
+   "kaynak": "00-4.7",
+   "eksikTamamlama": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "kozyagmuru",
+   "ad": "Közyağmuru",
+   "kademe": 2,
+   "element": "kor",
+   "tur": "alan",
+   "tipUyumu": "saldirgan",
+   "telegrafSn": 0.6,
+   "sureSn": 2.0,
+   "beklemeSn": 10,
+   "enerjiDilimi": 2,
+   "etki": {
+    "hizCarpani": 1.0,
+    "itme": 0,
+    "hasarKatsayisi": 0,
+    "yaricap": 110,
+    "alanHasarYuzdeSn": 2.0,
+    "sekmeSn": 0.6
+   },
+   "bedel": {
+    "staminaYuzde": 0,
+    "kilitSn": 0.6,
+    "kendiHizCarpani": 0.5,
+    "ek": "havada darbe alma x1.3"
+   },
+   "kaynak": "00-4.7",
+   "eksikTamamlama": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "kor-cukuru",
+   "ad": "Kor Çukuru",
+   "kademe": 2,
+   "element": "kor",
+   "tur": "alan",
+   "tipUyumu": "saldirgan",
+   "telegrafSn": 0.8,
+   "sureSn": 4.0,
+   "beklemeSn": 12,
+   "enerjiDilimi": 2,
+   "etki": {
+    "hizCarpani": 1.0,
+    "itme": 0,
+    "hasarKatsayisi": 0,
+    "yaricap": 100,
+    "surtunmeCarpani": 1.6,
+    "eremeCarpani": 1.5,
+    "kendineDeEtki": 0.5
+   },
+   "bedel": {
+    "staminaYuzde": 0,
+    "kilitSn": 0.0,
+    "kendiHizCarpani": 0.8,
+    "ek": null
+   },
+   "kaynak": "00-4.7",
+   "eksikTamamlama": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "catirti-kirmasi",
+   "ad": "Çatırtı Kırması",
+   "kademe": 2,
+   "element": "simsek",
+   "tur": "sayac",
+   "tipUyumu": "denge",
+   "telegrafSn": 0.0,
+   "sureSn": 0.5,
+   "beklemeSn": 10,
+   "enerjiDilimi": 2,
+   "etki": {
+    "hizCarpani": 1.0,
+    "itme": 260,
+    "hasarKatsayisi": 1.4,
+    "yaricap": 70,
+    "karsiPencereSn": 0.5
+   },
+   "bedel": {
+    "staminaYuzde": 0,
+    "kilitSn": 1.0,
+    "kendiHizCarpani": 1.0,
+    "ek": "kaçırırsan 1 sn sersem"
+   },
+   "kaynak": "00-4.7",
+   "eksikTamamlama": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "sarmal-pence",
+   "ad": "Sarmal Pençe",
+   "kademe": 2,
+   "element": "kasirga",
+   "tur": "hucum",
+   "tipUyumu": "denge",
+   "telegrafSn": 0.45,
+   "sureSn": 0.9,
+   "beklemeSn": 10,
+   "enerjiDilimi": 2,
+   "etki": {
+    "hizCarpani": 1.2,
+    "itme": 200,
+    "hasarKatsayisi": 1.3,
+    "yaricap": 0,
+    "kavisYaricap": 140
+   },
+   "bedel": {
+    "staminaYuzde": 0,
+    "kilitSn": 0.0,
+    "kendiHizCarpani": 1.0,
+    "ek": "yön kilitli"
+   },
+   "kaynak": "00-4.7",
+   "eksikTamamlama": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "savrulan-kusak",
+   "ad": "Savrulan Kuşak",
+   "kademe": 2,
+   "element": "kasirga",
+   "tur": "alan",
+   "tipUyumu": "denge",
+   "telegrafSn": 0.6,
+   "sureSn": 4.0,
+   "beklemeSn": 12,
+   "enerjiDilimi": 2,
+   "etki": {
+    "hizCarpani": 1.0,
+    "itme": 0,
+    "hasarKatsayisi": 0,
+    "yaricap": 110,
+    "yanKaymaItme": 140
+   },
+   "bedel": {
+    "staminaYuzde": 0,
+    "kilitSn": 0,
+    "kendiHizCarpani": 0.85,
+    "ek": null
+   },
+   "kaynak": "00-4.7",
+   "eksikTamamlama": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "dip-girdabi",
+   "ad": "Dip Girdabı",
+   "kademe": 2,
+   "element": "girdap",
+   "tur": "alan",
+   "tipUyumu": "dayanikli",
+   "telegrafSn": 0.6,
+   "sureSn": 2.5,
+   "beklemeSn": 10,
+   "enerjiDilimi": 2,
+   "etki": {
+    "hizCarpani": 1.0,
+    "itme": 0,
+    "hasarKatsayisi": 0,
+    "yaricap": 95,
+    "cekim": 220,
+    "staminaEmisYuzdeSn": 2.5
+   },
+   "bedel": {
+    "staminaYuzde": 0,
+    "kilitSn": 2.5,
+    "kendiHizCarpani": 0.0,
+    "ek": null
+   },
+   "kaynak": "00-4.7",
+   "eksikTamamlama": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "dalga-duvari",
+   "ad": "Dalga Duvarı",
+   "kademe": 2,
+   "element": "girdap",
+   "tur": "alan",
+   "tipUyumu": "kale",
+   "telegrafSn": 0.6,
+   "sureSn": 1.0,
+   "beklemeSn": 10,
+   "enerjiDilimi": 2,
+   "etki": {
+    "hizCarpani": 1.0,
+    "itme": 300,
+    "hasarKatsayisi": 0.5,
+    "yaricap": 120,
+    "dalgaMenzil": 160
+   },
+   "bedel": {
+    "staminaYuzde": 8,
+    "kilitSn": 0,
+    "kendiHizCarpani": 1.0,
+    "ek": null
+   },
+   "kaynak": "00-4.7",
+   "eksikTamamlama": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "kiragi-cemberi",
+   "ad": "Kırağı Çemberi",
+   "kademe": 2,
+   "element": "don",
+   "tur": "alan",
+   "tipUyumu": "dayanikli",
+   "telegrafSn": 0.7,
+   "sureSn": 4.0,
+   "beklemeSn": 12,
+   "enerjiDilimi": 2,
+   "etki": {
+    "hizCarpani": 1.0,
+    "itme": 0,
+    "hasarKatsayisi": 0,
+    "yaricap": 105,
+    "surtunmeCarpani": 0.35,
+    "ivmeCarpani": 0.6,
+    "kendineDeEtki": 1.0
+   },
+   "bedel": {
+    "staminaYuzde": 0,
+    "kilitSn": 0,
+    "kendiHizCarpani": 1.0,
+    "ek": null
+   },
+   "kaynak": "00-4.7",
+   "eksikTamamlama": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "yontu-siperi",
+   "ad": "Yontu Siperi",
+   "kademe": 2,
+   "element": "kaya",
+   "tur": "alan",
+   "tipUyumu": "kale",
+   "telegrafSn": 0.5,
+   "sureSn": 4.0,
+   "beklemeSn": 12,
+   "enerjiDilimi": 2,
+   "etki": {
+    "hizCarpani": 1.0,
+    "itme": 0,
+    "hasarKatsayisi": 0,
+    "yaricap": 36,
+    "engelSayisi": 1,
+    "engelYaricap": 36,
+    "engelDayanikliligi": 3
+   },
+   "bedel": {
+    "staminaYuzde": 0,
+    "kilitSn": 0.0,
+    "kendiHizCarpani": 1.0,
+    "ek": "engel yer kaplar"
+   },
+   "kaynak": "00-4.7",
+   "eksikTamamlama": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "dag-boynuzu",
+   "ad": "Dağ Boynuzu",
+   "kademe": 2,
+   "element": "kaya",
+   "tur": "hucum",
+   "tipUyumu": "saldirgan",
+   "telegrafSn": 0.7,
+   "sureSn": 1.1,
+   "beklemeSn": 10,
+   "enerjiDilimi": 2,
+   "etki": {
+    "hizCarpani": 0.7,
+    "itme": 340,
+    "hasarKatsayisi": 1.6,
+    "yaricap": 0,
+    "atilisHizi": 380
+   },
+   "bedel": {
+    "staminaYuzde": 0,
+    "kilitSn": 0,
+    "kendiHizCarpani": 0.6,
+    "ek": "yavaşlama"
+   },
+   "kaynak": "00-4.7",
+   "eksikTamamlama": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "karanlik-yagmuru",
+   "ad": "Karanlık Yağmuru",
+   "kademe": 2,
+   "element": "karanlik",
+   "tur": "hucum",
+   "tipUyumu": "saldirgan",
+   "telegrafSn": 0.6,
+   "sureSn": 1.5,
+   "beklemeSn": 10,
+   "enerjiDilimi": 2,
+   "etki": {
+    "hizCarpani": 1.0,
+    "itme": 0,
+    "hasarKatsayisi": 0.8,
+    "yaricap": 80,
+    "emisYuzde": 6.0
+   },
+   "bedel": {
+    "staminaYuzde": 0,
+    "kilitSn": 0,
+    "kendiHizCarpani": 1.0,
+    "ek": "Kararma +25"
+   },
+   "kaynak": "00-4.7",
+   "eksikTamamlama": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "taklit-sicrayis",
+   "ad": "Taklit Sıçrayış",
+   "kademe": 1,
+   "element": "yapay",
+   "tur": "hucum",
+   "tipUyumu": "denge",
+   "telegrafSn": 0.5,
+   "sureSn": 0.8,
+   "beklemeSn": 6,
+   "enerjiDilimi": 1,
+   "etki": {
+    "hizCarpani": 1.0,
+    "itme": 150,
+    "hasarKatsayisi": 1.0,
+    "yaricap": 0,
+    "kopyaZayiflama": 0.6
+   },
+   "bedel": {
+    "staminaYuzde": 0,
+    "kilitSn": 0,
+    "kendiHizCarpani": 1.0,
+    "ek": "çekirdek aşınması +%1,7"
+   },
+   "kaynak": "00-4.7",
+   "eksikTamamlama": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "ata-girdabi",
+   "ad": "Ata Girdabı",
+   "kademe": 3,
+   "element": "girdap",
+   "tur": "alan",
+   "tipUyumu": "dayanikli",
+   "telegrafSn": 0.9,
+   "sureSn": 4.0,
+   "beklemeSn": 0,
+   "enerjiDilimi": 3,
+   "etki": {
+    "hizCarpani": 1.0,
+    "itme": 0,
+    "hasarKatsayisi": 0.0,
+    "yaricap": 240,
+    "cekim": 320,
+    "alanHasarYuzdeSn": 3.0
+   },
+   "bedel": {
+    "staminaYuzde": 10,
+    "kilitSn": 0,
+    "kendiHizCarpani": 1.0,
+    "ek": null
+   },
+   "kaynak": "00-4.7",
+   "eksikTamamlama": false,
+   "ilkSurum": false
+  },
+  {
+   "id": "ata-kozu",
+   "ad": "Ata Közü",
+   "kademe": 3,
+   "element": "kor",
+   "tur": "alan",
+   "tipUyumu": "saldirgan",
+   "telegrafSn": 0.9,
+   "sureSn": 4.0,
+   "beklemeSn": 0,
+   "enerjiDilimi": 3,
+   "etki": {
+    "hizCarpani": 1.0,
+    "itme": 0,
+    "hasarKatsayisi": 0,
+    "yaricap": 240,
+    "alanHasarYuzdeSn": 4.0,
+    "sekmeSn": 0.0
+   },
+   "bedel": {
+    "staminaYuzde": 20,
+    "kilitSn": 0,
+    "kendiHizCarpani": 1.0,
+    "ek": null
+   },
+   "kaynak": "00-4.7",
+   "eksikTamamlama": false,
+   "ilkSurum": false
+  },
+  {
+   "id": "ata-cakimi",
+   "ad": "Ata Çakımı",
+   "kademe": 3,
+   "element": "simsek",
+   "tur": "hucum",
+   "tipUyumu": "saldirgan",
+   "telegrafSn": 0.9,
+   "sureSn": 3.0,
+   "beklemeSn": 0,
+   "enerjiDilimi": 3,
+   "etki": {
+    "hizCarpani": 1.0,
+    "itme": 0,
+    "hasarKatsayisi": 1.8,
+    "yaricap": 120,
+    "zincirSayisi": 3,
+    "zincirStaminaYuzde": 6
+   },
+   "bedel": {
+    "staminaYuzde": 12,
+    "kilitSn": 0,
+    "kendiHizCarpani": 1.0,
+    "ek": null
+   },
+   "kaynak": "ek",
+   "eksikTamamlama": true,
+   "ilkSurum": false
+  },
+  {
+   "id": "ata-savrugu",
+   "ad": "Ata Savruğu",
+   "kademe": 3,
+   "element": "kasirga",
+   "tur": "alan",
+   "tipUyumu": "denge",
+   "telegrafSn": 0.9,
+   "sureSn": 4.0,
+   "beklemeSn": 0,
+   "enerjiDilimi": 3,
+   "etki": {
+    "hizCarpani": 1.0,
+    "itme": 0,
+    "hasarKatsayisi": 0,
+    "yaricap": 240,
+    "yanKaymaItme": 240,
+    "surtunmeCarpani": 0.5
+   },
+   "bedel": {
+    "staminaYuzde": 10,
+    "kilitSn": 0,
+    "kendiHizCarpani": 1.0,
+    "ek": null
+   },
+   "kaynak": "ek",
+   "eksikTamamlama": true,
+   "ilkSurum": false
+  },
+  {
+   "id": "ata-dagi",
+   "ad": "Ata Dağı",
+   "kademe": 3,
+   "element": "kaya",
+   "tur": "alan",
+   "tipUyumu": "kale",
+   "telegrafSn": 0.9,
+   "sureSn": 4.0,
+   "beklemeSn": 0,
+   "enerjiDilimi": 3,
+   "etki": {
+    "hizCarpani": 1.0,
+    "itme": 0,
+    "hasarKatsayisi": 0,
+    "yaricap": 220,
+    "engelSayisi": 4,
+    "engelYaricap": 40,
+    "engelDayanikliligi": 3
+   },
+   "bedel": {
+    "staminaYuzde": 10,
+    "kilitSn": 0,
+    "kendiHizCarpani": 0.0,
+    "ek": null
+   },
+   "kaynak": "ek",
+   "eksikTamamlama": true,
+   "ilkSurum": false
+  },
+  {
+   "id": "ata-ayazi",
+   "ad": "Ata Ayazı",
+   "kademe": 3,
+   "element": "don",
+   "tur": "alan",
+   "tipUyumu": "dayanikli",
+   "telegrafSn": 0.9,
+   "sureSn": 4.0,
+   "beklemeSn": 0,
+   "enerjiDilimi": 3,
+   "etki": {
+    "hizCarpani": 1.0,
+    "itme": 0,
+    "hasarKatsayisi": 0,
+    "yaricap": 240,
+    "surtunmeCarpani": 0.25,
+    "ivmeCarpani": 0.5,
+    "kendineDeEtki": 0.6
+   },
+   "bedel": {
+    "staminaYuzde": 10,
+    "kilitSn": 0,
+    "kendiHizCarpani": 1.0,
+    "ek": null
+   },
+   "kaynak": "ek",
+   "eksikTamamlama": true,
+   "ilkSurum": false
+  },
+  {
+   "id": "takim-ultisi",
+   "ad": "Takım Ultisi",
+   "kademe": 4,
+   "element": "uc-element",
+   "tur": "hucum",
+   "tipUyumu": "denge",
+   "telegrafSn": 1.0,
+   "sureSn": 3.5,
+   "beklemeSn": 0,
+   "enerjiDilimi": 1,
+   "etki": {
+    "hizCarpani": 1.0,
+    "itme": 360,
+    "hasarKatsayisi": 1.5,
+    "yaricap": 140,
+    "alanHasarYuzdeSn": 3.0
+   },
+   "bedel": {
+    "staminaYuzde": 0,
+    "kilitSn": 0,
+    "kendiHizCarpani": 1.0,
+    "ek": "üç kart ayakta + paylaşılan 4. dilim"
+   },
+   "kaynak": "00-4.7",
+   "eksikTamamlama": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "savruk-atilis",
+   "ad": "Savruk Atılış",
+   "kademe": 1,
+   "element": "kasirga",
+   "tur": "hucum",
+   "tipUyumu": "denge",
+   "telegrafSn": 0.2,
+   "sureSn": 0.5,
+   "beklemeSn": 6,
+   "enerjiDilimi": 1,
+   "etki": {
+    "hizCarpani": 1.0,
+    "itme": 150,
+    "hasarKatsayisi": 1.2,
+    "yaricap": 0,
+    "atilisHizi": 440,
+    "kavisYaricap": 90
+   },
+   "bedel": {
+    "staminaYuzde": 4,
+    "kilitSn": 0,
+    "kendiHizCarpani": 1.0,
+    "ek": null
+   },
+   "kaynak": "ek",
+   "eksikTamamlama": true,
+   "ilkSurum": true
+  },
+  {
+   "id": "cekim-darbesi",
+   "ad": "Çekim Darbesi",
+   "kademe": 1,
+   "element": "girdap",
+   "tur": "hucum",
+   "tipUyumu": "dayanikli",
+   "telegrafSn": 0.25,
+   "sureSn": 0.6,
+   "beklemeSn": 6,
+   "enerjiDilimi": 1,
+   "etki": {
+    "hizCarpani": 1.0,
+    "itme": -120,
+    "hasarKatsayisi": 0.9,
+    "yaricap": 75,
+    "cekim": 160
+   },
+   "bedel": {
+    "staminaYuzde": 3,
+    "kilitSn": 0,
+    "kendiHizCarpani": 1.0,
+    "ek": null
+   },
+   "kaynak": "ek",
+   "eksikTamamlama": true,
+   "ilkSurum": true
+  },
+  {
+   "id": "agir-basis",
+   "ad": "Ağır Basış",
+   "kademe": 1,
+   "element": "kaya",
+   "tur": "hucum",
+   "tipUyumu": "kale",
+   "telegrafSn": 0.25,
+   "sureSn": 0.5,
+   "beklemeSn": 6,
+   "enerjiDilimi": 1,
+   "etki": {
+    "hizCarpani": 0.0,
+    "itme": 220,
+    "hasarKatsayisi": 1.3,
+    "yaricap": 70
+   },
+   "bedel": {
+    "staminaYuzde": 0,
+    "kilitSn": 0.5,
+    "kendiHizCarpani": 0.0,
+    "ek": null
+   },
+   "kaynak": "ek",
+   "eksikTamamlama": true,
+   "ilkSurum": true
+  },
+  {
+   "id": "kor-sicrayisi",
+   "ad": "Kor Sıçrayışı",
+   "kademe": 2,
+   "element": "kor",
+   "tur": "hucum",
+   "tipUyumu": "denge",
+   "telegrafSn": 0.45,
+   "sureSn": 0.8,
+   "beklemeSn": 10,
+   "enerjiDilimi": 2,
+   "etki": {
+    "hizCarpani": 1.0,
+    "itme": 230,
+    "hasarKatsayisi": 1.3,
+    "yaricap": 0,
+    "atilisHizi": 560
+   },
+   "bedel": {
+    "staminaYuzde": 6,
+    "kilitSn": 0,
+    "kendiHizCarpani": 1.0,
+    "ek": null
+   },
+   "kaynak": "ek",
+   "eksikTamamlama": true,
+   "ilkSurum": true
+  },
+  {
+   "id": "kiragi-suzulusu",
+   "ad": "Kırağı Süzülüşü",
+   "kademe": 2,
+   "element": "don",
+   "tur": "hucum",
+   "tipUyumu": "dayanikli",
+   "telegrafSn": 0.45,
+   "sureSn": 1.2,
+   "beklemeSn": 10,
+   "enerjiDilimi": 2,
+   "etki": {
+    "hizCarpani": 1.0,
+    "itme": 170,
+    "hasarKatsayisi": 1.1,
+    "yaricap": 0,
+    "surtunmeCarpani": 0.3,
+    "atilisHizi": 300
+   },
+   "bedel": {
+    "staminaYuzde": 0,
+    "kilitSn": 0,
+    "kendiHizCarpani": 1.0,
+    "ek": null
+   },
+   "kaynak": "ek",
+   "eksikTamamlama": true,
+   "ilkSurum": true
+  },
+  {
+   "id": "buz-kabugu",
+   "ad": "Buz Kabuğu",
+   "kademe": 2,
+   "element": "don",
+   "tur": "savunma",
+   "tipUyumu": "kale",
+   "telegrafSn": 0.3,
+   "sureSn": 2.5,
+   "beklemeSn": 12,
+   "enerjiDilimi": 2,
+   "etki": {
+    "hizCarpani": 0.0,
+    "itme": 0,
+    "hasarKatsayisi": 0,
+    "yaricap": 0,
+    "kbCarpani": 0.0,
+    "hasarAlmaCarpani": 0.6
+   },
+   "bedel": {
+    "staminaYuzde": 0,
+    "kilitSn": 2.5,
+    "kendiHizCarpani": 0.0,
+    "ek": null
+   },
+   "kaynak": "ek",
+   "eksikTamamlama": true,
+   "ilkSurum": true
+  },
+  {
+   "id": "kaya-sogugu",
+   "ad": "Kaya Soğuğu",
+   "kademe": 1,
+   "element": "kaya",
+   "tur": "savunma",
+   "tipUyumu": "kale",
+   "telegrafSn": 0.2,
+   "sureSn": 1.5,
+   "beklemeSn": 6,
+   "enerjiDilimi": 1,
+   "etki": {
+    "hizCarpani": 0.0,
+    "itme": 0,
+    "hasarKatsayisi": 0,
+    "yaricap": 0,
+    "kbCarpani": 0.3,
+    "hasarAlmaCarpani": 0.85
+   },
+   "bedel": {
+    "staminaYuzde": 0,
+    "kilitSn": 1.5,
+    "kendiHizCarpani": 0.0,
+    "ek": null
+   },
+   "kaynak": "ek",
+   "eksikTamamlama": true,
+   "ilkSurum": true
+  }
+ ]
+}

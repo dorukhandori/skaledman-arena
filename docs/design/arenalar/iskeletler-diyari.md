@@ -1,5 +1,7 @@
 # Arena: İskeletler Diyarı
 
+> **TARİHÇE (2026-11-04'ten beri geçerli değil):** Bu belge Skaledman/Pokémon füzyon arenası çağına (2026-11-01) aittir. Sahip 2026-11-04'te projeyi Skaledman ve Pokémon'dan ayırdı ("skaledman'dan bağımsız bir proje olacak"); proje artık özgün topaç dövüşü **Devran**. Gövde değiştirilmeden tarihçe olarak tutulur. **Geçerli belge:** ilk arena **Kuşak Arenası** (`docs/production/boslukler/nile-kapsam.md` B-12; sayılar `docs/design/tuning.md` § 2; kod `src/istemci/oyun/KusakArenasi.ts`, `HibritArena.ts`).
+
 [@cove · Arena Designer] Durum: öneri, sahip onayı bekler. Sahip kararı (1 Kas 2026): "ilk arenamız 'iskeletler diyarı' olacak". Kapsam: tek 1v1 sahası, v1'de yüzey yok, sanatçısız (her şey `Graphics` ilkelleriyle). Sayılar F0 sim'ine (`ayar.ts`, `carpisma.ts`) göre doğrulandı; kalıcı denge sayıları `economy-designer`'ındır.
 
 ## 1. Kimlik

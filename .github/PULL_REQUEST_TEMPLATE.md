@@ -16,4 +16,6 @@ Closes #
 - [ ] Tanımlayıcılar ve oyuncuya görünen metin Türkçe; commit mesajı İngilizce
 - [ ] Tasarım ya da sayı değiştiyse ilgili `docs/` dosyası güncellendi
 - [ ] Görsel/his değişikliğinde ekran görüntüsü eklendi
-- [ ] Üçüncü taraf varlık, anahtar, ücretli servis çağrısı yok
+- [ ] Üçüncü taraf varlık yalnız lisans + `docs/art/krediler.md` kaydıyla; anahtar, ücretli servis çağrısı yok
+- [ ] Sim'e dokunduysa altın hash'ler yeniden üretildi ve nedeni yazıldı (`npm run test:tarayici` Node = Chromium)
+- [ ] Başka oyun / marka adı, görseli yok (Devran özgün)

@@ -1,0 +1,1293 @@
+{
+ "01-karsilama": {
+  "url": "",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [],
+  "kirpik": [],
+  "tasma": [],
+  "binen": [],
+  "kucukDugme": [],
+  "bozukMetin": [],
+  "enKucukYazi": [],
+  "ingilizce": [],
+  "fontlar": [
+   "\"Jersey 10\"",
+   "m5x7"
+  ],
+  "fontBoyutlari": {
+   "40px": 2,
+   "32px": 6,
+   "60px": 1
+  },
+  "dugmeler": [
+   "KAYIT OL",
+   "GİRİŞ YAP",
+   "ANTRENMANI DENE"
+  ]
+ },
+ "02-kayit": {
+  "url": "?ekran=kayit",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [],
+  "kirpik": [],
+  "tasma": [],
+  "binen": [],
+  "kucukDugme": [],
+  "bozukMetin": [],
+  "enKucukYazi": [
+   "button.geri.k-geri \"◄ Geri\" 0px"
+  ],
+  "ingilizce": [],
+  "fontlar": [
+   "Arial",
+   "\"Jersey 10\"",
+   "m5x7"
+  ],
+  "fontBoyutlari": {
+   "0px": 1,
+   "40px": 2,
+   "32px": 7,
+   "60px": 1
+  },
+  "dugmeler": [
+   "◄ Geri",
+   "KAYIT OL",
+   "Hesabın var mı? Giriş yap"
+  ]
+ },
+ "03-giris": {
+  "url": "?ekran=giris",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [],
+  "kirpik": [],
+  "tasma": [],
+  "binen": [],
+  "kucukDugme": [],
+  "bozukMetin": [],
+  "enKucukYazi": [
+   "button.geri.k-geri \"◄ Geri\" 0px"
+  ],
+  "ingilizce": [],
+  "fontlar": [
+   "Arial",
+   "\"Jersey 10\"",
+   "m5x7"
+  ],
+  "fontBoyutlari": {
+   "0px": 1,
+   "40px": 2,
+   "32px": 4,
+   "60px": 1
+  },
+  "dugmeler": [
+   "◄ Geri",
+   "GİRİŞ YAP",
+   "Hesabın yok mu? Kayıt ol"
+  ]
+ },
+ "04-ayarlar-misafir": {
+  "url": "?ekran=ayarlar",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [],
+  "kirpik": [],
+  "tasma": [],
+  "binen": [],
+  "kucukDugme": [],
+  "bozukMetin": [],
+  "enKucukYazi": [],
+  "ingilizce": [],
+  "fontlar": [
+   "\"Jersey 10\"",
+   "m5x7"
+  ],
+  "fontBoyutlari": {
+   "40px": 2,
+   "32px": 30
+  },
+  "dugmeler": [
+   "%100",
+   "%125",
+   "%150",
+   "PİXEL",
+   "NORMAL",
+   "NORMAL",
+   "TAM",
+   "AÇIK",
+   "TAM",
+   "FARE",
+   "AÇIK",
+   "KAPALI",
+   "KAPALI",
+   "AÇIK",
+   "Gizlilik",
+   "Krediler"
+  ]
+ },
+ "05-krediler": {
+  "url": "?ekran=krediler",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [
+   "td \"Durma sesi: bozuk para yatışı (kaynak/efekt/bigsou\" [244,615,402,877]",
+   "td \"Joseph Sardin, BigSoundBank #2700 — https://bigsou\" [402,615,561,877]",
+   "td \"CC0 1.0\" [561,615,719,877]",
+   "td \"\"Durma sesi: Joseph Sardin, BigSoundBank (CC0)\"\" [719,615,878,877]",
+   "td \"aday, entegre değil; kırpıldı + mono OGG\" [878,615,1036,877]",
+   "td \"Cam kırılma sesi (kaynak/efekt/oga-glass-break/)\" [244,877,402,1055]",
+   "td \"Till Behrend — https://opengameart.org/content/gla\" [402,877,561,1055]",
+   "td \"CC0 1.0\" [561,877,719,1055]",
+   "td \"\"Cam kırılma: Till Behrend (OpenGameArt), CC0\"\" [719,877,878,1055]",
+   "td \"aday, entegre değil; mono OGG\" [878,877,1036,1055]",
+   "td \"2 buz kırılma sesi (kaynak/efekt/oga-ice-shatter/)\" [244,1055,402,1233]",
+   "td \"IgnasD — https://opengameart.org/content/ice-break\" [402,1055,561,1233]"
+  ],
+  "kirpik": [],
+  "tasma": [],
+  "binen": [],
+  "kucukDugme": [],
+  "bozukMetin": [
+   "h3 \"DEPODA BULUNAN DIŞ VARLIKLAR\""
+  ],
+  "enKucukYazi": [],
+  "ingilizce": [],
+  "fontlar": [
+   "\"Jersey 10\"",
+   "m5x7"
+  ],
+  "fontBoyutlari": {
+   "40px": 9,
+   "60px": 1,
+   "32px": 151
+  },
+  "dugmeler": []
+ },
+ "06-gizlilik": {
+  "url": "?ekran=gizlilik",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [
+   "h3 \"NE KADAR SÜRE\" [244,686,1036,726]",
+   "p \"Hesabın durduğu sürece. Oturum 30 gün sonra kendil\" [244,732,1036,788]",
+   "h3 \"SİLME YOLU\" [244,804,1036,844]",
+   "b \"Hesabımı sil\" [348,851,470,876]",
+   "li \"adın, şifre özetin, Çekirdeklerin, parçaların, tak\" [264,882,1036,938]",
+   "b \"\"Silinmiş oyuncu\"\" [264,941,976,994]",
+   "p \"Silme geri alınamaz. Hesapsız (misafir) oynadıysan\" [244,1002,1036,1058]",
+   "h3 \"ÇEREZLER\" [244,1074,1036,1114]",
+   "code \"devran_oturum\" [524,1123,682,1148]",
+   "h3 \"SEYİRCİ GÖRÜNÜMÜ\" [244,1224,1036,1264]",
+   "code \"#izle=\" [336,1273,398,1298]",
+   "h3 \"İLETİŞİM\" [244,1346,1036,1386]"
+  ],
+  "kirpik": [],
+  "tasma": [],
+  "binen": [],
+  "kucukDugme": [],
+  "bozukMetin": [],
+  "enKucukYazi": [],
+  "ingilizce": [],
+  "fontlar": [
+   "\"Jersey 10\"",
+   "m5x7"
+  ],
+  "fontBoyutlari": {
+   "40px": 8,
+   "60px": 1,
+   "32px": 15
+  },
+  "dugmeler": []
+ },
+ "kayit": 201,
+ "10-girisli-ilk-acilis": {
+  "url": "?ekran=profil",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [],
+  "kirpik": [],
+  "tasma": [],
+  "binen": [],
+  "kucukDugme": [],
+  "bozukMetin": [],
+  "enKucukYazi": [],
+  "ingilizce": [],
+  "fontlar": [
+   "\"Jersey 10\"",
+   "m5x7"
+  ],
+  "fontBoyutlari": {
+   "40px": 3,
+   "32px": 12,
+   "60px": 1
+  },
+  "dugmeler": [
+   "KOR",
+   "KASIRGA",
+   "ŞİMŞEK",
+   "GİRDAP",
+   "KAYA",
+   "DON",
+   "DESTEK KANALI ▾",
+   "BAŞLA"
+  ]
+ },
+ "11-profil-yeni": {
+  "url": "?ekran=profil",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [],
+  "kirpik": [],
+  "tasma": [],
+  "binen": [],
+  "kucukDugme": [],
+  "bozukMetin": [],
+  "enKucukYazi": [],
+  "ingilizce": [],
+  "fontlar": [
+   "\"Jersey 10\"",
+   "m5x7"
+  ],
+  "fontBoyutlari": {
+   "40px": 3,
+   "32px": 12,
+   "60px": 1
+  },
+  "dugmeler": [
+   "KOR",
+   "KASIRGA",
+   "ŞİMŞEK",
+   "GİRDAP",
+   "KAYA",
+   "DON",
+   "DESTEK KANALI ▾",
+   "BAŞLA"
+  ]
+ },
+ "profil": 200,
+ "12-ilk-cekirdek": {
+  "url": "?ekran=ilk-cekirdek",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [],
+  "kirpik": [
+   "h2.k-gizli-baslik \"İLK ÇEKİRDEĞİNİ SEÇ\" 272>1",
+   "div.kk \"GÖKTAŞI · KOR · SALDIRGAN · LV.2\" 108>1",
+   "div.kk \"MADEN · KAYA · KALE · LV.2\" 64>1",
+   "div.kk \"YAPAY · KASIRGA · DENGE · LV.2\" 84>1"
+  ],
+  "tasma": [],
+  "binen": [],
+  "kucukDugme": [],
+  "bozukMetin": [],
+  "enKucukYazi": [],
+  "ingilizce": [],
+  "fontlar": [
+   "\"Jersey 10\"",
+   "m5x7"
+  ],
+  "fontBoyutlari": {
+   "40px": 4,
+   "60px": 2,
+   "32px": 20
+  },
+  "dugmeler": [
+   "SEÇ"
+  ]
+ },
+ "ilk": 201,
+ "13-egitim-oncesi-acilis": {
+  "url": "?ekran=atolye",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [],
+  "kirpik": [
+   "span \"KOR GÖKTAŞI\" 130>1",
+   "span \"OK GÖVDE\" 94>1",
+   "span \"HAFİF DİSK\" 118>1",
+   "span \"DÜZ UÇ\" 70>1",
+   "ul.k-sr.g3-liste \"ÇEKİRDEK: Kor Göktaşı GÖVDE: Ok Gövde DİSK: Hafif \" 268>40"
+  ],
+  "tasma": [],
+  "binen": [],
+  "kucukDugme": [
+   "button.g3-etiket \"ÇEKİRDEK KOR GÖKTAŞI\" 100x22",
+   "button.g3-etiket \"GÖVDE OK GÖVDE\" 100x22",
+   "button.g3-etiket \"DİSK HAFİF DİSK\" 100x22",
+   "button.g3-etiket \"UÇ DÜZ UÇ\" 100x22",
+   "button.k-dugme.kucuk \"▲\" 20x32",
+   "button.k-dugme.kucuk \"▼\" 20x32",
+   "button.k-dugme.kucuk \"▲\" 20x32",
+   "button.k-dugme.kucuk \"▼\" 20x32",
+   "button.k-dugme.kucuk \"▲\" 20x32",
+   "button.k-dugme.kucuk \"▼\" 20x32"
+  ],
+  "bozukMetin": [],
+  "enKucukYazi": [],
+  "ingilizce": [],
+  "fontlar": [
+   "system-ui",
+   "m5x7",
+   "\"Jersey 10\""
+  ],
+  "fontBoyutlari": {
+   "12px": 1,
+   "32px": 51,
+   "40px": 13,
+   "14px": 6,
+   "60px": 1
+  },
+  "dugmeler": [
+   "AYARLAR",
+   "DAHA FAZLA",
+   "ÇIKIŞ",
+   "0",
+   "ÇEKİRDEK",
+   "GÖVDE",
+   "DİSK",
+   "UÇ",
+   "FİLTRE",
+   "DÜZ 1",
+   "İĞNE 100",
+   "DENGELİ 100",
+   "TOP 500",
+   "KUŞAK 0/20",
+   "???",
+   "ÇEKİRDEK KOR GÖKTAŞI",
+   "GÖVDE OK GÖVDE",
+   "DİSK HAFİF DİSK",
+   "UÇ DÜZ UÇ",
+   "BİRLEŞTİR",
+   "AYRINTI",
+   "TAKIM 1 ▾",
+   "▲",
+   "▼",
+   "▲",
+   "▼",
+   "▲",
+   "▼",
+   "MARKET",
+   "BAŞARIMLAR",
+   "DENE · 30 SN",
+   "KAYDET",
+   "OYNA",
+   "TAMAM"
+  ]
+ },
+ "egitim": 200,
+ "20-ana-acilis": {
+  "url": "?ekran=atolye",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [],
+  "kirpik": [
+   "span \"KOR GÖKTAŞI\" 130>1",
+   "span \"OK GÖVDE\" 94>1",
+   "span \"HAFİF DİSK\" 118>1",
+   "span \"DÜZ UÇ\" 70>1",
+   "ul.k-sr.g3-liste \"ÇEKİRDEK: Kor Göktaşı GÖVDE: Ok Gövde DİSK: Hafif \" 268>40"
+  ],
+  "tasma": [
+   "span.ad \"MARKET'TEN AL\" 116>96"
+  ],
+  "binen": [],
+  "kucukDugme": [
+   "button.g3-etiket \"ÇEKİRDEK KOR GÖKTAŞI\" 100x22",
+   "button.g3-etiket \"GÖVDE OK GÖVDE\" 100x22",
+   "button.g3-etiket \"DİSK HAFİF DİSK\" 100x22",
+   "button.g3-etiket \"UÇ DÜZ UÇ\" 100x22",
+   "button.k-dugme.kucuk \"▲\" 20x32",
+   "button.k-dugme.kucuk \"▼\" 20x32",
+   "button.k-dugme.kucuk \"▲\" 20x32",
+   "button.k-dugme.kucuk \"▼\" 20x32",
+   "button.k-dugme.kucuk \"▲\" 20x32",
+   "button.k-dugme.kucuk \"▼\" 20x32"
+  ],
+  "bozukMetin": [],
+  "enKucukYazi": [],
+  "ingilizce": [],
+  "fontlar": [
+   "system-ui",
+   "m5x7",
+   "\"Jersey 10\""
+  ],
+  "fontBoyutlari": {
+   "12px": 1,
+   "32px": 49,
+   "40px": 13,
+   "14px": 6,
+   "60px": 1
+  },
+  "dugmeler": [
+   "AYARLAR",
+   "DAHA FAZLA",
+   "ÇIKIŞ",
+   "1600",
+   "ÇEKİRDEK",
+   "GÖVDE",
+   "DİSK",
+   "UÇ",
+   "FİLTRE",
+   "DÜZ 1",
+   "İĞNE 100",
+   "DENGELİ 100",
+   "TOP 500",
+   "KUŞAK 0/20",
+   "???",
+   "MARKET'TEN AL",
+   "ÇEKİRDEK KOR GÖKTAŞI",
+   "GÖVDE OK GÖVDE",
+   "DİSK HAFİF DİSK",
+   "UÇ DÜZ UÇ",
+   "BİRLEŞTİR",
+   "AYRINTI",
+   "TAKIM 1 ▾",
+   "▲",
+   "▼",
+   "▲",
+   "▼",
+   "▲",
+   "▼",
+   "MARKET",
+   "BAŞARIMLAR",
+   "DENE · 30 SN",
+   "KAYDET",
+   "OYNA"
+  ]
+ },
+ "21-atolye": {
+  "url": "?ekran=atolye",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [],
+  "kirpik": [
+   "span \"KOR GÖKTAŞI\" 130>1",
+   "span \"OK GÖVDE\" 94>1",
+   "span \"HAFİF DİSK\" 118>1",
+   "span \"DÜZ UÇ\" 70>1",
+   "ul.k-sr.g3-liste \"ÇEKİRDEK: Kor Göktaşı GÖVDE: Ok Gövde DİSK: Hafif \" 268>40"
+  ],
+  "tasma": [
+   "span.ad \"MARKET'TEN AL\" 116>96"
+  ],
+  "binen": [],
+  "kucukDugme": [
+   "button.g3-etiket \"ÇEKİRDEK KOR GÖKTAŞI\" 100x22",
+   "button.g3-etiket \"GÖVDE OK GÖVDE\" 100x22",
+   "button.g3-etiket \"DİSK HAFİF DİSK\" 100x22",
+   "button.g3-etiket \"UÇ DÜZ UÇ\" 100x22",
+   "button.k-dugme.kucuk \"▲\" 20x32",
+   "button.k-dugme.kucuk \"▼\" 20x32",
+   "button.k-dugme.kucuk \"▲\" 20x32",
+   "button.k-dugme.kucuk \"▼\" 20x32",
+   "button.k-dugme.kucuk \"▲\" 20x32",
+   "button.k-dugme.kucuk \"▼\" 20x32"
+  ],
+  "bozukMetin": [],
+  "enKucukYazi": [],
+  "ingilizce": [],
+  "fontlar": [
+   "system-ui",
+   "m5x7",
+   "\"Jersey 10\""
+  ],
+  "fontBoyutlari": {
+   "12px": 1,
+   "32px": 49,
+   "40px": 13,
+   "14px": 6,
+   "60px": 1
+  },
+  "dugmeler": [
+   "AYARLAR",
+   "DAHA FAZLA",
+   "ÇIKIŞ",
+   "1600",
+   "ÇEKİRDEK",
+   "GÖVDE",
+   "DİSK",
+   "UÇ",
+   "FİLTRE",
+   "DÜZ 1",
+   "İĞNE 100",
+   "DENGELİ 100",
+   "TOP 500",
+   "KUŞAK 0/20",
+   "???",
+   "MARKET'TEN AL",
+   "ÇEKİRDEK KOR GÖKTAŞI",
+   "GÖVDE OK GÖVDE",
+   "DİSK HAFİF DİSK",
+   "UÇ DÜZ UÇ",
+   "BİRLEŞTİR",
+   "AYRINTI",
+   "TAKIM 1 ▾",
+   "▲",
+   "▼",
+   "▲",
+   "▼",
+   "▲",
+   "▼",
+   "MARKET",
+   "BAŞARIMLAR",
+   "DENE · 30 SN",
+   "KAYDET",
+   "OYNA"
+  ]
+ },
+ "22-market": {
+  "url": "?ekran=market",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [],
+  "kirpik": [],
+  "tasma": [],
+  "binen": [],
+  "kucukDugme": [],
+  "bozukMetin": [],
+  "enKucukYazi": [],
+  "ingilizce": [],
+  "fontlar": [
+   "\"Jersey 10\"",
+   "m5x7"
+  ],
+  "fontBoyutlari": {
+   "40px": 7,
+   "32px": 21,
+   "60px": 1
+  },
+  "dugmeler": [
+   "GÜNÜN PARÇASI −30% DENGELİ UÇ · 70 ALTIN 100",
+   "SENDE",
+   "100 ALTIN",
+   "100 ALTIN",
+   "0/10",
+   "2000 ALTIN",
+   "0/5",
+   "???",
+   "0/50",
+   "SENDE",
+   "100 ALTIN",
+   "100 ALTIN",
+   "500 ALTIN",
+   "0/10",
+   "0/10",
+   "0/10",
+   "0/3",
+   "SENDE",
+   "100 ALTIN",
+   "100 ALTIN",
+   "0/10",
+   "0/1",
+   "SENDE",
+   "100 ALTIN",
+   "70 ALTIN −30%",
+   "500 ALTIN",
+   "0/20",
+   "???",
+   "SATIN AL"
+  ]
+ },
+ "23-basarimlar": {
+  "url": "?ekran=basarimlar",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [],
+  "kirpik": [],
+  "tasma": [],
+  "binen": [],
+  "kucukDugme": [],
+  "bozukMetin": [],
+  "enKucukYazi": [],
+  "ingilizce": [],
+  "fontlar": [
+   "\"Jersey 10\"",
+   "m5x7"
+  ],
+  "fontBoyutlari": {
+   "40px": 2,
+   "32px": 29
+  },
+  "dugmeler": [
+   "1600",
+   "YOL 1/8",
+   "BİTİŞ 0/7",
+   "ELEMENT 0/8",
+   "RİSK 0/5",
+   "GÖSTERİ 0/5",
+   "??? 0/3",
+   "SOSYAL 0/3",
+   "YAPAY 0/3",
+   "GİZLİ 0/4"
+  ]
+ },
+ "24-gunluk": {
+  "url": "?ekran=gunluk",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [
+   "div \"Hücum · 1 Enerji dilimi · 6 sn bekleme · 0.2 sn te\" [558,698,1118,754]",
+   "span.kl \"KİLİTLİ: LV.3\" [980,772,1118,800]",
+   "b \"ÖZEL YETENEK: KÖZYAĞMURU\" [558,773,838,798]",
+   "div \"Alan · 2 Enerji dilimi · 10 sn bekleme · 0.6 sn te\" [558,800,1118,856]",
+   "span.kl \"KİLİTLİ: LV.3\" [980,874,1118,902]",
+   "b \"ULTİ: ATA KÖZÜ\" [558,875,714,900]",
+   "div \"Alan · 3 Enerji dilimi · 0 sn bekleme · 0.9 sn tel\" [558,902,1118,958]",
+   "div.not \"Lv.1: yetenek yok · Lv.2: Yetenek · Lv.3: Özel Yet\" [550,970,1126,1026]"
+  ],
+  "kirpik": [],
+  "tasma": [],
+  "binen": [],
+  "kucukDugme": [],
+  "bozukMetin": [],
+  "enKucukYazi": [],
+  "ingilizce": [],
+  "fontlar": [
+   "\"Jersey 10\"",
+   "m5x7"
+  ],
+  "fontBoyutlari": {
+   "40px": 9,
+   "32px": 22,
+   "26.6667px": 1,
+   "60px": 1
+  },
+  "dugmeler": [
+   "1600",
+   "KOR GÖKTAŞI LV.2 · 150 XP"
+  ]
+ },
+ "25-profil": {
+  "url": "?ekran=profil",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [],
+  "kirpik": [],
+  "tasma": [],
+  "binen": [],
+  "kucukDugme": [],
+  "bozukMetin": [],
+  "enKucukYazi": [
+   "button.geri.k-geri \"◄ Geri\" 0px"
+  ],
+  "ingilizce": [],
+  "fontlar": [
+   "Arial",
+   "\"Jersey 10\"",
+   "m5x7"
+  ],
+  "fontBoyutlari": {
+   "0px": 1,
+   "40px": 3,
+   "32px": 13,
+   "60px": 1
+  },
+  "dugmeler": [
+   "◄ Geri",
+   "Denetci c6ka",
+   "ADI DEĞİŞTİR",
+   "KOR",
+   "KASIRGA",
+   "ŞİMŞEK",
+   "GİRDAP",
+   "KAYA",
+   "DON",
+   "DESTEK KANALI ▾",
+   "KAYDET"
+  ]
+ },
+ "26-ayarlar": {
+  "url": "?ekran=ayarlar",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [],
+  "kirpik": [],
+  "tasma": [],
+  "binen": [],
+  "kucukDugme": [],
+  "bozukMetin": [],
+  "enKucukYazi": [],
+  "ingilizce": [],
+  "fontlar": [
+   "\"Jersey 10\"",
+   "m5x7"
+  ],
+  "fontBoyutlari": {
+   "40px": 3,
+   "32px": 31
+  },
+  "dugmeler": [
+   "1600",
+   "%100",
+   "%125",
+   "%150",
+   "PİXEL",
+   "NORMAL",
+   "NORMAL",
+   "TAM",
+   "AÇIK",
+   "TAM",
+   "FARE",
+   "AÇIK",
+   "KAPALI",
+   "KAPALI",
+   "AÇIK",
+   "Gizlilik",
+   "Krediler",
+   "HESABIMI SİL"
+  ]
+ },
+ "27-lobi": {
+  "url": "?ekran=lobi",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [],
+  "kirpik": [],
+  "tasma": [
+   "button.k-dugme.mod.centik \"HIZLI MAÇ\" 248>240"
+  ],
+  "binen": [],
+  "kucukDugme": [],
+  "bozukMetin": [],
+  "enKucukYazi": [],
+  "ingilizce": [],
+  "fontlar": [
+   "\"Jersey 10\"",
+   "m5x7"
+  ],
+  "fontBoyutlari": {
+   "40px": 6,
+   "32px": 5,
+   "60px": 1
+  },
+  "dugmeler": [
+   "1600",
+   "HIZLI MAÇ",
+   "ODA KODU",
+   "ANTRENMAN",
+   "MAÇ BUL"
+  ]
+ },
+ "28-dene": {
+  "url": "?ekran=atolye",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [],
+  "kirpik": [
+   "span \"KOR GÖKTAŞI\" 130>1",
+   "span \"OK GÖVDE\" 94>1",
+   "span \"HAFİF DİSK\" 118>1",
+   "span \"DÜZ UÇ\" 70>1",
+   "ul.k-sr.g3-liste \"ÇEKİRDEK: Kor Göktaşı GÖVDE: Ok Gövde DİSK: Hafif \" 268>40"
+  ],
+  "tasma": [
+   "span.ad \"MARKET'TEN AL\" 116>96"
+  ],
+  "binen": [],
+  "kucukDugme": [
+   "button.g3-etiket \"ÇEKİRDEK KOR GÖKTAŞI\" 100x22",
+   "button.g3-etiket \"GÖVDE OK GÖVDE\" 100x22",
+   "button.g3-etiket \"DİSK HAFİF DİSK\" 100x22",
+   "button.g3-etiket \"UÇ DÜZ UÇ\" 100x22",
+   "button.k-dugme.kucuk \"▲\" 20x32",
+   "button.k-dugme.kucuk \"▼\" 20x32",
+   "button.k-dugme.kucuk \"▲\" 20x32",
+   "button.k-dugme.kucuk \"▼\" 20x32",
+   "button.k-dugme.kucuk \"▲\" 20x32",
+   "button.k-dugme.kucuk \"▼\" 20x32"
+  ],
+  "bozukMetin": [],
+  "enKucukYazi": [],
+  "ingilizce": [],
+  "fontlar": [
+   "system-ui",
+   "m5x7",
+   "\"Jersey 10\""
+  ],
+  "fontBoyutlari": {
+   "12px": 1,
+   "32px": 49,
+   "40px": 13,
+   "14px": 6,
+   "60px": 1
+  },
+  "dugmeler": [
+   "AYARLAR",
+   "DAHA FAZLA",
+   "ÇIKIŞ",
+   "1600",
+   "ÇEKİRDEK",
+   "GÖVDE",
+   "DİSK",
+   "UÇ",
+   "FİLTRE",
+   "DÜZ 1",
+   "İĞNE 100",
+   "DENGELİ 100",
+   "TOP 500",
+   "KUŞAK 0/20",
+   "???",
+   "MARKET'TEN AL",
+   "ÇEKİRDEK KOR GÖKTAŞI",
+   "GÖVDE OK GÖVDE",
+   "DİSK HAFİF DİSK",
+   "UÇ DÜZ UÇ",
+   "BİRLEŞTİR",
+   "AYRINTI",
+   "TAKIM 1 ▾",
+   "▲",
+   "▼",
+   "▲",
+   "▼",
+   "▲",
+   "▼",
+   "MARKET",
+   "BAŞARIMLAR",
+   "DENE · 30 SN",
+   "KAYDET",
+   "OYNA"
+  ]
+ },
+ "29-ruhlar": {
+  "url": "?ekran=ruhlar",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [],
+  "kirpik": [],
+  "tasma": [],
+  "binen": [],
+  "kucukDugme": [],
+  "bozukMetin": [],
+  "enKucukYazi": [],
+  "ingilizce": [],
+  "fontlar": [],
+  "fontBoyutlari": {},
+  "dugmeler": []
+ },
+ "lobiModlar": [
+  "hizli",
+  "oda",
+  "antrenman"
+ ],
+ "30-lobi-mod-hizli": {
+  "url": "?ekran=lobi",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [],
+  "kirpik": [],
+  "tasma": [
+   "button.k-dugme.mod.centik \"HIZLI MAÇ\" 248>240"
+  ],
+  "binen": [],
+  "kucukDugme": [],
+  "bozukMetin": [],
+  "enKucukYazi": [],
+  "ingilizce": [],
+  "fontlar": [
+   "\"Jersey 10\"",
+   "m5x7"
+  ],
+  "fontBoyutlari": {
+   "40px": 6,
+   "32px": 5,
+   "60px": 1
+  },
+  "dugmeler": [
+   "1600",
+   "HIZLI MAÇ",
+   "ODA KODU",
+   "ANTRENMAN",
+   "MAÇ BUL"
+  ]
+ },
+ "30-lobi-mod-oda": {
+  "url": "?ekran=lobi",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [],
+  "kirpik": [],
+  "tasma": [
+   "button.k-dugme.mod.centik \"ODA KODU\" 248>240"
+  ],
+  "binen": [],
+  "kucukDugme": [],
+  "bozukMetin": [],
+  "enKucukYazi": [],
+  "ingilizce": [],
+  "fontlar": [
+   "\"Jersey 10\"",
+   "m5x7"
+  ],
+  "fontBoyutlari": {
+   "40px": 7,
+   "32px": 4,
+   "60px": 1
+  },
+  "dugmeler": [
+   "1600",
+   "HIZLI MAÇ",
+   "ODA KODU",
+   "ANTRENMAN",
+   "KATIL",
+   "ODA AÇ"
+  ]
+ },
+ "30-lobi-mod-antrenman": {
+  "url": "?ekran=lobi",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [],
+  "kirpik": [],
+  "tasma": [
+   "button.k-dugme.mod.centik \"ANTRENMAN\" 248>240"
+  ],
+  "binen": [],
+  "kucukDugme": [],
+  "bozukMetin": [],
+  "enKucukYazi": [],
+  "ingilizce": [],
+  "fontlar": [
+   "\"Jersey 10\"",
+   "m5x7"
+  ],
+  "fontBoyutlari": {
+   "40px": 6,
+   "32px": 5,
+   "60px": 1
+  },
+  "dugmeler": [
+   "1600",
+   "HIZLI MAÇ",
+   "ODA KODU",
+   "ANTRENMAN",
+   "BAŞLA"
+  ]
+ },
+ "31-lobi-araniyor": {
+  "url": "?ekran=lobi",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [],
+  "kirpik": [],
+  "tasma": [],
+  "binen": [],
+  "kucukDugme": [],
+  "bozukMetin": [],
+  "enKucukYazi": [],
+  "ingilizce": [],
+  "fontlar": [
+   "\"Jersey 10\"",
+   "m5x7"
+  ],
+  "fontBoyutlari": {
+   "40px": 5,
+   "80px": 1,
+   "32px": 2
+  },
+  "dugmeler": [
+   "1600",
+   "İPTAL"
+  ]
+ },
+ "32-lobi-araniyor-22sn": {
+  "url": "?ekran=lobi",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [],
+  "kirpik": [],
+  "tasma": [],
+  "binen": [],
+  "kucukDugme": [],
+  "bozukMetin": [],
+  "enKucukYazi": [],
+  "ingilizce": [],
+  "fontlar": [
+   "\"Jersey 10\"",
+   "m5x7"
+  ],
+  "fontBoyutlari": {
+   "40px": 6,
+   "80px": 1,
+   "32px": 3
+  },
+  "dugmeler": [
+   "1600",
+   "ANTRENMAN",
+   "İPTAL"
+  ]
+ },
+ "33-lobi-iptal": {
+  "url": "?ekran=lobi",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [],
+  "kirpik": [],
+  "tasma": [
+   "button.k-dugme.mod.centik \"HIZLI MAÇ\" 248>240"
+  ],
+  "binen": [],
+  "kucukDugme": [],
+  "bozukMetin": [],
+  "enKucukYazi": [],
+  "ingilizce": [],
+  "fontlar": [
+   "\"Jersey 10\"",
+   "m5x7"
+  ],
+  "fontBoyutlari": {
+   "40px": 6,
+   "32px": 5,
+   "60px": 1
+  },
+  "dugmeler": [
+   "1600",
+   "HIZLI MAÇ",
+   "ODA KODU",
+   "ANTRENMAN",
+   "MAÇ BUL"
+  ]
+ },
+ "34-lobi-oda-acik": {
+  "url": "?ekran=lobi",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [],
+  "kirpik": [],
+  "tasma": [],
+  "binen": [],
+  "kucukDugme": [],
+  "bozukMetin": [],
+  "enKucukYazi": [],
+  "ingilizce": [],
+  "fontlar": [
+   "\"Jersey 10\"",
+   "m5x7"
+  ],
+  "fontBoyutlari": {
+   "40px": 5,
+   "60px": 10,
+   "32px": 4
+  },
+  "dugmeler": [
+   "1600",
+   "BAĞLANTI",
+   "SEYİRCİ BAĞLANTISI",
+   "İPTAL",
+   "KODU KOPYALA"
+  ]
+ },
+ "menuDugmeSayisi": 1,
+ "40-ust-menu-0": {
+  "url": "?ekran=atolye",
+  "sayfaKaydirma": [
+   1280,
+   720,
+   1280,
+   720
+  ],
+  "disari": [],
+  "kirpik": [
+   "span \"KOR GÖKTAŞI\" 130>1",
+   "span \"OK GÖVDE\" 94>1",
+   "span \"HAFİF DİSK\" 118>1",
+   "span \"DÜZ UÇ\" 70>1",
+   "ul.k-sr.g3-liste \"ÇEKİRDEK: Kor Göktaşı GÖVDE: Ok Gövde DİSK: Hafif \" 268>40"
+  ],
+  "tasma": [
+   "span.ad \"MARKET'TEN AL\" 116>96"
+  ],
+  "binen": [],
+  "kucukDugme": [
+   "button.g3-etiket \"ÇEKİRDEK KOR GÖKTAŞI\" 100x22",
+   "button.g3-etiket \"GÖVDE OK GÖVDE\" 100x22",
+   "button.g3-etiket \"DİSK HAFİF DİSK\" 100x22",
+   "button.g3-etiket \"UÇ DÜZ UÇ\" 100x22",
+   "button.k-dugme.kucuk \"▲\" 20x32",
+   "button.k-dugme.kucuk \"▼\" 20x32",
+   "button.k-dugme.kucuk \"▲\" 20x32",
+   "button.k-dugme.kucuk \"▼\" 20x32",
+   "button.k-dugme.kucuk \"▲\" 20x32",
+   "button.k-dugme.kucuk \"▼\" 20x32"
+  ],
+  "bozukMetin": [],
+  "enKucukYazi": [],
+  "ingilizce": [],
+  "fontlar": [
+   "system-ui",
+   "m5x7",
+   "\"Jersey 10\""
+  ],
+  "fontBoyutlari": {
+   "12px": 1,
+   "32px": 55,
+   "40px": 13,
+   "14px": 6,
+   "60px": 1
+  },
+  "dugmeler": [
+   "AYARLAR",
+   "DAHA FAZLA",
+   "ÇEKİRDEK GÜNLÜĞÜ",
+   "PROFİL",
+   "ÇIKIŞ",
+   "1600",
+   "ÇEKİRDEK",
+   "GÖVDE",
+   "DİSK",
+   "UÇ",
+   "FİLTRE",
+   "DÜZ 1",
+   "İĞNE 100",
+   "DENGELİ 100",
+   "TOP 500",
+   "KUŞAK 0/20",
+   "???",
+   "MARKET'TEN AL",
+   "ÇEKİRDEK KOR GÖKTAŞI",
+   "GÖVDE OK GÖVDE",
+   "DİSK HAFİF DİSK",
+   "UÇ DÜZ UÇ",
+   "BİRLEŞTİR",
+   "AYRINTI",
+   "TAKIM 1 ▾",
+   "▲",
+   "▼",
+   "▲",
+   "▼",
+   "▲",
+   "▼",
+   "MARKET",
+   "BAŞARIMLAR",
+   "DENE · 30 SN",
+   "KAYDET",
+   "OYNA",
+   "TAMAM"
+  ]
+ },
+ "konsol": [
+  "[error] : Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "[warning] ekran=ilk-cekirdek: [.WebGL-0x13c000de000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "[warning] ekran=ilk-cekirdek: [.WebGL-0x13c000de000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "[warning] ekran=ilk-cekirdek: [.WebGL-0x13c000de000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "[warning] ekran=ilk-cekirdek: [.WebGL-0x13c000de000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)",
+  "[warning] ekran=lobi: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio",
+  "[warning] ekran=lobi: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio",
+  "[warning] ekran=lobi: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio",
+  "[warning] ekran=dene: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio",
+  "[warning] ekran=dene: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio",
+  "[warning] ekran=dene: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio",
+  "[warning] ekran=lobi: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio",
+  "[warning] ekran=lobi: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio",
+  "[warning] ekran=lobi: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+ ]
+}

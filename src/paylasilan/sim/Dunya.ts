@@ -1,118 +1,76 @@
-import type { Yon } from "../atlas.ts";
-import type { DovuscuProfili } from "../dovuscu.ts";
 import { AYAR } from "../kurallar/ayar.ts";
-import { YUVA_SAYISI } from "../kurallar/hamleler.ts";
-import { type Arena, varsayilanArena } from "./Arena.ts";
-import { dashBaslat, dovuscuAyir, hareketAdimla } from "./adim.ts";
-import { type Girdi, girdiTemizle } from "./Girdi.ts";
-import { hamleBaslat, hamleIlerlet } from "./hamle.ts";
-import { alanlariIlerlet, mermileriIlerlet } from "./mermiler.ts";
-import { durumlariIsle } from "./durumlar.ts";
-import type { Dovuscu, Dunya } from "./durum.ts";
-import { bosKademe, kademeleriIsle } from "./kademe.ts";
-import { degisimIste, takimHpOrani, takimIlerlet, takimKur, uyeKo, yasayanUyeVar } from "./takim.ts";
-import { dinlenmeGuncelle, ziplaBaslat, ziplaIsle } from "./zipla.ts";
+import { TABLO_BOYU } from "../kurallar/sinTablo.ts";
+import type { TopacProfili } from "../veri/profil.ts";
+import type { Dunya } from "./durum.ts";
+import { macKur, takimKur } from "./mac.ts";
+import { rastgele } from "./rastgele.ts";
+import { topacKur } from "./topac.ts";
 
-export type { Dunya, Dovuscu } from "./durum.ts";
+export { adim } from "./adim.ts";
 
-// Simülasyonun giriş noktası. Mutasyona açık tek durum nesnesi; render yalnız okur.
-// Sıra: zamanlayıcılar → takım geçişi → eylemler → hareket → hamleler → mermi/alan → bitiş kontrolü.
+export interface DunyaSecenekleri {
+  /** Uç deseni fazları (tablo birimi). Verilmezse tohumdan: rastgele(tohum, i) · 256. Simetri testi için. */
+  fazlar?: readonly [number, number];
+  /** Çekirdek seviyesi (oyuncu başına). VARSAYIM (D3, ilerleme D5'te): varsayılan Lv.3, üç yuva açık. */
+  seviye?: readonly [number, number];
+}
 
-const YON_VEKTORU: readonly (readonly [number, number])[] = [
-  [0, 1], [Math.SQRT1_2, Math.SQRT1_2], [1, 0], [Math.SQRT1_2, -Math.SQRT1_2],
-  [0, -1], [-Math.SQRT1_2, -Math.SQRT1_2], [-1, 0], [-Math.SQRT1_2, Math.SQRT1_2],
-];
+/** VARSAYIM: D5 ilerlemesi gelene kadar çevrimdışı maçta Çekirdekler Lv.3 (tavan) sayılır. */
+export const VARSAYILAN_SEVIYE = 3;
 
-function dovuscuKur(indeks: number, profil: DovuscuProfili, arena: Arena): Dovuscu {
-  const dogum = arena.dogum[indeks]!;
-  const [yonX, yonZ] = YON_VEKTORU[dogum.yon]!;
+/** Tek tur dünyası (Topaç Lab, D1): topaçlar doğum noktalarında, tam stamina, tık 0, faz `tur`. */
+export function dunyaKur(profiller: readonly [TopacProfili, TopacProfili], tohum: number, sec: DunyaSecenekleri = {}): Dunya {
+  const faz = (i: number) => sec.fazlar?.[i] ?? rastgele(tohum, i) * TABLO_BOYU;
+  const [a, b] = AYAR.dogum;
   return {
-    indeks, x: dogum.x, z: dogum.z, yonX, yonZ, yon: dogum.yon as Yon, hizX: 0, hizZ: 0,
-    hp: profil.maxHp, maxHp: profil.maxHp, itX: 0, itZ: 0, itKalan: 0,
-    dashKalan: 0, dashX: 0, dashZ: 0, dashBekleme: 0, dokunulmaz: 0, hitStun: 0, takilma: 0,
-    cooldown: new Array<number>(YUVA_SAYISI).fill(0), hamle: null,
-    yanik: 0, yanikSayac: 0, felc: 0, felcSayac: 0, olu: false,
-    ziplaKalan: 0, yukseklik: 0, ziplaBekleme: 0, enerji: 1, dinleniyor: false,
-    kademe: bosKademe(), kademeKalan: bosKademe(), gecis: null, sahaDisi: false,
+    tick: 0,
+    tohum,
+    profiller: [profiller[0], profiller[1]],
+    topaclar: [topacKur(profiller[0], a.x, a.z, faz(0)), topacKur(profiller[1], b.x, b.z, faz(1))],
+    temasKilidi: 0,
+    mac: macKur("tekTur"),
+    arenaYaricap: AYAR.arenaYaricap,
+    takimlar: null,
+    olaylar: [],
+    alanlar: [null, null],
+    engeller: [],
+    ultiKullanildi: [0, 0],
+    ultiKilit: 0,
+    yakinGecisBekleme: 0,
+    kararma: [0, 0],
+    seviye: [sec.seviye?.[0] ?? VARSAYILAN_SEVIYE, sec.seviye?.[1] ?? VARSAYILAN_SEVIYE],
+    sonYetenek: [-1, -1],
+    yetenekSayisi: [[0, 0, 0], [0, 0, 0]],
+    takimEnerji: [0, 0],
+    takimUltiKullanildi: [0, 0],
   };
 }
 
-/** Oyuncu başına tek profil ya da en çok 3 kartlık takım (ilk kart sahaya çıkar). */
-export type OyuncuKadrosu = DovuscuProfili | readonly DovuscuProfili[];
+export type TakimProfilleri = readonly [TopacProfili, TopacProfili, TopacProfili];
+/** D5: kayıtlı takımda üye başına Çekirdek seviyesi (ödünç Lv.1). */
+export type UyeSeviyeleri = readonly [number, number, number];
 
-export function dunyaKur(
-  kadrolar: readonly OyuncuKadrosu[], tohum: number, arena: Arena = varsayilanArena(), hasarCarpani: number = AYAR.hasarCarpani,
+/**
+ * Tam maç dünyası (D2): iki 3'lü takım (3 farklı Çekirdek zorunlu), her takımın 1. üyesi sahada, faz `geriSayim`
+ * (Hazır 2 s + 3-2-1). `aktif` verilirse ilk çıkan üye o olur.
+ */
+export function macDunyasiKur(
+  takimlar: readonly [TakimProfilleri, TakimProfilleri],
+  tohum: number,
+  sec: DunyaSecenekleri & { aktif?: readonly [number, number]; uyeSeviyeleri?: readonly [UyeSeviyeleri | null, UyeSeviyeleri | null] } = {},
 ): Dunya {
-  const takimlar = kadrolar.map((k) => takimKur(Array.isArray(k) ? k : [k as DovuscuProfili]));
-  const profiller = takimlar.map((t) => t.profiller[0]!);
-  return {
-    tick: 0, tohum, rngSira: 0, sonrakiId: 1, kalanSure: AYAR.mac.sure, hasarCarpani, arena,
-    profiller, takimlar, dovusculer: profiller.map((p, i) => dovuscuKur(i, p, arena)),
-    mermiler: [], alanlar: [], olaylar: [], sonuc: null,
-  };
-}
-
-function zamanlayicilar(d: Dunya, dv: Dovuscu, dt: number): void {
-  const azalt = (v: number, h = dt) => (v > 0 ? Math.max(0, v - h) : 0);
-  dv.dashBekleme = azalt(dv.dashBekleme);
-  dv.dokunulmaz = azalt(dv.dokunulmaz);
-  dv.hitStun = azalt(dv.hitStun);
-  const cdAdim = dt * (dv.dinleniyor ? AYAR.dinlen.cooldownHizi : 1);
-  for (let k = 0; k < dv.cooldown.length; k++) dv.cooldown[k] = azalt(dv.cooldown[k]!, cdAdim);
-  kademeleriIsle(d, dv, dt);
-  ziplaIsle(d, dv, dt);
-}
-
-function eylemler(d: Dunya, i: number, g: Girdi): void {
-  const dv = d.dovusculer[i]!;
-  degisimIste(d, i, g);
-  if (dv.olu || dv.gecis || dv.hitStun > 0 || dv.takilma > 0) { dv.dinleniyor = false; return; }
-  dinlenmeGuncelle(dv, g);
-  const atilisYok = !dv.hamle || dv.hamle.evre === "aviso";
-  if (g.dash && dv.dashBekleme <= 0 && dv.dashKalan <= 0 && atilisYok) dashBaslat(d, i, g);
-  if (g.zipla) ziplaBaslat(d, i);
-  if (g.atesle && dv.dashKalan <= 0 && !dv.hamle) hamleBaslat(d, i, g);
-}
-
-function bitisKontrolu(d: Dunya): void {
-  for (const dv of d.dovusculer) {
-    if (dv.hp > 0 || dv.olu) continue;
-    Object.assign(dv, { olu: true, hamle: null, dashKalan: 0, gecis: null, dinleniyor: false, ziplaKalan: 0, yukseklik: 0 });
-    d.olaylar.push({ tur: "ko", kim: dv.indeks });
-    uyeKo(d, dv.indeks);
-  }
-  const kaybeden = d.takimlar.map((t, i) => (yasayanUyeVar(t) ? -1 : i)).filter((i) => i >= 0);
-  if (kaybeden.length > 0) {
-    const kazanan = kaybeden.length === 1 ? 1 - kaybeden[0]! : null;
-    d.sonuc = { kazanan, neden: "ko" };
-  } else if (d.kalanSure <= 0) {
-    d.kalanSure = 0;
-    const a = takimHpOrani(d, 0);
-    const b = takimHpOrani(d, 1);
-    d.sonuc = { kazanan: a === b ? null : a > b ? 0 : 1, neden: "sure" };
-  }
-  if (d.sonuc) d.olaylar.push({ tur: "fin", kazanan: d.sonuc.kazanan, neden: d.sonuc.neden });
-}
-
-/** Bir sabit adım. Maç bitmişse hiçbir şey yapmaz. */
-export function adim(d: Dunya, girdiler: readonly Girdi[], dt: number = AYAR.dt): void {
-  d.olaylar = [];
-  if (d.sonuc) return;
-  d.tick++;
-  d.kalanSure -= dt;
-  const g = d.dovusculer.map((_, i) => girdiTemizle(girdiler[i]!));
-
-  // Eşzamanlı vuruşlarda ilk işlenen avantajlı olmasın: sıra her adımda dönüşümlü.
-  const sira = d.dovusculer.map((dv) => dv.indeks);
-  if (d.tick % 2 === 1) sira.reverse();
-
-  for (const dv of d.dovusculer) { zamanlayicilar(d, dv, dt); durumlariIsle(d, dv, dt); }
-  for (const i of sira) takimIlerlet(d, i, dt);
-  for (const i of sira) eylemler(d, i, g[i]!);
-  for (const i of sira) hareketAdimla(d, i, g[i]!, dt);
-  dovuscuAyir(d);
-  for (const i of sira) hamleIlerlet(d, i, dt);
-  mermileriIlerlet(d, dt);
-  alanlariIlerlet(d, dt);
-  bitisKontrolu(d);
+  const T = [takimKur(takimlar[0], sec.uyeSeviyeleri?.[0] ?? undefined), takimKur(takimlar[1], sec.uyeSeviyeleri?.[1] ?? undefined)] as const;
+  const ilk = sec.aktif ?? [0, 0];
+  T[0].aktif = ilk[0]!;
+  T[1].aktif = ilk[1]!;
+  const p0 = T[0].uyeler[T[0].aktif]!.profil;
+  const p1 = T[1].uyeler[T[1].aktif]!.profil;
+  // D5: üye seviyesi verilmişse sahadaki ilk üyenin seviyesi oyuncu seviyesidir
+  const sv0 = T[0].uyeler[T[0].aktif]!.seviye;
+  const sv1 = T[1].uyeler[T[1].aktif]!.seviye;
+  const seviye: [number, number] = [sv0 ?? sec.seviye?.[0] ?? VARSAYILAN_SEVIYE, sv1 ?? sec.seviye?.[1] ?? VARSAYILAN_SEVIYE];
+  const d = dunyaKur([p0, p1], tohum, { ...sec, seviye });
+  d.mac = macKur("mac");
+  d.takimlar = [T[0], T[1]];
+  return d;
 }

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Devran · Bakım</title>
+<!-- Statik bakım sayfası (nile B-22): sunucu kapalıyken tünel/ters vekil bu dosyayı gösterir. Dış istek yok. -->
+<style>
+  :root { color-scheme: dark; }
+  html, body { margin: 0; height: 100%; background: radial-gradient(circle at 50% 35%, #10222a, #070a1c 75%); color: #f3f1e8; font: 400 16px/1.5 system-ui, sans-serif; }
+  main { min-height: 100%; display: flex; align-items: center; justify-content: center; padding: 16px; box-sizing: border-box; }
+  .kart { max-width: 30rem; padding: 1.6rem 1.8rem; background: #0c191d; border: 3px solid #050d10; border-radius: 14px; box-shadow: 0 0 0 2px #24414b; text-align: center; }
+  h1 { margin: 0 0 .4rem; font: 900 2rem/1.1 "Trebuchet MS", system-ui; letter-spacing: 3px; }
+  p { margin: .5rem 0; }
+  small { color: #a3b2b6; }
+  button { margin-top: 1rem; padding: .6rem 1.1rem; background: #f4cf47; color: #2a2104; border: 2px solid #050d10; border-radius: 8px; font: 800 1rem system-ui; cursor: pointer; }
+  button:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="kart" role="alert">
+    <h1>DEVRAN</h1>
+    <p><b>Devran kısa bir bakımda. Birkaç dakika sonra tekrar dene.</b></p>
+    <p><small id="sayac">30 sn sonra kendiliğinden denenecek.</small></p>
+    <button type="button" id="dene" autofocus>Tekrar dene</button>
+  </div>
+</main>
+<script>
+  let n = 30;
+  const git = () => { location.href = "/"; };
+  document.getElementById("dene").addEventListener("click", git);
+  setInterval(() => { n--; document.getElementById("sayac").textContent = `${Math.max(0, n)} sn sonra kendiliğinden denenecek.`; if (n <= 0) git(); }, 1000);
+</script>
+</body>
+</html>

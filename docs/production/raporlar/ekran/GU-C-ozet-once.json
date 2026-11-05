@@ -1,0 +1,37 @@
+{
+ "cekilen": [
+  "docs/production/raporlar/ekran/GU-C-06-lobi-takim-once.png"
+ ],
+ "cozunurluk": "1280×720 CSS, DPR 2 (2560×1440)",
+ "hesap": [
+  201,
+  200,
+  201,
+  200
+ ],
+ "lobiIkon": true,
+ "lobiHizalama": [
+  {
+   "tur": "3b",
+   "ucAlt": 308,
+   "kaideUst": 316,
+   "fark": -8,
+   "kutuYuk": 96
+  },
+  {
+   "tur": "yordamsal",
+   "ucAlt": 302,
+   "kaideUst": 298,
+   "fark": 4,
+   "kutuYuk": 78
+  },
+  {
+   "tur": "yordamsal",
+   "ucAlt": 302,
+   "kaideUst": 298,
+   "fark": 4,
+   "kutuYuk": 78
+  }
+ ],
+ "hatalar": []
+}

@@ -1,4 +1,11 @@
+> **TARİHÇE: 2026-11-04'ten beri İPTAL.** Skaledman verisi çekilmiyor; oyun verisi bizim `veri/*.json` dosyalarımızdır ve
+> çalışma anında dışarıdan hiçbir şey alınmaz. **Yerine:** [veri-modeli.md](veri-modeli.md) (veri şemaları, SQLite),
+> [mimari.md](mimari.md) § 4 (güncel paylaşılan-sim lint kapısı ve determinizm), [ADR-004](adr/ADR-004-determinizm.md),
+> [ADR-006](adr/ADR-006-devran-donusumu.md). Aşağıdaki gövde değiştirilmeden tarihçe olarak tutulur; otorite değildir.
+
 # Veri çekimi ve paylaşılan-kod kapısı
+
+> **TARİHÇE / İPTAL (D8, B-37):** Bu belge iptal edilen ilk fikrin (hayran kartlarıyla arena, 2026-11-01) kaydıdır; içerik değiştirilmeden tarihçe olarak tutulur. Proje **Devran**'a (özgün dönen topaç dövüşü, kâr amaçsız) döndü; marka, kart, sprite ve dış site bağımlılığı yoktur. Güncel belgeler: `docs/production/devran-kod-brief.md`, `docs/production/raporlar/D1.md … D8.md`.
 
 `[@vault · Backend Engineer]` · 2026-11-01 · Durum: F0 aracı; sunucudaki saatlik senkron (SQLite) bunu temel alır.
 

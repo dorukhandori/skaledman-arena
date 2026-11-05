@@ -1,7 +1,11 @@
 import { AYAR } from "../kurallar/ayar.ts";
-import { YUVA_SAYISI } from "../kurallar/hamleler.ts";
 
-/** Bir adımlık oyuncu girdisi (K-7). Ağda yalnız bu gider; sunucu `girdiTemizle` ile kırpar. */
+const YUVA_SAYISI = AYAR.yuvaSayisi;
+
+/**
+ * Bir adımlık oyuncu girdisi (K-7, 01 § 1.2: alanlar aynı, anlamlar yeni). Ağda yalnız bu gider; sunucu `girdiTemizle`
+ * ile kırpar. Fare (`nisan*`) yalnız yetenek yönüdür, sürüşü etkilemez.
+ */
 export interface Girdi {
   /** −1..1; uzunluk 1'e kırpılır */
   yonX: number;
@@ -9,18 +13,19 @@ export interface Girdi {
   /** nişan noktası (dünya) */
   nisanX: number;
   nisanZ: number;
-  /** 0..3 */
+  /** 0..3: Yetenek / Özel Yetenek / Ulti / Parça Tekniği */
   secilenYuva: number;
-  /** bu adımda atış bırakıldı */
+  /** bu adımda yetenek bırakıldı (D3) */
   atesle: boolean;
+  /** Shift: dash */
   dash: boolean;
-  /** Space: bu adımda zıpla */
+  /** Space: Sekme */
   zipla: boolean;
-  /** Z basılı: dinlen */
+  /** Z basılı: Sıkı Dönüş */
   dinlen: boolean;
-  /** Q/E/Tab+1-3: geçilecek takım üyesi; −1 = yok */
+  /** Tab: geri çek / takım değişimi hedefi (D2); −1 = yok */
   degistir: number;
-  /** true: yeni üye nişan noktasına düşer (Tab basılı); false: olduğu yere */
+  /** yeni topacın nişan noktasına düşmesi (D2) */
   dusus: boolean;
 }
 
@@ -37,25 +42,25 @@ function sayi(v: number, enAz: number, enFazla: number): number {
 export function girdiTemizle(g: Girdi): Girdi {
   let yonX = sayi(g.yonX, -1, 1);
   let yonZ = sayi(g.yonZ, -1, 1);
-  const u = Math.hypot(yonX, yonZ);
+  const u = Math.sqrt(yonX * yonX + yonZ * yonZ);
   if (u > 1) { yonX /= u; yonZ /= u; }
-  const tas = AYAR.nisanTasma;
+  const sinir = AYAR.arenaYaricap + AYAR.nisanTasma; // merkez orijinli çanak
   return {
     yonX,
     yonZ,
-    nisanX: sayi(g.nisanX, -AYAR.saha.yariGenislik - tas, AYAR.saha.yariGenislik + tas),
-    nisanZ: sayi(g.nisanZ, -tas, AYAR.saha.derinlik + tas),
+    nisanX: sayi(g.nisanX, -sinir, sinir),
+    nisanZ: sayi(g.nisanZ, -sinir, sinir),
     secilenYuva: Math.floor(sayi(g.secilenYuva, 0, YUVA_SAYISI - 1)),
     atesle: g.atesle === true,
     dash: g.dash === true,
     zipla: g.zipla === true,
     dinlen: g.dinlen === true,
-    degistir: Number.isInteger(g.degistir) && g.degistir >= 0 && g.degistir < AYAR.takim.boyut ? g.degistir : -1,
+    degistir: Number.isInteger(g.degistir) && g.degistir >= 0 && g.degistir < AYAR.takimBoyutu ? g.degistir : -1,
     dusus: g.dusus === true,
   };
 }
 
-// ---- ağ biçimi yardımcıları (ADR-004, docs/tech/netcode.md § 2) ----------------------------------
+// ---- ağ biçimi yardımcıları (PROTOKOL_SURUMU 2) ----------------------------------
 // Ağ şeması (src/ag/GirdiSemasi.ts) düğmeleri tek bayt maskeyle taşır. Burada yalnız saf dönüşümler var:
 // paylaşılan kod Colyseus'a bağımlı olmaz (eslint kapısı).
 

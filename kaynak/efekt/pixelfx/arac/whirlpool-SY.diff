@@ -1,0 +1,4 @@
+19c19
+< const D = meta.duration, R = 60, SY = 0.6, K = 2.4, EYE = 0.16;
+---
+> const D = meta.duration, R = 60, SY = 0.875, K = 2.4, EYE = 0.16;

@@ -1,0 +1,27 @@
+{
+ "surum": 2,
+ "parcaId": "kaya-maden",
+ "tur": "cekirdek",
+ "kare": [
+  76,
+  76
+ ],
+ "capa": [
+  38,
+  60
+ ],
+ "birim": 1.0119409026512851,
+ "yukselti": 45,
+ "simetri": 5,
+ "periyotKare": 8,
+ "diskKare": 3,
+ "yonler": [
+  "s"
+ ],
+ "boyalar": null,
+ "ustZ": 30,
+ "disYaricap": 9.5,
+ "kaynak": "gemini-3.1-flash-image + tripo v3.1-20260211 + blender 5.2 (simetrik dilim) + topac-uret pişirici",
+ "tarih": "2026-11-05",
+ "bayt": 4360
+}

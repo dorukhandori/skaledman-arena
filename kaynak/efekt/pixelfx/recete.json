@@ -1,0 +1,397 @@
+{
+ "kaynak": "https://github.com/patch-gg/pixelfx",
+ "commit": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+ "commitTarihi": "2026-10-31T01:41:17-07:00",
+ "surum": "0.3.0",
+ "lisans": "MIT",
+ "kapsamDisi": [
+  "gallery/fonts (Patch Pixel, MIT dışı)",
+  "yazı içeren efektler: explosions/cartoon-pow, ui/level-up, ui/countdown, crit-number, combo-counter",
+  "actor/dummy gövdeleri (--no-actor)"
+ ],
+ "efektler": [
+  {
+   "id": "impacts/hit-spark",
+   "ad": "efekt.kivilcim",
+   "fps": 12,
+   "palet": null,
+   "paletAdi": "notr",
+   "actor": false,
+   "bg": "none",
+   "yazi": false,
+   "duzlem": "hava",
+   "hibritNot": "Işınsal kıvılcım; temas noktasına konur, eğik sahnede yön sorunu yok. Uzun ışın aim=normal ekran açısı (nx, nz·k_y).",
+   "pisirilenKare": 6,
+   "atlas": "efekt"
+  },
+  {
+   "id": "impacts/crit-hit",
+   "ad": "efekt.kritik",
+   "fps": 12,
+   "palet": null,
+   "paletAdi": "notr",
+   "actor": false,
+   "bg": "none",
+   "yazi": false,
+   "duzlem": "hava",
+   "hibritNot": "Yıldız patlaması: referans 07 hedefiyle en yakın öğe. Kırılan halka kısmı yandan basık; kabul edilir (hava).",
+   "pisirilenKare": 10,
+   "atlas": "efekt"
+  },
+  {
+   "id": "impacts/ricochet",
+   "ad": "efekt.sekme-iz",
+   "fps": 12,
+   "palet": null,
+   "paletAdi": "notr",
+   "actor": false,
+   "bg": "none",
+   "yazi": false,
+   "duzlem": "zemin",
+   "hibritNot": "pixelfx zemini çok basık (yandan kamera); zemin kayma izi kodla elips ölçekli çizilir, sheet yalnız kıvılcım kısmı için.",
+   "pisirilenKare": 13,
+   "atlas": "efekt"
+  },
+  {
+   "id": "impacts/heavy-landing",
+   "ad": "efekt.toz-halka",
+   "fps": 12,
+   "palet": [
+    "#1E1A14",
+    "#3A3024",
+    "#5E5040",
+    "#8A7458",
+    "#A8987C",
+    "#C2AC86",
+    "#EDE0C8"
+   ],
+   "paletAdi": "toz",
+   "actor": false,
+   "bg": "none",
+   "yazi": false,
+   "duzlem": "zemin",
+   "hibritNot": "Toz halkaları pixelfx'te ry/rx≈0,17: bizim çanak k_y≈0,85-0,90 ile çatışır. Halka kodla (elips, k_y); sheet'ten yalnız yükselen toz kümeleri.",
+   "pisirilenKare": 18,
+   "atlas": "efekt",
+   "secenek": {
+    "stone": "#6E604C"
+   }
+  },
+  {
+   "id": "impacts/ground-slam",
+   "ad": "efekt.zemin-sok",
+   "fps": 12,
+   "palet": [
+    "#3A3024",
+    "#8A7458",
+    "#C2AC86",
+    "#EDE0C8"
+   ],
+   "paletAdi": "kaya",
+   "actor": false,
+   "bg": "none",
+   "yazi": false,
+   "duzlem": "zemin",
+   "hibritNot": "Zemin flaşı ve hilal şok dalgaları yandan basık (ry/rx≈0,15): elips varyant gerekir. Taşlar/toz bulutu hava katmanı olarak kullanılabilir.",
+   "pisirilenKare": 36,
+   "atlas": "efekt",
+   "secenek": {
+    "stone": "#6E604C"
+   }
+  },
+  {
+   "id": "spawn/poof",
+   "ad": "efekt.toz-bulut",
+   "fps": 12,
+   "palet": [
+    "#3A3024",
+    "#6E604C",
+    "#A8987C",
+    "#C2AC86",
+    "#EDE0C8",
+    "#FFFFFF"
+   ],
+   "paletAdi": "toz",
+   "actor": false,
+   "bg": "none",
+   "yazi": false,
+   "duzlem": "hava",
+   "hibritNot": "Toz bulutu; düzlemden bağımsız.",
+   "pisirilenKare": 18,
+   "atlas": "efekt",
+   "secenek": {
+    "stars": [
+     "#C2AC86",
+     "#EDE0C8",
+     "#FFFFFF"
+    ]
+   }
+  },
+  {
+   "id": "lightning/zap-hit",
+   "ad": "efekt.simsek-carpma",
+   "fps": 12,
+   "palet": [
+    "#6B5A10",
+    "#F7D83A",
+    "#FFF3A0",
+    "#FFFFFF"
+   ],
+   "paletAdi": "simsek",
+   "actor": false,
+   "bg": "none",
+   "yazi": false,
+   "duzlem": "hava",
+   "hibritNot": "Hava; düzlemden bağımsız.",
+   "pisirilenKare": 11,
+   "atlas": "efekt-simsek"
+  },
+  {
+   "id": "lightning/charge-up",
+   "ad": "efekt.telegraf-sarj",
+   "fps": 12,
+   "palet": [
+    "#6B5A10",
+    "#F7D83A",
+    "#FFF3A0",
+    "#FFFFFF"
+   ],
+   "paletAdi": "simsek",
+   "actor": false,
+   "bg": "none",
+   "yazi": false,
+   "duzlem": "hava+zemin",
+   "hibritNot": "Topaç üstü şarj çekirdeği hava (kullan); düşen halkalar zemin değil. Ulti telegraf halkası (dolan kırmızı halka) KODLA elips k_y ile çizilir.",
+   "pisirilenKare": 31,
+   "atlas": "efekt-simsek"
+  },
+  {
+   "id": "ice/ice-shatter",
+   "ad": "efekt.don-kirilma",
+   "fps": 12,
+   "palet": [
+    "#2E6A80",
+    "#9FE3F5",
+    "#DDF7FF",
+    "#FFFFFF"
+   ],
+   "paletAdi": "don",
+   "actor": false,
+   "bg": "none",
+   "yazi": false,
+   "duzlem": "hava",
+   "hibritNot": "Kristal parçaları; hava.",
+   "pisirilenKare": 33,
+   "atlas": "efekt-don"
+  },
+  {
+   "id": "ice/frost-nova",
+   "ad": "efekt.ulti-don",
+   "fps": 12,
+   "palet": [
+    "#2E6A80",
+    "#9FE3F5",
+    "#DDF7FF",
+    "#FFFFFF"
+   ],
+   "paletAdi": "don",
+   "actor": false,
+   "bg": "none",
+   "yazi": false,
+   "duzlem": "zemin",
+   "hibritNot": "Nova halkası zemin düzleminde basık: elips varyant (k_y) ya da halka kodla + sheet'ten kristal sivrileri.",
+   "pisirilenKare": 41,
+   "atlas": "efekt-don"
+  },
+  {
+   "id": "fire/fire-ring",
+   "ad": "efekt.ulti-kor",
+   "fps": 12,
+   "palet": [
+    "#5A1A10",
+    "#E8452C",
+    "#FF9A5C",
+    "#FFE0B0",
+    "#FFFFFF"
+   ],
+   "paletAdi": "kor",
+   "actor": false,
+   "bg": "none",
+   "yazi": false,
+   "duzlem": "zemin",
+   "hibritNot": "Ateş halkası zemine yapışık (ry 4 px): elips varyant ya da halka kodla + sheet'ten alev dilleri.",
+   "pisirilenKare": 45,
+   "atlas": "efekt-kor"
+  },
+  {
+   "id": "nature/earth-spike",
+   "ad": "efekt.ulti-kaya",
+   "fps": 12,
+   "palet": [
+    "#3A3024",
+    "#8A7458",
+    "#C2AC86",
+    "#EDE0C8"
+   ],
+   "paletAdi": "kaya",
+   "actor": false,
+   "bg": "none",
+   "yazi": false,
+   "duzlem": "hava+zemin",
+   "hibritNot": "Kaya sivrileri yukarı (hava, eğik sahnede iyi okunur); zemin çatlağı kodla elips.",
+   "pisirilenKare": 39,
+   "atlas": "efekt-kaya"
+  },
+  {
+   "id": "nature/tornado",
+   "ad": "efekt.ulti-kasirga",
+   "fps": 12,
+   "palet": [
+    "#1F5A47",
+    "#5BD1A5",
+    "#A8F0D4",
+    "#FFFFFF"
+   ],
+   "paletAdi": "kasirga",
+   "actor": false,
+   "bg": "none",
+   "yazi": false,
+   "duzlem": "hava",
+   "hibritNot": "Dikey kasırga: 15-20° eğik topaçlarla uyumlu.",
+   "pisirilenKare": 24,
+   "atlas": "efekt-kasirga"
+  },
+  {
+   "id": "explosions/implosion",
+   "ad": "efekt.ulti-girdap",
+   "fps": 12,
+   "palet": [
+    "#0F2560",
+    "#2A5BD7",
+    "#7FA8FF",
+    "#D8E6FF",
+    "#FFFFFF"
+   ],
+   "paletAdi": "girdap",
+   "actor": false,
+   "bg": "none",
+   "yazi": false,
+   "duzlem": "hava",
+   "hibritNot": "İçe çöken küre; hava.",
+   "pisirilenKare": 19,
+   "atlas": "efekt-girdap"
+  },
+  {
+   "id": "water/whirlpool",
+   "ad": "efekt.girdap-dekal",
+   "fps": 12,
+   "palet": [
+    "#0F2560",
+    "#2A5BD7",
+    "#7FA8FF",
+    "#D8E6FF",
+    "#FFFFFF"
+   ],
+   "paletAdi": "girdap",
+   "actor": false,
+   "bg": "none",
+   "yazi": false,
+   "duzlem": "zemin",
+   "hibritNot": "Üstten girdap ama SY=0,6 sabit (kodda const). Bizim k_y≈0,85-0,90 için ya kaynakta SY değiştirilerek (yerel fork, MIT) pişirilir ya da dikey ×1,5 tam sayı olmayan ölçek YASAK → fork tercih.",
+   "pisirilenKare": 36,
+   "atlas": "efekt-girdap"
+  },
+  {
+   "id": "pickups/collect-burst",
+   "ad": "efekt.enerji-doldu",
+   "fps": 12,
+   "palet": [
+    "#1E1A14",
+    "#3A3024",
+    "#5E5040",
+    "#8A7458",
+    "#C2AC86",
+    "#EDE0C8",
+    "#F7F1E4",
+    "#FFFFFF"
+   ],
+   "paletAdi": "notr-acik",
+   "actor": false,
+   "bg": "none",
+   "yazi": false,
+   "duzlem": "hava",
+   "hibritNot": "Topaç üstünde; hava. Nötr açık rampa (2026-11-04): oyunda element rengiyle tint edilir.",
+   "pisirilenKare": 13,
+   "atlas": "efekt"
+  },
+  {
+   "id": "aim/realistic-blast",
+   "ad": "efekt.kor-bulut",
+   "fps": 12,
+   "palet": [
+    "#5A1A10",
+    "#E8452C",
+    "#FF9A5C",
+    "#FFE0B0",
+    "#FFFFFF"
+   ],
+   "paletAdi": "kor",
+   "actor": false,
+   "bg": "none",
+   "yazi": false,
+   "duzlem": "hava",
+   "hibritNot": "Aim Studios Realistic_Blast_default (CC0), 64×64 × 11 kare; parlaklık → Kor rampası. Kor ağır çarpışma / Kor Parçalanma bulutu.",
+   "harici": {
+    "dosya": "aim-explosions/Realistic_Blast_default_64x64.png",
+    "kare": [
+     64,
+     64
+    ],
+    "adet": 11,
+    "lisans": "CC0-1.0",
+    "renkHaritasi": {
+     "2d2c2c": "#3A3430"
+    }
+   },
+   "atlas": "efekt-kor"
+  },
+  {
+   "id": "aim/foam-bubble",
+   "ad": "efekt.don-parca",
+   "fps": 12,
+   "palet": [
+    "#2E6A80",
+    "#9FE3F5",
+    "#DDF7FF",
+    "#FFFFFF"
+   ],
+   "paletAdi": "don",
+   "actor": false,
+   "bg": "none",
+   "yazi": false,
+   "duzlem": "hava",
+   "hibritNot": "Aim Studios Foam_bubble_explosion (CC0), 64×64 × 10 kare; parlaklık → Don rampası. Don çarpışma / Don Parçalanma kırık parçaları.",
+   "harici": {
+    "dosya": "aim-explosions/Foam_bubble_explosion_64x64.png",
+    "kare": [
+     64,
+     64
+    ],
+    "adet": 10,
+    "lisans": "CC0-1.0",
+    "renkHaritasi": {
+     "00ffff": "#2E6A80",
+     "ffffff": "#DDF7FF"
+    }
+   },
+   "atlas": "efekt-don"
+  }
+ ],
+ "kamera": {
+  "karar": "hibrit (fizik tam üstten, sunum eğik elips çanak, topaçlar ~15-20° eğik)",
+  "k_y": "≈0,85-0,90 (tasarim-dili K-1 C; kesin değer Sahne'de belirlenecek)",
+  "kural": "duzlem=hava olan sheet'ler doğrudan; duzlem=zemin olanlarda halka/dekal kodla elips (rx, rx·k_y) çizilir ya da sheet k_y'ye göre yeniden parametrelenerek (yerel fork) pişirilir. Pişmiş sheet asla tam sayı olmayan ölçekle basıklaştırılmaz (pixel ızgarası).",
+  "pixelfxKamerasi": "yan görünüş (platform oyunu): zemin elipsleri ry/rx ≈ 0,15-0,6; bizim çanaktan çok daha basık"
+ },
+ "not": "İlk deneme kareSiniri ile fps 3-4'e düştü (çok kesik); 12 fps'e dönüldü, bütçe atlas bölme + kare kırpma ile tutuldu."
+}

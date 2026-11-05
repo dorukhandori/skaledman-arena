@@ -1,0 +1,88 @@
+{
+ "tarayici": "153.0.8010.12",
+ "cekilen": [
+  "docs/production/raporlar/ekran/FIZIK-1-girdisiz-1-baslangic.png",
+  "docs/production/raporlar/ekran/FIZIK-1-girdisiz-2-carpisma.png",
+  "docs/production/raporlar/ekran/FIZIK-1-girdisiz-3-sekme.png",
+  "docs/production/raporlar/ekran/FIZIK-1-botbot-1-baslangic.png",
+  "docs/production/raporlar/ekran/FIZIK-1-botbot-2-carpisma.png",
+  "docs/production/raporlar/ekran/FIZIK-1-botbot-3-sekme.png"
+ ],
+ "girdisiz": {
+  "turBasiSaatSn": 0.15,
+  "carpismaSayisi": 2,
+  "ilkCarpismaSn": 3.9,
+  "carpismalar": [
+   {
+    "saatSn": 3.9,
+    "vn": 69.8,
+    "mesafe": 60,
+    "kare": 0
+   },
+   {
+    "saatSn": 7.18,
+    "vn": 42.3,
+    "mesafe": 70.1,
+    "kare": 8
+   }
+  ],
+  "temasMesafesi": 60
+ },
+ "botBot": {
+  "turBasiSaatSn": 0.13,
+  "carpismaSayisi": 8,
+  "ilkCarpismaSn": 1.58,
+  "carpismalar": [
+   {
+    "saatSn": 1.58,
+    "vn": 363.1,
+    "mesafe": 60,
+    "kare": 0
+   },
+   {
+    "saatSn": 8.9,
+    "vn": 291.4,
+    "mesafe": 101.7,
+    "kare": 12
+   },
+   {
+    "saatSn": 9.32,
+    "vn": 335.5,
+    "mesafe": 60,
+    "kare": 0
+   },
+   {
+    "saatSn": 15.4,
+    "vn": 93.5,
+    "mesafe": 60,
+    "kare": 0
+   },
+   {
+    "saatSn": 18.37,
+    "vn": 89.9,
+    "mesafe": 60,
+    "kare": 0
+   },
+   {
+    "saatSn": 20.35,
+    "vn": 364,
+    "mesafe": 60,
+    "kare": 0
+   },
+   {
+    "saatSn": 21.42,
+    "vn": 149.6,
+    "mesafe": 60,
+    "kare": 0
+   },
+   {
+    "saatSn": 28.4,
+    "vn": 481,
+    "mesafe": 60,
+    "kare": 0
+   }
+  ],
+  "temasMesafesi": 60
+ },
+ "hatalar": []
+}

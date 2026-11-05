@@ -1,0 +1,1 @@
+{"surum":1,"senaryo":"bos-girdi","aciklama":"İki başlangıç seti, hiç girdi yok: yalnız Uç deseni + eğim + erime, 600 adım.","tohum":11,"profiller":[{"cekirdek":"kor-goktasi","govde":"ok-govde","disk":"hafif-disk","uc":"duz-uc"},{"cekirdek":"kaya-maden","govde":"kalkan-govde","disk":"agir-disk","uc":"igne-uc"}],"adim":600,"baslangic":null,"girdiler":[[600,{},{}]]}

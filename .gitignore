@@ -5,12 +5,11 @@ dist/
 !.env.example
 *.sqlite
 *.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+.veri/
 .DS_Store
-veri/spritecollab-tracker.json
 .cache/
-public/fusion/*/
-!public/fusion/.gitkeep
-public/fusion/liste.json
 
 # Claude Code / ajan dosyaları yerelde kalır, depoya girmez
 .claude/
@@ -19,3 +18,9 @@ AGENTS.md
 
 # Araştırma notları (ekran görüntüleri, üçüncü taraf analizleri) yerelde kalır
 docs/research/
+
+# Üretim ham dosyaları (Gemini/Tripo/Blender), depo dışı
+art-source/
+
+# Python bayt kodu (Blender betikleri içe aktarırken)
+__pycache__/

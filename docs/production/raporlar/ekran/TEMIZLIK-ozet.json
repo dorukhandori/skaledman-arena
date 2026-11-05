@@ -1,0 +1,111 @@
+{
+ "cekilen": [
+  "docs/production/raporlar/ekran/TEMIZLIK-atolye-birlesik.png",
+  "docs/production/raporlar/ekran/TEMIZLIK-atolye-izgara-az.png",
+  "docs/production/raporlar/ekran/TEMIZLIK-atolye-markette-ac.png",
+  "docs/production/raporlar/ekran/TEMIZLIK-atolye-patlatilmis.png",
+  "docs/production/raporlar/ekran/TEMIZLIK-atolye-webgl-boyut.png",
+  "docs/production/raporlar/ekran/TEMIZLIK-atolye-yedek.png",
+  "docs/production/raporlar/ekran/TEMIZLIK-basarim-ikonlar.png",
+  "docs/production/raporlar/ekran/TEMIZLIK-kasirga-ulti.png",
+  "docs/production/raporlar/ekran/TEMIZLIK-lobi-takim-ikon.png",
+  "docs/production/raporlar/ekran/TEMIZLIK-market-ikonlar.png",
+  "docs/production/raporlar/ekran/TEMIZLIK-market-vurgu.png",
+  "docs/production/raporlar/ekran/TEMIZLIK-pergel-ringout.png"
+ ],
+ "hesap-Temiz 6lpxb": [
+  201,
+  200,
+  201,
+  200
+ ],
+ "marketIkon": true,
+ "marketIkonSayi": 16,
+ "basarimIkon": true,
+ "lobiIkon": true,
+ "cizer": "webgl",
+ "marketteAcDugme": 1,
+ "marketVurgu": {
+  "urun": "kalkan-govde",
+  "odak": true,
+  "url": "?ekran=market&vurgu=kalkan-govde"
+ },
+ "boyutWebgl": [
+  356,
+  468
+ ],
+ "boyutYedek": [
+  356,
+  468,
+  "yedek"
+ ],
+ "hatalar": [],
+ "ringout": {
+  "mac1": {
+   "neden": "puan",
+   "kazandi": false,
+   "bitis": "durma",
+   "ringOutKayip": false,
+   "macSayisi": 1
+  },
+  "mac2": {
+   "neden": "puan",
+   "kazandi": false,
+   "bitis": "ringOut",
+   "ringOutKayip": true,
+   "macSayisi": 2
+  },
+  "ipucu": "Aslında kenara yakın dönmek Enerji doldurur ama riskli. Ağır rakibe karşı Space ile sekme kurtarır.",
+  "ekran": "TEMIZLIK-pergel-ringout.png",
+  "hatalar": 0
+ },
+ "ultiCevrimici": {
+  "ultiXp": {
+   "ok": true,
+   "seviye": 3,
+   "tecrube": 850
+  },
+  "ultiMac1": {
+   "enCokEnerji": 216.7972869873047
+  },
+  "ultiMac2": {
+   "enCokEnerji": 235.9868621826172
+  },
+  "ultiMac3": {
+   "enCokEnerji": 61.13604736328125
+  },
+  "ultiMac4": {
+   "enCokEnerji": 158.3609619140625
+  },
+  "not": "4 gerçek sunucu botu maçı (?oto=dolas): paylaşılan bot Enerjiyi 300e biriktirmedi (en çok 236); Ulti anı yok"
+ },
+ "ultiAntrenman": {
+  "ultiXp": {
+   "ok": true,
+   "seviye": 3,
+   "tecrube": 850
+  },
+  "antrenmanAdim": 3,
+  "antrenmanProfil": {
+   "el": "kasirga",
+   "cekirdek": "kasirga-yapay",
+   "yuva": [
+    14,
+    6,
+    18
+   ],
+   "seviye": [
+    3,
+    3
+   ],
+   "enerji": 300
+  },
+  "ultiAn": {
+   "yol": "antrenman",
+   "ata": 1,
+   "ulti": 0,
+   "en": 300
+  },
+  "hatalar": []
+ }
+}

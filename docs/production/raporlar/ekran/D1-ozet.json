@@ -1,0 +1,305 @@
+{
+  "adres": "http://localhost:5173/?ekran=topac-lab&debug&tohum=7&bot=saldirgan",
+  "tarayici": "153.0.8010.12",
+  "baslangic": {
+    "tick": 13,
+    "topaclar": [
+      {
+        "x": -124.7,
+        "z": 0.3,
+        "stamina": 383.8,
+        "tik": 0,
+        "durum": 0
+      },
+      {
+        "x": 123.9,
+        "z": 0,
+        "stamina": 398.9,
+        "tik": 0,
+        "durum": 0
+      }
+    ],
+    "mac": {
+      "faz": "tur",
+      "puan": [
+        0,
+        0
+      ],
+      "sonuc": null
+    },
+    "parcacik": 0,
+    "kademeler": [
+      "yuksek",
+      "yuksek",
+      "yuksek",
+      "orta",
+      "dusuk"
+    ],
+    "fps": 0
+  },
+  "wasdCarpisma": {
+    "carpti": true,
+    "sayac": {
+      "yok": 1,
+      "hafif": 1,
+      "agir": 0,
+      "kritik": 0,
+      "duvar": 0,
+      "ringOut": 0,
+      "parcalanma": 0,
+      "durma": 0,
+      "dash": 1,
+      "sekme": 0,
+      "zitElement": 0,
+      "ekranFlas": 0,
+      "ekranFlasReddi": 0
+    },
+    "durum": {
+      "tick": 193,
+      "topaclar": [
+        {
+          "x": 40.8,
+          "z": -152.1,
+          "stamina": 346.5,
+          "tik": 0.37,
+          "durum": 0
+        },
+        {
+          "x": -18.1,
+          "z": 49.2,
+          "stamina": 350.7,
+          "tik": 0.34,
+          "durum": 0
+        }
+      ],
+      "mac": {
+        "faz": "tur",
+        "puan": [
+          0,
+          0
+        ],
+        "sonuc": null
+      },
+      "parcacik": 0,
+      "kademeler": [
+        "yuksek",
+        "yuksek",
+        "yuksek",
+        "orta",
+        "dusuk"
+      ],
+      "fps": 10
+    }
+  },
+  "dashCarpisma": {
+    "carpti": true,
+    "sayac": {
+      "yok": 1,
+      "hafif": 1,
+      "agir": 0,
+      "kritik": 1,
+      "duvar": 0,
+      "ringOut": 0,
+      "parcalanma": 0,
+      "durma": 0,
+      "dash": 3,
+      "sekme": 0,
+      "zitElement": 0,
+      "ekranFlas": 1,
+      "ekranFlasReddi": 0
+    }
+  },
+  "serbest": {
+    "sayac": {
+      "yok": 1,
+      "hafif": 3,
+      "agir": 0,
+      "kritik": 1,
+      "duvar": 1,
+      "ringOut": 1,
+      "parcalanma": 0,
+      "durma": 0,
+      "dash": 4,
+      "sekme": 0,
+      "zitElement": 0,
+      "ekranFlas": 2,
+      "ekranFlasReddi": 0
+    },
+    "durum": {
+      "tick": 240,
+      "topaclar": [
+        {
+          "x": 46.6,
+          "z": -206.3,
+          "stamina": 305.8,
+          "tik": 1.28,
+          "durum": 1
+        },
+        {
+          "x": 86.3,
+          "z": -65.3,
+          "stamina": 329.6,
+          "tik": 1.09,
+          "durum": 0
+        }
+      ],
+      "mac": {
+        "faz": "turBitti",
+        "puan": [
+          0,
+          2
+        ],
+        "sonuc": {
+          "tur": "ringOut",
+          "kazanan": 1,
+          "kaybeden": 0,
+          "puan": 2,
+          "tick": 127
+        }
+      },
+      "parcacik": 0,
+      "kademeler": [
+        "yuksek",
+        "yuksek",
+        "yuksek",
+        "orta",
+        "dusuk"
+      ],
+      "fps": 10
+    }
+  },
+  "kademe": {
+    "orta": [
+      "orta",
+      "yuksek",
+      "yuksek",
+      "orta",
+      "dusuk"
+    ],
+    "dusuk": [
+      "dusuk",
+      "yuksek",
+      "yuksek",
+      "orta",
+      "dusuk"
+    ]
+  },
+  "ringOut": {
+    "oldu": true,
+    "mac": {
+      "faz": "turBitti",
+      "puan": [
+        2,
+        0
+      ],
+      "sonuc": {
+        "tur": "ringOut",
+        "kazanan": 0,
+        "kaybeden": 1,
+        "puan": 2,
+        "tick": 81
+      }
+    }
+  },
+  "parcalanma": {
+    "oldu": true,
+    "mac": {
+      "faz": "turBitti",
+      "puan": [
+        2,
+        0
+      ],
+      "sonuc": {
+        "tur": "parcalanma",
+        "kazanan": 0,
+        "kaybeden": 1,
+        "puan": 2,
+        "tick": 69
+      }
+    }
+  },
+  "durma": {
+    "oldu": true,
+    "mac": {
+      "faz": "turBitti",
+      "puan": [
+        1,
+        0
+      ],
+      "sonuc": {
+        "tur": "durma",
+        "kazanan": 0,
+        "kaybeden": 1,
+        "puan": 1,
+        "tick": 82
+      }
+    }
+  },
+  "bot30sn": {
+    "sayac": {
+      "yok": 1,
+      "hafif": 7,
+      "agir": 1,
+      "kritik": 3,
+      "duvar": 8,
+      "ringOut": 2,
+      "parcalanma": 1,
+      "durma": 2,
+      "dash": 10,
+      "sekme": 0,
+      "zitElement": 0,
+      "ekranFlas": 6,
+      "ekranFlasReddi": 0
+    },
+    "durum": {
+      "tick": 906,
+      "topaclar": [
+        {
+          "x": -67,
+          "z": -121.7,
+          "stamina": 0,
+          "tik": 4.46,
+          "durum": 3
+        },
+        {
+          "x": 70.7,
+          "z": -2,
+          "stamina": 121,
+          "tik": 4.98,
+          "durum": 0
+        }
+      ],
+      "mac": {
+        "faz": "turBitti",
+        "puan": [
+          0,
+          1
+        ],
+        "sonuc": {
+          "tur": "durma",
+          "kazanan": 1,
+          "kaybeden": 0,
+          "puan": 1,
+          "tick": 733
+        }
+      },
+      "parcacik": 0,
+      "kademeler": [
+        "dusuk",
+        "orta",
+        "yuksek",
+        "orta",
+        "dusuk"
+      ],
+      "fps": 10
+    },
+    "enAzFps": 10
+  },
+  "konsolHatalari": [],
+  "konsolUyarilari": [
+    "[.WebGL-0x214c00171600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+    "[.WebGL-0x214c00171600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+    "[.WebGL-0x214c00171600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+    "[.WebGL-0x214c00171600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  ]
+}

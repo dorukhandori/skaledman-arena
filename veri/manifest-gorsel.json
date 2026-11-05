@@ -1,0 +1,864 @@
+{
+ "surum": 1,
+ "aciklama": "Devran görsel varlıkları: kaynak, araç, tarih, lisans, atıf (topac-pixel-plani § 7.4, efekt-kaynaklari § 5.4).",
+ "atlas": {
+  "not": "TEMIZLIK #2 (2026-11-05): public/efekt/ araclar/sanat/efekt-paketle.ts ile kayıpsız kaynaktan (kaynak/efekt/pixelfx/atlas/, eski tek-atlas paketleri) yeniden paketlenir: yalnız oyunun çaldığı animasyonlar, 256 renk palet PNG. Açılışta yalnız efekt-cekirdek (kıvılcım, kritik); efekt ilk çarpışmada, element atlası Enerji/stamina eşiğinde ya da yetenek başlayınca (Efektler.atlasHazirla). Kaynakta kalan, oyunda çalınmayan: sekme-iz, toz-halka, zemin-sok, ulti-kor, ulti-don, girdap-dekal, telegraf-sarj.",
+  "dosyalar": {
+   "efekt-cekirdek": {
+    "boyut": [
+     512,
+     512
+    ],
+    "kare": 16,
+    "bayt": 28255,
+    "efektler": [
+     "kivilcim",
+     "kritik"
+    ]
+   },
+   "efekt": {
+    "boyut": [
+     512,
+     512
+    ],
+    "kare": 31,
+    "bayt": 31828,
+    "efektler": [
+     "toz-bulut",
+     "enerji-doldu"
+    ]
+   },
+   "efekt-kor": {
+    "boyut": [
+     256,
+     256
+    ],
+    "kare": 11,
+    "bayt": 3191,
+    "efektler": [
+     "kor-bulut"
+    ]
+   },
+   "efekt-don": {
+    "boyut": [
+     1024,
+     512
+    ],
+    "kare": 43,
+    "bayt": 46283,
+    "efektler": [
+     "don-kirilma",
+     "don-parca"
+    ]
+   },
+   "efekt-kaya": {
+    "boyut": [
+     1024,
+     1024
+    ],
+    "kare": 39,
+    "bayt": 66550,
+    "efektler": [
+     "ulti-kaya"
+    ]
+   },
+   "efekt-kasirga": {
+    "boyut": [
+     1024,
+     512
+    ],
+    "kare": 24,
+    "bayt": 95418,
+    "efektler": [
+     "ulti-kasirga"
+    ]
+   },
+   "efekt-girdap": {
+    "boyut": [
+     1024,
+     512
+    ],
+    "kare": 19,
+    "bayt": 57132,
+    "efektler": [
+     "ulti-girdap"
+    ]
+   },
+   "efekt-simsek": {
+    "boyut": [
+     512,
+     256
+    ],
+    "kare": 11,
+    "bayt": 16506,
+    "efektler": [
+     "simsek-carpma"
+    ]
+   }
+  },
+  "toplamBayt": 345163,
+  "sinir": [
+   2048,
+   2048
+  ]
+ },
+ "dosyalar": [
+  {
+   "ad": "efekt.kivilcim",
+   "dosya": "kaynak/efekt/pixelfx/atlas/efekt.png#kivilcim",
+   "olay": "Ağır çarpışma kıvılcımı (hafifte ilk 4-5 kare)",
+   "kaynak": "pixelfx impacts/hit-spark",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/impacts/hit-spark.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    136,
+    80
+   ],
+   "kaynakSureSn": 0.5,
+   "dongu": false,
+   "hamKare30fps": 16,
+   "arac": "kaynak/efekt/pixelfx/arac/bake.py → node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 [--opts palette]; pack.py (raf paketleme, 1 px boşluk)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "pişirildi; oyun yüklemiyor (entegrasyon ayrı dilim)",
+   "duzlem": "hava",
+   "hibritNot": "Işınsal kıvılcım; temas noktasına konur, eğik sahnede yön sorunu yok. Uzun ışın aim=normal ekran açısı (nx, nz·k_y).",
+   "hedefDosya": "public/efekt/efekt.png (entegrasyon dilimi)",
+   "pisirildi": {
+    "fps": 12,
+    "kare": 6,
+    "kareMs": 83,
+    "dongu": false,
+    "kirpma": "kare başına şeffaf kenar kırpma (trimmed, spriteSourceSize)",
+    "anchor": [
+     0.3235,
+     0.8
+    ]
+   }
+  },
+  {
+   "ad": "efekt.kritik",
+   "dosya": "kaynak/efekt/pixelfx/atlas/efekt.png#kritik",
+   "olay": "Kritik çarpışma yıldız patlaması",
+   "kaynak": "pixelfx impacts/crit-hit",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/impacts/crit-hit.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    216,
+    136
+   ],
+   "kaynakSureSn": 0.9,
+   "dongu": false,
+   "hamKare30fps": 28,
+   "arac": "kaynak/efekt/pixelfx/arac/bake.py → node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 [--opts palette]; pack.py (raf paketleme, 1 px boşluk)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "pişirildi; oyun yüklemiyor (entegrasyon ayrı dilim)",
+   "duzlem": "hava",
+   "hibritNot": "Yıldız patlaması: referans 07 hedefiyle en yakın öğe. Kırılan halka kısmı yandan basık; kabul edilir (hava).",
+   "hedefDosya": "public/efekt/efekt.png (entegrasyon dilimi)",
+   "pisirildi": {
+    "fps": 12,
+    "kare": 10,
+    "kareMs": 83,
+    "dongu": false,
+    "kirpma": "kare başına şeffaf kenar kırpma (trimmed, spriteSourceSize)",
+    "anchor": [
+     0.3889,
+     0.7794
+    ]
+   }
+  },
+  {
+   "ad": "efekt.sekme-iz",
+   "dosya": "kaynak/efekt/pixelfx/atlas/efekt.png#sekme-iz",
+   "olay": "Duvar/kenar kayma izi (yedek)",
+   "kaynak": "pixelfx impacts/ricochet",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/impacts/ricochet.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    232,
+    84
+   ],
+   "kaynakSureSn": 1.1,
+   "dongu": false,
+   "hamKare30fps": 34,
+   "arac": "kaynak/efekt/pixelfx/arac/bake.py → node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 [--opts palette]; pack.py (raf paketleme, 1 px boşluk)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "pişirildi; oyun yüklemiyor (entegrasyon ayrı dilim)",
+   "duzlem": "zemin",
+   "hibritNot": "pixelfx zemini çok basık (yandan kamera); zemin kayma izi kodla elips ölçekli çizilir, sheet yalnız kıvılcım kısmı için.",
+   "hedefDosya": "public/efekt/efekt.png (entegrasyon dilimi)",
+   "pisirildi": {
+    "fps": 12,
+    "kare": 13,
+    "kareMs": 83,
+    "dongu": false,
+    "kirpma": "kare başına şeffaf kenar kırpma (trimmed, spriteSourceSize)",
+    "anchor": [
+     0.2759,
+     0.7143
+    ]
+   }
+  },
+  {
+   "ad": "efekt.toz-halka",
+   "dosya": "kaynak/efekt/pixelfx/atlas/efekt.png#toz-halka",
+   "olay": "Durma toz halkası, Ring Out kenar tozu",
+   "kaynak": "pixelfx impacts/heavy-landing",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/impacts/heavy-landing.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    176,
+    80
+   ],
+   "kaynakSureSn": 1.6,
+   "dongu": false,
+   "hamKare30fps": 49,
+   "arac": "kaynak/efekt/pixelfx/arac/bake.py → node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 [--opts palette]; pack.py (raf paketleme, 1 px boşluk)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "pişirildi; oyun yüklemiyor (entegrasyon ayrı dilim)",
+   "duzlem": "zemin",
+   "hibritNot": "Toz halkaları pixelfx'te ry/rx≈0,17: bizim çanak k_y≈0,85-0,90 ile çatışır. Halka kodla (elips, k_y); sheet'ten yalnız yükselen toz kümeleri.",
+   "hedefDosya": "public/efekt/efekt.png (entegrasyon dilimi)",
+   "pisirildi": {
+    "fps": 12,
+    "kare": 18,
+    "kareMs": 83,
+    "dongu": false,
+    "kirpma": "kare başına şeffaf kenar kırpma (trimmed, spriteSourceSize)",
+    "anchor": [
+     0.5,
+     0.75
+    ]
+   }
+  },
+  {
+   "ad": "efekt.zemin-sok",
+   "dosya": "kaynak/efekt/pixelfx/atlas/efekt.png#zemin-sok",
+   "olay": "Parçalanma zemin şoku, Kaya Ulti tabanı",
+   "kaynak": "pixelfx impacts/ground-slam",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/impacts/ground-slam.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    288,
+    208
+   ],
+   "kaynakSureSn": 3.2,
+   "dongu": false,
+   "hamKare30fps": 97,
+   "arac": "kaynak/efekt/pixelfx/arac/bake.py → node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 [--opts palette]; pack.py (raf paketleme, 1 px boşluk)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "pişirildi; oyun yüklemiyor (entegrasyon ayrı dilim)",
+   "duzlem": "zemin",
+   "hibritNot": "Zemin flaşı ve hilal şok dalgaları yandan basık (ry/rx≈0,15): elips varyant gerekir. Taşlar/toz bulutu hava katmanı olarak kullanılabilir.",
+   "hedefDosya": "public/efekt/efekt.png (entegrasyon dilimi)",
+   "pisirildi": {
+    "fps": 12,
+    "kare": 36,
+    "kareMs": 83,
+    "dongu": false,
+    "kirpma": "kare başına şeffaf kenar kırpma (trimmed, spriteSourceSize)",
+    "anchor": [
+     0.5,
+     0.7885
+    ]
+   }
+  },
+  {
+   "ad": "efekt.toz-bulut",
+   "dosya": "kaynak/efekt/pixelfx/atlas/efekt.png#toz-bulut",
+   "olay": "Parçalanma toz bulutu (yıldız/çizgi öğeleri kapalı)",
+   "kaynak": "pixelfx spawn/poof",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/spawn/poof.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    112,
+    92
+   ],
+   "kaynakSureSn": 1.6,
+   "dongu": false,
+   "hamKare30fps": 49,
+   "arac": "kaynak/efekt/pixelfx/arac/bake.py → node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 [--opts palette]; pack.py (raf paketleme, 1 px boşluk)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "pişirildi; oyun yüklemiyor (entegrasyon ayrı dilim)",
+   "duzlem": "hava",
+   "hibritNot": "Toz bulutu; düzlemden bağımsız.",
+   "hedefDosya": "public/efekt/efekt.png (entegrasyon dilimi)",
+   "pisirildi": {
+    "fps": 12,
+    "kare": 18,
+    "kareMs": 83,
+    "dongu": false,
+    "kirpma": "kare başına şeffaf kenar kırpma (trimmed, spriteSourceSize)",
+    "anchor": [
+     0.5,
+     0.8696
+    ]
+   }
+  },
+  {
+   "ad": "efekt.simsek-carpma",
+   "dosya": "kaynak/efekt/pixelfx/atlas/efekt-simsek.png#simsek-carpma",
+   "olay": "Şimşek karşıt element / çarpışma katmanı",
+   "kaynak": "pixelfx lightning/zap-hit",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/lightning/zap-hit.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    144,
+    112
+   ],
+   "kaynakSureSn": 0.9,
+   "dongu": false,
+   "hamKare30fps": 28,
+   "arac": "kaynak/efekt/pixelfx/arac/bake.py → node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 [--opts palette]; pack.py (raf paketleme, 1 px boşluk)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "pişirildi; oyun yüklemiyor (entegrasyon ayrı dilim)",
+   "duzlem": "hava",
+   "hibritNot": "Hava; düzlemden bağımsız.",
+   "hedefDosya": "public/efekt/efekt-simsek.png (entegrasyon dilimi)",
+   "pisirildi": {
+    "fps": 12,
+    "kare": 11,
+    "kareMs": 83,
+    "dongu": false,
+    "kirpma": "kare başına şeffaf kenar kırpma (trimmed, spriteSourceSize)",
+    "anchor": [
+     0.5278,
+     0.5
+    ]
+   }
+  },
+  {
+   "ad": "efekt.telegraf-sarj",
+   "dosya": "kaynak/efekt/pixelfx/atlas/efekt-simsek.png#telegraf-sarj",
+   "olay": "Ulti telegrafı şarjı (element paletiyle)",
+   "kaynak": "pixelfx lightning/charge-up",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/lightning/charge-up.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    272,
+    184
+   ],
+   "kaynakSureSn": 2.7,
+   "dongu": false,
+   "hamKare30fps": 82,
+   "arac": "kaynak/efekt/pixelfx/arac/bake.py → node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 [--opts palette]; pack.py (raf paketleme, 1 px boşluk)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "pişirildi; oyun yüklemiyor (entegrasyon ayrı dilim)",
+   "duzlem": "hava+zemin",
+   "hibritNot": "Topaç üstü şarj çekirdeği hava (kullan); düşen halkalar zemin değil. Ulti telegraf halkası (dolan kırmızı halka) KODLA elips k_y ile çizilir.",
+   "hedefDosya": "public/efekt/efekt-simsek.png (entegrasyon dilimi)",
+   "pisirildi": {
+    "fps": 12,
+    "kare": 31,
+    "kareMs": 83,
+    "dongu": false,
+    "kirpma": "kare başına şeffaf kenar kırpma (trimmed, spriteSourceSize)",
+    "anchor": [
+     0.4559,
+     0.8043
+    ]
+   }
+  },
+  {
+   "ad": "efekt.don-kirilma",
+   "dosya": "kaynak/efekt/pixelfx/atlas/efekt-don.png#don-kirilma",
+   "olay": "Don çarpışma / Don Parçalanma",
+   "kaynak": "pixelfx ice/ice-shatter",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/ice/ice-shatter.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    224,
+    112
+   ],
+   "kaynakSureSn": 2.8,
+   "dongu": false,
+   "hamKare30fps": 85,
+   "arac": "kaynak/efekt/pixelfx/arac/bake.py → node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 [--opts palette]; pack.py (raf paketleme, 1 px boşluk)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "pişirildi; oyun yüklemiyor (entegrasyon ayrı dilim)",
+   "duzlem": "hava",
+   "hibritNot": "Kristal parçaları; hava.",
+   "hedefDosya": "public/efekt/efekt-don.png (entegrasyon dilimi)",
+   "pisirildi": {
+    "fps": 12,
+    "kare": 33,
+    "kareMs": 83,
+    "dongu": false,
+    "kirpma": "kare başına şeffaf kenar kırpma (trimmed, spriteSourceSize)",
+    "anchor": [
+     0.3036,
+     0.8036
+    ]
+   }
+  },
+  {
+   "ad": "efekt.ulti-don",
+   "dosya": "kaynak/efekt/pixelfx/atlas/efekt-don.png#ulti-don",
+   "olay": "Don Ulti vuruşu",
+   "kaynak": "pixelfx ice/frost-nova",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/ice/frost-nova.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    288,
+    192
+   ],
+   "kaynakSureSn": 3.4,
+   "dongu": false,
+   "hamKare30fps": 103,
+   "arac": "kaynak/efekt/pixelfx/arac/bake.py → node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 [--opts palette]; pack.py (raf paketleme, 1 px boşluk)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "pişirildi; oyun yüklemiyor (entegrasyon ayrı dilim)",
+   "duzlem": "zemin",
+   "hibritNot": "Nova halkası zemin düzleminde basık: elips varyant (k_y) ya da halka kodla + sheet'ten kristal sivrileri.",
+   "hedefDosya": "public/efekt/efekt-don.png (entegrasyon dilimi)",
+   "pisirildi": {
+    "fps": 12,
+    "kare": 41,
+    "kareMs": 83,
+    "dongu": false,
+    "kirpma": "kare başına şeffaf kenar kırpma (trimmed, spriteSourceSize)",
+    "anchor": [
+     0.5,
+     0.7812
+    ]
+   }
+  },
+  {
+   "ad": "efekt.ulti-kor",
+   "dosya": "kaynak/efekt/pixelfx/atlas/efekt-kor.png#ulti-kor",
+   "olay": "Kor Ulti vuruşu",
+   "kaynak": "pixelfx fire/fire-ring",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/fire/fire-ring.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    224,
+    128
+   ],
+   "kaynakSureSn": 3.9,
+   "dongu": false,
+   "hamKare30fps": 118,
+   "arac": "kaynak/efekt/pixelfx/arac/bake.py → node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 [--opts palette]; pack.py (raf paketleme, 1 px boşluk)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "pişirildi; oyun yüklemiyor (entegrasyon ayrı dilim)",
+   "duzlem": "zemin",
+   "hibritNot": "Ateş halkası zemine yapışık (ry 4 px): elips varyant ya da halka kodla + sheet'ten alev dilleri.",
+   "hedefDosya": "public/efekt/efekt-kor.png (entegrasyon dilimi)",
+   "pisirildi": {
+    "fps": 12,
+    "kare": 45,
+    "kareMs": 83,
+    "dongu": false,
+    "kirpma": "kare başına şeffaf kenar kırpma (trimmed, spriteSourceSize)",
+    "anchor": [
+     0.5,
+     0.7188
+    ]
+   }
+  },
+  {
+   "ad": "efekt.ulti-kaya",
+   "dosya": "kaynak/efekt/pixelfx/atlas/efekt-kaya.png#ulti-kaya",
+   "olay": "Kaya Ulti vuruşu",
+   "kaynak": "pixelfx nature/earth-spike",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/nature/earth-spike.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    272,
+    150
+   ],
+   "kaynakSureSn": 3.4,
+   "dongu": false,
+   "hamKare30fps": 103,
+   "arac": "kaynak/efekt/pixelfx/arac/bake.py → node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 [--opts palette]; pack.py (raf paketleme, 1 px boşluk)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "pişirildi; oyun yüklemiyor (entegrasyon ayrı dilim)",
+   "duzlem": "hava+zemin",
+   "hibritNot": "Kaya sivrileri yukarı (hava, eğik sahnede iyi okunur); zemin çatlağı kodla elips.",
+   "hedefDosya": "public/efekt/efekt-kaya.png (entegrasyon dilimi)",
+   "pisirildi": {
+    "fps": 12,
+    "kare": 39,
+    "kareMs": 83,
+    "dongu": false,
+    "kirpma": "kare başına şeffaf kenar kırpma (trimmed, spriteSourceSize)",
+    "anchor": [
+     0.5,
+     0.88
+    ]
+   }
+  },
+  {
+   "ad": "efekt.ulti-kasirga",
+   "dosya": "kaynak/efekt/pixelfx/atlas/efekt-kasirga.png#ulti-kasirga",
+   "olay": "Kasırga Ulti / Kasırga Alanı (döngü)",
+   "kaynak": "pixelfx nature/tornado",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/nature/tornado.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    196,
+    168
+   ],
+   "kaynakSureSn": 2.0,
+   "dongu": true,
+   "hamKare30fps": 60,
+   "arac": "kaynak/efekt/pixelfx/arac/bake.py → node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 [--opts palette]; pack.py (raf paketleme, 1 px boşluk)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "pişirildi; oyun yüklemiyor (entegrasyon ayrı dilim)",
+   "duzlem": "hava",
+   "hibritNot": "Dikey kasırga: 15-20° eğik topaçlarla uyumlu.",
+   "hedefDosya": "public/efekt/efekt-kasirga.png (entegrasyon dilimi)",
+   "pisirildi": {
+    "fps": 12,
+    "kare": 24,
+    "kareMs": 83,
+    "dongu": true,
+    "kirpma": "kare başına şeffaf kenar kırpma (trimmed, spriteSourceSize)",
+    "anchor": [
+     0.5,
+     0.9048
+    ]
+   }
+  },
+  {
+   "ad": "efekt.ulti-girdap",
+   "dosya": "kaynak/efekt/pixelfx/atlas/efekt-girdap.png#ulti-girdap",
+   "olay": "Girdap Ulti çekimi",
+   "kaynak": "pixelfx explosions/implosion",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/explosions/implosion.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    208,
+    184
+   ],
+   "kaynakSureSn": 1.65,
+   "dongu": false,
+   "hamKare30fps": 51,
+   "arac": "kaynak/efekt/pixelfx/arac/bake.py → node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 [--opts palette]; pack.py (raf paketleme, 1 px boşluk)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "pişirildi; oyun yüklemiyor (entegrasyon ayrı dilim)",
+   "duzlem": "hava",
+   "hibritNot": "İçe çöken küre; hava.",
+   "hedefDosya": "public/efekt/efekt-girdap.png (entegrasyon dilimi)",
+   "pisirildi": {
+    "fps": 12,
+    "kare": 19,
+    "kareMs": 83,
+    "dongu": false,
+    "kirpma": "kare başına şeffaf kenar kırpma (trimmed, spriteSourceSize)",
+    "anchor": [
+     0.5,
+     0.5
+    ]
+   }
+  },
+  {
+   "ad": "efekt.girdap-dekal",
+   "dosya": "kaynak/efekt/pixelfx/atlas/efekt-girdap.png#girdap-dekal",
+   "olay": "Girdap Çekimi zemin dekali (üstten, döngü)",
+   "kaynak": "pixelfx water/whirlpool",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/water/whirlpool.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    128,
+    84
+   ],
+   "kaynakSureSn": 3.0,
+   "dongu": true,
+   "hamKare30fps": 90,
+   "arac": "kaynak/efekt/pixelfx/arac/bake.py → node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 [--opts palette]; pack.py (raf paketleme, 1 px boşluk)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "pişirildi; oyun yüklemiyor (entegrasyon ayrı dilim)",
+   "duzlem": "zemin",
+   "hibritNot": "Üstten girdap ama SY=0,6 sabit (kodda const). Bizim k_y≈0,85-0,90 için ya kaynakta SY değiştirilerek (yerel fork, MIT) pişirilir ya da dikey ×1,5 tam sayı olmayan ölçek YASAK → fork tercih.",
+   "hedefDosya": "public/efekt/efekt-girdap.png (entegrasyon dilimi)",
+   "pisirildi": {
+    "fps": 12,
+    "kare": 36,
+    "kareMs": 83,
+    "dongu": true,
+    "kirpma": "kare başına şeffaf kenar kırpma (trimmed, spriteSourceSize)",
+    "anchor": [
+     0.5,
+     0.5
+    ]
+   },
+   "degisiklik": "yerel fork: src/fx/water/whirlpool.js SY 0.6 → 0.875 (hibrit çanak k_y); kaynak/efekt/pixelfx/arac/whirlpool-SY.diff"
+  },
+  {
+   "ad": "efekt.enerji-doldu",
+   "dosya": "kaynak/efekt/pixelfx/atlas/efekt.png#enerji-doldu",
+   "olay": "Enerji doldu parıltısı (yarı boy)",
+   "kaynak": "pixelfx pickups/collect-burst",
+   "kaynakUrl": "https://github.com/patch-gg/pixelfx/blob/a84159688af3ca37a4be05a0d422b94451b2e24e/src/fx/pickups/collect-burst.js",
+   "kaynakSurum": "a84159688af3ca37a4be05a0d422b94451b2e24e",
+   "kaynakTuval": [
+    112,
+    108
+   ],
+   "kaynakSureSn": 1.35,
+   "dongu": false,
+   "hamKare30fps": 41,
+   "arac": "kaynak/efekt/pixelfx/arac/bake.py → node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 [--opts palette]; pack.py (raf paketleme, 1 px boşluk)",
+   "lisans": "MIT",
+   "atif": "pixelfx — Copyright (c) 2026 Patch, Copyright (c) 2026 Hugo Duprez, MIT License",
+   "lisansDosyasi": "kaynak/efekt/pixelfx/LICENSE",
+   "tarih": "2026-11-04",
+   "degistirildi": true,
+   "durum": "pişirildi; oyun yüklemiyor (entegrasyon ayrı dilim)",
+   "duzlem": "hava",
+   "hibritNot": "Topaç üstünde; hava.",
+   "hedefDosya": "public/efekt/efekt.png (entegrasyon dilimi)",
+   "pisirildi": {
+    "fps": 12,
+    "kare": 13,
+    "kareMs": 83,
+    "dongu": false,
+    "kirpma": "kare başına şeffaf kenar kırpma (trimmed, spriteSourceSize)",
+    "anchor": [
+     0.5,
+     0.8704
+    ]
+   }
+  },
+  {
+   "ad": "yazi.jersey10",
+   "dosya": "public/yazi/Jersey10-Regular.ttf",
+   "olay": "Menü/HUD başlık, düğme, rakam yazı tipi (20/30/40 mantıksal px)",
+   "kaynak": "Sarah Cadigan-Fried, Jersey 10 (The Soft Type Project)",
+   "kaynakUrl": "https://github.com/google/fonts/tree/main/ofl/jersey10",
+   "lisans": "OFL-1.1",
+   "atif": "Jersey 10: Sarah Cadigan-Fried (SIL Open Font License 1.1)",
+   "lisansDosyasi": "public/yazi/Jersey10-OFL.txt",
+   "tarih": "2026-11-05",
+   "sha256": "db9cbd091617048a145d249daa2b815fe7083be6ab66ac26626e21a4e01c3e82",
+   "durum": "entegre (GU-01)"
+  },
+  {
+   "ad": "yazi.m5x7",
+   "dosya": "public/yazi/m5x7.ttf",
+   "olay": "Menü/HUD etiket ve açıklama yazı tipi (16/32 mantıksal px)",
+   "kaynak": "Daniel Linssen, m5x7",
+   "kaynakUrl": "https://managore.itch.io/m5x7",
+   "lisans": "CC0-1.0",
+   "atif": "m5x7: Daniel Linssen (CC0)",
+   "lisansDosyasi": "public/yazi/m5x7-CC0.txt",
+   "tarih": "2026-11-05",
+   "sha256": "47c3f0b01f0fd417b3a44c2888a71d3072f750e76f3e6e946a6a9b188d988cbf",
+   "durum": "entegre (GU-01); crates.io m5x7 1.0.0 TTF"
+  },
+  {
+   "ad": "arayuz.menu-dokulari",
+   "dosya": "src/istemci/stil/doku/*.png",
+   "olay": "Menü dili v2 (Kuşak Taşı) dokuları ve ikon sprite'ları",
+   "kaynak": "sentez (araclar/menu-dokulari.ts)",
+   "lisans": "CC0-1.0",
+   "atif": "gerekmez (kendi üretimimiz)",
+   "tarih": "2026-11-05",
+   "durum": "entegre (GU-01)"
+  },
+  {
+   "ad": "topac.katmanlar",
+   "dosya": "public/topac/ (27 parça: 8 Gövde × 6 Element, 5 Disk, 6 Uç, 8 Çekirdek; ikon-48.png, ikon-24.png)",
+   "olay": "Maç topaç katman sprite'ları (Uç/Disk/Gövde/Çekirdek; keskin, bulanık, bulanık disk; sol ayna) + parça ikonları",
+   "kaynak": "kendi üretimimiz (araclar/sanat/topac-uret.ts + araclar/sanat/blender/topac_render.py, modeller kaynak/topac/parcalar-3b.json)",
+   "arac": "Blender 4.0.2 (GPL; yalnız araç, çıktı bizim) + sharp",
+   "lisans": "CC0 (bizim)",
+   "tarih": "2026-11-05",
+   "durum": "entegre (TopacYandan sprite kipi, yordamsal yedek)"
+  },
+  {
+   "ad": "ruh.ata-hologram",
+   "dosya": "public/ruh/ata/<element>-holo.png, <element>-holo-k.png (6 element × 2 boy)",
+   "olay": "Ulti (ve Takım Ultisi) anında çağıranın çekirdeğinden yükselen Ata hologramı (RuhGorsel.ts); tembel: Ulti Enerjisi yarıyı geçince yalnız o elementin sayfası",
+   "kaynak": "kendi üretimimiz, yapay zekâ üretimi (Gemini gemini-3.1-flash-image konsept → Tripo image-to-model v3.1 → Blender 5.2 render → araclar/sanat/sayfala.py + hologram.py)",
+   "arac": "Gemini, Tripo (ücretli hizmet), Blender 5.2 (GPL; yalnız araç), Pillow + numpy",
+   "lisans": "bizim (yapay zekâ çıktısı; hizmet koşullarına göre çıktı kullanıcıya ait)",
+   "yapayZeka": true,
+   "bayt": 1758606,
+   "tarih": "2026-11-05",
+   "durum": "entegre (SANAT entegrasyonu)"
+  },
+  {
+   "ad": "ruh.ata-kaynak",
+   "dosya": "kaynak/ruh/ata/<element>.png + .json (6)",
+   "olay": "Renkli kaynak sayfa (176 px hücre, 6×4, 24 kare); public/ dışında, dağıtılmaz; hologram buradan pişirilir",
+   "kaynak": "kendi üretimimiz, yapay zekâ üretimi (aynı hat)",
+   "lisans": "bizim (yapay zekâ çıktısı)",
+   "yapayZeka": true,
+   "bayt": 1415657,
+   "tarih": "2026-11-05",
+   "durum": "kaynak (çalışma anında kullanılmaz)"
+  },
+  {
+   "ad": "ruh.portre",
+   "dosya": "public/ruh/portre/*.png (21)",
+   "olay": "Özel Yetenek ruh portresi; RUH_PORTRE_OZEL_YETENEK = false (sahip kararı), maçta yüklenmez",
+   "kaynak": "kendi üretimimiz, yapay zekâ üretimi (Gemini gemini-3.1-flash-image → araclar/sanat/anahtarla.py)",
+   "lisans": "bizim (yapay zekâ çıktısı)",
+   "yapayZeka": true,
+   "bayt": 474745,
+   "tarih": "2026-11-05",
+   "durum": "varlık (bayrakla kapalı)"
+  },
+  {
+   "ad": "bilgic.pergel",
+   "dosya": "public/bilgic/{anlatiyor,aslinda,sevinc}.png",
+   "olay": "Atölye rehberi Pergel'in üç ifadesi (yalnız Atölye'de, İpuçları açıkken)",
+   "kaynak": "kendi üretimimiz, yapay zekâ üretimi (Gemini gemini-3.1-flash-image → anahtarla.py)",
+   "lisans": "bizim (yapay zekâ çıktısı)",
+   "yapayZeka": true,
+   "bayt": 53227,
+   "tarih": "2026-11-05",
+   "durum": "entegre"
+  },
+  {
+   "ad": "atolye3d.three",
+   "dosya": "node_modules/three (dist/client/assets/Goruntuleyici-*.js, GLTFLoader-*.js)",
+   "olay": "Atölye 3B patlatılmış topaç görüntüleyicisi (yalnız Atölye'de tembel yüklenir)",
+   "kaynak": "three (three.js 0.186.1, npm, mrdoob ve katkıcılar)",
+   "lisans": "MIT",
+   "atif": "three.js — Copyright © 2010-2026 three.js authors, MIT License",
+   "tarih": "2026-11-05",
+   "durum": "entegre"
+  },
+  {
+   "ad": "atolye3d.parametrik",
+   "dosya": "src/istemci/atolye3d/geometri.ts (kaynak/topac/parcalar-3b.json)",
+   "olay": "Atölye 3B parça modelleri, çalışma zamanında yordamsal kurulur; GLB gelince public/topac/model/<id>.glb",
+   "kaynak": "kendi üretimimiz (parametrik tanım, ART-1)",
+   "lisans": "CC0 (bizim)",
+   "tarih": "2026-11-05",
+   "durum": "entegre"
+  },
+  {
+   "ad": "topac.mac-katmanlar",
+   "dosya": "public/topac/<tur>/<parcaId>.json + <parcaId>-<keskin|bulanik|disk>-<s|l>[-<boya>].png (biçim B; liste veri/topac-gorsel.json bicimB)",
+   "olay": "Maç topaç katman sprite'ları, Mac hattı (Tripo modeli simetrik dilim; biçim A bulut sayfalarının önüne geçer)",
+   "kaynak": "kendi üretimimiz, yapay zekâ üretimi (Gemini gemini-3.1-flash-image konsept → Tripo image-to-model v3.1 → Blender 5.2 simetrik dilim + veri render → araclar/sanat/topac-mac.ts pişirici)",
+   "arac": "Gemini, Tripo (ücretli hizmet), Blender 5.2 (GPL; yalnız araç), sharp",
+   "lisans": "bizim (yapay zekâ çıktısı; hizmet koşullarına göre çıktı kullanıcıya ait)",
+   "yapayZeka": true,
+   "bayt": 1642007,
+   "tarih": "2026-11-05",
+   "durum": "entegre (18 parça: 8 Gövde, 8 Çekirdek, Hafif Disk, Düz Uç; diğer Disk/Uç parametrik bulut sayfası, sahip kararı)"
+  },
+  {
+   "ad": "topac.mac-model",
+   "dosya": "public/topac/model/<parcaId>.glb (liste veri/topac-model.json glb)",
+   "olay": "Atölye 3B parça modeli (sınıf adlı malzemeler, toon gölgeleme çalışma zamanında); listede olmayan parça parametrik",
+   "kaynak": "kendi üretimimiz, yapay zekâ üretimi (aynı hat; Blender'da simetrik dilim + azaltma, doku yok)",
+   "arac": "Gemini, Tripo (ücretli hizmet), Blender 5.2 (GPL; yalnız araç)",
+   "lisans": "bizim (yapay zekâ çıktısı)",
+   "yapayZeka": true,
+   "bayt": 6578672,
+   "tarih": "2026-11-05",
+   "durum": "entegre (18 parça)"
+  },
+  {
+   "ad": "topac.mac-ikon",
+   "dosya": "public/topac/ikon/<parcaId>-48.png, -24.png",
+   "olay": "Parça ikonu (Gemini 2B pixel art → anahtarla → 48/24 kuantize); menüler şu an Atölye 3B ikon önbelleğini kullanıyor, bu dosyalar bağlı değil",
+   "kaynak": "kendi üretimimiz, yapay zekâ üretimi (Gemini gemini-3.1-flash-image → araclar/sanat/anahtarla.py → topac-mac.ts)",
+   "arac": "Gemini, Pillow, sharp",
+   "lisans": "bizim (yapay zekâ çıktısı)",
+   "yapayZeka": true,
+   "bayt": 26042,
+   "tarih": "2026-11-05",
+   "durum": "varlık (27 parça; bağlı değil)"
+  }
+ ],
+ "kamera": {
+  "karar": "hibrit (fizik tam üstten, sunum eğik elips çanak, topaçlar ~15-20° eğik)",
+  "k_y": "≈0,85-0,90 (tasarim-dili K-1 C; kesin değer Sahne'de belirlenecek)",
+  "kural": "duzlem=hava olan sheet'ler doğrudan; duzlem=zemin olanlarda halka/dekal kodla elips (rx, rx·k_y) çizilir ya da sheet k_y'ye göre yeniden parametrelenerek (yerel fork) pişirilir. Pişmiş sheet asla tam sayı olmayan ölçekle basıklaştırılmaz (pixel ızgarası).",
+  "pixelfxKamerasi": "yan görünüş (platform oyunu): zemin elipsleri ry/rx ≈ 0,15-0,6; bizim çanaktan çok daha basık"
+ },
+ "kayitAdaylari": {
+  "aciklama": "Dış kaynaklı sprite sheet adayları (kaynak/efekt/). Atlasa alınmadı; entegrasyon ayrı dilim. Değerlendirme: ilgili KAYNAK.md ve efekt-kaynaklari.md § 9.5.",
+  "dosyalar": [
+   {
+    "klasor": "kaynak/efekt/aim-explosions/",
+    "kaynak": "Aim studios, Explosions - Pixel Art",
+    "kaynakUrl": "https://aim-studios.itch.io/explosions-pixel-art",
+    "lisans": "CC0-1.0",
+    "atif": "gerekmez; kredilere 'Aim studios (CC0)'",
+    "tarih": "2026-11-04",
+    "kare": "32×32 (3×3) ve 64×64 şerit/ızgara",
+    "oneri": "Realistic_Blast_default (Kor ağır / Parçalanma), Foam_bubble_explosion (Don / Parçalanma parçaları), Blast_default/blue (çarpışma)",
+    "duzlem": "hava",
+    "durum": "2 şerit atlasa alındı (2026-11-04, sahip onayı): Realistic_Blast_default → efekt-kor 'kor-bulut', Foam_bubble_explosion → efekt-don 'don-parca' (element rampasına boyandı, arac/harici.py)"
+   },
+   {
+    "klasor": "kaynak/efekt/foozle-pixel-magic/",
+    "kaynak": "Foozle (lordfitoi), Pixel Magic Effects 1.0",
+    "kaynakUrl": "https://foozlecc.itch.io/pixel-magic-sprite-effects",
+    "lisans": "CC0-1.0",
+    "atif": "gerekmez; kredilere 'Foozle / lordfitoi (CC0)'",
+    "tarih": "2026-11-04",
+    "kare": "64×64 (sayfa 32×32 diyor: yalnız ikonlar)",
+    "oneri": "yedek havuz: Explosion, Tornado, Earth_Spike; mermi/yan görünüş kareleri kullanılmaz",
+    "duzlem": "hava/dikey"
+   }
+  ]
+ }
+}

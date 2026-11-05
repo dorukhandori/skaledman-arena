@@ -4,17 +4,27 @@ Her oturum işe başlamadan önce `git pull`, bu dosyayı oku, satırını ekle,
 
 ## Devam eden
 
-- 2026-11-01 20:00 · @glyph (Claude Code yan oturum) · `index.html`, `src/istemci/stil/`, `Hud.ts`, `KartPanosu.ts`, Arena üst satırı, Lab DOM kabuğu · arayüzü skaledman.com görsel diline benzetiyor
-- 2026-11-01 19:15 · @nile (Claude Code, Opus 5.5 oturumu) · `src/paylasilan/sim`, `src/istemci/oyun`, `docs/` · F0 sonrası: zıplama/takım/dinlenme/kademe (bitti), İskeletler Diyarı + arenada kart panosu (bitti), alt ajanları topluyor
-- 2026-11-01 19:15 · @relay (alt ajan) · `src/sunucu/**`, `src/paylasilan/sim/Girdi.ts`, `src/istemci/ag/**`, Oyun/Arena çevrimiçi yolu · sunucu yetkili 1v1, tahmin + interpolasyon, ADR-004
-- 2026-11-01 19:00 · @iris (alt ajan) · `araclar/fusion/**`, `public/fusion/`, `src/istemci/sprite/**` · boyun köprüsü, soluk palet kontrastı, shiny hue
-- 2026-11-01 19:00 · @ledger (alt ajan) · `docs/design/tuning.md`, `araclar/denge/` veya `test/denge/` · 20 kartlık bot turnuvası, çarpan seçenekleri
+- 2026-11-05 · baş geliştirici (bulut kodlama oturumu, `devran-kod`) · `src/**`, `veri/`, `test/` · dilimler ve cila; haber yalnız `docs/production/devran-kod-brief.md` ile
+- 2026-11-05 · yerel oturum "Oyun menüsü UI hataları" · `docs/production/raporlar/MENU-DENETIM.md`, `araclar/menu-denetim-*.cjs` · denetim bitti; düzeltmeler (P1-P5) başlarsa `src/istemci/ekranlar/**`, `src/istemci/stil/**` (S-1 kararı bekliyor)
+- 2026-11-05 · yerel oturum "Mac oturum başlat dokümantasyonu" · `araclar/sanat/**`, `public/topac/**` · parça hattı Parti 1-3 işlendi; Disk/Uç parametrik
+- 2026-11-05 · yerel oturum "Kutsal canavarlar ve rehber karakter" · `public/ruh/**`, `public/bilgic/` · boşta; Ata rig işi sahip onayı bekliyor
 
 ## Beklemede
 
 (boş)
 
 ## Son kapanan işler
+
+- (2026-11-01 satırı, Skaledman çağı, iptal ve tarihçe) 2026-11-01 20:00 · @glyph (Claude Code yan oturum) · `index.html`, `src/istemci/stil/`, `Hud.ts`, `KartPanosu.ts`, Arena üst satırı, Lab DOM kabuğu · arayüzü skaledman.com görsel diline benzetiyor
+- (2026-11-01 satırı, Skaledman çağı, iptal ve tarihçe) 2026-11-01 19:15 · @nile (Claude Code, Opus 5.5 oturumu) · `src/paylasilan/sim`, `src/istemci/oyun`, `docs/` · F0 sonrası: zıplama/takım/dinlenme/kademe (bitti), İskeletler Diyarı + arenada kart panosu (bitti), alt ajanları topluyor
+- (2026-11-01 satırı, Skaledman çağı, iptal ve tarihçe) 2026-11-01 19:15 · @relay (alt ajan) · `src/sunucu/**`, `src/paylasilan/sim/Girdi.ts`, `src/istemci/ag/**`, Oyun/Arena çevrimiçi yolu · sunucu yetkili 1v1, tahmin + interpolasyon, ADR-004
+- (2026-11-01 satırı, Skaledman çağı, iptal ve tarihçe) 2026-11-01 19:00 · @iris (alt ajan) · `araclar/fusion/**`, `public/fusion/`, `src/istemci/sprite/**` · boyun köprüsü, soluk palet kontrastı, shiny hue
+- (2026-11-01 satırı, Skaledman çağı, iptal ve tarihçe) 2026-11-01 19:00 · @ledger (alt ajan) · `docs/design/tuning.md`, `araclar/denge/` veya `test/denge/` · 20 kartlık bot turnuvası, çarpan seçenekleri
+
+
+- 2026-11-05 · baş geliştirici (temizlik ve cila, Claude Code) · `veri/ruhlar.json` (Yapay/Karanlık Ulti), `public/efekt/` + `araclar/sanat/efekt-paketle.ts` (palet + tembel atlas), `kaynak/ruh/ata/`, `src/istemci/atolye3d/ikonOnbellek.ts` (ortak 3B ikon), `/api/ben` `sonMac` (Pergel ring-out), Atölye "Market'te aç" + cilalar · rapor `docs/production/raporlar/TEMIZLIK.md`
+- 2026-11-05 · baş geliştirici (entegrasyon, Claude Code) · `devran-sanat` → `devran-kod` birleştirme, `RuhGorsel.ts` (hologram + tembel yükleme + Takım Ultisi), `MacHud.ts` (tek Ulti bandı), `src/istemci/bilgic/` (Kuşak Taşı stili, azalan sıklık), `Ayarlar.ts` (İpuçları), krediler + manifest · rapor `docs/production/raporlar/SANAT-ENTEGRASYON.md`
+- 2026-11-05 · @nile (Claude Code) + @glyph (alt ajan) · `src/istemci/oyun/RuhGorsel.ts`, `YetenekGorsel.ts`, `src/istemci/bilgic/`, `Atolye.ts`, `Ayarlar.ts`, `veri/{ruhlar,ipuclari}.json`, `public/{ruh,bilgic}/`, `araclar/sanat/`, docs 06 + bilgic-pergel · kutsal canavar belirmesi ve Pergel ipucu karakteri (Paca SA #13-18)
 
 - 2026-11-01 · @vault (alt ajan) · `eslint.config.js`, `araclar/veri-cek.ts`, `test/veri-cek.test.ts`, `docs/tech/veri-cekimi.md` · `src/paylasilan` lint kapısı + saatlik Skaledman çekimi
 - 2026-11-01 · @cove (alt ajan) · `docs/design/arenalar/iskeletler-diyari.md` · ilk arena özelliği

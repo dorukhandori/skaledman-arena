@@ -1,5 +1,5 @@
 name: Hata bildirimi
-description: Oyunda, Lab'da ya da araçlarda bir şey yanlış çalışıyor
+description: Oyunda, seyirci görünümünde, Lab'da ya da araçlarda bir şey yanlış çalışıyor
 labels: ["hata"]
 body:
   - type: textarea
@@ -13,18 +13,18 @@ body:
     id: adimlar
     attributes:
       label: Nasıl tekrarlanır
-      description: Adım adım. Varsa URL (`?ekran=arena&a=…&b=…&tohum=…`) tam hâliyle; tohum maçı birebir tekrarlar.
+      description: Adım adım. Varsa URL (`?ekran=mac&tohum=…&takim=…&rakip=…`, oda kodu, `#izle=` bağlantısı) tam hâliyle; tohum çevrimdışı maçı birebir tekrarlar.
       placeholder: |
         1. `npm run dev`
-        2. `/?ekran=arena&a=251.443&b=76.538&tohum=7`
+        2. `/?ekran=mac&tohum=7&takim=0&rakip=1`
         3. …
     validations:
       required: true
   - type: input
     id: kartlar
     attributes:
-      label: Hangi kartlar / fusionId'ler
-      placeholder: "251.443 vs 76.538"
+      label: Hangi takımlar / parçalar
+      placeholder: "kor-goktasi:ok-govde:hafif-disk:duz-uc vs …"
   - type: input
     id: ortam
     attributes:

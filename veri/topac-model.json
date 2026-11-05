@@ -1,0 +1,25 @@
+{
+ "surum": 1,
+ "aciklama": "Atölye 3B GLB modelleri (ATOLYE3D). Mac hattı (Tripo/Blender) public/topac/model/<parcaId>.glb bırakınca kimliği buraya ekler; listede olmayan parça parametrik modelle (kaynak/topac/parcalar-3b.json) çizilir. Sözleşme: docs/production/raporlar/ATOLYE3D.md § 6.",
+ "glb": [
+  "ok-govde",
+  "kalkan-govde",
+  "savrulan-govde",
+  "halka-govde",
+  "ayaz-govde",
+  "dusurucu-govde",
+  "sivri-govde",
+  "izli-govde",
+  "hafif-disk",
+  "duz-uc",
+  "kor-goktasi",
+  "kaya-maden",
+  "kasirga-yapay",
+  "simsek-goktasi",
+  "girdap-maden",
+  "sabir-tasi",
+  "kor-kalbi",
+  "kul-cekirdegi"
+ ],
+ "ozet": "ad833a40"
+}

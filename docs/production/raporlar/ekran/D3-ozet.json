@@ -1,0 +1,255 @@
+{
+ "tarayici": "153.0.8010.12",
+ "not": "Otomatik oynanış (Playwright). A: elle girdi + ZORLAMA (Enerji debug kancası, rakip bota yuva zorlama). B: oto=kenar tam maç, zorlama yok.",
+ "adresA": "http://localhost:5173/?ekran=mac&debug&tohum=21&takim=0&rakip=1&bot=kukla",
+ "iptal": {
+  "basiliIken": {
+   "basili": 0,
+   "iptal": 0,
+   "nisanModu": "fare"
+  },
+  "escSonrasi": {
+   "basili": -1,
+   "iptal": 1,
+   "nisanModu": "fare",
+   "menu": false
+  },
+  "altSeritSonrasi": {
+   "basili": -1,
+   "iptal": 2,
+   "nisanModu": "fare"
+  }
+ },
+ "ayarlar": {
+  "sonra": {
+   "sarsinti": "yari",
+   "flas": "normal",
+   "hitstop": "tam",
+   "yavasZoom": "acik",
+   "parcacik": "tam",
+   "nisan": "fare",
+   "ses": "acik"
+  },
+  "saklanan": "{\"sarsinti\":\"yari\",\"flas\":\"normal\",\"hitstop\":\"tam\",\"yavasZoom\":\"acik\",\"parcacik\":\"tam\",\"nisan\":\"fare\",\"ses\":\"acik\"}",
+  "mTusu": {
+   "kapaliyken": false
+  }
+ },
+ "bolumA": {
+  "ulti": [
+   1,
+   0
+  ],
+  "ultiTelegrafDurdu": true,
+  "rakipUltiDurdu": true,
+  "kullanim": {
+   "sen:kor-atilisi": 1,
+   "sen:kozyagmuru": 1,
+   "rakip:yontu-siperi": 1,
+   "sen:ata-kozu": 1,
+   "rakip:ata-dagi": 1
+  },
+  "gorsel": {
+   "telegrafKare": 60,
+   "rakipTelegrafKare": 31,
+   "dekalKare": 95,
+   "nisanKare": 18,
+   "siluet": 2,
+   "kenarParlama": 2,
+   "ipucuKare": 31,
+   "engelKare": 146
+  },
+  "sayac": {
+   "yok": 2,
+   "hafif": 1,
+   "agir": 1,
+   "kritik": 0,
+   "duvar": 1,
+   "ringOut": 0,
+   "parcalanma": 0,
+   "durma": 0,
+   "dash": 0,
+   "sekme": 0,
+   "zitElement": 0,
+   "ekranFlas": 2,
+   "ekranFlasReddi": 0,
+   "telegraf": 5,
+   "ulti": 2,
+   "enerjiDoldu": 1,
+   "yetenekVurus": 1,
+   "zincir": 0,
+   "kontra": 0,
+   "engel": 2
+  }
+ },
+ "adresB": "http://localhost:5173/?ekran=mac&debug&hiz=2&oto=kenar&tohum=8&takim=0&rakip=2",
+ "bolumB": {
+  "sonuc": [
+   {
+    "kazanan": 1,
+    "neden": "surePuan",
+    "puan": [
+     0,
+     1
+    ],
+    "tick": 5700
+   }
+  ],
+  "kullanim": {
+   "rakip:sarmal-pence": 1,
+   "sen:kor-atilisi": 1,
+   "rakip:cekim-darbesi": 2,
+   "rakip:buz-zirhi": 1
+  },
+  "sayi": [
+   [
+    1,
+    0,
+    0
+   ],
+   [
+    3,
+    1,
+    0
+   ]
+  ],
+  "kararma": [
+   0,
+   0
+  ],
+  "saat": 90,
+  "gorulen": {
+   "durma": 1
+  },
+  "ses": {
+   "sayac": {
+    "geri-sayim": 13,
+    "carpisma-hafif": 24,
+    "dash": 15,
+    "carpisma-kritik": 6,
+    "enerji-doldu": 9,
+    "telegraf": 5,
+    "sekme": 8,
+    "durma": 1,
+    "carpisma-agir": 1,
+    "mac-sonu": 1
+   },
+   "calinan": {
+    "geri-sayim": 13,
+    "carpisma-hafif": 23,
+    "dash": 15,
+    "carpisma-kritik": 6,
+    "enerji-doldu": 8,
+    "telegraf": 5,
+    "sekme": 8,
+    "durma": 1,
+    "carpisma-agir": 1,
+    "mac-sonu": 1
+   },
+   "yuklenen": [
+    "carpisma-hafif",
+    "carpisma-agir",
+    "carpisma-kritik",
+    "duvar",
+    "dash",
+    "sekme",
+    "parcalanma",
+    "ring-out",
+    "durma",
+    "telegraf",
+    "geri-sayim",
+    "ulti",
+    "ui-tik",
+    "enerji-doldu",
+    "kenar-uyari",
+    "mac-sonu"
+   ],
+   "hatalar": [],
+   "acik": true,
+   "bagli": true
+  }
+ },
+ "sesYanitlari": {
+  "carpisma-hafif.wav": 200,
+  "carpisma-agir.wav": 200,
+  "carpisma-kritik.wav": 200,
+  "duvar.wav": 200,
+  "dash.wav": 200,
+  "sekme.wav": 200,
+  "ring-out.wav": 200,
+  "parcalanma.wav": 200,
+  "durma.wav": 200,
+  "telegraf.wav": 200,
+  "geri-sayim.wav": 200,
+  "ulti.wav": 200,
+  "mac-sonu.wav": 200,
+  "ui-tik.wav": 200,
+  "enerji-doldu.wav": 200,
+  "kenar-uyari.wav": 200
+ },
+ "ses": {
+  "sayac": {
+   "geri-sayim": 13,
+   "carpisma-hafif": 24,
+   "dash": 15,
+   "carpisma-kritik": 6,
+   "enerji-doldu": 9,
+   "telegraf": 5,
+   "sekme": 8,
+   "durma": 1,
+   "carpisma-agir": 1,
+   "mac-sonu": 1
+  },
+  "calinan": {
+   "geri-sayim": 13,
+   "carpisma-hafif": 23,
+   "dash": 15,
+   "carpisma-kritik": 6,
+   "enerji-doldu": 8,
+   "telegraf": 5,
+   "sekme": 8,
+   "durma": 1,
+   "carpisma-agir": 1,
+   "mac-sonu": 1
+  },
+  "yuklenen": [
+   "carpisma-hafif",
+   "carpisma-agir",
+   "carpisma-kritik",
+   "duvar",
+   "dash",
+   "sekme",
+   "parcalanma",
+   "ring-out",
+   "durma",
+   "telegraf",
+   "geri-sayim",
+   "ulti",
+   "ui-tik",
+   "enerji-doldu",
+   "kenar-uyari",
+   "mac-sonu"
+  ],
+  "hatalar": [],
+  "acik": true,
+  "bagli": true
+ },
+ "hatalar": [],
+ "ekranlar": [
+  "docs/production/raporlar/ekran/D3-01-mac-basladi.png",
+  "docs/production/raporlar/ekran/D3-02-nisan-cizgisi-H9.png",
+  "docs/production/raporlar/ekran/D3-03-kendi-telegraf.png",
+  "docs/production/raporlar/ekran/D3-04-alan-dekali.png",
+  "docs/production/raporlar/ekran/D3-05-rakip-telegraf-H13.png",
+  "docs/production/raporlar/ekran/D3-06-enerji-doldu.png",
+  "docs/production/raporlar/ekran/D3-07-ulti-ani-kenar-parlamasi.png",
+  "docs/production/raporlar/ekran/D3-07b-ulti-ruh-siluet.png",
+  "docs/production/raporlar/ekran/D3-08-ulti-vurusu.png",
+  "docs/production/raporlar/ekran/D3-09-ulti-alan.png",
+  "docs/production/raporlar/ekran/D3-10-rakip-ulti-bandi.png",
+  "docs/production/raporlar/ekran/D3-10b-rakip-ulti-telegraf.png",
+  "docs/production/raporlar/ekran/D3-11-ayarlar.png",
+  "docs/production/raporlar/ekran/D3-12-oto-mac-yetenek.png",
+  "docs/production/raporlar/ekran/D3-13-sonuc.png"
+ ]
+}

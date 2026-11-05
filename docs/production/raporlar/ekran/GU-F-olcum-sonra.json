@@ -1,0 +1,781 @@
+{
+ "on": "sonra",
+ "sn": 60,
+ "tarayici": "153.0.8010.12",
+ "maclar": {
+  "botbot-dolas-kenar": {
+   "turSn": 46.2,
+   "carpisma": 20,
+   "carpismaDk": 26,
+   "kademe": {
+    "yok": 4,
+    "agir": 8,
+    "hafif": 6,
+    "kritik": 2
+   },
+   "aralikSn": {
+    "min": 0.333,
+    "p10": 0.35,
+    "medyan": 1.983
+   },
+   "art_arda_lt_0_3sn": 0,
+   "vnMedyan": 291,
+   "gpMedyan": 0.59,
+   "birikme": {
+    "kvOnceMedyan": 0,
+    "kvOnceMaks": 0,
+    "oncekiCanliyken": 0
+   },
+   "simTemas": {
+    "adet": 22,
+    "sureMedyan": 0.033,
+    "sureP90": 0.133,
+    "sureMaks": 0.233,
+    "toplamSn": 1.18
+   },
+   "akis": {
+    "adet": 2,
+    "sureMedyan": 0.283,
+    "sureMaks": 0.283,
+    "yanipSonme": 0,
+    "isimaAdet": 0,
+    "isimaSureMedyan": 0,
+    "akisKivilcim": 0
+   },
+   "sesler": {
+    "toplam": 60,
+    "temas": 0,
+    "temasDk": 0
+   },
+   "kivilcim": {
+    "maks": 49,
+    "p99": 47,
+    "ort": 3.1,
+    "flasMaks": 1,
+    "parcacikMaks": 51
+   },
+   "tepki": {
+    "kare": 281,
+    "yaklasmaMaksPx": 11.7,
+    "yaklasmaP90Px": 6.1,
+    "binenKare": 66
+   },
+   "kareMs": {
+    "medyan": 1.5,
+    "p95": 6.5,
+    "p99": 1375.6,
+    "maks": 3885.7
+   },
+   "gercekZaman": {
+    "kare": 150,
+    "medyanMs": 37.5,
+    "p95Ms": 51.6,
+    "fps": 27
+   },
+   "olaylar": [
+    {
+     "t": 5.9,
+     "vn": 57,
+     "gp": 0.14,
+     "kvOnce": 0,
+     "kvSonra": 5
+    },
+    {
+     "t": 6.73,
+     "vn": 363,
+     "gp": 1.1,
+     "kvOnce": 0,
+     "kvSonra": 48
+    },
+    {
+     "t": 13.85,
+     "vn": 291,
+     "gp": 0.59,
+     "kvOnce": 0,
+     "kvSonra": 25
+    },
+    {
+     "t": 14.47,
+     "vn": 336,
+     "gp": 1.1,
+     "kvOnce": 0,
+     "kvSonra": 42
+    },
+    {
+     "t": 20.55,
+     "vn": 94,
+     "gp": 0.13,
+     "kvOnce": 0,
+     "kvSonra": 6
+    },
+    {
+     "t": 23.52,
+     "vn": 90,
+     "gp": 0.11,
+     "kvOnce": 0,
+     "kvSonra": 5
+    },
+    {
+     "t": 25.5,
+     "vn": 364,
+     "gp": 1.1,
+     "kvOnce": 0,
+     "kvSonra": 49
+    },
+    {
+     "t": 26.57,
+     "vn": 150,
+     "gp": 0.26,
+     "kvOnce": 0,
+     "kvSonra": 10
+    },
+    {
+     "t": 33.55,
+     "vn": 481,
+     "gp": 1.06,
+     "kvOnce": 0,
+     "kvSonra": 43
+    },
+    {
+     "t": 40.13,
+     "vn": 361,
+     "gp": 1.1,
+     "kvOnce": 0,
+     "kvSonra": 45
+    },
+    {
+     "t": 42.78,
+     "vn": 204,
+     "gp": 0.5,
+     "kvOnce": 0,
+     "kvSonra": 19
+    },
+    {
+     "t": 45.18,
+     "vn": 359,
+     "gp": 1.1,
+     "kvOnce": 0,
+     "kvSonra": 45
+    },
+    {
+     "t": 46.93,
+     "vn": 150,
+     "gp": 0.26,
+     "kvOnce": 0,
+     "kvSonra": 9
+    },
+    {
+     "t": 48.53,
+     "vn": 169,
+     "gp": 0.3,
+     "kvOnce": 0,
+     "kvSonra": 11
+    },
+    {
+     "t": 53.12,
+     "vn": 511,
+     "gp": 1.15,
+     "kvOnce": 0,
+     "kvSonra": 47
+    },
+    {
+     "t": 55.1,
+     "vn": 351,
+     "gp": 1.1,
+     "kvOnce": 0,
+     "kvSonra": 44
+    },
+    {
+     "t": 57.48,
+     "vn": 27,
+     "gp": 0.02,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 58,
+     "vn": 48,
+     "gp": 0.03,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 58.35,
+     "vn": 56,
+     "gp": 0.05,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 58.68,
+     "vn": 316,
+     "gp": 1.1,
+     "kvOnce": 0,
+     "kvSonra": 43
+    }
+   ]
+  },
+  "botbot-kenar-dolas": {
+   "turSn": 53.6,
+   "carpisma": 30,
+   "carpismaDk": 33.6,
+   "kademe": {
+    "agir": 4,
+    "yok": 13,
+    "hafif": 11,
+    "kritik": 2
+   },
+   "aralikSn": {
+    "min": 0.15,
+    "p10": 0.15,
+    "medyan": 0.583
+   },
+   "art_arda_lt_0_3sn": 11,
+   "vnMedyan": 92,
+   "gpMedyan": 0.11,
+   "birikme": {
+    "kvOnceMedyan": 0,
+    "kvOnceMaks": 11,
+    "oncekiCanliyken": 11
+   },
+   "simTemas": {
+    "adet": 31,
+    "sureMedyan": 0.067,
+    "sureP90": 0.083,
+    "sureMaks": 0.217,
+    "toplamSn": 1.8
+   },
+   "akis": {
+    "adet": 2,
+    "sureMedyan": 2.15,
+    "sureMaks": 2.15,
+    "yanipSonme": 0,
+    "isimaAdet": 3,
+    "isimaSureMedyan": 0.533,
+    "akisKivilcim": 0
+   },
+   "sesler": {
+    "toplam": 62,
+    "temas": 6,
+    "temasDk": 6.7
+   },
+   "kivilcim": {
+    "maks": 49,
+    "p99": 45,
+    "ort": 2.4,
+    "flasMaks": 5,
+    "parcacikMaks": 45
+   },
+   "tepki": {
+    "kare": 421,
+    "yaklasmaMaksPx": 6.4,
+    "yaklasmaP90Px": 2.2,
+    "binenKare": 50
+   },
+   "kareMs": {
+    "medyan": 1.5,
+    "p95": 6.7,
+    "p99": 1364.6,
+    "maks": 3802.1
+   },
+   "gercekZaman": {
+    "kare": 150,
+    "medyanMs": 42.9,
+    "p95Ms": 54,
+    "fps": 23
+   },
+   "olaylar": [
+    {
+     "t": 6.87,
+     "vn": 341,
+     "gp": 1.1,
+     "kvOnce": 0,
+     "kvSonra": 45
+    },
+    {
+     "t": 9.88,
+     "vn": 37,
+     "gp": 0.02,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 11.53,
+     "vn": 93,
+     "gp": 0.12,
+     "kvOnce": 0,
+     "kvSonra": 5
+    },
+    {
+     "t": 13.55,
+     "vn": 100,
+     "gp": 0.26,
+     "kvOnce": 0,
+     "kvSonra": 10
+    },
+    {
+     "t": 16.97,
+     "vn": 303,
+     "gp": 1.1,
+     "kvOnce": 0,
+     "kvSonra": 45
+    },
+    {
+     "t": 23.6,
+     "vn": 533,
+     "gp": 1.18,
+     "kvOnce": 0,
+     "kvSonra": 49
+    },
+    {
+     "t": 27.17,
+     "vn": 53,
+     "gp": 0.03,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 27.75,
+     "vn": 74,
+     "gp": 0.07,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 27.95,
+     "vn": 92,
+     "gp": 0.11,
+     "kvOnce": 0,
+     "kvSonra": 5
+    },
+    {
+     "t": 28.1,
+     "vn": 70,
+     "gp": 0.07,
+     "kvOnce": 6,
+     "kvSonra": 10
+    },
+    {
+     "t": 28.25,
+     "vn": 75,
+     "gp": 0.08,
+     "kvOnce": 8,
+     "kvSonra": 11
+    },
+    {
+     "t": 28.4,
+     "vn": 74,
+     "gp": 0.08,
+     "kvOnce": 9,
+     "kvSonra": 12
+    },
+    {
+     "t": 28.55,
+     "vn": 67,
+     "gp": 0.06,
+     "kvOnce": 11,
+     "kvSonra": 14
+    },
+    {
+     "t": 28.8,
+     "vn": 82,
+     "gp": 0.09,
+     "kvOnce": 2,
+     "kvSonra": 5
+    },
+    {
+     "t": 29.02,
+     "vn": 73,
+     "gp": 0.07,
+     "kvOnce": 2,
+     "kvSonra": 5
+    },
+    {
+     "t": 29.25,
+     "vn": 73,
+     "gp": 0.07,
+     "kvOnce": 4,
+     "kvSonra": 7
+    },
+    {
+     "t": 29.48,
+     "vn": 60,
+     "gp": 0.04,
+     "kvOnce": 4,
+     "kvSonra": 8
+    },
+    {
+     "t": 29.8,
+     "vn": 66,
+     "gp": 0.06,
+     "kvOnce": 2,
+     "kvSonra": 6
+    },
+    {
+     "t": 31.55,
+     "vn": 100,
+     "gp": 0.14,
+     "kvOnce": 0,
+     "kvSonra": 5
+    },
+    {
+     "t": 31.88,
+     "vn": 89,
+     "gp": 0.11,
+     "kvOnce": 0,
+     "kvSonra": 5
+    },
+    {
+     "t": 32.13,
+     "vn": 69,
+     "gp": 0.07,
+     "kvOnce": 1,
+     "kvSonra": 5
+    },
+    {
+     "t": 32.32,
+     "vn": 304,
+     "gp": 1.1,
+     "kvOnce": 1,
+     "kvSonra": 41
+    },
+    {
+     "t": 34.88,
+     "vn": 365,
+     "gp": 1.1,
+     "kvOnce": 0,
+     "kvSonra": 45
+    },
+    {
+     "t": 38.38,
+     "vn": 20,
+     "gp": 0.01,
+     "kvOnce": 0,
+     "kvSonra": 3
+    },
+    {
+     "t": 38.9,
+     "vn": 215,
+     "gp": 0.5,
+     "kvOnce": 0,
+     "kvSonra": 19
+    },
+    {
+     "t": 42.18,
+     "vn": 240,
+     "gp": 0.57,
+     "kvOnce": 0,
+     "kvSonra": 21
+    },
+    {
+     "t": 52.52,
+     "vn": 487,
+     "gp": 1.12,
+     "kvOnce": 0,
+     "kvSonra": 46
+    },
+    {
+     "t": 59.33,
+     "vn": 135,
+     "gp": 0.21,
+     "kvOnce": 0,
+     "kvSonra": 8
+    },
+    {
+     "t": 62.52,
+     "vn": 94,
+     "gp": 0.23,
+     "kvOnce": 0,
+     "kvSonra": 8
+    },
+    {
+     "t": 64.37,
+     "vn": 157,
+     "gp": 0.27,
+     "kvOnce": 0,
+     "kvSonra": 10
+    }
+   ]
+  },
+  "girdisiz": {
+   "turSn": 54.8,
+   "carpisma": 30,
+   "carpismaDk": 32.8,
+   "kademe": {
+    "yok": 30
+   },
+   "aralikSn": {
+    "min": 0.65,
+    "p10": 0.667,
+    "medyan": 1
+   },
+   "art_arda_lt_0_3sn": 0,
+   "vnMedyan": 54,
+   "gpMedyan": 0.04,
+   "birikme": {
+    "kvOnceMedyan": 0,
+    "kvOnceMaks": 0,
+    "oncekiCanliyken": 0
+   },
+   "simTemas": {
+    "adet": 31,
+    "sureMedyan": 0.083,
+    "sureP90": 0.1,
+    "sureMaks": 0.333,
+    "toplamSn": 2.83
+   },
+   "akis": {
+    "adet": 2,
+    "sureMedyan": 0.517,
+    "sureMaks": 0.517,
+    "yanipSonme": 0,
+    "isimaAdet": 1,
+    "isimaSureMedyan": 0.467,
+    "akisKivilcim": 1
+   },
+   "sesler": {
+    "toplam": 31,
+    "temas": 0,
+    "temasDk": 0
+   },
+   "kivilcim": {
+    "maks": 5,
+    "p99": 4,
+    "ort": 0.3,
+    "flasMaks": 2,
+    "parcacikMaks": 18
+   },
+   "tepki": {
+    "kare": 1709,
+    "yaklasmaMaksPx": 12.4,
+    "yaklasmaP90Px": 6.2,
+    "binenKare": 111
+   },
+   "kareMs": {
+    "medyan": 0.9,
+    "p95": 4.8,
+    "p99": 1995.8,
+    "maks": 4105.6
+   },
+   "gercekZaman": {
+    "kare": 150,
+    "medyanMs": 39.8,
+    "p95Ms": 51,
+    "fps": 25
+   },
+   "olaylar": [
+    {
+     "t": 9.08,
+     "vn": 70,
+     "gp": 0.08,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 13.12,
+     "vn": 75,
+     "gp": 0.09,
+     "kvOnce": 0,
+     "kvSonra": 5
+    },
+    {
+     "t": 13.92,
+     "vn": 40,
+     "gp": 0.02,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 17.08,
+     "vn": 61,
+     "gp": 0.06,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 17.9,
+     "vn": 59,
+     "gp": 0.05,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 18.67,
+     "vn": 30,
+     "gp": 0.01,
+     "kvOnce": 0,
+     "kvSonra": 3
+    },
+    {
+     "t": 21.33,
+     "vn": 58,
+     "gp": 0.05,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 22.22,
+     "vn": 59,
+     "gp": 0.05,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 22.87,
+     "vn": 54,
+     "gp": 0.04,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 25.45,
+     "vn": 38,
+     "gp": 0.02,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 26.43,
+     "vn": 55,
+     "gp": 0.04,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 27.1,
+     "vn": 57,
+     "gp": 0.04,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 27.85,
+     "vn": 31,
+     "gp": 0.02,
+     "kvOnce": 0,
+     "kvSonra": 3
+    },
+    {
+     "t": 30.37,
+     "vn": 51,
+     "gp": 0.03,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 31.32,
+     "vn": 58,
+     "gp": 0.05,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 31.97,
+     "vn": 57,
+     "gp": 0.04,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 34.47,
+     "vn": 30,
+     "gp": 0.01,
+     "kvOnce": 0,
+     "kvSonra": 3
+    },
+    {
+     "t": 35.47,
+     "vn": 53,
+     "gp": 0.03,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 36.17,
+     "vn": 58,
+     "gp": 0.05,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 36.87,
+     "vn": 39,
+     "gp": 0.02,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 39.45,
+     "vn": 47,
+     "gp": 0.02,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 40.43,
+     "vn": 59,
+     "gp": 0.05,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 41.18,
+     "vn": 63,
+     "gp": 0.06,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 50.12,
+     "vn": 64,
+     "gp": 0.05,
+     "kvOnce": 0,
+     "kvSonra": 4
+    },
+    {
+     "t": 57.23,
+     "vn": 9,
+     "gp": 0,
+     "kvOnce": 0,
+     "kvSonra": 3
+    },
+    {
+     "t": 59,
+     "vn": 36,
+     "gp": 0.01,
+     "kvOnce": 0,
+     "kvSonra": 3
+    },
+    {
+     "t": 60.47,
+     "vn": 34,
+     "gp": 0.01,
+     "kvOnce": 0,
+     "kvSonra": 3
+    },
+    {
+     "t": 61.8,
+     "vn": 37,
+     "gp": 0.01,
+     "kvOnce": 0,
+     "kvSonra": 3
+    },
+    {
+     "t": 63.05,
+     "vn": 38,
+     "gp": 0.01,
+     "kvOnce": 0,
+     "kvSonra": 3
+    },
+    {
+     "t": 64.25,
+     "vn": 39,
+     "gp": 0.01,
+     "kvOnce": 0,
+     "kvSonra": 3
+    }
+   ]
+  }
+ },
+ "hatalar": []
+}

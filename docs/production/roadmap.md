@@ -1,5 +1,69 @@
 # Skaledman Arena — yol haritası ve karar günlüğü
 
+> **TARİHÇE / İPTAL (D8, B-37):** "Durum (2026-11-01)", aşamalar F0–F3 ve K-1…K-16 iptal edilen ilk fikrin (hayran kartlarıyla arena) tarihçesidir; değiştirilmeden tutulur. Proje **Devran**'a döndü: özgün dönen topaç dövüşü, kâr amaçsız.
+
+## Devran durumu (2026-11-06)
+
+[@nile · Producer] Kaynak: `docs/production/raporlar/*.md` başlıkları; güncel tek tablo `durum-20261105.md`. Bu bölüm yalnız işaret eder, karar vermez.
+Sağlık (`devran-kod` 23a772b, durum-20261105 § 1): typecheck, lint, build temiz; 488/488 test. **İnsanla oyun testi henüz yok.**
+
+### Çekirdek dilimler (D1-D8, hepsi tamam)
+
+| Dilim | Kapsam | Durum |
+|---|---|---|
+| D1 | Deterministik sim, Topaç Lab, altın hash'ler | ✔ |
+| D2 | Tam maç (3'lü takım, tur arası, ani ölüm), bot kademeleri | ✔ |
+| D3 | Enerji, Yetenek / Özel / Ulti, telegraf | ✔ |
+| D4 | Çevrimiçi 1v1 (Colyseus 0.18, tahmin + ara değer, kopma) | ✔ |
+| D5 | Hesaplar (ad + şifre), profil, ilk Çekirdek, eğitim, XP | ✔ |
+| D6 | Atölye, Çekirdek Günlüğü, Dene | ✔ |
+| D7 | Altın, Market, Başarımlar, hızlı maç, sonuç ekranı | ✔ |
+| D8 | Takım Ultisi, yetenek kullanan botlar, seyirci/OBS (`#izle=`), ruh siluetleri, gizlilik + hesap silme, krediler, marka temizliği, QA kapısı, test gecesi belgeleri | ✔ (rapor `raporlar/D8.md`; kırmızı kapılar orada) |
+
+### D8 sonrası (2026-11-05, hepsi `devran-kod`)
+
+| İş | Kapsam | Durum | Kanıt |
+|---|---|---|---|
+| GU-A | Menü dili v2 "Kuşak Taşı" (Yön B) tüm menü ekranlarında | ✔ | `raporlar/GU-A.md` |
+| GU-B | Maç ekranı: Hibrit kamera (yalnız sunum eğik), topaç, efekt, HUD, Ulti | ✔ | `raporlar/GU-B.md` |
+| GU-C, GU-D | Referans 07/08'e yaklaştırma: sprite, çanak, gölge, kalabalık, sarmal iz; büyük çanak, 45° topaç | ✔ | `raporlar/GU-C.md`, `GU-D.md` |
+| GU-E, GU-F | Kıvılcım çarpışması, temas akışı, seyirci köşe kartları; kıvılcım yeni fiziğe göre | ✔ | `raporlar/GU-E.md`, `GU-F.md` |
+| FIZIK-1 | Girdisiz topaçlar çarpışır ve seker (çanak eğimi, `vRO` 250) | ✔ | `raporlar/FIZIK-1.md` |
+| DENGE-1, DENGE-2 | Kazanım bandı, Ring Out payı, bot Ulti'si, Enerji Mirası, maç süresi | ✔ (insan verisi yok) | `raporlar/DENGE-1.md`, `DENGE-2.md` |
+| ATOLYE3D | Atölye'de three.js ile parçalı (patlatılmış) 3B topaç | ✔ | `raporlar/ATOLYE3D.md` |
+| ART-1 | Bulut yedeği: 3B → pixel topaç sprite'ları | ✔ (nihai sanat Mac hattında) | `raporlar/ART-1.md` |
+| MAC-PARCA Parti 1-3 | Gemini + Tripo + Blender: Parti 1 kalite kapısı, Parti 2 yedi Gövde, Parti 3 yedi Çekirdek; Disk/Uç sahip kararıyla parametrik; menü ikonları GLB'den | ✔ | `raporlar/MAC-PARCA.md` |
+| SANAT-ENTEGRASYON | Kutsal canavarlar (Ata hologramları, ruh portreleri) ve Pergel, `devran-sanat` → `devran-kod` | ✔ | `raporlar/SANAT-ENTEGRASYON.md` |
+| TEMIZLIK | Sekiz açık kalemin cila turu | ✔ | `raporlar/TEMIZLIK.md` |
+| MENU-DENETIM | Menü hata/karmaşa iş listesi (H-1…H-14), P1-P5 paketleri; S-1…S-3 onaylı | rapor ✔, **düzeltme yapılmadı** | `raporlar/MENU-DENETIM.md` |
+
+### Sırada (tek liste `durum-20261105.md` § 4-6)
+Menü düzeltmeleri P1 → ilk test gecesi (`test-gecesi.md`; alan adı ve VPS kurulumu sahipte) → ağ N3 kararı (sahip) → Kick OAuth (askıda, sahip söyleyene kadar yazılmaz).
+
+### Eski K-1…K-16 → Devran eşlemesi (2026-11-06)
+
+Eski kararlar aşağıda **olduğu gibi** durur; numaralar yeniden kullanılmaz. Devran'ın kendi karar listesi ayrı numaralıdır: `docs/design/beyblade/02-sahip-kararlari.md` (orada da K-1…K-12 var; karışmasın diye burada "02 K-n" yazılır). Kaynaklar: 02-sahip-kararlari, ADR-001…005, CLAUDE.md, kod.
+
+| Eski | Konu | Devran'da | Yerine geçen / dayanak |
+|---|---|---|---|
+| K-1 | Skaledman kartlarıyla arena | **iptal** | 02 K-1 (a) tam bağımsız; sahip 2026-11-04 "skaledman'dan bağımsız bir proje olacak" |
+| K-2 | Yığın (Vite + TS + PixiJS 8, Colyseus 0.18, SQLite, VPS, Kick OAuth) | **geçerli**, Kick OAuth hariç | ADR-001; kimlik ad + şifre (D5), Kick OAuth sahip kararıyla askıda |
+| K-3 | Fusion ölçümü, prosedürel animasyon | **iptal** | Sanat hattı `docs/art/topac-pixel-plani.md` (katmanlı sprite, Mac hattı) |
+| K-4 | WyrmWar rosteri, aynı nick'ler | **geçerli** | CLAUDE.md "Claude Code agents" |
+| K-5 | 8 yönlü kare animasyonlu fusion sprite'ları | **iptal** | Topaç sprite'ları + Ata/ruh görselleri (`06-kutsal-canavarlar.md`) |
+| K-6 | 60 Hz tick, 20 Hz yama | **geçerli** | ADR-002 |
+| K-7 | Referans oyunun kontrol şeması (1-4, sağ tuş nişan, Tab/Q/E takım) | **kısmen; belirsiz** | 02 K-3 (C hibrit: WASD sürüş, Shift dash, Space zıplama, fare nişan). ADR-003 hâlâ eski şemayı anlatıyor; Devran için güncellenmedi |
+| K-8 | Colyseus 0.18, geri dönüş 0.17 | **geçerli** | ADR-001 (`colyseus` 0.18.10 `package.json`'da) |
+| K-9 | Tek paket, npm | **geçerli** | ADR-001 |
+| K-10 | Türkçe tanımlayıcılar | **geçerli** | CLAUDE.md |
+| K-11 | Paca projesi Skaledman Arena | **geçerli (ad eski)** | Paca projesi aynı kaldı (SA öneki), proje adı Devran |
+| K-12 | Skaledman açık kaynak, onay engeli kalktı | **iptal** (konu kalmadı) | 02 K-1 |
+| K-13 taslağı | Skaledman'a "arenada savaş" devri | **iptal** | 02 K-1 |
+| K-14 | İlk arena İskeletler Diyarı | **iptal** | İlk arena **Kuşak Arenası** (`boslukler/nile-kapsam.md` B-12; kod `src/istemci/oyun/KusakArenasi.ts`, `HibritArena.ts`) |
+| K-15 | Arenada Skaledman kartı görünür | **iptal** | Marka temizliği B-37; `KartPanosu.ts` kodda yok |
+| K-16 | Zıplama, Z dinlenme, 3'lü takım, Q/E/Tab takım değişimi | **kısmen; belirsiz** | Zıplama ve dinlenme `Girdi`'de var, 3'lü takım D2'de; takım değişimi 02 K-6'ya göre bitiş sonrası zorunlu. Ayrıntı eşlemesi doğrulanmadı |
+
+
 Sahibi: `@nile`. Bu dosya nerede olduğumuzu söyler ve karar veren belgeye işaret eder; kendisi karar vermez.
 
 ## Durum (2026-11-01)

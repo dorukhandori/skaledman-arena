@@ -1,4 +1,12 @@
+> **TARİHÇE: 2026-11-04'ten beri İPTAL.** Sahip kararı: "skaledman'dan bağımsız bir proje olacak." Proje **Devran** oldu
+> (özgün topaç dövüşü, kâr amaçsız); Skaledman eklentisi, kart verisi, fusion sprite'ları ve Kick `user_id` eşleşmesi yok.
+> **Yerine:** [ADR-006](adr/ADR-006-devran-donusumu.md) (dönüşüm), [mimari.md](mimari.md) (güncel mimari),
+> [veri-modeli.md](veri-modeli.md) (kendi `veri/*.json` verimiz), [backend.md](backend.md) (ad + şifre kimliği; Kick OAuth askıda).
+> Aşağıdaki gövde değiştirilmeden tarihçe olarak tutulur; otorite değildir.
+
 # Skaledman'a eklenti olarak arena: entegrasyon yazısı
+
+> **TARİHÇE / İPTAL (D8, B-37):** Bu belge iptal edilen ilk fikrin (hayran kartlarıyla arena, 2026-11-01) kaydıdır; içerik değiştirilmeden tarihçe olarak tutulur. Proje **Devran**'a (özgün dönen topaç dövüşü, kâr amaçsız) döndü; marka, kart, sprite ve dış site bağımlılığı yoktur. Güncel belgeler: `docs/production/devran-kod-brief.md`, `docs/production/raporlar/D1.md … D8.md`.
 
 `[@axiom · Technical Director]` · 2026-11-01 · Durum: teknik öneri; Skaledman deposu görülünce (K-13) kesinleşir. Kaynaklar: [skaledman-sayfa-analizi.md](../research/skaledman-sayfa-analizi.md), [mimari.md](mimari.md), [oyun-konsepti.md § 1b](../design/oyun-konsepti.md).
 
