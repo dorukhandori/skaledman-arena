@@ -109,7 +109,7 @@ export function ustGezinti(ekran: string, ben: Ben | null): void {
   stilEkle();
   const nav = document.getElementById("menu");
   const rozet = document.querySelector("body > header h1 span");
-  if (rozet) rozet.textContent = "D7";
+  if (rozet) rozet.textContent = "D8";
   if (!nav) return;
   nav.innerHTML = "";
   nav.setAttribute("aria-label", "Ana gezinti");

@@ -10,7 +10,7 @@ import { bakimKatmani, darEkranDenetle, metinOlcegiUygula, surumDenetle, ustGezi
 
 export type EkranAdi =
   | "karsilama" | "kayit" | "giris" | "profil" | "ilk-cekirdek" | "antrenman" | "atolye" | "market" | "basarimlar" | "ayarlar"
-  | "lobi" | "mac" | "topac-lab" | "dene" | "gunluk" | "seyirci";
+  | "lobi" | "mac" | "topac-lab" | "dene" | "gunluk" | "seyirci" | "ruhlar";
 
 export interface EkranBaglami {
   app: Application;
@@ -38,6 +38,7 @@ const EKRANLAR: Record<EkranAdi, () => Promise<Modul>> = {
   dene: () => import("./ekranlar/Dene.ts"),
   gunluk: () => import("./ekranlar/Gunluk.ts"),
   seyirci: () => import("./ekranlar/Seyirci.ts"),
+  ruhlar: () => import("./ekranlar/RuhKontakt.ts"),
 };
 
 /** Giriş isteyen ekranlar (misafir yalnız Karşılama / Kayıt / Giriş / Antrenman / Ayarlar). */
@@ -45,7 +46,7 @@ const GIRIS_GEREKIR = new Set<EkranAdi>(["profil", "ilk-cekirdek", "atolye", "ma
 /** Pixi gerekmeyen menü ekranları */
 const CANVASSIZ = new Set<EkranAdi>(["karsilama", "kayit", "giris", "profil", "atolye", "market", "basarimlar", "ayarlar", "gunluk"]);
 /** D8: hesap ve gezinti istemeyen ekranlar (seyirci/OBS: giriş yok, kontrol yok) */
-const HESAPSIZ = new Set<EkranAdi>(["mac", "topac-lab", "seyirci"]);
+const HESAPSIZ = new Set<EkranAdi>(["mac", "topac-lab", "seyirci", "ruhlar"]);
 
 function ekranAdi(): EkranAdi {
   const istenen = new URLSearchParams(location.search).get("ekran");
@@ -74,7 +75,8 @@ async function ana() {
       ad = "karsilama";
     }
   }
-  if (ad !== "seyirci") { ustGezinti(ad, ben); darEkranDenetle(); }
+  if (ad === "seyirci" || ad === "ruhlar") document.body.classList.add("ciplak");
+  else { ustGezinti(ad, ben); darEkranDenetle(); }
   let app: Application | null = null;
   if (!CANVASSIZ.has(ad)) {
     app = new Application();

@@ -27,12 +27,14 @@
       #ustYazi { position: absolute; inset: 0; pointer-events: none; }
       #ustYazi > * { pointer-events: none; }
       #ustYazi > .lab, #ustYazi > .lobi, #ustYazi > .ekr { pointer-events: auto; }
+      /* D8 seyirci/OBS ve geliştirici kontakt levhası: üst bant yok, tuval tüm pencere */
+      body.ciplak { grid-template-rows: 1fr; } body.ciplak > header { display: none; }
       @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
     </style>
   </head>
   <body>
     <header>
-      <h1><a href="?ekran=atolye" style="color:inherit;text-decoration:none" aria-label="Devran: Atölye">DEVRAN</a> <span>D7</span></h1>
+      <h1><a href="?ekran=atolye" style="color:inherit;text-decoration:none" aria-label="Devran: Atölye">DEVRAN</a> <span>D8</span></h1>
       <nav id="menu"></nav>
     </header>
     <div id="sahne"><div id="ustYazi"></div></div>

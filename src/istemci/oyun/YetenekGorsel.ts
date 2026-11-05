@@ -5,6 +5,7 @@ import type { Dunya, Olay, Topac } from "../../paylasilan/sim/durum.ts";
 import { yetenekHedefi } from "../../paylasilan/sim/yetenek.ts";
 import { YETENEK_SIM, type YetenekSim } from "../../paylasilan/veri/yetenekSablon.ts";
 import { YOL } from "./elementSimge.ts";
+import { ruhSiluetCiz } from "./ruhSiluet.ts";
 import { ELEMENT_RENK, SAHNE_RENK, TAKIM_RENK } from "./renkler.ts";
 import { SAHNE, type Sahne } from "./Sahne.ts";
 import { SusRastgele } from "./SusRastgele.ts";
@@ -224,53 +225,9 @@ export class YetenekGorsel {
     g.stroke({ width: 4, color: beyaz ? 0xffffff : renk, alpha: 1 });
   }
 
-  // ---- ruh silüeti (element başına basit kod çizimi; kanatlı/ejderli değil, pixel planı § 4 yer tutucu) ----
+  // ---- ruh silüeti (D8: ruhSiluet.ts, maket m2 dili; özgün, kanatsız) ----
   private ruhCiz(el: ElementAdi): Graphics {
-    const c = ELEMENT_RENK[el];
-    const g = new Graphics();
-    const dolgu = { color: c.acik, alpha: 0.6 };
-    const cizgi = { width: 4, color: c.vurgu, alpha: 0.95 };
-    switch (el) {
-      case "kor": // köz tilkisi: sivri kulaklar, alev uçları
-        g.poly([-62, -10, -40, -92, -14, -40, 14, -40, 40, -92, 62, -10, 30, 52, 0, 78, -30, 52]).fill(dolgu).stroke(cizgi);
-        for (const x of [-22, 0, 22]) g.poly([x - 9, -44, x, -78 + Math.abs(x) * 0.6, x + 9, -44]).fill({ color: c.vurgu, alpha: 0.7 });
-        break;
-      case "kasirga": // sarmal baykuş başı (kanatsız): yuvarlak baş, tüy tutamları, iri göz halkaları
-        g.circle(0, 0, 68).fill(dolgu).stroke(cizgi);
-        g.poly([-52, -40, -66, -92, -24, -60]).fill(dolgu).stroke(cizgi);
-        g.poly([52, -40, 66, -92, 24, -60]).fill(dolgu).stroke(cizgi);
-        g.circle(-26, -4, 22).stroke({ width: 4, color: c.vurgu, alpha: 0.8 });
-        g.circle(26, -4, 22).stroke({ width: 4, color: c.vurgu, alpha: 0.8 });
-        break;
-      case "simsek": // çatır geyiği: baş + zikzak boynuzlar
-        g.ellipse(0, 10, 44, 62).fill(dolgu).stroke(cizgi);
-        g.moveTo(-20, -40).lineTo(-44, -76).lineTo(-30, -84).lineTo(-60, -112).moveTo(-44, -76).lineTo(-70, -80);
-        g.moveTo(20, -40).lineTo(44, -76).lineTo(30, -84).lineTo(60, -112).moveTo(44, -76).lineTo(70, -80);
-        g.stroke({ width: 6, color: c.acik, alpha: 0.9 });
-        break;
-      case "girdap": // emiş ahtapotu: kubbe + kollar
-        g.ellipse(0, -20, 70, 56).fill(dolgu).stroke(cizgi);
-        for (let k = -2; k <= 2; k++) {
-          const x = k * 26;
-          g.moveTo(x, 26).quadraticCurveTo(x + k * 14 + 20, 70, x - 6, 104);
-        }
-        g.stroke({ width: 8, color: c.orta, alpha: 0.75 });
-        break;
-      case "kaya": // yontu boğası: köşeli baş + kalın boynuzlar
-        g.poly([-50, -36, 50, -36, 62, 20, 30, 70, -30, 70, -62, 20]).fill(dolgu).stroke(cizgi);
-        g.moveTo(-46, -30).quadraticCurveTo(-110, -40, -96, -96).moveTo(46, -30).quadraticCurveTo(110, -40, 96, -96);
-        g.stroke({ width: 12, color: c.acik, alpha: 0.85 });
-        break;
-      case "don": // ayaz morsu: geniş baş + iki uzun diş
-        g.ellipse(0, 0, 72, 56).fill(dolgu).stroke(cizgi);
-        g.poly([-26, 30, -14, 30, -18, 110]).fill({ color: 0xffffff, alpha: 0.85 });
-        g.poly([26, 30, 14, 30, 18, 110]).fill({ color: 0xffffff, alpha: 0.85 });
-        break;
-    }
-    // göz parlaması
-    g.circle(-22, -6, 7).fill({ color: 0xffffff, alpha: 0.95 });
-    g.circle(22, -6, 7).fill({ color: 0xffffff, alpha: 0.95 });
-    return g;
+    return ruhSiluetCiz(el);
   }
 
   // ---- dekaller ----
