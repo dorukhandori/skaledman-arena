@@ -77,7 +77,7 @@ export async function atolyeGetir(): Promise<AtolyeGorunumu> {
 }
 
 /** PUT / PATCH / POST gövdeli istek (apiPost'un yöntemli hâli). */
-export async function apiIstek<T = { ok: boolean }>(yontem: "POST" | "PUT" | "PATCH", yol: string, govde: unknown = {}): Promise<{ durum: number; veri: T & { hata?: string } }> {
+export async function apiIstek<T = { ok: boolean }>(yontem: "POST" | "PUT" | "PATCH" | "DELETE", yol: string, govde: unknown = {}): Promise<{ durum: number; veri: T & { hata?: string } }> {
   let r: Response;
   try {
     r = await fetch(yol, { method: yontem, credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify(govde) });

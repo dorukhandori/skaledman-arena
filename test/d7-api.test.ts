@@ -55,7 +55,7 @@ describe("Altın defteri ve maç sonu (tek işlem, idempotent)", () => {
   it("göç 3: user_version, yeni tablo/sütunlar", () => {
     const d = yeni();
     expect(d.db.pragma("user_version", { simple: true })).toBe(GOCLER.length);
-    expect(GOCLER.length).toBe(3);
+    expect(GOCLER.length).toBeGreaterThanOrEqual(3); // D8: göç 4 (hesap silme)
     const sutun = (t: string) => (d.db.prepare(`PRAGMA table_info(${t})`).all() as { name: string }[]).map((x) => x.name);
     expect(sutun("altin_defteri")).toContain("zaman");
     expect(sutun("basarim")).toContain("tamam_tarihi");

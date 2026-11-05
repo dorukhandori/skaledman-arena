@@ -41,6 +41,7 @@ export function karsilama(b: EkranBaglami): void {
   const mesaj = new URLSearchParams(location.search).get("mesaj");
   if (mesaj === "oda" || location.hash.startsWith("#oda=")) el("p", "hata", kart, "Odaya katılmak için kayıt ol ya da giriş yap.");
   if (mesaj === "cikis") el("p", "alt", kart, "Çıkış yaptın.");
+  if (mesaj === "silindi") el("p", "alt", kart, "Hesabın silindi.");
   const s = el("div", "satir", kart);
   s.style.justifyContent = "center";
   const kayit = el("button", "bir", s, "Kayıt ol");

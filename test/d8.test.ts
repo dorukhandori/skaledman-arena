@@ -231,3 +231,116 @@ describe("D8 bot: yetenek kullanır (Takım Ultisi dahil)", () => {
     expect(takim).toBeGreaterThan(0);
   });
 });
+
+// ---- D8 d: hesap silme (depo), krediler ↔ manifest, gizlilik, XSS taraması ----
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { join } from "node:path";
+import { Depo, veritabaniAc } from "../src/sunucu/db/depo.ts";
+import { adAnahtari, adDogrula, takimAdDogrula } from "../src/sunucu/oyuncu/kurallar.ts";
+import { kaynakAnahtari, kredilerDerle, tablolariOku } from "../src/paylasilan/krediler.ts";
+
+describe("hesap silme (depo, nile B-28)", () => {
+  const kur = () => {
+    const d = new Depo(veritabaniAc(":memory:"));
+    const yeni = (ad: string) => d.oyuncuOlustur({ ad, adAnahtar: adAnahtari(ad), sifreHash: "scrypt$x", simdi: 1 })!;
+    const a = yeni("Silinen Sude");
+    const b = yeni("Kalan Kaan");
+    for (const id of [a, b]) {
+      expect(d.ilkCekirdek(id, "goktasi", 1)).toBe("tamam");
+      d.oturumAc(`oturum-${id}`, id, 9e15);
+      d.altinYaz(id, 100, "basarim", `basarim:ilk-devir:${id}`, 1);
+      d.basarimYaz(id, "zit-kutup", 3, false, 1, ["kor"]);
+    }
+    const ck = d.cekirdekler(a)[0]!;
+    d.macYaz({ id: "m1", mod: "oda", a, b, kazanan: a, puan: "3-1", sure: 60, bitis_nedeni: "puan", katalog_ozeti: "k", baslangic: 5, takim_a: "x", takim_b: "y" }, [{ cekirdekId: ck.id, kazanc: 10, tecrube: 160, seviye: 2, omur: null }]);
+    d.macYaz({ id: "m2", mod: "oda", a: b, b: a, kazanan: b, puan: "3-0", sure: 50, bitis_nedeni: "puan", katalog_ozeti: "k", baslangic: 6, takim_a: "y", takim_b: "x" }, []);
+    return { d, a, b };
+  };
+  const izSay = (d: Depo, id: number) => {
+    const db = d.db;
+    const tablolar = (db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'").all() as { name: string }[]).map((r) => r.name);
+    let n = 0;
+    for (const t of tablolar) {
+      const sutun = (db.prepare(`PRAGMA table_info(${t})`).all() as { name: string }[]).map((r) => r.name);
+      if (sutun.includes("oyuncu_id")) n += (db.prepare(`SELECT COUNT(*) n FROM ${t} WHERE oyuncu_id = ?`).get(id) as { n: number }).n;
+    }
+    n += (db.prepare("SELECT COUNT(*) n FROM oyuncu WHERE id = ?").get(id) as { n: number }).n;
+    n += (db.prepare("SELECT COUNT(*) n FROM mac WHERE a = ? OR b = ? OR kazanan = ?").get(id, id, id) as { n: number }).n;
+    return { n, tablolar };
+  };
+  it("tüm tablolardan siler, maç satırlarını anonimleştirir, rakibin verisi kalır", () => {
+    const { d, a, b } = kur();
+    const once = izSay(d, a);
+    expect(once.n).toBeGreaterThan(10);
+    expect(once.tablolar).toEqual(expect.arrayContaining(["oyuncu", "oturum", "cekirdek", "parca", "takim", "altin_defteri", "basarim", "basarim_kume", "mac", "cekirdek_xp"]));
+    const kalanOnce = izSay(d, b).n;
+    expect(d.hesapSil(a)).toBe(true);
+    expect(izSay(d, a).n).toBe(0);
+    expect((d.db.prepare("SELECT COUNT(*) n FROM cekirdek_xp").get() as { n: number }).n).toBe(0);
+    const m1 = d.mac("m1")!;
+    const m2 = d.mac("m2")!;
+    expect([m1.a, m1.silinen_a, m1.kazanan, m1.b]).toStrictEqual([null, 1, null, b]);
+    expect([m2.b, m2.silinen_b, m2.kazanan]).toStrictEqual([null, 1, b]);
+    // rakip: oyuncu, oturum, Çekirdek, Altın, başarım ve iki maç satırı duruyor (kazanan = rakip olan maç dahil)
+    expect(izSay(d, b).n).toBe(kalanOnce);
+    expect(d.bakiye(b)).toBe(100);
+    expect(d.sonMaclar(b).map((m) => m.id)).toStrictEqual(["m2", "m1"]);
+  });
+  it("idempotent: ikinci silme false, hiçbir şey değişmez", () => {
+    const { d, a, b } = kur();
+    expect(d.hesapSil(a)).toBe(true);
+    const sonra = izSay(d, b).n;
+    expect(d.hesapSil(a)).toBe(false);
+    expect(izSay(d, b).n).toBe(sonra);
+    expect(d.hesapSil(999)).toBe(false);
+  });
+});
+
+describe("krediler (manifest ↔ docs/art/krediler.md)", () => {
+  const oku = (p: string) => (existsSync(p) ? readFileSync(p, "utf8") : null);
+  const json = (p: string) => { const m = oku(p); return m ? JSON.parse(m) as unknown : null; };
+  it("manifest'teki her kaynağın krediler listesinde karşılığı var", () => {
+    const k = kredilerDerle(oku("docs/art/krediler.md"), json("veri/manifest-gorsel.json"), json("veri/manifest-ses.json"));
+    expect(k.kaynaklar.length).toBeGreaterThan(0);
+    const eksik = k.kaynaklar.filter((x) => x.eksikAtif).map((x) => `${x.dosya} (${x.kaynak})`);
+    expect(eksik).toStrictEqual([]);
+    expect(k.bildirim).toMatch(/Permission is hereby granted/);
+    expect(k.yazilim.map((y) => y.ad).join(" ")).toMatch(/PixiJS.*@pixi\/sound.*Colyseus/);
+    expect(k.yaziTipi).toMatch(/yazı tipi/i);
+  });
+  it("eksik dosya → boş durum; atıfsız kaynak işaretlenir", () => {
+    expect(kredilerDerle(null, null, null)).toMatchObject({ bolumler: [], bildirim: null, kaynaklar: [] });
+    const k = kredilerDerle("## Bölüm\n| A | B |\n|---|---|\n| Kenney | CC0 |\n", { dosyalar: [{ dosya: "x.png", kaynak: "Bilinmeyen Usta, paket", lisans: "CC0-1.0" }, { dosya: "y.ogg", kaynak: "Kenney, Impact", lisans: "CC0-1.0" }] }, { dosyalar: [{ dosya: "s.wav", kaynak: "sentez (araclar/ses-uret.ts)" }] });
+    expect(k.kaynaklar.map((x) => [x.anahtar, x.eksikAtif])).toStrictEqual([["bilinmeyen", true], ["kenney", false], ["sentez", true]]);
+    expect(kaynakAnahtari("Joseph Sardin, BigSoundBank")).toBe("joseph");
+    expect(tablolariOku("## T\n| a | b |\n|---|---|\n| `x` | **y** |").bolumler[0]!.satirlar[0]!.hucreler).toStrictEqual(["x", "y"]);
+  });
+});
+
+describe("gizlilik (nile B-28)", () => {
+  it("docs/gizlilik.md var: ne / ne için / ne kadar / silme yolu / kâr amaçsız / çerezler", () => {
+    const m = readFileSync("docs/gizlilik.md", "utf8");
+    for (const s of ["## Ne saklıyoruz", "## Ne için", "## Ne kadar süre", "## Silme yolu", "## Çerezler", "kâr amaçsız", "Hesabımı sil", "Silinmiş oyuncu", "devran_oturum"]) expect(m).toContain(s);
+    expect(readFileSync("src/istemci/ekranlar/Bilgi.ts", "utf8")).toContain("docs/gizlilik.md?raw");
+    expect(readFileSync("src/istemci/ekranlar/Diger.ts", "utf8")).toMatch(/\/gizlilik[\s\S]*\/krediler[\s\S]*Hesabımı sil/);
+  });
+});
+
+describe("XSS: kullanıcı / takım adı (güvenlik öz denetimi)", () => {
+  const dosyalar = (k: string): string[] => readdirSync(k).flatMap((f) => { const p = join(k, f); return statSync(p).isDirectory() ? dosyalar(p) : p.endsWith(".ts") ? [p] : []; });
+  it("sunucu ad ve takım adında < > & \" karakterlerini reddeder", () => {
+    for (const ad of ["<script>x", "a<img src=x>", "ab\"c", "a&b"]) expect(adDogrula(ad).hata, ad).toBe("karakter");
+    for (const ad of ["<b>takım</b>", "Takım\"1", "x&y"]) expect(takimAdDogrula(ad).hata, ad).toBe("karakter");
+  });
+  it("istemcide innerHTML / insertAdjacentHTML şablonları oyuncu / rakip / takım adı içermez (adlar textContent ile)", () => {
+    const yasak = /(oyuncu\(|\.oyuncu\.ad|rakipAd|adlar\[|sonAd|takim[A-Za-z]*\.ad|ben\.oyuncu|\.ad \?\? "Rakip")/;
+    const ihlal: string[] = [];
+    for (const f of dosyalar("src/istemci")) {
+      readFileSync(f, "utf8").split("\n").forEach((satir, n) => {
+        const m = /(innerHTML\s*=|insertAdjacentHTML\([^,]+,)\s*(.*)$/.exec(satir);
+        if (m && /\$\{/.test(m[2]!) && yasak.test(m[2]!)) ihlal.push(`${f}:${n + 1}`);
+      });
+    }
+    expect(ihlal).toStrictEqual([]);
+  });
+});

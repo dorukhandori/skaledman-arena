@@ -135,3 +135,45 @@ describe("seyirci odası (ux § 5, #izle=)", () => {
     await oda.leave(true);
   }, 60000);
 });
+
+describe("hesap silme API (DELETE /api/hesap, nile B-28)", () => {
+  it("misafir 401; yanlış şifre 401; doğru şifre 200 + çerez temizlenir; ikinci çağrı 401; rakip geçmişinde 'Silinmiş oyuncu'", async () => {
+    const { PROTOKOL_SURUMU } = await import("../src/ag/protokol.ts");
+    const { KATALOG_OZETI } = await import("../src/ag/katalog.ts");
+    const A = await hesap("Gidecek Gul");
+    const B = await hesap("Kalacak Kerem");
+    // bir oda maçı oynat (A teslim): mac satırı yazılır
+    const oda = await new Client(TABAN).create<OdaDurumu>("mac", { v: PROTOKOL_SURUMU, mod: "oda", katalog: KATALOG_OZETI, bilet: await bilet(A) });
+    await bekle(200);
+    const odaB = await new Client(TABAN).joinById<OdaDurumu>(oda.roomId, { v: PROTOKOL_SURUMU, mod: "oda", katalog: KATALOG_OZETI, bilet: await bilet(B) });
+    await bekle(200);
+    oda.send("hazir", { v: PROTOKOL_SURUMU });
+    odaB.send("hazir", { v: PROTOKOL_SURUMU });
+    await bekle(1500);
+    oda.send("teslim", { v: PROTOKOL_SURUMU });
+    await bekle(800);
+    await odaB.leave(true);
+    await oda.leave(true);
+    const once = (await istek("/api/maclar", undefined, B)).veri as { maclar: { rakipAd: string; sonuc: string; skor: number[] }[] };
+    expect(once.maclar[0]).toMatchObject({ rakipAd: "Gidecek Gul", sonuc: "zafer", skor: [3, 0] });
+    expect((await istek("/api/hesap", { sifre: "uzun-sifre-1" }, null, "DELETE")).durum).toBe(401); // misafir
+    expect((await istek("/api/hesap", { sifre: "yanlis-sifre-x" }, A, "DELETE")).veri).toStrictEqual({ hata: "yanlis" });
+    const r = await istek("/api/hesap", { sifre: "uzun-sifre-1" }, A, "DELETE");
+    expect(r.durum).toBe(200);
+    expect(r.veri).toMatchObject({ silindi: true });
+    expect(r.cerez).toBe("devran_oturum=");
+    expect((await istek("/api/ben", undefined, A)).veri["girisli"]).toBe(false);
+    expect((await istek("/api/hesap", { sifre: "uzun-sifre-1" }, A, "DELETE")).durum).toBe(401); // ikinci çağrı
+    expect((await istek("/api/giris", { ad: "Gidecek Gul", sifre: "uzun-sifre-1" })).durum).toBe(401);
+    const sonra = (await istek("/api/maclar", undefined, B)).veri as { maclar: { rakipAd: string; sonuc: string }[] };
+    expect(sonra.maclar[0]).toMatchObject({ rakipAd: "Silinmiş oyuncu", sonuc: "zafer" });
+    // ad yeniden alınabilir (veri yok)
+    expect((await istek("/api/kayit", { ad: "Gidecek Gul", sifre: "uzun-sifre-1", sifreTekrar: "uzun-sifre-1" })).durum).toBe(201);
+  }, 30000);
+});
+
+describe("gizlilik ve krediler sayfaları (tek sayfa yolları)", () => {
+  it("/api/izle bilinmeyen kod → yok", async () => {
+    expect((await istek("/api/izle/xx")).veri).toStrictEqual({ durum: "yok" });
+  });
+});

@@ -33,6 +33,8 @@ export interface MacSatiri {
   /** D7 (göç 3): gün anahtarı (04:00), bitiş ms, bot maçı, telemetri (B-40), oyuncu başı Altın */
   gun?: number | null; bitis?: number | null; bot?: number; bitis_turleri?: string | null; yetenek_a?: string | null; yetenek_b?: string | null;
   altin_a?: number | null; altin_b?: number | null;
+  /** D8 (göç 4): bu taraf hesabını sildi */
+  silinen_a?: number; silinen_b?: number;
 }
 export interface DefterSatiri { id: number; oyuncu_id: number; miktar: number; neden: string; ref: string; zaman: number }
 export interface BasarimSatiri { basarim_id: string; ilerleme: number; tamam: number; tamam_tarihi: number | null }
@@ -274,6 +276,36 @@ export class Depo {
       }
       return true;
     })();
+  }
+
+  /**
+   * D8 hesap silme (nile B-28): oyuncunun tüm satırları tek işlemde silinir (oturum, takım, Çekirdek + XP günlüğü,
+   * parça, Altın defteri, başarım, başarım kümesi, oyuncu); maç satırlarında kimliği NULL'a çekilir, taraf "silinmiş"
+   * işaretlenir, kazanansa kazanan NULL olur (rakibin kaydı mağlubiyet olarak kalır). İdempotent: yoksa false.
+   */
+  hesapSil(id: number): boolean {
+    return this.islem(() => {
+      if (!this.oyuncu(id)) return false;
+      const db = this.db;
+      db.prepare("UPDATE mac SET kazanan = NULL WHERE kazanan = ?").run(id);
+      db.prepare("UPDATE mac SET a = NULL, silinen_a = 1 WHERE a = ?").run(id);
+      db.prepare("UPDATE mac SET b = NULL, silinen_b = 1 WHERE b = ?").run(id);
+      db.prepare("DELETE FROM oturum WHERE oyuncu_id = ?").run(id);
+      db.prepare("DELETE FROM takim WHERE oyuncu_id = ?").run(id);
+      db.prepare("DELETE FROM cekirdek_xp WHERE cekirdek_id IN (SELECT id FROM cekirdek WHERE oyuncu_id = ?)").run(id);
+      db.prepare("DELETE FROM cekirdek WHERE oyuncu_id = ?").run(id);
+      db.prepare("DELETE FROM parca WHERE oyuncu_id = ?").run(id);
+      db.prepare("DELETE FROM altin_defteri WHERE oyuncu_id = ?").run(id);
+      db.prepare("DELETE FROM basarim WHERE oyuncu_id = ?").run(id);
+      db.prepare("DELETE FROM basarim_kume WHERE oyuncu_id = ?").run(id);
+      db.prepare("DELETE FROM oyuncu WHERE id = ?").run(id);
+      return true;
+    });
+  }
+
+  /** D8: oyuncunun son maçları (en yeni önce). */
+  sonMaclar(id: number, n = 20): MacSatiri[] {
+    return this.db.prepare("SELECT * FROM mac WHERE a = ? OR b = ? ORDER BY baslangic DESC LIMIT ?").all(id, id, n) as MacSatiri[];
   }
 
   mac(id: string): MacSatiri | null {

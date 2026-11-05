@@ -10,7 +10,7 @@ import { bakimKatmani, darEkranDenetle, metinOlcegiUygula, surumDenetle, ustGezi
 
 export type EkranAdi =
   | "karsilama" | "kayit" | "giris" | "profil" | "ilk-cekirdek" | "antrenman" | "atolye" | "market" | "basarimlar" | "ayarlar"
-  | "lobi" | "mac" | "topac-lab" | "dene" | "gunluk" | "seyirci" | "ruhlar";
+  | "lobi" | "mac" | "topac-lab" | "dene" | "gunluk" | "seyirci" | "ruhlar" | "gizlilik" | "krediler";
 
 export interface EkranBaglami {
   app: Application;
@@ -39,12 +39,14 @@ const EKRANLAR: Record<EkranAdi, () => Promise<Modul>> = {
   gunluk: () => import("./ekranlar/Gunluk.ts"),
   seyirci: () => import("./ekranlar/Seyirci.ts"),
   ruhlar: () => import("./ekranlar/RuhKontakt.ts"),
+  gizlilik: () => import("./ekranlar/Bilgi.ts").then((m) => ({ baslat: m.gizlilik })),
+  krediler: () => import("./ekranlar/Bilgi.ts").then((m) => ({ baslat: m.krediler })),
 };
 
 /** Giriş isteyen ekranlar (misafir yalnız Karşılama / Kayıt / Giriş / Antrenman / Ayarlar). */
 const GIRIS_GEREKIR = new Set<EkranAdi>(["profil", "ilk-cekirdek", "atolye", "market", "basarimlar", "lobi", "dene", "gunluk"]);
 /** Pixi gerekmeyen menü ekranları */
-const CANVASSIZ = new Set<EkranAdi>(["karsilama", "kayit", "giris", "profil", "atolye", "market", "basarimlar", "ayarlar", "gunluk"]);
+const CANVASSIZ = new Set<EkranAdi>(["karsilama", "kayit", "giris", "profil", "atolye", "market", "basarimlar", "ayarlar", "gunluk", "gizlilik", "krediler"]);
 /** D8: hesap ve gezinti istemeyen ekranlar (seyirci/OBS: giriş yok, kontrol yok) */
 const HESAPSIZ = new Set<EkranAdi>(["mac", "topac-lab", "seyirci", "ruhlar"]);
 
@@ -52,6 +54,10 @@ function ekranAdi(): EkranAdi {
   const istenen = new URLSearchParams(location.search).get("ekran");
   if (istenen && istenen in EKRANLAR) return istenen as EkranAdi;
   if (location.hash.startsWith("#izle=")) return "seyirci";
+  // D8: /gizlilik ve /krediler yolları (tek sayfa; sunucu bilinmeyen yolda index.html verir)
+  const yol = location.pathname.replace(/\/+$/, "");
+  if (yol.endsWith("/gizlilik")) return "gizlilik";
+  if (yol.endsWith("/krediler")) return "krediler";
   return location.hash.startsWith("#oda=") ? "lobi" : "karsilama";
 }
 

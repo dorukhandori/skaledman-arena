@@ -13,6 +13,7 @@ export interface Uygulama {
   post(yol: string, f: Isleyici): void;
   put(yol: string, f: Isleyici): void;
   patch(yol: string, f: Isleyici): void;
+  delete(yol: string, f: Isleyici): void;
 }
 
 export async function govdeOku(q: Istek): Promise<unknown> {

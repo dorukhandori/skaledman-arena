@@ -130,6 +130,14 @@ export const GOCLER: readonly string[] = [
   ALTER TABLE mac ADD COLUMN altin_b INTEGER;
   CREATE INDEX mac_gun ON mac(gun);
   `,
+  // 4 (D8): hesap silme (nile B-28). Silinen oyuncunun maç satırı kalır (rakibin geçmişi, telemetri) ama kimliği
+  // NULL'a çekilir ve taraf "silinmiş" işaretlenir (rakip adı "Silinmiş oyuncu").
+  `
+  ALTER TABLE mac ADD COLUMN silinen_a INTEGER NOT NULL DEFAULT 0;
+  ALTER TABLE mac ADD COLUMN silinen_b INTEGER NOT NULL DEFAULT 0;
+  CREATE INDEX mac_a ON mac(a);
+  CREATE INDEX mac_b ON mac(b);
+  `,
 ];
 
 /** Göçleri uygula; dönen: uygulanan göç sayısı. */

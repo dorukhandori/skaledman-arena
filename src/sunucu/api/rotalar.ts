@@ -32,6 +32,7 @@ const KayitSema = z.object({ ad: z.string().max(64), sifre: z.string().max(256),
 const GirisSema = z.object({ ad: z.string().max(64), sifre: z.string().max(256) });
 const ProfilSema = z.object({ arma: z.enum(AMBLEMLER as unknown as [string, ...string[]]), renk: z.enum(RENKLER), destekKanali: z.string().trim().max(25).regex(/^[A-Za-z0-9_]*$/).optional() });
 const IlkCekirdekSema = z.object({ set: z.string().max(20) });
+const HesapSilSema = z.object({ sifre: z.string().max(256) });
 
 function oturumAc(r: Yanit, oyuncuId: number, d: Depo): void {
   const id = yeniOturumId();
@@ -127,6 +128,46 @@ export function rotalariKur(app: Uygulama): void {
     if (id) depo().oturumSil(id);
     r.setHeader("Set-Cookie", cerezBasligi(OTURUM_CEREZI, "", 0));
     yaz(r, 200, { ok: true });
+  });
+
+  /**
+   * D8 hesap silme (nile B-28; iki adım istemcide, burada şifre onayı): oturumdaki oyuncunun tüm verisi silinir,
+   * maç satırları anonimleşir, oturum çerezi temizlenir. Misafire uygulanmaz (oturum yok → 401). Kaba kuvvet
+   * girişle aynı sınır. İkinci çağrı: oturum artık yok → 401 (depo düzeyinde idempotent).
+   */
+  app.delete("/api/hesap", async (q, r) => {
+    if (!kokenTamam(q, r)) return;
+    const d = depo();
+    const id = oturumdakiOyuncu(q, d);
+    if (id === null) { yaz(r, 401, { hata: "oturum" }); return; }
+    let b: z.infer<typeof HesapSilSema>;
+    try { b = HesapSilSema.parse(await govdeOku(q)); } catch { yaz(r, 400, { hata: "bicim" }); return; }
+    if (!denemeIzinli(`sil:${ip(q)}:${id}`)) { yaz(r, 429, { hata: "cok" }); return; }
+    const o = d.oyuncu(id);
+    if (!o || !(await sifreDogrula(b.sifre, o.sifre_hash))) { yaz(r, 401, { hata: "yanlis" }); return; }
+    d.hesapSil(id);
+    r.setHeader("Set-Cookie", cerezBasligi(OTURUM_CEREZI, "", 0));
+    console.log(`[kimlik] hesap silindi: oyuncu ${id}`);
+    yaz(r, 200, { ok: true, silindi: true });
+  });
+
+  /** D8: son 20 maç (rakip adı; hesabını silen rakip "Silinmiş oyuncu", bot "Devran botu"). */
+  app.get("/api/maclar", (q, r) => {
+    const d = depo();
+    const id = oturumdakiOyuncu(q, d);
+    if (id === null) { yaz(r, 401, { hata: "oturum" }); return; }
+    const maclar = d.sonMaclar(id).map((m) => {
+      const ben = m.a === id ? "a" : "b";
+      const rakipId = ben === "a" ? m.b : m.a;
+      const silindi = (ben === "a" ? m.silinen_b : m.silinen_a) === 1;
+      const rakipAd = rakipId !== null ? (d.oyuncu(rakipId)?.ad ?? "Silinmiş oyuncu") : silindi ? "Silinmiş oyuncu" : m.bot ? "Devran botu" : "—";
+      const puan = m.puan.split("-").map(Number) as [number, number];
+      return {
+        id: m.id, mod: m.mod, tarih: m.baslangic, rakipAd, skor: ben === "a" ? puan : [puan[1], puan[0]],
+        sonuc: m.kazanan === id ? "zafer" : m.bitis_nedeni === "iptal" ? "iptal" : "yenilgi", sureSn: m.sure,
+      };
+    });
+    yaz(r, 200, { maclar });
   });
 
   /** Profil (US-1.2): ad kayıttan gelir; arma, renk, destek kanalı. */

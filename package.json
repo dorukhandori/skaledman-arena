@@ -22,7 +22,8 @@
     "ag:simulator": "tsx araclar/ag-simulatoru.ts",
     "d5:akis": "tsx araclar/d5-akis.ts",
     "d6:akis": "tsx araclar/d6-akis.ts",
-    "d7:akis": "tsx araclar/d7-akis.ts"
+    "d7:akis": "tsx araclar/d7-akis.ts",
+    "krediler:uret": "tsx araclar/krediler-uret.ts"
   },
   "dependencies": {
     "@colyseus/monitor": "0.18.7",
