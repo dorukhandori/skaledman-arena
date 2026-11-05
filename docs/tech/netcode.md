@@ -132,3 +132,8 @@ RTT: SDK saatinin yumuşatılmış girdi-ack RTT'si, yoksa ping ortalaması.
   hatırlanır; oda kodu üreticisi yayın kodlarını yeniden vermez. `GET /api/izle/:kod` oda ya da yayın kodunu yayın koduna çözer.
 - Ölçüm: oda adımı (`odaAdimSureleri`, sim + yama + seyirci yansıtma) p50/p95/p99 ve seyirci sayısı `[olcum …]` günlük satırında
   ve `/api/olcum`'da. D8 sayıları: `docs/production/raporlar/D8.md`.
+
+## Karar N3 (sahip onayı, Kasım 2026): atlama eşiği 8 → 40 br
+`UZLASMA.sicrama` 40, `buyukEsik` 8, `buyukAdim` 6: 8-40 br arası fark 6 adımda yumuşak erir, yalnız > 40 br atlama olur.
+Ölçüm (`npm run ag:matris`, N3): sıçrama/10 çarpışma **12-14 → A 1,67 / B 1,46** (kapı ≤ 1: hâlâ kırmızı, ama D4 deneyindeki 1,8-2,3 ile uyumlu);
+varış p95 348/489 ms değişmedi (taşıma gecikmesi; çözümü güvenilmez girdi kanalı, ayrı karar). N0 0,67/0,33, N1 0,40/0,00.

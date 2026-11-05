@@ -15,7 +15,7 @@ import { kaydiOynat } from "../../ag/kayit.ts";
 
 // Çevrimiçi maç kaynağı (tahmin modeli A, ADR-005, docs/tech/netcode.md § 5):
 // - Kendi topacım: girdi tamponu + sunucu ack'inden yeniden oynatma (paylasilan/sim/tahmin.ts `kendiAdimi`).
-//   Uzlaşma: < 0,5 br yok say (görsel konum korunur), 0,5-8 br yumuşak (4 adım eğri), > 8 br atlama; yakın zamanda
+//   Uzlaşma: < 0,5 br yok say (görsel konum korunur), 0,5-8 br yumuşak (4 adım eğri), 8-40 br büyük yumuşak (6 adım), > 40 br atlama; yakın zamanda
 //   sunucu darbesi (çarpışma / yetenek isabeti) aldıysam büyük fark da yumuşak (6 adım: savrulma olarak okunur).
 //   Hitstop sırasında düzeltme erimez (bitince uygulanır). Görsel efekt asla geri alınmaz.
 // - Rakip: sunucu anlık görüntülerinden 100 ms geriden ara değer; rakibe karşı yalnız konumsal ayırma (içinden geçmez).
@@ -180,7 +180,8 @@ export class AgMaci {
     const u = this.olcum.uzlasma;
     const darbe = performance.now() - this.sonDarbeMs < 600;
     if (e < UZLASMA.yokSay) { u.yokSay++; this.ofsetEkle(ex, ez, UZLASMA.yumusakAdim); }
-    else if (e <= UZLASMA.sicrama) { u.yumusak++; this.ofsetEkle(ex, ez, UZLASMA.yumusakAdim); }
+    else if (e <= UZLASMA.buyukEsik) { u.yumusak++; this.ofsetEkle(ex, ez, UZLASMA.yumusakAdim); }
+    else if (e <= UZLASMA.sicrama) { u.buyuk++; u.deneyYumusak++; this.ofsetEkle(ex, ez, UZLASMA.buyukAdim); }
     else if (e <= this.deneySicrama) { u.buyuk++; u.deneyYumusak++; this.ofsetEkle(ex, ez, 6); }
     else {
       u.buyuk++;

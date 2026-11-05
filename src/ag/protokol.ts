@@ -53,8 +53,12 @@ export const BOSTA_TASIMA_ADIMI = 30;
 export const UZLASMA = {
   /** bu kadarın altındaki konum farkı yok sayılır (görsel konum korunur, fark birkaç adımda erir) */
   yokSay: 0.5,
-  /** bu kadarın üstü atlama (sıçrama); arası yumuşak düzeltme */
-  sicrama: 8,
+  /** bu kadarın üstü atlama (sıçrama); arası yumuşak düzeltme. Sahip kararı N3: 8 → 40 br (D4 § 6, SAPMA) */
+  sicrama: 40,
+  /** yumuşak aralıkta bu eşiğin üstü 'büyük' düzeltme sayılır ve daha uzun (6 adım) erir; altı 4 adım */
+  buyukEsik: 8,
+  /** büyük yumuşak düzeltme süresi (adım) */
+  buyukAdim: 6,
   /** yumuşak düzeltme süresi (adım; 05 § 4: 3-5) */
   yumusakAdim: 4,
 } as const;

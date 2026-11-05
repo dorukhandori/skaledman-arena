@@ -30,9 +30,10 @@ describe("protokol v6 (D8)", () => {
     expect(KatilmaSema.safeParse({ v: 6, mod: "oda", bilet: "x".repeat(600), katalog: KATALOG_OZETI }).success).toBe(false);
     expect(KatilmaSema.safeParse({ v: 6, mod: "dereceli", katalog: "x" }).success).toBe(false);
   });
-  it("uzlaşma eşikleri flint § 2: yumuşak > 0,5, sıçrama > 8; boşluk taşıma TCP yeniden iletimini kapsar", () => {
+  it("uzlaşma eşikleri flint § 2: yumuşak > 0,5, büyük yumuşak > 8, sıçrama > 40 (sahip kararı N3); boşluk taşıma TCP yeniden iletimini kapsar", () => {
     expect(UZLASMA.yokSay).toBe(0.5);
-    expect(UZLASMA.sicrama).toBe(8);
+    expect(UZLASMA.buyukEsik).toBe(8);
+    expect(UZLASMA.sicrama).toBe(40);
     expect(BOSTA_TASIMA_ADIMI * 1000 / 60).toBeGreaterThanOrEqual(350);
   });
 });

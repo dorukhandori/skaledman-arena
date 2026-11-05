@@ -12,7 +12,7 @@ rakiple çarpışır. 05 § 4 iki aşama önerir: A (sade) ve B (rakip ileri tah
 - Topaç-topaç impulsu, hasar, tık, Enerji, yetenek etkileri, Ring Out/Durma/Parçalanma yalnız sunucudan.
 - Rakibe karşı yalnız konumsal ayırma (görsel; içinden geçmez), hız değişmez. Hayalet çarpma yapısal olarak 0.
 - Çarpışma hissi sunucu `carpisma` olayı gelince oynar (olaylar adım sonunda anında, yamayı beklemez).
-- Uzlaşma: < 0,5 br yok say, 0,5-8 br yumuşak (4 adım), > 8 br atlama; son 600 ms'de sunucu darbesi varsa büyük
+- Uzlaşma: < 0,5 br yok say, 0,5-8 br yumuşak (4 adım), 8-40 br büyük yumuşak (6 adım), > 40 br atlama (sahip onayı, N3); son 600 ms'de sunucu darbesi varsa büyük
   fark da yumuşak (6 adım, savrulma olarak okunur). Hitstop sırasında düzeltme erimez. Efektler geri alınmaz.
 
 ## B'ye geçiş tetiği
