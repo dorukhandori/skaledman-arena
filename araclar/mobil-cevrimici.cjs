@@ -102,7 +102,19 @@ const sonuc = {};
         sonuc.donusBandi = await B.s.evaluate(() => (document.querySelector(".agk .bant.acik") || {}).innerText || "");
         await B.s.screenshot({ path: `${K}/MOBIL-cevrimici-donus.png` });
       }
-    } else if (adim % 20 !== 0) { await dok("touchEnd", []); adim = Math.ceil(adim / 20) * 20; }
+    } else {
+      await dok("touchEnd", []);
+      adim = Math.ceil(adim / 20) * 20;
+      // tur arası H14 seçim paneli (kaybeden): seçilebilir ilk karta GERÇEK dokunuş → kart seçilir mi
+      const kart = await B.s.evaluate(() => { const k = [...document.querySelectorAll(".mh .ds.acik .kart:not(.elendi):not(.secildi)")].pop(); if (!k) return null; const r = k.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; });
+      if (kart && !sonuc.secimKarti) {
+        await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: kart[0], y: kart[1], id: 9 }] });
+        await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+        await bekle(1200); // seçim sunucudan döner (RTT)
+        sonuc.secimKarti = await B.s.evaluate(() => ({ secildi: !!document.querySelector(".mh .ds .kart.secildi"), baslik: document.querySelector(".mh .ds h4")?.textContent }));
+        await B.s.screenshot({ path: `${K}/MOBIL-cevrimici-tur-arasi.png` });
+      }
+    }
     adim++;
     await bekle(90);
   }
@@ -119,7 +131,7 @@ const sonuc = {};
   sonuc.hatalarB = B.hatalar;
   sonuc.sureSn = Math.round((Date.now() - t0) / 1000);
   fs.writeFileSync(`${K}/MOBIL-cevrimici.json`, JSON.stringify(sonuc, null, 1));
-  console.log(JSON.stringify({ hesapB: sonuc.hesapB, A: sonuc.A, B: sonuc.B, kayitA: sonuc.kayitA, kayitB: sonuc.kayitB, donus: sonuc.donusBandi, hataA: A.hatalar.length, hataB: B.hatalar.length, sure: sonuc.sureSn }, null, 1));
+  console.log(JSON.stringify({ hesapB: sonuc.hesapB, A: sonuc.A, B: sonuc.B, kayitA: sonuc.kayitA, kayitB: sonuc.kayitB, donus: sonuc.donusBandi, secimKarti: sonuc.secimKarti, hataA: A.hatalar.length, hataB: B.hatalar.length, sure: sonuc.sureSn }, null, 1));
   await A.t.close();
   await B.t.close();
 })().catch((e) => { console.error(e); fs.writeFileSync(`${K}/MOBIL-cevrimici.json`, JSON.stringify({ ...sonuc, olumcul: String(e) }, null, 1)); process.exit(1); });

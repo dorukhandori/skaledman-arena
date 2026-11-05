@@ -150,6 +150,8 @@ html[data-dokunmatik] .ms button { min-height:max(56px, calc(44px * var(--dk, 1)
 html[data-dokunmatik] .ms .ay button, html[data-dokunmatik] .ms .bsk .acl button { min-height:calc(44px * var(--dk, 1)); }
 html[data-dokunmatik] .ms .menu { top:50%; transform:translateY(-50%); max-height:532px; overflow-y:auto; overscroll-behavior:contain; }
 html[data-dokunmatik] .ms .menu .dg { gap:6px; }
+html[data-dokunmatik] .ms .ipc { display:none; }
+html[data-dokunmatik] .ms .oduller { height:164px; }
 `;
 
 const BITIS_AD = { durma: "DURMA", ringOut: "RING OUT", parcalanma: "PARÇALANMA", berabere: "BERABERE" } as const;

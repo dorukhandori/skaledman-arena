@@ -49,7 +49,8 @@ type Parmak =
 
 const STIL = `
 #ustYazi > .dk, .dk { pointer-events:auto; }
-.dk { position:absolute; inset:0; z-index:1; touch-action:none; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; -webkit-tap-highlight-color:transparent; }
+/* z-index YOK: katman #ustYazi'nin ilk çocuğu, HUD (.mh: H14 kartları) ve menü/sonuç (.ms) DOM sırasıyla üstünde kalır */
+.dk { position:absolute; inset:0; touch-action:none; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; -webkit-tap-highlight-color:transparent; }
 .dk .joy { position:absolute; left:0; top:0; width:${JOYSTICK.yaricap * 2}px; height:${JOYSTICK.yaricap * 2}px; margin:-${JOYSTICK.yaricap}px 0 0 -${JOYSTICK.yaricap}px; border-radius:50%;
   border:2px solid rgba(251,242,195,.55); background:rgba(27,33,49,.35); box-shadow:inset 0 0 0 1px #05050a; pointer-events:none; opacity:.35; }
 .dk .joy.acik { opacity:1; }
