@@ -35,6 +35,8 @@ const H = {
   isaretY: 60,
 } as const;
 const KT = 0.5;
+/** GU-E çarpışma tepkisi: eğim (rad), sönüm (s), salınım (Hz), zıplama hızı (px/s), yörünge titremesi (px), yerçekimi */
+const DARBE = { egimTaban: 0.04, egimEgim: 0.18, tauTaban: 0.22, tauEgim: 0.38, hzHafif: 5, hzAgir: 3, zipEsik: 0.2, zipTaban: 50, zipEgim: 150, yer: 1500, yorunge: 5, yorungeHz: 7, yaslanEgim: 0.09 } as const;
 
 interface Parca { g: Graphics; x: number; y: number; vx: number; vy: number; w: number; yuk: number; vyuk: number; sekti: boolean }
 
@@ -121,6 +123,9 @@ export class TopacYandan implements TopacCizimi {
   private parlamaAci = 0;
   private yalpaFaz = 0;
   private squashD = { sx: 1, sy: 1, sure: 0, kalan: 0 };
+  /** GU-E darbe tepkisi: `yon` ekran x işareti (öbür topaca doğru), `bekle` hitstop, `t` geçen, zıplama `h`/`vh` */
+  private darbeD = { g: 0, yon: 0, bekle: 0, t: 1e9, h: 0, vh: 0, sekti: true, faz: 0 };
+  private yaslanD = { yon: 0, guc: 0, hedef: 0 };
   private flasKare = 0;
   private catlakSeviye = 0;
   private bitisDurum: { tur: GorselBitis; t: number; vx: number; vy: number; x0: number; y0: number; arkada: boolean } | null = null;
@@ -249,6 +254,64 @@ export class TopacYandan implements TopacCizimi {
     this.squashD = { sx: 1 + (sx - 1) * k, sy: 1 + (sy - 1) * k, sure, kalan: sure };
   }
 
+  darbe(nx: number, ny: number, siddet: number, bekleme: number): void {
+    const e = this.sahne.ekranYon(nx, ny);
+    const g = Math.max(0, Math.min(1.2, siddet));
+    // aynı anda iki darbe: büyüğü kalır
+    if (this.darbeD.t < this.darbeSure() && this.darbeD.g > g) return;
+    this.darbeD = { g, yon: Math.abs(e.x) < 0.15 ? (e.x >= 0 ? 0.3 : -0.3) : Math.sign(e.x) * Math.min(1, Math.abs(e.x) * 1.3), bekle: Math.max(0, bekleme), t: 0, h: 0, vh: g > DARBE.zipEsik ? DARBE.zipTaban + DARBE.zipEgim * Math.min(1, g) : 0, sekti: false, faz: this.rng.aralik(0, TAM) };
+  }
+
+  yaslan(nx: number, ny: number, guc: number): void {
+    const e = this.sahne.ekranYon(nx, ny);
+    if (guc > 0) this.yaslanD.yon = Math.sign(e.x) * Math.min(1, Math.abs(e.x) * 1.3);
+    this.yaslanD.hedef = Math.min(1.2, guc);
+  }
+
+  private darbeSure(): number { return 5 * (DARBE.tauTaban + DARBE.tauEgim * Math.min(1, this.darbeD.g)); }
+
+  /** Darbe + temas tepkisi: [eğim (rad), dx, dy (yörünge/titreme), yukarı zıplama px]. */
+  private tepkiGuncelle(dt: number): [number, number, number, number] {
+    const D = this.darbeD;
+    let egim = 0, dx = 0, dy = 0;
+    if (D.t < this.darbeSure()) {
+      const g1 = Math.min(1, D.g);
+      const e0 = (DARBE.egimTaban + DARBE.egimEgim * g1) * D.yon;
+      if (D.bekle > 0) {
+        // hitstop: darbeye doğru yaslı donar (referans 07: iki topaç çarpışmada birbirine yatık)
+        D.bekle -= dt;
+        egim = e0;
+      } else {
+        D.t += dt;
+        const tau = DARBE.tauTaban + DARBE.tauEgim * g1;
+        const hz = DARBE.hzHafif + (DARBE.hzAgir - DARBE.hzHafif) * g1;
+        const zarf = Math.exp(-D.t / tau);
+        egim = e0 * zarf * Math.cos(TAM * hz * D.t);
+        // sönümlü yörünge titremesi (dönüş yönünde), şiddetle
+        D.faz += (this.profil.donus === "sol" ? -1 : 1) * TAM * DARBE.yorungeHz * dt;
+        const A = DARBE.yorunge * g1 * Math.exp(-D.t / (tau * 0.8));
+        dx = Math.cos(D.faz) * A;
+        dy = Math.sin(D.faz) * A * this.sahne.k;
+        // sekme: küçük zıplama, bir kez seker
+        if (D.vh !== 0 || D.h > 0) {
+          D.vh -= DARBE.yer * dt;
+          D.h += D.vh * dt;
+          if (D.h <= 0) { D.h = 0; if (!D.sekti) { D.vh = Math.abs(D.vh) * 0.3; D.sekti = true; } else D.vh = 0; }
+        }
+      }
+    } else { D.h = 0; D.vh = 0; }
+    // sürekli temas: ötekine yaslanma + güçle titreme
+    const Y = this.yaslanD;
+    Y.guc += (Y.hedef - Y.guc) * Math.min(1, dt * 10);
+    if (Y.guc > 0.01) {
+      egim += DARBE.yaslanEgim * Math.min(1, Y.guc) * Y.yon;
+      const tit = Math.min(1.5, Y.guc) * (this.rng.sayi() < 0.5 ? -1 : 1);
+      dx += tit;
+      dy += this.rng.isaretli() * 0.5 * Math.min(1, Y.guc);
+    }
+    return [egim, dx, dy, D.h];
+  }
+
   catlakAyarla(oran: number): void { this.catlakSeviye = oran >= 0.9 ? 2 : oran >= 0.75 ? 1 : 0; }
 
   flas(kare: number): void { this.flasKare = Math.max(this.flasKare, kare); }
@@ -280,6 +343,8 @@ export class TopacYandan implements TopacCizimi {
     this.spriteKap.tint = 0xffffff;
     this.spriteKap.visible = this.katman !== null;
     this.squashD.kalan = 0;
+    this.darbeD.t = 1e9; this.darbeD.h = 0; this.darbeD.vh = 0;
+    this.yaslanD.guc = 0; this.yaslanD.hedef = 0;
     this.sqKap.scale.set(1);
     this.yukseklik = 0;
   }
@@ -350,8 +415,11 @@ export class TopacYandan implements TopacCizimi {
     this.golge.alpha = 1 - 0.35 * ayr;
     this.kok.position.set(x, y);
     this.kok.zIndex = y;
-    this.yalpaKap.position.set(ox, oy - this.yukseklik);
-    this.yalpaKap.rotation = (ox / Math.max(1, G.yalpa.tavanPx)) * 0.22;
+    const [tEgim, tdx, tdy, tZip] = this.tepkiGuncelle(dt * yavas);
+    this.yalpaKap.position.set(ox + tdx, oy + tdy - this.yukseklik - tZip);
+    this.yalpaKap.rotation = (ox / Math.max(1, G.yalpa.tavanPx)) * 0.22 + tEgim;
+    // zıplamada gölge küçülür
+    if (tZip > 0) this.golge.scale.set((1 - 0.3 * ayr) * (1 - Math.min(0.25, tZip / 40)));
     // squash geri yaylanma (gövde merkezi etrafında: sqKap'ı gövde ortasına taşı)
     this.govdeKap.position.set(0, -H.govdeAlt);
     this.govde.position.set(0, H.govdeAlt);

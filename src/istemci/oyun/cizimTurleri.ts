@@ -16,6 +16,13 @@ export interface TopacCizimi {
   profilAyarla(p: TopacProfili, takim?: TakimIsareti): void;
   /** Squash/stretch: (nx, ny) SİM yönü; çizim kendi kamerasına çevirir. */
   squash(nx: number, ny: number, sx: number, sy: number, sure: number): void;
+  /**
+   * GU-E çarpışma sonrası tepki (yalnız görsel): (nx, ny) SİM yönü, ÖBÜR topaca doğru; `siddet` 0..~1,2; `bekleme` s
+   * (hitstop: o süre topaç darbeye yaslı donar). Sekme (küçük zıplama), sönümlü öne-arkaya yalpalama, yörünge titremesi.
+   */
+  darbe?(nx: number, ny: number, siddet: number, bekleme: number): void;
+  /** GU-E sürekli temas: her kare çağrılır; `guc` 0 = temas yok. Topaç ötekine hafifçe yaslanır ve titrer. */
+  yaslan?(nx: number, ny: number, guc: number): void;
   catlakAyarla(oran: number): void;
   flas(kare: number): void;
   /** (vx, vy) SİM hızı */

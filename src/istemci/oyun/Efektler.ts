@@ -237,14 +237,21 @@ export class Efektler {
   /** Son çarpışmanın şiddet puanı (doğrulama). */
   sonSiddet = 0;
 
-  /** Çarpışma sonrası topaç tepkisi (yalnız görsel): squash puanla ölçeklenir. */
-  private tepki(o: Extract<Olay, { tur: "carpisma" }>, _d: Dunya, gp: number, dash: boolean, sd: Siddet, _hitstopMs: number): void {
+  /**
+   * Çarpışma sonrası topaç tepkisi (yalnız görsel, GU-E): squash + sekme/yalpalama puanla ölçeklenir. Vurulan (daha çok
+   * hasar alan) taraf daha güçlü tepki verir; hitstop süresince darbeye yaslı donar.
+   */
+  private tepki(o: Extract<Olay, { tur: "carpisma" }>, _d: Dunya, gp: number, dash: boolean, sd: Siddet, hitstopMs: number): void {
     const g = this.gorseller();
     const g1 = Math.min(1, gp);
     const [sx, sy] = dash && sd !== "hafif" ? HIS.squash.dash : [1 - (0.08 + 0.24 * g1), 1 + (0.08 + 0.24 * g1)];
     const sure = (70 + 100 * g1) / 1000;
     g[0]?.squash(o.nx, o.nz, sx, sy, sure);
     g[1]?.squash(o.nx, o.nz, sx, sy, sure);
+    const h0 = o.taraflar[0].hasar, h1 = o.taraflar[1].hasar;
+    const pay = (h: number) => (h0 + h1 > 0 ? h / (h0 + h1) : 0.5);
+    g[0]?.darbe?.(o.nx, o.nz, gp * (0.7 + 0.6 * pay(h0)), hitstopMs / 1000);
+    g[1]?.darbe?.(-o.nx, -o.nz, gp * (0.7 + 0.6 * pay(h1)), hitstopMs / 1000);
   }
 
   /** Işınsal yıldız patlaması (referans 07 temas noktası). */
@@ -342,13 +349,12 @@ export class Efektler {
           // halka şok dalgası (zeminde elips), boyu ve süresi puanla
           const sure2 = HIS.sok.agirMs + (HIS.sok.kritikMs - HIS.sok.agirMs) * Math.min(1, (gp - 0.45) / 0.55);
           this.sok(x, y, 6, 26 + 34 * g1, sure2, renkKaristir(r0.orta, r1.orta, 0.5), o.zitElement ? r1.orta : null, gp > 0.8 ? 4 : 3);
-          this.sok(x, y, 2, 14 + 24 * g1, sure2 * 0.7, 0xfff6c8, null, 2);
         }
         if (sd !== "hafif") {
           const z = sd === "kritik" ? HIS.zoom.kritik : HIS.zoom.agir;
           this.zoom(z[0], z[1]);
         }
-        if (o.zitElement) this.sok(x, y, 4, 30, 200, r0.orta, r1.orta, 4);
+        if (o.zitElement && gp < 0.45) this.sok(x, y, 4, 30, 200, r0.orta, r1.orta, 4);
         if (dash) { this.sok(x, y, 10, 70, 240, 0xffffff, null, 2); this.zoom(HIS.zoom.dash[0], HIS.zoom.dash[1]); }
         break;
       }
@@ -584,6 +590,7 @@ export class Efektler {
       if (T.kopuk >= TEMAS.toleransSn) T.sure = 0;
     }
     T.guc += (hedef - T.guc) * Math.min(1, dt * (hedef > T.guc ? 12 : 8));
+    { const g = this.gorseller(); const y = T.kopuk < TEMAS.toleransSn ? T.guc : 0; g[0]?.yaslan?.(nx, nz, y); g[1]?.yaslan?.(-nx, -nz, y); }
     if (T.guc < 0.01) { T.guc = 0; this.kivilcimlar.isimaAyarla(0, 0, 0); return; }
     // temas noktası: iki topacın GÖRSEL konumlarının ortası, gövde yüksekliğinde
     const ka = this.konumlar[0]!, kb = this.konumlar[1]!;
