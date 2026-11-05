@@ -161,6 +161,39 @@ TOPAC_PARCA = {
   "A round balance ring with EXACTLY FOUR (4) long slanted blades spaced 90 degrees apart swept clockwise, eight small notches "
   "on the rim, eight thin raised pure white fins radiating on the top face, a round bright steel hub ring in the center with "
   "an empty round socket. Body and blades painted matte brick red enamel, fins white, hub bright steel. Count: 4 blades only."),
+
+ # ---- Parti 3: 7 Çekirdek (Tripo; taş mat kırmızı + çerçeve altın: sınıf renkten, renk Element/Köken rampasından)
+ "simsek-goktasi": (4,
+  "a small sharp four-faceted glowing electric yellow gemstone set in a gold bezel ring, the core of a spinning top.",
+  "A small round gem cap, only this single small part, a thick round gold bezel ring holding a tall sharp pyramid-cut gemstone with EXACTLY FOUR (4) facets, 4 facets only. The stone is matte ember red, the bezel is gold. Nothing else attached, no blades, no stand."),
+ "kor-kalbi": (6,
+  "a small smooth round glowing ember-orange dome gemstone like a burning heart coal, set in a gold bezel ring, the core of a spinning top.",
+  "A small round gem cap, only this single small part, a thick round gold bezel ring holding a smooth round polished dome gemstone (cabochon), no facets, with six small round studs evenly spaced on the bezel. The stone is matte ember red, the bezel is gold. Nothing else attached, no blades, no stand."),
+ "kaya-maden": (5,
+  "a small flat five-faceted amber-brown ore ingot set in a slightly wavy copper bezel, the core of a spinning top.",
+  "A small round gem cap, only this single small part, a slightly wavy round bezel ring with EXACTLY FIVE (5) gentle waves holding a low flat ore ingot cut with EXACTLY FIVE (5) facets. The stone is matte ember red, the bezel is gold. Nothing else attached, no blades, no stand."),
+ "girdap-maden": (5,
+  "a small five-faceted deep blue ore ingot with twisted swirling facets set in a copper bezel, the core of a spinning top.",
+  "A small round gem cap, only this single small part, a round bezel ring holding a low ore ingot cut with EXACTLY FIVE (5) facets that are twisted like a swirl around the center. The stone is matte ember red, the bezel is gold. Nothing else attached, no blades, no stand."),
+ "sabir-tasi": (6,
+  "a small low smooth icy pale cyan dome stone set in a six-lobed copper bezel, the core of a spinning top.",
+  "A small round gem cap, only this single small part, a bezel ring with EXACTLY SIX (6) rounded lobes like a flower outline, holding a low smooth polished dome stone, no facets. The stone is matte ember red, the bezel is gold. Nothing else attached, no blades, no stand."),
+ "kasirga-yapay": (8,
+  "a small flat mint-green lens dome set in a steel-blue gear-shaped bezel with eight teeth, a cast mechanical core of a spinning top.",
+  "A small round gem cap, only this single small part, a gear-shaped bezel with EXACTLY EIGHT (8) square gear teeth around its rim holding a flat low lens dome. The stone is matte ember red, the bezel is gold. Nothing else attached, no blades, no stand."),
+ "kul-cekirdegi": (5,
+  "a small dark smoldering pointed stone with violet glowing cracks set in a five-spiked purple-black bezel, a corrupted core of a spinning top.",
+  "A small round gem cap, only this single small part, a bezel ring with EXACTLY FIVE (5) short sharp spikes pointing outward around its rim holding a dark pointed pyramid stone with five facets. The stone is matte ember red, the bezel is gold. Nothing else attached, no blades, no stand."),
+ # ---- Parti 3: Disk/Uç yalnız ikon (dönen sprite + Atölye modeli parametrik kalır; sahip kararı, 440 kredi tasarruf)
+ "agir-disk": (9, "a thick heavy polished steel weight disc for a spinning top with nine wide lock tabs around its rim, narrowing toward the bottom, brushed metal.", None),
+ "denge-disk": (7, "a polished steel weight disc for a spinning top with a smoothly wavy rim of seven rounded lobes, brushed metal.", None),
+ "alcak-disk": (8, "a wide low flat polished steel weight disc for a spinning top with eight short lock tabs around its rim, brushed metal.", None),
+ "parlak-disk": (6, "a tall polished steel weight disc for a spinning top with six long lock tabs tipped with gold, brushed metal.", None),
+ "igne-uc": (6, "the tip of a spinning top: a thin sharp gunmetal needle point under a short dark collar.", None),
+ "dengeli-uc": (6, "the tip of a spinning top: a short dark gunmetal cone with a semi-flat rounded point.", None),
+ "top-uc": (6, "the tip of a spinning top: a dark gunmetal collar ending in a round hemisphere ball.", None),
+ "kusak-ucu": (12, "the tip of a spinning top: a dark collar on a wide black rubber ring base with twelve thin ribs.", None),
+ "karanlik-ucu": (4, "the tip of a spinning top: a very dark gunmetal cone with four gripping teeth ribs (mechanical grip teeth, not animal claws).", None),
 }
 TOPAC_KOK = KOK + "/topac"
 TOPAC_KAYIT = TOPAC_KOK + "/manifest.jsonl"
@@ -229,7 +262,7 @@ def isler(gruplar):
     for pid, (n, ikon, tripo) in TOPAC_PARCA.items():
         if "topac-ikon" in gruplar or f"topac:{pid}" in gruplar:
             out.append((f"topac-ikon:{pid}", TOPAC + ikon, f"{TOPAC_KOK}/ikon-ham/{pid}.png", "1:1", ()))
-        if "topac-tripo" in gruplar or f"topac-tripo:{pid}" in gruplar:
+        if tripo and ("topac-tripo" in gruplar or f"topac-tripo:{pid}" in gruplar):
             for v in ("a", "b"):
                 out.append((f"topac-tripo:{pid}-{v}", TOPAC_TRIPO + tripo, f"{TOPAC_KOK}/tripo/{pid}-{v}.png", "1:1", ()))
     return out

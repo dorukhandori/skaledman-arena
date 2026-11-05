@@ -214,7 +214,8 @@ def sinif_sec(tur, kural, renk, r, z, R):
     elif tur == "uc":
         c = np.where(lum < kural.get("koyuLum", 0.09), S["koyu"], S["metal"])
     else:
-        c = np.where(kirmizi, S["kubbe"], S["cerceve"])
+        tas = kirmizi | (lum < kural.get("koyuKubbe", -1.0))  # Kül: konseptte taş koyu
+        c = np.where(tas, S["kubbe"], S["cerceve"])
     return c.astype(np.float32)
 
 

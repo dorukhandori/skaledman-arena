@@ -4,6 +4,7 @@
 //   npx tsx araclar/sanat/topac-mac.ts --parca ok-govde --onizle     # yalnız kare 0 albedo (eksen/ters kontrolü)
 //   ... --render-yok    # .cache/topac-mac-ham önbelleğini kullan, yalnız pişir
 //   ... --ikon-yok      # ikonları atla
+//   ... --yalniz-ikon   # yalnız ikon (GLB'si olmayan parametrik Disk/Uç)
 //
 // Girdi (depo dışı, art-source/topac/): glb/<id>.glb (tripo_model.mjs --alan topac), ikon-ham/<id>.png (gemini_uret.py topac-ikon).
 // Çıktı: public/topac/<tur>/<id>.json + <id>-<kademe>-<yon>[-<boya>].png (biçim B), public/topac/ikon/<id>-48.png / -24.png,
@@ -39,6 +40,14 @@ const MAC: Record<string, { eksen?: "auto" | "x" | "y" | "z"; ters?: boolean; ku
   "hafif-disk": {},
   "duz-uc": { eksen: "z" }, // koni: PCA güvenilmez (yassı değil)
   "kor-goktasi": {},
+  // Parti 3: Çekirdek (taş mat kırmızı, çerçeve altın); Disk/Uç parametrik kalır (sahip kararı)
+  "simsek-goktasi": {},
+  "kor-kalbi": { eksen: "z" }, // kalın kubbe: PCA güvenilmez
+  "kaya-maden": {},
+  "girdap-maden": {},
+  "sabir-tasi": {},
+  "kasirga-yapay": {},
+  "kul-cekirdegi": { kural: { koyuKubbe: 0.16 } },
 };
 
 function hedef(spec: Parca3B): { R: number; zAlt: number; zUst: number } {
@@ -232,21 +241,21 @@ async function levhaYaz(set: Record<Tur, Onizleme>, diskUstZ: number, ikonIdler:
     .png().toFile(join(KOK, "docs/art/topac-mac-kiyas.png"));
 }
 
-/** Gövde levhası: her Gövde, setin Disk/Uç/Çekirdeğiyle, katalog Element boyasında: keskin 0-3, bulanık 0, disk 0, sol 0. */
-async function govdeLevhasi(govdeler: [string, Onizleme][], set: Record<Tur, Onizleme>, diskUstZ: number, katalog: Map<string, KatalogParca>): Promise<void> {
+/** Tür levhası: her Gövde (ya da Çekirdek) setin diğer katmanlarıyla, katalog Element boyasında: keskin 0-3, bulanık 0, disk 0, sol 0. */
+async function turLevhasi(tur: "govde" | "cekirdek", parcalar: [string, Onizleme][], set: Record<Tur, Onizleme>, diskUstZ: number, katalog: Map<string, KatalogParca>): Promise<void> {
   const W = SANAT.kareW, H = SANAT.kareH, tile = W + 4, sutun = 7;
-  const tw = sutun * tile, th = govdeler.length * tile;
+  const tw = sutun * tile, th = parcalar.length * tile;
   const levha = new Uint8ClampedArray(tw * th * 4);
   for (let i = 0; i < tw * th; i++) { levha[i * 4] = 0x4a; levha[i * 4 + 1] = 0x46; levha[i * 4 + 2] = 0x42; levha[i * 4 + 3] = 255; }
-  govdeler.forEach(([id, o], ri) => {
+  parcalar.forEach(([id, o], ri) => {
     const boya = katalog.get(id)?.element ?? "kor";
-    const s2 = { ...set, govde: o };
+    const s2 = { ...set, [tur]: o };
     const kareler = [0, 1, 2, 3].map((f) => birlestir(s2, diskUstZ, boya, 0, f, "s"));
     kareler.push(birlestir(s2, diskUstZ, boya, 1, 0, "s"), birlestir(s2, diskUstZ, boya, 2, 0, "s"), birlestir(s2, diskUstZ, boya, 0, 0, "l"));
     kareler.forEach((k, ci) => yapistir(levha, tw, k, W, H, ci * tile + 2, ri * tile + 2));
   });
   await sharp(Buffer.from(levha.buffer), { raw: { width: tw, height: th, channels: 4 } }).resize(tw * 3, th * 3, { kernel: "nearest" }).png()
-    .toFile(join(KOK, "docs/art/topac-mac-govdeler.png"));
+    .toFile(join(KOK, tur === "govde" ? "docs/art/topac-mac-govdeler.png" : "docs/art/topac-mac-cekirdekler.png"));
 }
 
 // ------------------------------------------------------------------ liste metaları
@@ -274,6 +283,11 @@ async function main(): Promise<void> {
   const specler = (JSON.parse(readFileSync(join(KOK, "kaynak/topac/parcalar-3b.json"), "utf8")) as { parcalar: Record<string, Parca3B> }).parcalar;
   const katalog = new Map((JSON.parse(readFileSync(join(KOK, "veri/parcalar.json"), "utf8")) as { parcalar: KatalogParca[] }).parcalar.map((p) => [p.id, p]));
   for (const id of idler) if (!specler[id]) throw new Error(`bilinmeyen parça: ${id}`);
+  if (arg.includes("--yalniz-ikon")) {
+    // GLB'siz parçalar (parametrik kalan Disk/Uç): yalnız Gemini ikonu → 48/24
+    for (const id of idler) { await ikonUret(id, specler[id]!.tur, katalog.get(id)); console.log(`ikon: ${id}`); }
+    return;
+  }
   if (!arg.includes("--render-yok")) blenderCalistir(idler, specler, onizle);
   if (onizle) {
     for (const id of idler) console.log(join(HAM, specler[id]!.tur, id, "s", "00_t.png"));
@@ -281,6 +295,7 @@ async function main(): Promise<void> {
   }
   const set: Partial<Record<Tur, Onizleme>> = {};
   const govdeler: [string, Onizleme][] = [];
+  const cekirdekler: [string, Onizleme][] = [];
   let diskUstZ: number = SANAT.govdeTabanZ;
   for (const id of idler) {
     const spec = specler[id]!;
@@ -288,7 +303,8 @@ async function main(): Promise<void> {
     const bayt = await bicimBYaz(id, spec, onizleme);
     console.log(`biçim B: ${id} (${(bayt / 1024).toFixed(1)} KB)`);
     if (spec.tur === "govde") govdeler.push([id, onizleme]);
-    if (spec.tur !== "govde" || id === "ok-govde" || !set.govde) set[spec.tur] = onizleme;
+    if (spec.tur === "cekirdek") cekirdekler.push([id, onizleme]);
+    if ((spec.tur !== "govde" && spec.tur !== "cekirdek") || id === "ok-govde" || id === "kor-goktasi" || !set[spec.tur]) set[spec.tur] = onizleme;
     if (spec.tur === "disk") diskUstZ = ustOlcu(spec).ustZ;
     if (!arg.includes("--ikon-yok") && existsSync(join(KAYNAK, "ikon-ham", `${id}.png`))) await ikonUret(id, spec.tur, katalog.get(id));
   }
@@ -296,7 +312,8 @@ async function main(): Promise<void> {
   if (set.govde && set.disk && set.uc && set.cekirdek) {
     await levhaYaz(set as Record<Tur, Onizleme>, diskUstZ, idler);
     console.log("levha: docs/art/topac-mac-onizleme.png, kıyas: docs/art/topac-mac-kiyas.png");
-    if (govdeler.length > 1) { await govdeLevhasi(govdeler, set as Record<Tur, Onizleme>, diskUstZ, katalog); console.log("gövde levhası: docs/art/topac-mac-govdeler.png"); }
+    if (govdeler.length > 1) { await turLevhasi("govde", govdeler, set as Record<Tur, Onizleme>, diskUstZ, katalog); console.log("gövde levhası: docs/art/topac-mac-govdeler.png"); }
+    if (cekirdekler.length > 1) { await turLevhasi("cekirdek", cekirdekler, set as Record<Tur, Onizleme>, diskUstZ, katalog); console.log("çekirdek levhası: docs/art/topac-mac-cekirdekler.png"); }
   }
 }
 

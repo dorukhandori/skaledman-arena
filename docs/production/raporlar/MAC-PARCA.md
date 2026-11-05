@@ -64,5 +64,27 @@ model (+40 kredi) kancaları silüette ayırıyor, ama sabit Gövde yüksekliği
 yükseklik denendi, reddedildi: Çekirdek sabit yükseklikte çizildiği için kaide üstünde yüzüyordu. İlk model `art-source` içinde
 `glb/savrulan-govde-1.glb` olarak duruyor.
 
-**Çalışma zamanı** (`ekran/MAC-P2-*`, Sivri Gövde seti): atlas sprite kipinde, biçim B istekleri 29, konsol hatası 0. Kapılar:
+**Çalışma zamanı** (`ekran/MAC-P2-*`): atlas sprite kipinde, biçim B istekleri 29, konsol hatası 0. **Düzeltme:** çekim betiğinin
+localStorage takım ayarı oyuncuya uygulanmadı (HUD "Kor Göktaşı"); ekrandaki topaçlar varsayılan takımlar, "Sivri seti" değil. Kapılar:
 `npm test` 480 · `lint` · `typecheck` · `build` · `krediler:uret` yeşil · `test:tarayici` Node = Chrome bit bit aynı.
+
+## Parti 3: 7 Çekirdek (Disk/Uç parametrik)
+
+Sahip kararı: Uç ve Disk parametrik modelde kalır (bulut biçim A sayfaları + Atölye parametrik ağı), 440 kredi tasarruf; Hafif Disk ve
+Düz Uç Parti 1'den Mac'te. Çekirdek levhası `docs/art/topac-mac-cekirdekler.png` (her Çekirdek Ok Gövde üstünde, Gövde Çekirdeğin
+Element boyasında: oyundaki gibi). 9 Disk/Uç için yalnız ikon üretildi (`--yalniz-ikon`); 27 parçanın ikonu tamam (bağlı değil).
+
+- Konsepte taş mat kırmızı + çerçeve altın; sınıf mevcut kuralla (kırmızı = kubbe, gerisi çerçeve). Kül'de taş koyu: `koyuKubbe`.
+- Kor Kalbi kalın şişkin kubbe (yükseklik ≈ yarıçap): PCA 14° saptırdı, `eksen: "z"` sabit. Üstü dar olduğu için kameradan küçük
+  okunuyor; Çekirdeklerin en zayıfı ama katalog tarifine ("pürüzsüz yuvarlak kubbe") uygun.
+- Çerçeveler Köken rengini alıyor (Göktaşı altın, Maden bakır, Yapay çelik dişli, Karanlık mor diken), amblemler üstte.
+
+**Çalışma zamanı** (`ekran/MAC-P3-*`; takım ayarı yine uygulanmadı, varsayılan takımlar): Kasırga Döküm'ün dişli çerçevesi maçta
+görünüyor, biçim B istekleri 32, konsol hatası 0. Kapılar: `npm test` 487 · `lint` · `typecheck` · `build` · `krediler:uret` ·
+`test:tarayici` Node = Chrome bit bit aynı.
+
+## Sonuç
+
+18 parça Mac hattında (8 Gövde, 8 Çekirdek, Hafif Disk, Düz Uç), 18 Atölye GLB'si, 27 ikon. Toplam ≈ $3,11 Gemini + 760 Tripo kredisi
+(brief tahmini ≈ $3,2 + 1 280). Açık işler: ikonların ve 3B ikon önbelleğinin GLB'ye bağlanması (Atölye kodu), Savrulan ve Kor Kalbi
+isteğe bağlı yeniden üretim, çekim betiğinde takım ayarının oyuncuya uygulanması.

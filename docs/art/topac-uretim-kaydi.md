@@ -13,6 +13,9 @@ simetrik dilim → `topac-uret.ts` pişiricisi → biçim B). Ham dosyalar ve sa
 | 2026-11-05 | Gemini | Parti 2: 7 Gövde ikonu | 7 | ≈$0,32 |
 | 2026-11-05 | Gemini | Parti 2: 7 Gövde Tripo konsepti × 2 varyant + Savrulan 2. tur × 2 (ilk model kancaları yüksek duvar yaptı) | 16 | ≈$0,72 |
 | 2026-11-05 | Tripo `image-to-model` v3.1-20260211 | Parti 2: 7 Gövde + Savrulan yeniden | 8 | 320 kredi (≈2825 → ≈2505, kayıttan hesap) |
+| 2026-11-05 | Gemini | Parti 3: 16 ikon (7 Çekirdek + 4 Disk + 5 Uç) + 7 Çekirdek Tripo konsepti × 2 varyant | 30 | ≈$1,35 |
+| 2026-11-05 | Tripo `image-to-model` v3.1-20260211 | Parti 3: 7 Çekirdek (Disk/Uç parametrik kaldı: sahip kararı, 440 kredi tasarruf) | 7 | 280 kredi (≈2505 → ≈2225, kayıttan hesap) |
 
 Parti 1 toplamı: **≈$0,72 Gemini + 160 Tripo kredisi** (brief tahmini $0,5 + 160-200).
 Parti 2 toplamı: **≈$1,04 Gemini + 320 Tripo kredisi** (öngörü $0,95 + 280; fark Savrulan'ın ikinci turu).
+Parti 3 toplamı: **≈$1,35 Gemini + 280 Tripo kredisi**. Genel toplam: **≈$3,11 Gemini + 760 Tripo kredisi** (brief tahmini ≈$3,2 + 1 280).

@@ -1,0 +1,27 @@
+{
+ "surum": 2,
+ "parcaId": "sabir-tasi",
+ "tur": "cekirdek",
+ "kare": [
+  76,
+  76
+ ],
+ "capa": [
+  38,
+  60
+ ],
+ "birim": 1.0119409026512851,
+ "yukselti": 45,
+ "simetri": 6,
+ "periyotKare": 8,
+ "diskKare": 3,
+ "yonler": [
+  "s"
+ ],
+ "boyalar": null,
+ "ustZ": 30,
+ "disYaricap": 9.299999999999999,
+ "kaynak": "gemini-3.1-flash-image + tripo v3.1-20260211 + blender 5.2 (simetrik dilim) + topac-uret pişirici",
+ "tarih": "2026-11-05",
+ "bayt": 2279
+}

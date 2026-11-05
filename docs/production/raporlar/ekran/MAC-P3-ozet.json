@@ -1,0 +1,30 @@
+{
+ "set": {
+  "cekirdek": "kasirga-yapay",
+  "govde": "izli-govde",
+  "disk": "denge-disk",
+  "uc": "dengeli-uc"
+ },
+ "atlas": true,
+ "ilkTopac": {
+  "govde": null
+ },
+ "hesap": [
+  201,
+  200,
+  201,
+  200
+ ],
+ "glbIstek": [
+  "200 /topac/model/kasirga-yapay.glb",
+  "200 /topac/model/ok-govde.glb",
+  "200 /topac/model/hafif-disk.glb",
+  "200 /topac/model/duz-uc.glb",
+  "200 /topac/model/kor-goktasi.glb",
+  "200 /topac/model/kalkan-govde.glb",
+  "200 /topac/model/kaya-maden.glb",
+  "200 /topac/model/savrulan-govde.glb"
+ ],
+ "bicimBIstek": 32,
+ "hatalar": []
+}

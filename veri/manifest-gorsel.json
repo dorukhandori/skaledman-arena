@@ -798,9 +798,9 @@
    "arac": "Gemini, Tripo (ücretli hizmet), Blender 5.2 (GPL; yalnız araç), sharp",
    "lisans": "bizim (yapay zekâ çıktısı; hizmet koşullarına göre çıktı kullanıcıya ait)",
    "yapayZeka": true,
-   "bayt": 1610815,
+   "bayt": 1642007,
    "tarih": "2026-11-05",
-   "durum": "entegre (11 parça: Parti 1 + Parti 2 Gövdeleri)"
+   "durum": "entegre (18 parça: 8 Gövde, 8 Çekirdek, Hafif Disk, Düz Uç; diğer Disk/Uç parametrik bulut sayfası, sahip kararı)"
   },
   {
    "ad": "topac.mac-model",
@@ -810,9 +810,9 @@
    "arac": "Gemini, Tripo (ücretli hizmet), Blender 5.2 (GPL; yalnız araç)",
    "lisans": "bizim (yapay zekâ çıktısı)",
    "yapayZeka": true,
-   "bayt": 4011460,
+   "bayt": 6578672,
    "tarih": "2026-11-05",
-   "durum": "entegre (11 parça)"
+   "durum": "entegre (18 parça)"
   },
   {
    "ad": "topac.mac-ikon",
@@ -822,9 +822,9 @@
    "arac": "Gemini, Pillow, sharp",
    "lisans": "bizim (yapay zekâ çıktısı)",
    "yapayZeka": true,
-   "bayt": 10274,
+   "bayt": 26042,
    "tarih": "2026-11-05",
-   "durum": "varlık (bağlı değil)"
+   "durum": "varlık (27 parça; bağlı değil)"
   }
  ],
  "kamera": {
