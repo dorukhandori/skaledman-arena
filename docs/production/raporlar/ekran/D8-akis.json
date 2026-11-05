@@ -1,0 +1,623 @@
+{
+ "hazirlik": {
+  "aAd": "Ay99ux0",
+  "xp": {
+   "ok": true,
+   "seviye": 3,
+   "tecrube": 750
+  },
+  "takimKur": {
+   "ok": true,
+   "atolye": {
+    "oyuncu": {
+     "id": 17,
+     "ad": "Ay99ux0",
+     "arma": "kor",
+     "renk": "#f4cf47",
+     "destekKanali": null,
+     "adKalanGun": 0
+    },
+    "aktifTakim": 0,
+    "cekirdekler": [
+     {
+      "id": 23,
+      "tanimId": "kor-goktasi",
+      "ad": "Kor Göktaşı",
+      "element": "kor",
+      "koken": "goktasi",
+      "ruh": "kozkartal",
+      "seviye": 3,
+      "tecrube": 1500,
+      "alt": 700,
+      "ust": 700,
+      "omur": null,
+      "yon": "sag",
+      "ciftYon": false,
+      "devreDisi": false,
+      "defter": {
+       "mac": 0,
+       "galibiyet": 0,
+       "krizGalibiyet": 0,
+       "enUzunDonusSn": 0,
+       "kararma": 0
+      }
+     },
+     {
+      "id": 25,
+      "tanimId": "kaya-maden",
+      "ad": "Kaya Maden",
+      "element": "kaya",
+      "koken": "maden",
+      "ruh": "dagzirhli",
+      "seviye": 3,
+      "tecrube": 750,
+      "alt": 700,
+      "ust": 700,
+      "omur": null,
+      "yon": "sag",
+      "ciftYon": false,
+      "devreDisi": false,
+      "defter": {
+       "mac": 0,
+       "galibiyet": 0,
+       "krizGalibiyet": 0,
+       "enUzunDonusSn": 0,
+       "kararma": 0
+      }
+     },
+     {
+      "id": 26,
+      "tanimId": "kasirga-yapay",
+      "ad": "Kasırga Döküm",
+      "element": "kasirga",
+      "koken": "yapay",
+      "ruh": "dokum-sarmalbaykus",
+      "seviye": 3,
+      "tecrube": 750,
+      "alt": 700,
+      "ust": 700,
+      "omur": 30,
+      "yon": "sag",
+      "ciftYon": true,
+      "devreDisi": false,
+      "defter": {
+       "mac": 0,
+       "galibiyet": 0,
+       "krizGalibiyet": 0,
+       "enUzunDonusSn": 0,
+       "kararma": 0
+      }
+     }
+    ],
+    "parcalar": [
+     {
+      "id": 76,
+      "tanimId": "ok-govde",
+      "tur": "govde"
+     },
+     {
+      "id": 77,
+      "tanimId": "hafif-disk",
+      "tur": "disk"
+     },
+     {
+      "id": 78,
+      "tanimId": "duz-uc",
+      "tur": "uc"
+     },
+     {
+      "id": 82,
+      "tanimId": "ok-govde",
+      "tur": "govde"
+     },
+     {
+      "id": 83,
+      "tanimId": "hafif-disk",
+      "tur": "disk"
+     },
+     {
+      "id": 84,
+      "tanimId": "duz-uc",
+      "tur": "uc"
+     },
+     {
+      "id": 85,
+      "tanimId": "kalkan-govde",
+      "tur": "govde"
+     },
+     {
+      "id": 86,
+      "tanimId": "agir-disk",
+      "tur": "disk"
+     },
+     {
+      "id": 87,
+      "tanimId": "igne-uc",
+      "tur": "uc"
+     },
+     {
+      "id": 88,
+      "tanimId": "savrulan-govde",
+      "tur": "govde"
+     },
+     {
+      "id": 89,
+      "tanimId": "denge-disk",
+      "tur": "disk"
+     },
+     {
+      "id": 90,
+      "tanimId": "dengeli-uc",
+      "tur": "uc"
+     }
+    ],
+    "takimlar": [
+     {
+      "takimNo": 0,
+      "ad": "Takım 1",
+      "yuvalar": [
+       {
+        "cekirdek": 23,
+        "govde": 82,
+        "disk": 83,
+        "uc": 84
+       },
+       {
+        "cekirdek": 25,
+        "govde": 85,
+        "disk": 86,
+        "uc": 87
+       },
+       {
+        "cekirdek": 26,
+        "govde": 88,
+        "disk": 89,
+        "uc": 90
+       }
+      ],
+      "degerlendirme": {
+       "hatalar": [],
+       "durum": [
+        "sahip",
+        "sahip",
+        "sahip"
+       ],
+       "bos": 0,
+       "oynanabilir": true
+      },
+      "oynanabilir": true,
+      "uyeler": [
+       {
+        "cekirdek": "kor-goktasi",
+        "govde": "ok-govde",
+        "disk": "hafif-disk",
+        "uc": "duz-uc",
+        "seviye": 3,
+        "odunc": false,
+        "yon": "sag"
+       },
+       {
+        "cekirdek": "kaya-maden",
+        "govde": "kalkan-govde",
+        "disk": "agir-disk",
+        "uc": "igne-uc",
+        "seviye": 3,
+        "odunc": false,
+        "yon": "sag"
+       },
+       {
+        "cekirdek": "kasirga-yapay",
+        "govde": "savrulan-govde",
+        "disk": "denge-disk",
+        "uc": "dengeli-uc",
+        "seviye": 3,
+        "odunc": false,
+        "yon": "sag"
+       }
+      ],
+      "cubuklar": [
+       {
+        "cubuklar": [
+         {
+          "anahtar": "saldiri",
+          "ad": "Saldırı",
+          "deger": 76,
+          "ham": 66,
+          "birim": ""
+         },
+         {
+          "anahtar": "savunma",
+          "ad": "Savunma",
+          "deger": 20,
+          "ham": 28,
+          "birim": ""
+         },
+         {
+          "anahtar": "agirlik",
+          "ad": "Ağırlık",
+          "deger": 5,
+          "ham": 27,
+          "birim": ""
+         },
+         {
+          "anahtar": "stamina",
+          "ad": "Stamina",
+          "deger": 22,
+          "ham": 70,
+          "birim": " sn"
+         },
+         {
+          "anahtar": "hiz",
+          "ad": "Hız",
+          "deger": 100,
+          "ham": 972,
+          "birim": ""
+         },
+         {
+          "anahtar": "saglamlik",
+          "ad": "Sağlamlık",
+          "deger": 25,
+          "ham": 7,
+          "birim": " tık"
+         }
+        ],
+        "desen": "cicek",
+        "desenAd": "Çiçek deseni",
+        "donus": "sag",
+        "ciftYon": false,
+        "tip": "saldirgan",
+        "tipAd": "Saldırgan",
+        "yakinTip": "dayanikli",
+        "yakinTipAd": "Dayanıklı"
+       },
+       {
+        "cubuklar": [
+         {
+          "anahtar": "saldiri",
+          "ad": "Saldırı",
+          "deger": 0,
+          "ham": 22,
+          "birim": ""
+         },
+         {
+          "anahtar": "savunma",
+          "ad": "Savunma",
+          "deger": 100,
+          "ham": 76,
+          "birim": ""
+         },
+         {
+          "anahtar": "agirlik",
+          "ad": "Ağırlık",
+          "deger": 100,
+          "ham": 48,
+          "birim": ""
+         },
+         {
+          "anahtar": "stamina",
+          "ad": "Stamina",
+          "deger": 26,
+          "ham": 77,
+          "birim": " sn"
+         },
+         {
+          "anahtar": "hiz",
+          "ad": "Hız",
+          "deger": 0,
+          "ham": 331,
+          "birim": ""
+         },
+         {
+          "anahtar": "saglamlik",
+          "ad": "Sağlamlık",
+          "deger": 100,
+          "ham": 10,
+          "birim": " tık"
+         }
+        ],
+        "desen": "cakili",
+        "desenAd": "Yerinde köklenir",
+        "donus": "sag",
+        "ciftYon": false,
+        "tip": "kale",
+        "tipAd": "Kale",
+        "yakinTip": "dayanikli",
+        "yakinTipAd": "Dayanıklı"
+       },
+       {
+        "cubuklar": [
+         {
+          "anahtar": "saldiri",
+          "ad": "Saldırı",
+          "deger": 38,
+          "ham": 44,
+          "birim": ""
+         },
+         {
+          "anahtar": "savunma",
+          "ad": "Savunma",
+          "deger": 52,
+          "ham": 47,
+          "birim": ""
+         },
+         {
+          "anahtar": "agirlik",
+          "ad": "Ağırlık",
+          "deger": 36,
+          "ham": 34,
+          "birim": ""
+         },
+         {
+          "anahtar": "stamina",
+          "ad": "Stamina",
+          "deger": 16,
+          "ham": 61,
+          "birim": " sn"
+         },
+         {
+          "anahtar": "hiz",
+          "ad": "Hız",
+          "deger": 50,
+          "ham": 650,
+          "birim": ""
+         },
+         {
+          "anahtar": "saglamlik",
+          "ad": "Sağlamlık",
+          "deger": 50,
+          "ham": 8,
+          "birim": " tık"
+         }
+        ],
+        "desen": "dengeli",
+        "desenAd": "Dengeli",
+        "donus": "sag",
+        "ciftYon": true,
+        "tip": "denge",
+        "tipAd": "Denge",
+        "yakinTip": "dayanikli",
+        "yakinTipAd": "Dayanıklı"
+       }
+      ]
+     }
+    ],
+    "basarimIlerleme": {
+     "ilk-devir": 1
+    },
+    "tamamlanan": [
+     "ilk-devir"
+    ],
+    "altin": 100,
+    "yenileme": [
+     {
+      "cekirdekId": 26,
+      "omur": 30,
+      "fiyat": 40
+     }
+    ],
+    "takimTavani": 3,
+    "gelistirme": true
+   }
+  }
+ },
+ "oda": {
+  "kod": "VXGKBFNF",
+  "seyirciLinki": "http://localhost:5791/#izle=VXGKBFNF"
+ },
+ "seyirciBekleme": {
+  "metin": "Sıradaki maç bekleniyor\nKatılmak için oda kodu\nVXGK-BFNF\nLobi › Oda kodu › Katıl",
+  "imlec": "none",
+  "baslik": "none",
+  "olcek": 0
+ },
+ "takimHazir": {
+  "bant": "Takım Ultisi hazır · 4",
+  "yuva4": "hazir",
+  "te": [
+   100,
+   2.4337499141693115
+  ]
+ },
+ "takimTelegraf": {
+  "faz": "tur",
+  "yf": 0,
+  "yuva": -1,
+  "kalan": 0,
+  "te": 0,
+  "tu": 1,
+  "sv": 3,
+  "aktif": 1,
+  "elendi": [
+   1,
+   0,
+   0
+  ]
+ },
+ "takimAn": {
+  "siluet": 3,
+  "takimUlti": 1,
+  "bant": "TAKIM ULTİSİ",
+  "kullanildi": [
+   1,
+   0
+  ]
+ },
+ "seyirciTakimUlti": {
+  "bant": "Ay99ux0: TAKIM ULTİSİ",
+  "gorulen": {
+   "turBasladi": 2,
+   "duvar": 6,
+   "ringOut": 1,
+   "turBitti": 1,
+   "secim": 1,
+   "degisim": 1,
+   "takimEnerjiDoldu": 1,
+   "carpisma": 3,
+   "yetenekBasladi": 1,
+   "yetenekEtki": 1,
+   "yetenekBitti": 1
+  }
+ },
+ "ilkDurum": {
+  "faz": "tur",
+  "seviye": [
+   3,
+   2
+  ],
+  "yerel": 0
+ },
+ "seyirciMac": {
+  "paneller": [
+   {
+    "ad": "Ay99ux0",
+    "yuzde": "55%",
+    "enerji": 4
+   },
+   {
+    "ad": "Bxodey6",
+    "yuzde": "29%",
+    "enerji": 4
+   }
+  ],
+  "kartlar": [
+   {
+    "ust": "KorKor GöktaşıLv.3",
+    "alt": "Ok Gövde · Hafif Disk · Düz Uç",
+    "aktif": false
+   },
+   {
+    "ust": "KayaKaya MadenLv.3",
+    "alt": "Kalkan Gövde · Ağır Disk · İğne Uç",
+    "aktif": true
+   },
+   {
+    "ust": "KasırgaKasırga DökümLv.3",
+    "alt": "Savrulan Gövde · Denge Disk · Dengeli Uç",
+    "aktif": false
+   },
+   {
+    "ust": "KasırgaKasırga DökümLv.2",
+    "alt": "Savrulan Gövde · Denge Disk · Dengeli Uç",
+    "aktif": true
+   },
+   {
+    "ust": "KorKor GöktaşıLv.1",
+    "alt": "Ok Gövde · Hafif Disk · Düz Uç",
+    "aktif": false
+   },
+   {
+    "ust": "KayaKaya MadenLv.1",
+    "alt": "Kalkan Gövde · Ağır Disk · İğne Uç",
+    "aktif": false
+   }
+  ],
+  "odaKoduGizli": true,
+  "yetenekYuvasi": 0,
+  "yazi": {
+   "ad": "14px",
+   "skor": "28px",
+   "sure": "18px",
+   "bant": "20px"
+  },
+  "kartY": [
+   484,
+   532
+  ],
+  "olcek": null,
+  "canvas": [
+   960,
+   540
+  ]
+ },
+ "seffafArkaPlan": {
+  "body": "rgba(0, 0, 0, 0)",
+  "sinif": "ciplak seyirci seffaf"
+ },
+ "seyirciBantKBs": 1.57,
+ "macSonucu": {
+  "kazanan": 1,
+  "neden": "puan",
+  "puan": [
+   2,
+   3
+  ],
+  "tick": 4972
+ },
+ "seyirciSon": {
+  "bant": "Bxodey6 kazandı · 2 – 3",
+  "sonVar": true,
+  "puan": [
+   2,
+   3
+  ]
+ },
+ "sunucuOlcum": {
+  "oda": "VXGKBFNF",
+  "adim": 4972,
+  "p50": 0.033492999849841,
+  "p95": 0.06549800001084805,
+  "p99": 0.1656299999449402,
+  "enFazla": 95.30896200006828,
+  "odaP50": 0.08171000005677342,
+  "odaP95": 1.1634009999688715,
+  "odaP99": 2.8281640000641346,
+  "seyirci": 22,
+  "sayac": {
+   "birlestirme": 250,
+   "borc": 1889,
+   "tasima": 5337,
+   "notr": 3938,
+   "dondurma": 0,
+   "hukmen": 0
+  },
+  "tick": 4972,
+  "sonHash": "4c254fe85f0f7675"
+ },
+ "gizlilik": [
+  "Ne saklıyoruz",
+  "Ne için",
+  "Ne kadar süre",
+  "Silme yolu",
+  "Çerezler",
+  "Seyirci görünümü",
+  "İletişim"
+ ],
+ "krediler": {
+  "basliklar": [
+   "Depoda bulunan dış varlıklar",
+   "Pişirilmiş kod kaynaklı efektler",
+   "Kendi üretimimiz",
+   "Yazılım",
+   "Yazı tipleri",
+   "MIT bildirimi"
+  ],
+  "alt": "Manifest kaynağı: 53 · atıfı eksik: 0"
+ },
+ "seyirciArasi": "Sıradaki maç bekleniyor\nAy99ux0 2 – 3 Bxodey6",
+ "hesapSilindi": {
+  "metin": true,
+  "ben": null
+ },
+ "silinenGiris": 401,
+ "rakipGecmisi": {
+  "id": "ac4da269-d2cc-4d27-a813-374d939cee16",
+  "mod": "oda",
+  "tarih": 1793840752199,
+  "rakipAd": "Silinmiş oyuncu",
+  "skor": [
+   3,
+   2
+  ],
+  "sonuc": "zafer",
+  "sureSn": 78
+ },
+ "konsolHata": {
+  "A": [
+   "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+  ],
+  "B": [],
+  "C": [],
+  "D": []
+ },
+ "sureSn": 131.353
+}

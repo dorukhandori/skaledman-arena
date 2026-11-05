@@ -51,7 +51,20 @@ try {
   for (const s of [A, B]) await ev(s.sayfa, `fetch("/api/egitim-bitti", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: "{}" }).then((r) => r.status)`);
   const benA = await ev<{ oyuncu: { ad: string }; cekirdekler: { id: number; seviye: number }[] }>(A.sayfa, `fetch("/api/ben", { credentials: "same-origin" }).then((r) => r.json())`);
   const xp = await ev(A.sayfa, `fetch("/api/gelistirme/xp-ver", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ cekirdekId: ${benA.cekirdekler[0]!.id}, xp: 600 }) }).then((r) => r.json())`);
-  kayit["hazirlik"] = { aAd: benA.oyuncu.ad, xp };
+  // A'nın takımı: üç sahip olunan Çekirdek, hepsi Lv.3 (geliştirme ucu; ödünç Lv.1 üyede Takım Ultisi kilitli kalır)
+  const takimKur = await ev(A.sayfa, `(async () => {
+    const p = (y, g, m = "POST") => fetch(y, { method: m, credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify(g) }).then((r) => r.json());
+    const ver = (t) => p("/api/gelistirme/parca-ver", { tanim: t }).then((j) => j.id);
+    const setler = [["kor-goktasi", "ok-govde", "hafif-disk", "duz-uc"], ["kaya-maden", "kalkan-govde", "agir-disk", "igne-uc"], ["kasirga-yapay", "savrulan-govde", "denge-disk", "dengeli-uc"]];
+    const yuvalar = [];
+    for (const [k, set] of setler.entries()) {
+      const c = k === 0 ? ${benA.cekirdekler[0]!.id} : await ver(set[0]);
+      yuvalar.push({ cekirdek: c, govde: await ver(set[1]), disk: await ver(set[2]), uc: await ver(set[3]) });
+      await p("/api/gelistirme/xp-ver", { cekirdekId: c, xp: 750 });
+    }
+    return p("/api/takim/0", { yuvalar }, "PUT");
+  })()`);
+  kayit["hazirlik"] = { aAd: benA.oyuncu.ad, xp, takimKur };
   log(`A ${benA.oyuncu.ad} Çekirdek → ${JSON.stringify(xp)}`);
 
   // ---- A oda açar, seyirci bağlantısını kopyalar ----
@@ -78,6 +91,7 @@ try {
   await foto(C.sayfa, "seyirci-bekleme");
 
   // ---- B katılır, ikisi Hazır → maç ----
+  const bantBas0 = Date.now();
   await B.sayfa.goto(`${TABAN}?ekran=lobi&oto=dolas&debug&takim=0#oda=${kod}`);
   await bekleKosul(B.sayfa, `!!document.querySelector("[data-eylem=katil]")`, 20000);
   await tikla(B.sayfa, "[data-eylem=katil]");
@@ -86,15 +100,44 @@ try {
   await bekleKosul(A.sayfa, `window.__lobi.agMaci && window.__lobi.agMaci.sunucu && window.__lobi.agMaci.sunucu.mac.faz === "tur"`, 40000);
   log("maç başladı");
 
+    // ---- Takım Ultisi: GELİŞTİRME ile Takım Enerjisi 99,9 (bir sonraki doğal kazanç doldurur) ----
+  const yerelA = await ev<number>(A.sayfa, `window.__lobi.agMaci.yerel`);
+  await ev(A.sayfa, `(() => { window.__mac = window.__lobi.macEkrani; return 1; })()`);
+  // A'nın sahadaki topacı Lv.3 olana kadar bekle (ödünç Lv.1 üyede Takım Ultisi kilitli), sonra Takım Enerjisi 99,9
+  await bekleKosul(A.sayfa, `window.__lobi.agMaci.sunucu.mac.faz === "tur"`, 20000);
+  const durum = `(() => { const d = window.__lobi.agMaci.sunucu; const t = d.topaclar[${yerelA}]; const tk = d.takimlar[${yerelA}]; return { faz: d.mac.faz, yf: t.yetenekFaz, yuva: t.yetenekYuva, kalan: t.yetenekKalan, te: d.takimEnerji[${yerelA}], tu: d.takimUltiKullanildi[${yerelA}], sv: d.seviye[${yerelA}], aktif: tk.aktif, elendi: tk.uyeler.map((u) => u.elendi) }; })()`;
+  // dolum olayında çizim durur (bant + yuva 4 hazır görünür), ekran görüntüsünden sonra sürer
+  await ev(A.sayfa, `(() => { window.__mac.olaydaDur(["takimEnerjiDoldu"], 1, ${yerelA}); return 1; })()`);
+  await ev(A.sayfa, `window.__lobi.agMaci.gonder("gTakimEnerji", { miktar: 99.9 })`);
+  await bekleKosul(A.sayfa, `!!window.__mac.durmaOlayi && window.__mac.durdu`, 30000);
+  kayit["takimHazir"] = await ev(A.sayfa, `({ bant: document.querySelector(".mh .bant").textContent, yuva4: document.querySelectorAll(".mh .yv")[3].dataset.durum, te: window.__lobi.agMaci.sunucu.takimEnerji })`);
+  await foto(A.sayfa, "takim-ultisi-hazir");
+  // telegraf: A'nın yetenekBasladi olayında 12 kare sonra çizim durur; kademe 4 değilse sürdür (bot uygun anda atar)
+  for (let k = 0; k < 30; k++) {
+    await ev(A.sayfa, `(() => { window.__mac.devam(); window.__mac.olaydaDur(["yetenekBasladi"], 12, ${yerelA}); return 1; })()`);
+    try { await bekleKosul(A.sayfa, `!!window.__mac.durmaOlayi && window.__mac.durdu`, 30000); } catch { kayit["takimTelegrafBekleme"] = await ev(A.sayfa, durum); break; }
+    const o = await ev<{ kademe: number }>(A.sayfa, `window.__mac.durmaOlayi`);
+    if (o.kademe === 4) break;
+  }
+  kayit["takimTelegraf"] = await ev(A.sayfa, durum);
+  await foto(A.sayfa, "takim-ultisi-telegraf");
+  await ev(A.sayfa, `(() => { window.__mac.devam(); return 1; })()`);
+  // an: 0,8 s sonra (üç ruh sırayla belirdi, telegraf sonu / alan)
+  await bekle(800);
+  kayit["takimAn"] = await ev(A.sayfa, `({ siluet: window.__mac.gorselSayac.siluet, takimUlti: window.__mac.gorselSayac.takimUlti, bant: document.querySelector(".mh .bant").textContent, kullanildi: window.__lobi.agMaci.sunucu.takimUltiKullanildi })`);
+  await Promise.all([foto(A.sayfa, "takim-ultisi-an"), foto(C.sayfa, "seyirci-takim-ultisi")]);
+
+  kayit["seyirciTakimUlti"] = await ev(C.sayfa, `({ bant: window.__seyirci.hud ? document.querySelector(".sh .bant").textContent : "", gorulen: window.__seyirci.gorulen })`);
   // ---- 20 Node SDK seyircisi (oda adımı p95; seyirci girdisi yok) ----
   const { PROTOKOL_SURUMU } = await import("../src/ag/protokol.ts");
   const kalabalik = [];
   for (let k = 0; k < 20; k++) kalabalik.push(await new Client(TABAN.replace(/\/$/, "")).joinOrCreate("izle", { v: PROTOKOL_SURUMU, kod: link.slice(link.indexOf("=") + 1, link.indexOf("=") + 9) }));
   log(`20 SDK seyircisi bağlı (oda ${kalabalik[0]!.roomId})`);
 
-  await bekleKosul(C.sayfa, `(() => { const s = window.__seyirci; return s && s.ag.sunucu && s.ag.sunucu.mac.faz === "tur" && document.querySelector(".sh"); })()`, 20000);
+  await bekleKosul(C.sayfa, `(() => { const s = window.__seyirci; return s && s.ag.sunucu && document.querySelector(".sh"); })()`, 20000);
+  kayit["ilkDurum"] = await ev(A.sayfa, `(() => { const d = window.__lobi.agMaci.sunucu; return { faz: d.mac.faz, seviye: [...d.seviye], yerel: window.__lobi.agMaci.yerel }; })()`);
   const bantBas = Date.now();
-  await bekle(5000);
+  await bekle(2500);
   kayit["seyirciMac"] = await ev(C.sayfa, `(() => {
     const k = document.querySelector(".sh");
     const p = [...k.querySelectorAll(".pn")].map((x) => ({ ad: x.querySelector(".ad").textContent, yuzde: x.querySelector(".bar b").textContent, enerji: x.querySelectorAll(".en span").length }));
@@ -109,31 +152,8 @@ try {
   await foto(D.sayfa, "seyirci-seffaf", true);
   kayit["seffafArkaPlan"] = await ev(D.sayfa, `({ body: getComputedStyle(document.body).backgroundColor, sinif: document.body.className })`);
 
-  // ---- Takım Ultisi: GELİŞTİRME ile Takım Enerjisi 99,9 (bir sonraki doğal kazanç doldurur) ----
-  const yerelA = await ev<number>(A.sayfa, `window.__lobi.agMaci.yerel`);
-  await ev(A.sayfa, `(() => { window.__mac = window.__lobi.macEkrani; window.__mac.olaydaDur(["takimEnerjiDoldu"], 1, ${yerelA}); return 1; })()`);
-  await ev(A.sayfa, `window.__lobi.agMaci.gonder("gTakimEnerji", { miktar: 99.9 })`);
-  await bekleKosul(A.sayfa, `!!window.__mac.durmaOlayi && window.__mac.durdu`, 30000);
-  kayit["takimHazir"] = await ev(A.sayfa, `({ bant: document.querySelector(".mh .bant").textContent, yuva4: document.querySelectorAll(".mh .yv")[3].dataset.durum, te: window.__lobi.agMaci.sunucu.takimEnerji })`);
-  await foto(A.sayfa, "takim-ultisi-hazir");
-  // telegraf: yuva 4 başladı (kademe 4) → 12 kare sonra dur (ilk ruh + telegraf halkası); bot hazır olduğu anda atar
-  let tel: { yuva: number; kademe: number } | null = null;
-  for (let k = 0; k < 40 && !(tel && tel.kademe === 4); k++) {
-    await ev(A.sayfa, `(() => { window.__mac.devam(); window.__mac.olaydaDur(["yetenekBasladi"], 12, ${yerelA}); return 1; })()`);
-    await bekleKosul(A.sayfa, `!!window.__mac.durmaOlayi && window.__mac.durdu`, 60000);
-    tel = await ev(A.sayfa, `window.__mac.durmaOlayi`);
-  }
-  kayit["takimTelegraf"] = { olay: tel, faz: await ev(A.sayfa, `(() => { const t = window.__mac.durum.topaclar[${yerelA}]; return { faz: t.yetenekFaz, yuva: t.yetenekYuva, kalan: t.yetenekKalan }; })()`) };
-  await foto(A.sayfa, "takim-ultisi-telegraf");
-  // an: akış sürerken 0,8 s sonra (üç ruh sırayla belirdi, telegraf sonu / alan)
-  await ev(A.sayfa, `window.__mac.devam()`);
-  await bekle(800);
-  kayit["takimAn"] = await ev(A.sayfa, `({ siluet: window.__mac.gorselSayac.siluet, takimUlti: window.__mac.gorselSayac.takimUlti, bant: document.querySelector(".mh .bant").textContent, kullanildi: window.__lobi.agMaci.sunucu.takimUltiKullanildi })`);
-  await Promise.all([foto(A.sayfa, "takim-ultisi-an"), foto(C.sayfa, "seyirci-takim-ultisi")]);
-
-  kayit["seyirciTakimUlti"] = await ev(C.sayfa, `({ bant: window.__seyirci.hud ? document.querySelector(".sh .bant").textContent : "", gorulen: window.__seyirci.gorulen })`);
   const bantSon = Date.now();
-  kayit["seyirciBantKBs"] = +bant(C.bayt, bantBas, bantSon).toFixed(2);
+  kayit["seyirciBantKBs"] = +bant(C.bayt, bantBas0, bantSon).toFixed(2);
   log(`Takım Ultisi: ${JSON.stringify(kayit["takimAn"])}; seyirci bant ${kayit["seyirciBantKBs"]} KB/s`);
 
   // ---- maç doğal biter ----
@@ -159,6 +179,9 @@ try {
   kayit["krediler"] = await ev(B.sayfa, `({ basliklar: [...document.querySelectorAll(".bilgi h3")].map((h) => h.textContent), alt: document.querySelector(".bilgi .yt").textContent })`);
   await A.sayfa.goto(`${TABAN}?ekran=ayarlar`);
   await bekle(1500);
+  // oyuncular ayrıldı: oda (yeniden bağlanma süresi dolunca) kapanır → seyirci bekleme kartı + son skor
+  await bekleKosul(C.sayfa, `document.querySelector(".sy .bekle").classList.contains("acik") && !!document.querySelector(".sy .bekle .son span")`, 60000);
+  await bekle(500);
   kayit["seyirciArasi"] = await ev(C.sayfa, `document.querySelector(".sy .bekle").innerText`);
   await foto(C.sayfa, "seyirci-bekleme-son-skor");
   await foto(A.sayfa, "ayarlar");

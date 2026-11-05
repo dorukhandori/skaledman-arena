@@ -75,7 +75,8 @@ class SeyirciEkrani {
     this.stil.textContent = STIL;
     document.head.appendChild(this.stil);
     document.body.classList.add("seyirci");
-    if (seffaf) document.body.classList.add("seffaf");
+    // OBS: html + body + #sahne saydam (index.html html/body'ye zemin verir), tuval backgroundAlpha 0 (main.ts)
+    if (seffaf) { document.body.classList.add("seffaf"); document.documentElement.style.background = "transparent"; }
     this.sahne = new Sahne(b.app, kameraKipi(ayarlariOku()));
     this.sahne.tamSayiOlcek = true;
     this.sahne.boyutla(true);
