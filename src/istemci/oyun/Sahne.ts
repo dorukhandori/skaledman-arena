@@ -87,7 +87,9 @@ export class Sahne {
     this.zeminKatmani.addChild(this.zeminDuzlem);
     this.efektKatmani.addChild(this.ustDuzlem);
     this.nesneKatmani.sortableChildren = true;
-    this.dunya.addChild(this.arkaNesneKatmani, this.zeminKatmani, this.izKatmani, this.golgeKatmani, this.nesneKatmani, this.dudakKatmani, this.efektKatmani);
+    // GU-D hibrit: krem sarmal iz düşen gölgenin ÜSTÜNDE (referans 07: kıvrım gölgeyi keser, kararmaz), topacın altında
+    const izGolge = hibrit ? [this.golgeKatmani, this.izKatmani] : [this.izKatmani, this.golgeKatmani];
+    this.dunya.addChild(this.arkaNesneKatmani, this.zeminKatmani, ...izGolge, this.nesneKatmani, this.dudakKatmani, this.efektKatmani);
     this.dunya.pivot.set(SAHNE.merkezX, SAHNE.merkezY);
     this.dunya.position.set(SAHNE.merkezX, SAHNE.merkezY);
     this.arkaKatmani.pivot.set(SAHNE.merkezX, SAHNE.merkezY);
