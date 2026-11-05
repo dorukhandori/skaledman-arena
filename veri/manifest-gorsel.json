@@ -767,6 +767,25 @@
    "bayt": 53227,
    "tarih": "2026-11-05",
    "durum": "entegre"
+  },
+  {
+   "ad": "atolye3d.three",
+   "dosya": "node_modules/three (dist/client/assets/Goruntuleyici-*.js, GLTFLoader-*.js)",
+   "olay": "Atölye 3B patlatılmış topaç görüntüleyicisi (yalnız Atölye'de tembel yüklenir)",
+   "kaynak": "three (three.js 0.186.1, npm, mrdoob ve katkıcılar)",
+   "lisans": "MIT",
+   "atif": "three.js — Copyright © 2010-2026 three.js authors, MIT License",
+   "tarih": "2026-11-05",
+   "durum": "entegre"
+  },
+  {
+   "ad": "atolye3d.parametrik",
+   "dosya": "src/istemci/atolye3d/geometri.ts (kaynak/topac/parcalar-3b.json)",
+   "olay": "Atölye 3B parça modelleri, çalışma zamanında yordamsal kurulur; GLB gelince public/topac/model/<id>.glb",
+   "kaynak": "kendi üretimimiz (parametrik tanım, ART-1)",
+   "lisans": "CC0 (bizim)",
+   "tarih": "2026-11-05",
+   "durum": "entegre"
   }
  ],
  "kamera": {

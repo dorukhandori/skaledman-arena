@@ -22,6 +22,7 @@ export const YAZILIM: readonly YazilimKredisi[] = [
   { ad: "Colyseus (sunucu, SDK, @colyseus/schema)", lisans: "MIT", telif: "Copyright (c) 2015-present Endel Dreyer", url: "https://github.com/colyseus/colyseus" },
   { ad: "Colyseus + Vite başlangıç şablonu", lisans: "MIT", telif: "docs/tech/LICENSE-colyseus-vite-starter.txt", url: "https://github.com/colyseus" },
   { ad: "better-sqlite3", lisans: "MIT", telif: "Copyright (c) 2017 Joshua Wise", url: "https://github.com/WiseLibs/better-sqlite3" },
+  { ad: "three.js (Atölye 3B görüntüleyici, ayrı paket)", lisans: "MIT", telif: "Copyright © 2010-2026 three.js authors", url: "https://github.com/mrdoob/three.js" },
   { ad: "Zod", lisans: "MIT", telif: "Copyright (c) 2025 Colin McDonnell", url: "https://github.com/colinhacks/zod" },
   { ad: "Vite (yapım aracı)", lisans: "MIT", telif: "Copyright (c) 2019-present VoidZero Inc. and Vite contributors", url: "https://github.com/vitejs/vite" },
 ];

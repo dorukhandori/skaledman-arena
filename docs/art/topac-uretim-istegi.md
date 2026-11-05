@@ -159,6 +159,7 @@ Yükleyici biçim B json'unu yalnız `veri/topac-gorsel.json` `bicimB` dizisinde
 
 **İkonlar:** `public/topac/ikon-48.png` ve `ikon-24.png` (8 sütun ızgara) + meta `veri/topac-gorsel.json` `ikon.ikon48.yer.<id> = [x, y]`; Mac çıktısı aynı adla üzerine yazabilir ya da `public/topac/ikon/<parcaId>-48.png` / `-24.png` tek dosyalar bırakır (menü bağlaması iki yolu da dener).
 **Manifest:** her dosya için `veri/manifest-gorsel.json` `dosyalar[]` satırı (`kaynak`: "kendi üretimimiz (Gemini + Tripo + Blender)", araç, tarih, lisans "proje varlığı") ve `docs/art/ruh-uretim-kaydi.md` benzeri `docs/art/topac-uretim-kaydi.md` maliyet satırı.
+**3B model (Atölye, ATOLYE3D):** Tripo/Blender GLB'leri `public/topac/model/<parcaId>.glb` olarak da bırakılabilir (Y yukarı, kök dönme ekseninde ve Uç ucunda, 1 birim = topaç birimi; malzeme adları sınıf adı `boya`/`metal`/`koyu`/…) ve kimlik `veri/topac-model.json` `glb` listesine eklenir; yoksa Atölye parametrik modeli çizer (sözleşme: `docs/production/raporlar/ATOLYE3D.md` § 6).
 
 ## 6. Parti sırası ve kalite kapısı
 

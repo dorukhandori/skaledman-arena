@@ -16,6 +16,13 @@ Kural: yalnız ücretsiz ve lisansı uygun kaynak (CC0 tercih; MIT / CC-BY atıf
 | Büyü efektleri sheet'i (`kaynak/efekt/foozle-pixel-magic/`) | lordfitoi, Foozle dağıtımı — https://foozlecc.itch.io/pixel-magic-sprite-effects | CC0 1.0 | "Büyü efektleri: Foozle / lordfitoi (CC0)" | yedek havuz, atlasa alınmadı |
 | 7 efekt atlası, 16 efekt (`kaynak/efekt/pixelfx/atlas/`) | pixelfx (Patch, Hugo Duprez) | MIT | "Efektler: pixelfx — Patch, Hugo Duprez (MIT)" + aşağıdaki MIT bildirimi | pişirildi, entegre değil |
 
+## Oyunla dağıtılan görsel yazılım (ATOLYE3D)
+
+| Varlık | Yazar / kaynak | Lisans | Atıf metni (oyun içi) | Durum |
+|---|---|---|---|---|
+| three.js 0.186.1 (npm `three`, tam sürüm; yalnız Atölye'de tembel yüklenen `Goruntuleyici` paketi + isteğe bağlı `GLTFLoader`) | three.js authors (mrdoob ve katkıcılar) — https://github.com/mrdoob/three.js | MIT | "3B görüntüleyici: three.js (MIT)" + aşağıdaki MIT bildirimi; tam metin `node_modules/three/LICENSE` | entegre |
+| Atölye 3B parça modelleri (çalışma zamanında `kaynak/topac/parcalar-3b.json`'dan kurulur; `src/istemci/atolye3d/geometri.ts`) | kendi üretimimiz | CC0 (bizim) | — | entegre |
+
 ## Yazı tipleri (GU-01, menü dili v2)
 
 | Varlık | Yazar / kaynak | Lisans | Atıf metni (oyun içi) | Durum |
