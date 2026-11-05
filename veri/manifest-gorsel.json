@@ -737,8 +737,8 @@
   },
   {
    "ad": "ruh.ata-kaynak",
-   "dosya": "public/ruh/ata/<element>.png + .json (6)",
-   "olay": "Renkli kaynak sayfa (176 px hücre, 6×4, 24 kare); oyunda yüklenmez, hologram buradan pişirilir",
+   "dosya": "kaynak/ruh/ata/<element>.png + .json (6)",
+   "olay": "Renkli kaynak sayfa (176 px hücre, 6×4, 24 kare); public/ dışında, dağıtılmaz; hologram buradan pişirilir",
    "kaynak": "kendi üretimimiz, yapay zekâ üretimi (aynı hat)",
    "lisans": "bizim (yapay zekâ çıktısı)",
    "yapayZeka": true,

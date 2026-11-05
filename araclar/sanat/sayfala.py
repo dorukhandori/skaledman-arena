@@ -1,11 +1,11 @@
-"""Ata kareleri -> piksel sanat sprite sayfası (6x4 ızgara) + json."""
+"""Ata kareleri -> piksel sanat sprite sayfası (6x4 ızgara) + json (kaynak/ruh/ata/, public/ dışında)."""
 import json, sys
 import numpy as np
 from PIL import Image
 import os
 DEPO = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")
 A = os.path.join(DEPO, "art-source", "ruh", "kare")
-P = os.path.join(DEPO, "public", "ruh", "ata")
+P = os.path.join(DEPO, "kaynak", "ruh", "ata")  # renkli kaynak sayfa; hologram.py buradan public/ruh/ata/*-holo.png pişirir
 HUCRE, SUT, SAT = 192, 6, 4
 # İçerik kırpma: kükreme+döngü karelerinin (10-23) birleşik kutusu kare bir pencereye %88 doluluk ile oturur; ayak çizgisi
 # hücrenin AYAK_Y pikseline düşer (oyun anchor'ı bu sayıyı kullanır). Yükseliş kareleri aynı pencereden kesilir.

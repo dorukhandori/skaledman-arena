@@ -6,7 +6,7 @@ Dal: `devran-sanat` (origin/devran-kod `d360444` üstüne rebase). Tasarım `doc
 | Yol | Ne |
 |---|---|
 | `public/ruh/ata/<element>-holo.png` (+ `-holo-k.png` yarım boy) | Oyunda kullanılan hologram sayfaları: 192 (96) px hücre, 6×4, 24 kare (0-9 yükseliş, 10-15 kükreme, 16-23 döngü), 16 fps, ayak y 184 (92) |
-| `public/ruh/ata/<element>.png` + `.json` | Renkli kaynak sayfa (hologram buradan pişirilir: `araclar/sanat/hologram.py`) |
+| `kaynak/ruh/ata/<element>.png` + `.json` | Renkli kaynak sayfa (public/ dışında, dağıtılmaz; 2026-11-05 TEMIZLIK #3) (hologram buradan pişirilir: `araclar/sanat/hologram.py`) |
 | `public/ruh/portre/<ruh-id>.png` | 21 ruh portresi (en uzun kenar 320, 96 renk). Şimdilik oyunda yüklenmez |
 | `public/bilgic/{anlatiyor,aslinda,sevinc}.png` | Pergel ifadeleri |
 | `src/istemci/oyun/RuhGorsel.ts` | Canavar sunumu (yükleme, belirme, kükreme, vinyet, ad bandı) |

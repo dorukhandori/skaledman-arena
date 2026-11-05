@@ -178,7 +178,7 @@ Kare maliyeti (tahmin): bir Gövde = 8 keskin + 8 bulanık + 3 disk + 1 parlama 
 | Okunurluk | Avatar **oyun alanını kapatamaz**: alfa ≤ %75, ekranın üst-orta bandına, Topaç'ların üstüne değil arkasına yerleşir |
 | Takım Ultisi | Üç küçük avatar (%60 ölçek) üç Topaç'ın arkasında; **yeni çizim yok**, mevcut avatarlar kullanılır |
 
-> **Uygulama notu (2026-11-05):** Altı Ata Tripo 3B → Blender ile üretildi: 176 px hücre, 24 kare, 6×4 sayfa (0-9 yükseliş = belirme, 10-15 kükreme = vuruş, 16-23 döngü = boşta), 192 px 4+4+1 setinin üst kümesi sayıldı; oyunda ×2,4 ekran ölçeği. Yollar: `public/ruh/ata/<element>.png|json`, ruh portreleri `public/ruh/portre/<ruh-id>.png` (Özel Yetenek, bayrakla kapalı). Ayrıntı `docs/art/ruh-entegrasyon-notu.md`.
+> **Uygulama notu (2026-11-05):** Altı Ata Tripo 3B → Blender ile üretildi: 176 px hücre, 24 kare, 6×4 sayfa (0-9 yükseliş = belirme, 10-15 kükreme = vuruş, 16-23 döngü = boşta), 192 px 4+4+1 setinin üst kümesi sayıldı; oyunda ×2,4 ekran ölçeği. Yollar: `kaynak/ruh/ata/<element>.png|json` (kaynak, dağıtılmaz; oyunda `public/ruh/ata/<element>-holo*.png`), ruh portreleri `public/ruh/portre/<ruh-id>.png` (Özel Yetenek, bayrakla kapalı). Ayrıntı `docs/art/ruh-entegrasyon-notu.md`.
 
 ### 4.2 Kaç farklı avatar
 

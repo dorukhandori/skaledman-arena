@@ -1,4 +1,4 @@
-"""Ata sayfası -> hologram sayfası (public/ruh/ata/<el>-holo.png).
+"""Ata sayfası (kaynak/ruh/ata/<el>.png, sunulmaz) -> hologram sayfası (public/ruh/ata/<el>-holo.png).
 
 Parlaklık element gradyanına eşlenir (koyu -> orta -> açık -> vurgu), koyu kontur parlak kenara döner, tek satırlar
 sönükleşir (tarama çizgisi), gövde yarı saydam olur. Çalışma anında filtre gerekmez (pixel önbelleğinde filtre bozuluyor).
@@ -11,6 +11,7 @@ from PIL import Image
 
 DEPO = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")
 P = os.path.join(DEPO, "public", "ruh", "ata")
+K = os.path.join(DEPO, "kaynak", "ruh", "ata")  # renkli kaynak sayfalar public/ dışında (dağıtılmaz)
 RENK = {
     "kor": (0x7a1d12, 0xe8452c, 0xff8a5c, 0xffd2a8),
     "kasirga": (0x1f6b52, 0x5bd1a5, 0x9cebc9, 0xe2fff2),
@@ -29,7 +30,7 @@ def rgb(h):
 
 def kaynak(el, kucuk):
     """Renkli sayfa; küçük sürüm hücre 96 (yarım boy, BOX), yer dar olduğunda oyunda yine ×2 net çizilir."""
-    im = Image.open(os.path.join(P, f"{el}.png")).convert("RGBA")
+    im = Image.open(os.path.join(K, f"{el}.png")).convert("RGBA")
     if not kucuk:
         return im
     k = im.resize((im.width // 2, im.height // 2), Image.BOX)
