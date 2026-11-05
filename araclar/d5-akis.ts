@@ -58,7 +58,8 @@ function yon(dx: number, dz: number): string[] {
   return t;
 }
 async function ekranNoktasi(s: S, x: number, z: number): Promise<{ x: number; y: number }> {
-  return ev(s, `(() => { const r = document.querySelector(".mh").getBoundingClientRect(); return { x: r.left + (480 + ${x}) * r.width / 960, y: r.top + (270 + ${z}) * r.height / 540 }; })()`);
+  // GU-B: hibrit izdüşüm dahil (__mac.ekranNoktasi); kanca yoksa eski düz eşleme
+  return ev(s, `(() => { if (window.__mac && window.__mac.ekranNoktasi) return window.__mac.ekranNoktasi(${x}, ${z}); const r = document.querySelector(".mh").getBoundingClientRect(); return { x: r.left + (480 + ${x}) * r.width / 960, y: r.top + (270 + ${z}) * r.height / 540 }; })()`);
 }
 interface EgDurum { a: number[]; b: number[]; v: number[]; adim: number; faz: string; ry: boolean; bitti: boolean; kapanis: boolean }
 const egOku = (s: S) => ev<EgDurum>(s, `(() => { const d = window.__mac.durum; const t = d.topaclar; const e = window.__egitim;

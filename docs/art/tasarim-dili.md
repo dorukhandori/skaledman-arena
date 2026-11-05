@@ -50,7 +50,7 @@ Yöntem: scratchpad'de Python/Pillow, her noktada 5×5 ya da 7×7 piksel medyan�
 | Geri / kapat düğmesi | kırmızı kare: 04 `#943A3C`, 06 `#994036`; X 03 `#7E2E3A`, 05 `#83313D` | düz koyu düğme | — | kaçak (geri) / kasıtlı (X yok, G-15) |
 | Ana eylem | 01 GİRİŞ yeşil `#3AA152`; diğerleri koyu zemin + bronz çerçeve; seçili mod 06 kahve-turuncu | sarı dolgu `#F4CF47` | — | kaçak; tek tutarlı kural önerisi § 4.3 |
 | Mürekkep | açık krem `#FBF2C3` | `#F3F1E8` | 20 | referans daha sıcak/sarı |
-| **Stamina (07)** | kırmızı bölge `#F76A35` → sarı bölge `#FFF268` → boş `#23283B` (dış uçta kırmızı, içe doğru sarı) | eşik rengi: krem `#F2E8B0` / amber `#F2A33A` / kırmızı `#E3350D` | 18 / 39 | yapı farklı: referansta bir çubukta iki bölge; bizde tek renk eşikle değişir (kasıtlı, C-4/C-16) |
+| **Stamina (07)** | kırmızı bölge `#F76A35` → sarı bölge `#FFF268` → boş `#23283B` (dış uçta kırmızı, içe doğru sarı) | GU-B: dış uçtan kırmızı `#F2622F` (%0–25) → sarı `#FFE45E` bölgeli çubuk (eski: eşik rengi krem / amber / kırmızı) | — | C-16 **sahip kararıyla değişti (2026-11-05)**: referans 07 iki bölgeli çubuk alındı; okunurluk ayraç (%25, %60) + tarama + "!" + nabızla korunur |
 | **Stamina (08)** | bej `#A88D58`, boş `#191C38` | krem `#F2E8B0` | 33 | referans bejı belirgin koyu ve doygun; krem açık kalır |
 | **Enerji (07)** | yeşil segment `#86E065` | açık mavi `#7FD3FF` (`MacHud.ts`) | 88 | **kaçak**: renk tamamen farklı |
 | **Enerji (08)** | dolu dilim sarı-turuncu `#FEE55F`, parlak `#FEFBB3`, rakip bej `#D4BC7E`; "ULTİ" turuncu | açık mavi; ULTİ `#FFB347` | — | kaçak; 07 ve 08 kendi aralarında da farklı (§ 9 Ç-15) |
@@ -346,7 +346,7 @@ Farklar aşağıda iki etiketle: **[K]** kasıtlı (belge kazandı, kapatılmaz)
 - **Referansta:** kamera **eğik** (~35-45° yükselti; çanak geniş elips, iç duvar ve tribün görünür); zemin çatlaklı sıcak gri taş levhalar, ortada içe çökük çukur, dış kuşakta **ışıyan krem-turuncu halka**, kenarda koyu duvar, üstte ve yanlarda kalabalık silüetleri. Topaçlar **3/4 yandan** görünüşlü pixel sprite (turuncu Kor, mavi Girdap), altlarında koyu gölge, çarpışmada sarı-beyaz ışınsal patlama + kırmızı/mavi hız çizgileri + krem sarmal iz. HUD: sol üst "STAMINA" etiketi + ~480 px uzunlukta çubuk (dış uçtan kırmızı, sonra sarı bölge, sonra boş), altında "ENERJİ" + yeşil segmentli kısa çubuk; sağ üst ayna; üst ortada bronz çerçeveli trapez plaka "1 - 2" (turuncu rakam) ve altında "0:47" kutusu. Sol alt 3 ikonlu kare yuva (alev patlaması, kırmızı yasak dairesi, mavi sarmal); sağ alt 3 boş kare (ilki turuncu çerçeve).
 - **Bizde:** tam üstten daire; köşe panelleri (ad satırı, stamina eşik renkli + %, Enerji 3 açık mavi dilim, Çatlak); skor + süre koyu kutular; 4 yuva + yetenek adları + Shift/Space; 3 takım yuvası element silüetli.
 - **Farklar:**
-  - [K] Köşe paneli (08 dili) + alt yuvalar (C-4); çubuk rengi eşikle (C-16); yasak dairesi yerine kilit (C-7); sağ alt = takım yuvaları (C-8); ad/Lv. satırı, Çatlak, Shift/Space rozetleri, 4. yuva (ux § 2); takım çemberi (İ-3, Hibrit'te zeminde elips).
+  - [K] Köşe paneli (08 dili) + alt yuvalar (C-4); çubuk rengi: C-16 sahip kararıyla değişti (2026-11-05), referans 07 iki bölge; yasak dairesi yerine kilit (C-7); sağ alt = takım yuvaları (C-8); ad/Lv. satırı, Çatlak, Shift/Space rozetleri, 4. yuva (ux § 2); takım çemberi (İ-3, Hibrit'te zeminde elips).
   - [S] **Kamera:** referans eğik, bizde tam üstten → **K-1 = Hibrit** ile kaçak fark oldu, GU-00 kapatır (fizik düz kalır; `maketler/m1-mac-hibrit.png`).
   - [S] "STAMINA" / "ENERJİ" büyük harf pixel etiketleri yok.
   - [S] Enerji rengi açık mavi, referans yeşil (§ 2.0).
@@ -382,7 +382,7 @@ Farklar aşağıda iki etiketle: **[K]** kasıtlı (belge kazandı, kapatılmaz)
 | 03: 8 stat (Hız, Güç, Defans, Stamina, Denge, Ağırlık, Çeviklik, Turbo) | 6 çubuk | sim parametreleri | C-1 |
 | 02: kartta farklı stat çiftleri | aynı 4 çubuk | karşılaştırma | C-2 |
 | İngilizce: CORE-A, SPARK, GEAR, VAER, BLAZE STRIKER, STORM/IGNIS/FALCON, COUNTDOWN, TEAM SELECT, OPPONENT, CORE; bozuk FİNF/SCPR, GENKİN OSTAVI | Türkçe sözlük | K-12 | C-3 |
-| 07: tam genişlik iki bölgeli çubuk | köşe panelinde eşik renkli çubuk | okunurluk | C-4, C-16 |
+| 07: tam genişlik iki bölgeli çubuk | köşe panelinde **iki bölgeli kırmızı→sarı çubuk** (C-16 sahip kararıyla değişti, 2026-11-05; ayraç + tarama + "!" korunur); köşe paneli yerleşimi kasıtlı kalır | okunurluk | C-4; C-16 değişti |
 | 07/08: eğik arena, 3/4 topaç | **sunum eğik (Hibrit), fizik düz daire**; yalnız "Düz görünüm" erişilebilirlik ayarında tam üstten | sahip kararı K-1 (2026-11-04): kasıtlı fark kalktı, fizik farkı ekranda görünmez | C-5 yerine K-1 |
 | 08: alevli kanatlı kuş | özgün avatar | IP | C-6; B-36 |
 | 07: kırmızı yasak dairesi | asma kilit + Lv.3 | anlam | C-7 |

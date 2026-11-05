@@ -37,11 +37,14 @@ const cekilen: string[] = [];
 const goruntu = async (ad: string) => { const yol = `${KLASOR}/D3-${ad}.png`; await s.screenshot({ path: yol }); cekilen.push(yol); console.log("  ekran:", yol); };
 const durum = () => m(s, (mac) => { const d = mac.durum; return { faz: d.mac.faz as string, tick: d.tick as number, e0: d.topaclar[0].enerji as number, e1: d.topaclar[1].enerji as number, y0: d.topaclar[0].yetenekFaz as number, y1: d.topaclar[1].yetenekFaz as number, durdu: mac.durdu as boolean, sonuc: mac.sonucAcik as boolean, ulti: [...d.ultiKullanildi] }; });
 /** Sim noktası → sayfa (CSS) koordinatı. */
-const ekranda = (x: number, z: number) => s.evaluate((a) => {
+/** Mantıksal 960×540 nokta → sayfa (CSS) koordinatı (HUD şeritleri, iptal bölgesi). */
+const mantiksal = (lx: number, ly: number) => s.evaluate((a) => {
   const r = document.querySelector("canvas")!.getBoundingClientRect();
   const ol = Math.min(r.width / 960, r.height / 540);
-  return { x: r.left + (r.width - 960 * ol) / 2 + (480 + a.x) * ol, y: r.top + (r.height - 540 * ol) / 2 + (270 + a.z) * ol };
-}, { x, z });
+  return { x: r.left + (r.width - 960 * ol) / 2 + a.lx * ol, y: r.top + (r.height - 540 * ol) / 2 + a.ly * ol };
+}, { lx, ly });
+/** Sim noktası → sayfa (CSS) koordinatı: GU-B sonrası hibrit izdüşüm dahil (__mac.ekranNoktasi). */
+const ekranda = (x: number, z: number) => s.evaluate((a) => (window as unknown as W).__mac.ekranNoktasi(a.x, a.z) as { x: number; y: number }, { x, z });
 const rakipEkranda = async () => { const p = await m(s, (mac) => ({ x: mac.durum.topaclar[1].x, z: mac.durum.topaclar[1].z })); return ekranda(p.x, p.z); };
 const olaydaDur = (turler: string[], kare: number, i = -1) => s.evaluate((a) => (window as unknown as W).__mac.olaydaDur(a.turler, a.kare, a.i), { turler, kare, i });
 const devam = () => m(s, (mac) => mac.devam());
@@ -83,7 +86,7 @@ await bekle(150);
 await s.keyboard.press("Escape");
 await s.keyboard.up("Digit2");
 const escIptal = await m(s, (mac) => ({ ...mac.girdiDurumu, menu: mac.menuAcik }));
-const alt = await ekranda(0, 240); // mantıksal y = 510 > 492
+const alt = await mantiksal(480, 510); // mantıksal y = 510 > 492 (iptal şeridi)
 await s.mouse.move(alt.x, alt.y);
 await s.mouse.down({ button: "right" });
 await bekle(120);
