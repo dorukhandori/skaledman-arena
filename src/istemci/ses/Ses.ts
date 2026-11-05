@@ -31,7 +31,20 @@ const SENTEZ_KATMANLI = 0.6;
 const EN_AZ_ARALIK_MS = 45;
 const HACIM: Partial<Record<SesAdi, number>> = { "kenar-uyari": 0.5, "ui-tik": 0.6, telegraf: 0.7 };
 
+const HACIM_ANAHTAR = "devran.sesHacim.v1";
+/** H16: Müzik varsayılanı düşük (%40), Efekt %100. */
+function hacimOku(): { muzik: number; efekt: number } {
+  try {
+    const h = JSON.parse(localStorage.getItem(HACIM_ANAHTAR) ?? "{}") as { muzik?: number; efekt?: number };
+    const s = (v: unknown, d: number) => (typeof v === "number" && v >= 0 && v <= 1 ? v : d);
+    return { muzik: s(h.muzik, 0.4), efekt: s(h.efekt, 1) };
+  } catch { return { muzik: 0.4, efekt: 1 }; }
+}
+
 class SesCephesi {
+  /** H16 kaydırıcıları (0..1), tarayıcıda saklanır */
+  readonly hacim = hacimOku();
+  private muzikCaliyor = false;
   /** `cal` çağrı sayısı (kapalıyken de sayılır; headless doğrulama). */
   readonly sayac: Record<string, number> = {};
   /** Gerçekten çalınan (bağlam açık, ses açık, dosya yüklü). */
@@ -67,6 +80,7 @@ class SesCephesi {
         } catch { /* kayıt yok: yalnız sentez */ }
       }
     }
+    try { sound.add("muzik-arena", { url: `${taban}ses/kayit/atari-dongu.ogg`, preload: true, loop: true, loaded: (hata) => { if (!hata) { this.yuklenen.add("muzik-arena"); if (this.muzikIstek) this.muzikBaslat(); } } }); } catch { /* müzik yok */ }
     const ac = () => this.kilidiAc();
     window.addEventListener("pointerdown", ac, { once: true, capture: true });
     window.addEventListener("keydown", ac, { once: true, capture: true });
@@ -80,6 +94,26 @@ class SesCephesi {
       const ctx = (sound.context as unknown as { audioContext?: AudioContext }).audioContext;
       if (ctx && ctx.state === "suspended") void ctx.resume().catch(() => {});
     } catch { /* ses yok: sessiz */ }
+  }
+
+  private muzikIstek = false;
+  /** Arena döngüsü (maç ekranı; sahip kararı: basit atari döngüsü, CC0 kendi sentezimiz). */
+  muzikBaslat(): void {
+    this.muzikIstek = true;
+    if (this.muzikCaliyor || !this.yuklenen.has("muzik-arena")) return;
+    try { void sound.play("muzik-arena", { loop: true, volume: this.hacim.muzik * 0.5 }); this.muzikCaliyor = true; } catch { /* yok */ }
+  }
+  muzikDurdur(): void {
+    this.muzikIstek = false;
+    if (!this.muzikCaliyor) return;
+    try { sound.stop("muzik-arena"); } catch { /* yok */ }
+    this.muzikCaliyor = false;
+  }
+  /** H16 kaydırıcı: tür (müzik/efekt), 0..1. */
+  hacimAyarla(tur: "muzik" | "efekt", v: number): void {
+    this.hacim[tur] = Math.max(0, Math.min(1, v));
+    try { localStorage.setItem(HACIM_ANAHTAR, JSON.stringify(this.hacim)); } catch { /* depolama kapalı */ }
+    if (tur === "muzik") { try { const m = sound.find("muzik-arena"); if (m) m.volume = this.hacim.muzik * 0.5; } catch { /* yok */ } }
   }
 
   get bagliMi(): boolean { return this.kilitAcik; }
@@ -99,6 +133,7 @@ class SesCephesi {
     try {
       const katman = KAYIT_KATMANI[ad];
       const hazir = katman?.dosyalar.filter((f) => this.yuklenen.has(`kayit:${f}`)) ?? [];
+      hacim *= this.hacim.efekt;
       void sound.play(ad, { volume: Math.min(1, hacim * (HACIM[ad] ?? 1) * (hazir.length ? SENTEZ_KATMANLI : 1)) });
       if (katman && hazir.length) {
         const i = (this.kayitSira[ad] = ((this.kayitSira[ad] ?? -1) + 1) % hazir.length);

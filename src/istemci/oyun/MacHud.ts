@@ -9,6 +9,7 @@ import { elementSvg } from "./elementSimge.ts";
 import { ELEMENT_RENK, KOKEN_RENK } from "./renkler.ts";
 import { metinOlcegiOku } from "../ekranlar/arayuz.ts";
 import { ayarlariOku } from "./Ayarlar.ts";
+import { Ses } from "../ses/Ses.ts";
 
 // Maç HUD'u (ux § 2: H1-H15, 960×540 mantıksal DOM katmanı; konum ve boyutlar tablodan birebir).
 // Yazı boyutları: ad 10 · sayı 10 · tuş rozeti 10 · bekleme 12 · süre 14 · skor 20 · olay bandı 16.
@@ -121,6 +122,61 @@ const STIL = `
 .mh .bant .els { display:inline-block; vertical-align:-3px; margin-left:6px; }
 .mh .pn > .sayi { position:absolute; top:21px; right:14px; font-size:10px; line-height:13px; font-weight:900; text-shadow:0 0 2px #000,0 1px 0 #000; z-index:1; }
 .mh .pn.sag > .sayi { right:auto; left:14px; }
+/* GU-02 referans 07/08 HUD dili (menü dili v2 jetonları: src/istemci/stil/jetonlar.css; pixel yazı m5x7 + Jersey 10):
+   lacivert panel, 2 px bej dış + koyu iç çizgi, pahlı köşe; STAMINA/ENERJİ büyük harf pixel etiketleri; stamina kırmızı→sarı
+   bölgeli (dış uçtan kırmızı %25'e kadar, sonra sarı; ayraç + tarama + "!" korunur); Enerji yeşil (dolarken) / sarı-turuncu (Ulti
+   hazır, "ULTİ" turuncu); bronz trapez skor plakası + turuncu rakam; süre plakası. Yerleşim (H1–H15) değişmez. */
+.mh { --pn:#1b2131; --pn2:#20263a; --bej:#9a9184; --koyu:#05050a; --bronz:#c08e52; --bronzI:#e8c27a; --tur:#e8762f; --sari:#ffe45e; --kirm:#f2622f; --yesil:#86e065; --dolu:#fee55f; color:#fbf2c3; }
+.mh .etk { font-family:"m5x7",ui-monospace,monospace; font-size:16px; line-height:12px; letter-spacing:1px; color:#fbf2c3; text-shadow:1px 1px 0 #05050a; font-weight:400; }
+.mh .pn { background:var(--pn); border:2px solid var(--bej); border-radius:0; box-shadow:inset 0 0 0 1px var(--koyu), 0 2px 0 var(--koyu);
+  clip-path:polygon(4px 0,calc(100% - 4px) 0,100% 4px,100% calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,0 calc(100% - 4px),0 4px); }
+.mh .pn .s1 .ad { color:#a49c8c; font-weight:700; }
+.mh .bar { height:14px; background:#23283b; border:1px solid var(--koyu); border-radius:0; box-shadow:inset 0 0 0 1px #3a4058; }
+.mh .bar i, .mh .bar i.amber { background:linear-gradient(90deg,var(--kirm) 0 25%,var(--sari) 25% 100%); background-size:272px 100%; background-repeat:no-repeat; box-shadow:inset 0 2px 0 rgba(255,255,255,.35), inset 0 -2px 0 rgba(0,0,0,.25); }
+.mh .pn.sag .bar i, .mh .pn.sag .bar i.amber { background:linear-gradient(270deg,var(--kirm) 0 25%,var(--sari) 25% 100%); background-size:272px 100%; background-position:right top; }
+.mh .bar i.kirmizi, .mh .pn.sag .bar i.kirmizi { background:repeating-linear-gradient(135deg,var(--kirm) 0 4px,#9e2207 4px 7px); }
+.mh .bar u { background:var(--koyu); }
+.mh .en { left:6px; top:42px; align-items:center; }
+.mh .en b.etk { margin-right:6px; }
+.mh .pn.sag .en b.etk { margin-right:0; margin-left:6px; }
+.mh .en span { width:34px; height:12px; border:1px solid var(--koyu); border-radius:0; background:#23283b; box-shadow:inset 0 0 0 1px #3a4058; }
+.mh .en span i { background:var(--yesil); box-shadow:inset 0 2px 0 rgba(255,255,255,.35); }
+.mh .en span.dolu { border-color:var(--koyu); box-shadow:inset 0 0 0 1px #c7f5b0; }
+.mh .en.ulti span i { background:var(--dolu); }
+.mh .en.ulti span.dolu { box-shadow:inset 0 0 0 1px #fffbb3, 0 0 0 1px var(--tur); }
+.mh .en span.tk { width:24px; border-color:var(--bronz); }
+.mh .en span.tk i { background:var(--bronzI); }
+.mh .en em { font-family:"m5x7",ui-monospace,monospace; font-size:16px; font-weight:400; letter-spacing:1px; }
+.mh .en em.ulti { color:var(--tur); text-shadow:1px 1px 0 #05050a; }
+.mh .skor { left:400px; top:4px; width:160px; height:38px; font:400 30px/34px "Jersey 10","m5x7",system-ui; color:var(--tur); letter-spacing:4px; text-shadow:2px 2px 0 #05050a;
+  background:var(--bronz); border:0; border-radius:0; clip-path:polygon(0 0,100% 0,86% 100%,14% 100%); isolation:isolate; }
+.mh .skor::before { content:""; position:absolute; inset:2px 2px 3px; background:var(--pn); clip-path:polygon(0 0,100% 0,86% 100%,14% 100%); z-index:-1; box-shadow:inset 0 0 0 1px var(--koyu); }
+.mh .sure { top:44px; height:22px; font:400 20px/20px "Jersey 10","m5x7",system-ui; letter-spacing:2px; color:#fbf2c3; background:var(--pn); border:2px solid var(--bronz); border-radius:0; box-shadow:inset 0 0 0 1px var(--koyu); text-shadow:1px 1px 0 #05050a; }
+.mh .sure.son { color:#ff8a7a; }
+.mh .sure.ani { color:#fff7e0; background:#a3260a; font-size:16px; letter-spacing:1px; }
+.mh .bant { font:400 20px/32px "Jersey 10","m5x7",system-ui; letter-spacing:2px; background:rgba(27,33,49,.94); border:2px solid var(--bronz); border-radius:0; box-shadow:inset 0 0 0 1px var(--koyu); }
+.mh .gs { font:400 64px/80px "Jersey 10","m5x7",system-ui; letter-spacing:4px; color:#fbf2c3; text-shadow:3px 3px 0 #05050a,-1px -1px 0 #05050a,1px -1px 0 #05050a,-1px 1px 0 #05050a; }
+.mh .gs small { font-size:40px; letter-spacing:6px; }
+.mh .yv { background:var(--pn); border-color:var(--bej); box-shadow:inset 0 0 0 1px var(--koyu); }
+.mh .yv .tus { font-family:"m5x7",ui-monospace,monospace; font-size:16px; line-height:12px; color:#fbf2c3; text-shadow:1px 1px 0 #05050a; }
+.mh .yv.hazir { border-color:var(--bronzI); box-shadow:inset 0 0 0 1px var(--koyu), 0 0 0 1px var(--koyu); }
+.mh .yv.parla { box-shadow:0 0 0 2px #fff7e0; }
+.mh .yv.etkin { border-color:var(--tur); box-shadow:inset 0 0 0 1px var(--koyu); }
+.mh .tk { background:var(--pn); border:2px solid var(--bej); border-radius:0; box-shadow:inset 0 0 0 1px var(--koyu); }
+.mh .tk.aktif { border:3px solid var(--tur); }
+.mh .tk .ok { color:#2fb8e8; text-shadow:1px 1px 0 #05050a; }
+.mh .tk .st i, .mh .tk .st i.amber { background:var(--sari); } .mh .tk .st i.kirmizi { background:var(--kirm); }
+.mh .ds, .mh .ip { background:rgba(27,33,49,.95); border-color:var(--bronz); border-radius:0; }
+.mh .ds .kart { background:var(--pn2); border-color:var(--bej); border-radius:0; }
+.mh .ds .kart.secildi { border-color:var(--bronzI); background:#3a2a1a; }
+/* H16 ses düğmesi: her zaman görünür, tık = tümünü kapat/aç (M ile aynı); üzerine gelince Müzik/Efekt kaydırıcıları */
+.mh .sd { position:absolute; left:572px; top:10px; width:28px; height:28px; pointer-events:auto; }
+.mh .sd button { width:28px; height:28px; padding:0; border:2px solid var(--bej); background:var(--pn); color:#fbf2c3; cursor:pointer; box-shadow:inset 0 0 0 1px var(--koyu); display:flex; align-items:center; justify-content:center; }
+.mh .sd button:focus-visible { outline:2px solid var(--bronzI); outline-offset:1px; }
+.mh .sd .kd { display:none; position:absolute; left:-46px; top:30px; width:120px; padding:6px; background:var(--pn); border:2px solid var(--bronz); box-shadow:inset 0 0 0 1px var(--koyu); }
+.mh .sd:hover .kd, .mh .sd:focus-within .kd { display:block; }
+.mh .sd label { display:flex; align-items:center; gap:4px; font-family:"m5x7",ui-monospace,monospace; font-size:16px; line-height:14px; }
+.mh .sd input { width:64px; accent-color:var(--tur); }
 /* D6 HUD metin ölçeği (ux § 6.3: %100/125/150; panel yeniden dizilir, çubuklar sabit 272×14, Enerji 40×12, yuvalar 44×44) */
 .mh.o125 .pn { height:78px; } .mh.o150 .pn { height:92px; }
 .mh.o125 .pn .s1 { height:18px; font-size:12.5px; } .mh.o150 .pn .s1 { height:22px; font-size:15px; }
@@ -142,10 +198,16 @@ const STIL = `
 .mh.o125 .ds h4 { font-size:13.5px; line-height:17px; } .mh.o150 .ds h4 { font-size:16.5px; line-height:20px; }
 .mh.o125 .ds .kart { font-size:12.5px; height:60px; } .mh.o150 .ds .kart { font-size:15px; height:68px; }
 .mh.o125 .ip { font-size:15px; } .mh.o150 .ip { font-size:18px; }
+.mh.o125 .skor { font-size:30px; } .mh.o150 .skor { font-size:40px; line-height:34px; height:38px; }
+.mh.o125 .sure { font-size:20px; } .mh.o150 .sure { font-size:30px; line-height:26px; }
+.mh.o125 .etk, .mh.o125 .en em, .mh.o125 .yv .tus { font-size:20px; line-height:14px; } .mh.o150 .etk, .mh.o150 .en em, .mh.o150 .yv .tus { font-size:24px; line-height:16px; }
+.mh.o125 .bant { font-size:30px; } .mh.o150 .bant { font-size:30px; }
 /* Yüksek kontrast HUD (ux § 6.3): opak panel, 2 px beyaz çerçeve */
 .mh.kontrast .pn, .mh.kontrast .skor, .mh.kontrast .sure, .mh.kontrast .bant, .mh.kontrast .yv, .mh.kontrast .tk, .mh.kontrast .ds, .mh.kontrast .ip { background:#000; border:2px solid #fff; box-shadow:none; }
 .mh.kontrast .pn .lv, .mh.kontrast .en em, .mh.kontrast .yv .tus, .mh.kontrast .ya { color:#fff; }
 .mh.kontrast .bar { border-color:#fff; } .mh.kontrast .en span { border-color:#fff; }
+.mh.kontrast .skor { background:#fff; } .mh.kontrast .skor::before { background:#000; }
+.mh.kontrast .pn { clip-path:none; } .mh.kontrast .etk { color:#fff; }
 `;
 
 function el<K extends keyof HTMLElementTagNameMap>(etiket: K, sinif = "", ust?: HTMLElement, metin = ""): HTMLElementTagNameMap[K] {
@@ -167,7 +229,7 @@ export function catlakSvg(oran: number): string {
 export const BITIS_AD = { durma: "DURMA", ringOut: "RING OUT", parcalanma: "PARÇALANMA", berabere: "BERABERE" } as const;
 export const sinifOran = (o: number) => (o < AYAR.kritikEsik ? "kirmizi" : o <= 0.6 ? "amber" : "");
 
-interface Panel { kok: HTMLElement; ik: HTMLElement; ad: HTMLElement; lv: HTMLElement; ekip: HTMLElement; dolgu: HTMLElement; sayi: HTMLElement; unlem: HTMLElement; enerji: HTMLElement[]; takimDilim: HTMLElement; enerjiYazi: HTMLElement; ct: HTMLElement }
+interface Panel { enKok: HTMLElement; kok: HTMLElement; ik: HTMLElement; ad: HTMLElement; lv: HTMLElement; ekip: HTMLElement; dolgu: HTMLElement; sayi: HTMLElement; unlem: HTMLElement; enerji: HTMLElement[]; takimDilim: HTMLElement; enerjiYazi: HTMLElement; ct: HTMLElement }
 
 export class MacHud {
   readonly kok = el("div", "mh");
@@ -190,6 +252,9 @@ export class MacHud {
   readonly ipucu = el("div", "ip");
   private onbellek = new Map<HTMLElement, string>();
   private basla = 0;
+  /** H16 ses düğmesi tıkı (Mac: M ile aynı iş). */
+  sesTik: () => void = () => {};
+  private sesDugme = el("button");
   /** H14 kartına tıklama → seçim. */
   kartSecildi: (uye: number) => void = () => {};
 
@@ -251,12 +316,29 @@ export class MacHud {
     }
     const sc = el("div", "sc", this.ds); sc.append(this.dsSure);
     this.kok.append(this.ds, this.ipucu);
+    // H16 ses düğmesi (ux § 2): hoparlör; kapalıyken üstü çizili (yalnız renge dayanmaz); Müzik/Efekt kaydırıcıları
+    const sd = el("div", "sd", this.kok);
+    sd.appendChild(this.sesDugme);
+    this.sesDugme.type = "button";
+    this.sesDugme.addEventListener("click", (e) => { e.stopPropagation(); this.sesTik(); });
+    const kd = el("div", "kd", sd);
+    for (const [tur, ad] of [["muzik", "MÜZİK"], ["efekt", "EFEKT"]] as const) {
+      const lb = el("label", "", kd);
+      el("span", "", lb, ad);
+      const r = el("input", "", lb);
+      r.type = "range"; r.min = "0"; r.max = "100";
+      r.value = String(Math.round(Ses.hacim[tur] * 100));
+      r.setAttribute("aria-label", `${ad === "MÜZİK" ? "Müzik" : "Efekt"} sesi`);
+      r.addEventListener("input", () => Ses.hacimAyarla(tur, Number(r.value) / 100));
+    }
+    this.sesDurumu(Ses.acikMi);
     ust.appendChild(this.kok);
   }
 
   private panel(taraf: "sol" | "sag"): Panel {
     const kok = el("div", `pn ${taraf}`, this.kok);
     const s1 = el("div", "s1", kok);
+    el("span", "etk", s1, "STAMINA");
     const ik = el("span", "", s1);
     const ad = el("span", "ad", s1);
     const lv = el("span", "lv", s1);
@@ -268,6 +350,7 @@ export class MacHud {
     const sayi = el("b", "sayi", kok);
     const unlem = el("s", "", bar, "!");
     const en = el("div", "en", kok);
+    el("b", "etk", en, "ENERJİ");
     const enerji: HTMLElement[] = [];
     for (let k = 0; k < 3; k++) { const d = el("span", "", en); el("i", "", d); enerji.push(d); }
     // D8: paylaşılan 4. dilim (Takım Enerjisi)
@@ -275,7 +358,14 @@ export class MacHud {
     takimDilim.title = "Takım Enerjisi";
     const enerjiYazi = el("em", "", en);
     const ct = el("span", "ct", kok);
-    return { kok, ik, ad, lv, ekip, dolgu, sayi, unlem, enerji, takimDilim, enerjiYazi, ct };
+    return { enKok: en, kok, ik, ad, lv, ekip, dolgu, sayi, unlem, enerji, takimDilim, enerjiYazi, ct };
+  }
+
+  /** H16: düğmenin hâli (açık / kapalı). */
+  sesDurumu(acik: boolean): void {
+    this.sesDugme.setAttribute("aria-label", acik ? "Sesi kapat" : "Sesi aç");
+    this.sesDugme.title = acik ? "Sesi kapat (M)" : "Sesi aç (M)";
+    this.sesDugme.innerHTML = `<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M2 6h3l4-3v10l-4-3H2z" fill="#fbf2c3"/>${acik ? '<path d="M11 5.5c1 1.2 1 3.8 0 5M12.8 4c1.8 2 1.8 6 0 8" stroke="#fbf2c3" stroke-width="1.5" fill="none"/>' : '<path d="M10.5 5.5l4 5M14.5 5.5l-4 5" stroke="#f2622f" stroke-width="2"/>'}</svg>`;
   }
 
   hizala(x: number, y: number, olcek: number): void {
@@ -388,6 +478,7 @@ export class MacHud {
       const ultiVar = d.profiller[i]!.yetenekler[ULTI_YUVA]! >= 0 && ultiAcik !== "kilitli" && ultiAcik !== "ultiKullanildi" && ultiAcik !== "yok";
       this.yaz(pn.enerjiYazi, e >= 300 ? (ultiVar ? "ULTİ" : "DOLU") : "");
       pn.enerjiYazi.classList.toggle("ulti", e >= 300 && ultiVar);
+      pn.enKok.classList.toggle("ulti", e >= 300 && ultiVar);
       // D8: Takım Enerjisi (4. dilim): dolu = parlak; takım düştü / kullanıldı = kesikli gri
       const te = d.takimEnerji[i]!;
       (pn.takimDilim.firstElementChild as HTMLElement).style.width = `${Math.max(0, Math.min(1, te / AYAR_.enerji.takimDilim)) * 100}%`;

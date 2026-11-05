@@ -1,4 +1,4 @@
-import { Graphics } from "pixi.js";
+import { Graphics, UPDATE_PRIORITY } from "pixi.js";
 import { botGirdisi, botKademesiSec, type BotKipi } from "../../paylasilan/bot/bot.ts";
 import { AYAR } from "../../paylasilan/kurallar/ayar.ts";
 import { adim, macDunyasiKur, type TakimProfilleri } from "../../paylasilan/sim/Dunya.ts";
@@ -306,6 +306,7 @@ export class MacEkrani {
     this.girdi.iptalBolgesi = (px, py) => { const c = this.sahne.cerceve(); return (py - c.y) / c.olcek > 492; };
     this.ayarlariUygula();
     Ses.yukle();
+    Ses.muzikBaslat();
     this.efektler.sesKanca = (ad, hacim) => Ses.cal(ad, hacim);
     // arayüz tıkı: menü ve sonuç düğmeleri
     this.ust.addEventListener("click", (e) => { if ((e.target as HTMLElement).closest("button")) Ses.cal("ui-tik"); });
@@ -337,7 +338,7 @@ export class MacEkrani {
   get yerelIndeks(): number { return this.yerel; }
   /** son karede basılı tutulan yuva (eğitim nişan vurgusu) */
   get basiliYuva(): number { return this.girdi.basiliYuva; }
-  durdur(): void { this.b.app.ticker.stop(); window.clearInterval(this.agZamanlayici); window.removeEventListener("keydown", this.tus, { capture: true }); }
+  durdur(): void { Ses.muzikDurdur(); this.b.app.ticker.stop(); window.clearInterval(this.agZamanlayici); window.removeEventListener("keydown", this.tus, { capture: true }); }
 
   // ---- hata ayıklama kancaları (Playwright) ----
   get durum(): Dunya { return this.dunya; }
@@ -353,6 +354,15 @@ export class MacEkrani {
   get ayar(): OyunAyarlari { return { ...this.ayarlar }; }
   get girdiDurumu(): { basili: number; iptal: number; nisanModu: string } { return { basili: this.girdi.basiliYuva, iptal: this.girdi.iptalSayisi, nisanModu: this.girdi.nisanModu }; }
 
+  /** M tuşu ve H16 ses düğmesi. */
+  private sesDegistir(): void {
+    const acik = Ses.degistir();
+    this.ayarlar = { ...this.ayarlar, ses: acik ? "acik" : "kapali" };
+    ayarlariYaz(this.ayarlar);
+    this.hud.sesDurumu(acik);
+    this.hud.bantGoster(acik ? "Ses açık" : "Ses kapalı", 1);
+  }
+
   private ayarlariUygula(): void {
     const a = this.ayarlar;
     const h = hisAyari(a);
@@ -362,10 +372,28 @@ export class MacEkrani {
     this.yetenekGorsel.ipucuAcik = sekmeIpucuGoster();
     this.girdi.nisanModu = a.nisan;
     if (a.ses === "acik") Ses.ac(); else Ses.kapat();
+    (this.hud as MacHud | undefined)?.sesDurumu(a.ses === "acik");
   }
   get menuAcik(): boolean { return this.menu.classList.contains("acik"); }
   /** Ekran görüntüsü için: bu olaylardan biri olunca `kare` render karesi sonra ticker'ı durdur (yalnız ?debug). */
   olaydaDur(turler: Olay["tur"][], kare: number, i = -1): void { this.durTalebi = { turler, kare, oldu: null, i }; }
+  /** Debug (GU-B ekran görüntüsü / fare nişanı): sim noktası → sayfa CSS koordinatı (hibrit izdüşüm dahil). */
+  ekranNoktasi(x: number, z: number): { x: number; y: number } {
+    const S = this.sahne;
+    const e = S.dunyadanEkrana(S.ekranX(x), S.ekranY(z));
+    const c = S.cerceve();
+    const r = this.b.app.canvas.getBoundingClientRect();
+    return { x: r.left + c.x + e.x * c.olcek, y: r.top + c.y + e.y * c.olcek };
+  }
+  get kameraKipi(): string { return this.sahne.kip; }
+  /** Debug ölçüm: kare başına CPU işi (mantık + Pixi render; ms). Ticker'a en önde ve render'dan sonra kanca. */
+  olcumBaslat(): { isMs: number[] } {
+    const o = { isMs: [] as number[] };
+    let bas = 0;
+    this.b.app.ticker.add(() => { bas = performance.now(); }, null, UPDATE_PRIORITY.INTERACTION + 10);
+    this.b.app.ticker.add(() => { if (bas) o.isMs.push(performance.now() - bas); }, null, UPDATE_PRIORITY.UTILITY - 10);
+    return o;
+  }
   /** ZORLAMA (yalnız ?debug, uçtan uca ekran görüntüsü): rakip botun bir sonraki adımda bu yuvayı bana nişanlayıp atması. */
   rakipYetenek(yuva: number): void { this.zorlaRakip = yuva; }
   private zorlaRakip = -1;
@@ -421,6 +449,7 @@ export class MacEkrani {
     const hudAdlari: [string, string] = this.yerel === 0 ? adlar : [adlar[1], adlar[0]];
     this.hud = new MacHud(this.b.ustYazi, this.yerel, this.yerel === 0 ? adlar : hudAdlari);
     this.hud.kartSecildi = (k) => this.secimIste(k);
+    this.hud.sesTik = () => this.sesDegistir();
     this.b.ustYazi.appendChild(this.ust); // sonuç/menü HUD'un üstünde
   }
 
@@ -465,13 +494,7 @@ export class MacEkrani {
       if (!e.repeat) this.menuAcKapa();
       return;
     }
-    if (e.code === "KeyM" && !e.repeat) {
-      const acik = Ses.degistir();
-      this.ayarlar = { ...this.ayarlar, ses: acik ? "acik" : "kapali" };
-      ayarlariYaz(this.ayarlar);
-      this.hud.bantGoster(acik ? "Ses açık" : "Ses kapalı", 1);
-      return;
-    }
+    if (e.code === "KeyM" && !e.repeat) { this.sesDegistir(); return; }
     if (e.code === "KeyF" && !e.repeat) { e.preventDefault(); this.tamEkran(); return; }
     if (this.menuAcik) return;
     if (e.code === "Tab") {
