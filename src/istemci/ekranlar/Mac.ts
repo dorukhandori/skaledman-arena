@@ -438,8 +438,8 @@ export class MacEkrani {
       for (let i = 0; i < 2; i++) {
         const g = this.sahne.topacOlustur(this.dunya.profiller[i]!, i === this.yerel ? "oyuncu" : "rakip");
         this.gorseller.push(g);
-        const iz = new Iz(ELEMENT_RENK[this.dunya.profiller[i]!.element].acik);
-        this.sahne.izKatmani.addChild(iz.rope);
+        const iz = new Iz(ELEMENT_RENK[this.dunya.profiller[i]!.element].acik, this.sahne.hibrit ? this.sahne.k : 0);
+        this.sahne.izKatmani.addChild(iz.kap);
         this.izler.push(iz);
       }
     }
@@ -463,6 +463,7 @@ export class MacEkrani {
     this.gorseller[i]!.sifirla();
     this.izler[i]!.sifirla();
     this.izler[i]!.renk = ELEMENT_RENK[p.element].acik;
+    this.izler[i]!.donus = p.donus === "sol" ? -1 : 1;
   }
 
   private botKipi(i: number): BotKipi {
@@ -789,7 +790,7 @@ export class MacEkrani {
       const kademeGucu = g.kademeAdi === "yuksek" ? 1 : g.kademeAdi === "orta" ? 0.6 : 0.25;
       const hiz = kok2(t.vx, t.vz) / p.sim.vSurus;
       const serit = aktifMi(t) && kusakta(t, d.arenaYaricap);
-      this.izler[i]!.guncelle(ekran.x, ekran.y, aktifMi(t) ? Math.min(1, hiz * (serit ? 1.6 : 1)) * kademeGucu * (t.dashKalan > 0 ? 1.6 : 1) : 0, serit);
+      this.izler[i]!.guncelle(ekran.x, ekran.y, aktifMi(t) ? Math.min(1, hiz * (serit ? 1.6 : 1)) * kademeGucu * (t.dashKalan > 0 ? 1.6 : 1) : 0, serit, dt);
     });
     const daralma = d.mac.aniOlum ? Math.min(1, d.mac.aniOlumTick / MAC_ADIM.aniOlumDaralma) : 0;
     S.arena.guncelle(dt, d.arenaYaricap, d.topaclar.some((t) => aktifMi(t) && kusakta(t, d.arenaYaricap)), d.mac.aniOlum ? Math.max(0.05, daralma) : 0);

@@ -8,14 +8,17 @@ export type KameraKipi = "hibrit" | "duz";
  * Yakınlık tek düze ölçektir (x ve z aynı), yalnız z ayrıca zOrani ile basılır. Değerler sabit (tahmin; sahip kararı).
  */
 export const KAMERA = {
-  zOrani: 0.62,
-  /** İkinci tur (sahip: referanstaki gibi): ×1,6 denendi; oynanabilir elips (R=240) HUD şeritlerine (süre plakası y ≤ 66,
-   *  Shift/Space y ≥ 494) girmesin diye en büyük uygun değer ×1,44 (test/kamera.test.ts sınar). */
-  yakinlik: 1.44,
+  /** GU-C: 0,62 → 0,56. Referans 07'nin çanak elipsi ölçüldü: ışıyan halka 1170 × 625 px → basıklık ≈ 0,53; biraz daha
+   *  basık elips aynı dikey bantta (HUD şeritleri arası) daha geniş çanak demek. Topaç sprite'ı 36° (sin ≈ 0,59) ile uyumlu. */
+  zOrani: 0.56,
+  /** İkinci tur ×1,44 (zOranı 0,62 ile HUD şeritlerine sığan en büyük). GU-C: zOranı 0,56 ile ×1,6 sığar: oynanabilir
+   *  elips (R=240) yine süre plakası (y ≤ 62) ile Shift/Space (y ≥ 494) arasında, yatayda ekranın %80'i (test/kamera.test.ts). */
+  yakinlik: 1.6,
   /** çanak merkezinin dünya kayması (px): üstte uzak duvar + tribün için yer */
-  kaymaY: 6,
-  /** Topaç çizim ölçeği (sim yarıçapı 30 sabit; yalnız çizim iri: referans 07) */
-  topacCizimOlcek: 1.2,
+  kaymaY: 5,
+  /** Topaç çizim ölçeği (sim yarıçapı 30 sabit; yalnız çizim iri: referans 07). GU-C: yakınlık ×1,6 ile ekrandaki boyut
+   *  aynı kalsın (1,08 · 1,6 = 1,2 · 1,44): sprite pikseli = sanat pikseli kuralı (topac-uret SANAT.birim) bozulmaz. */
+  topacCizimOlcek: 1.08,
   /** Sekme yüksekliği (dünya px, ekranda yukarı) */
   sekmeYukseklik: 16,
   /** pixel görünüm: dünya bu çözünürlükte (0,5 → 480×270) önbelleğe çizilir, `nearest` büyütülür */

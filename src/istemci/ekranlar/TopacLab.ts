@@ -113,8 +113,8 @@ class TopacLab {
     for (let i = 0; i < 2; i++) {
       const g = this.sahne.topacOlustur(this.profiller[i]!, i === YEREL ? "oyuncu" : "rakip");
       this.gorseller.push(g);
-      const iz = new Iz(ELEMENT_RENK[this.profiller[i]!.element].acik);
-      this.sahne.izKatmani.addChild(iz.rope);
+      const iz = new Iz(ELEMENT_RENK[this.profiller[i]!.element].acik, this.sahne.hibrit ? this.sahne.k : 0);
+      this.sahne.izKatmani.addChild(iz.kap);
       this.izler.push(iz);
     }
     this.onizlemeKur();

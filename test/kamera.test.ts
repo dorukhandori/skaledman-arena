@@ -29,6 +29,6 @@ describe("hibrit kamera izdüşümü", () => {
     const alt = simdenEkrana(hibrit, 0, 240).y;
     expect(ust).toBeGreaterThan(62);
     expect(alt).toBeLessThan(494);
-    expect(simdenEkrana(hibrit, 240, 0).x - simdenEkrana(hibrit, -240, 0).x).toBeGreaterThan(600);
+    expect(simdenEkrana(hibrit, 240, 0).x - simdenEkrana(hibrit, -240, 0).x).toBeGreaterThan(740); // GU-C: ekranın %77+ 
   });
 });

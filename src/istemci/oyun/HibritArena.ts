@@ -155,8 +155,8 @@ export class HibritArena implements ArenaCizimi {
     const rng = new SusRastgele(0x7b1b);
     const cx = g.cx + PAY;
     const cy = g.cy + PAY;
-    const DERIN = 7.5;
-    const sirada = (s: number) => ({ olc: 1 + g.t + 0.05 + s * 0.085, yuk: g.hUzak + 4 + s * 12 });
+    const DERIN = 5;
+    const sirada = (s: number) => ({ olc: 1 + g.t + 0.05 + s * 0.11, yuk: g.hUzak + 6 + s * 15 });
     // basamak zemini: derinliğe göre yumuşak ton (dither), sıra çizgisi yok
     for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) {
       const zx = (i - cx) / g.rx, zy = (j - cy) / g.ry;
@@ -167,7 +167,9 @@ export class HibritArena implements ArenaCizimi {
       koy(i, j, [0x0d0c12, 0x13121b, 0x1a1824][ditherIndeks(v, i, j, 3)]!);
     }
     const kisi: { i: number; j: number; ton: number; giysi: number; kol: number }[] = [];
-    const n = 1500;
+    // GU-C: seyrek ve iri (referans 07: tek tek okunan baş-omuz siluetleri, aralarında koyu boşluk). Eski 1500 küçük
+    // figür yanlarda çizgisel/noktalı doku gibi okunuyordu; ~5 kat daha az, ~2 kat iri figür.
+    const n = 300;
     for (let q = 0; q < n; q++) {
       const a = rng.aralik(0, Math.PI * 2);
       const sin = Math.sin(a);
@@ -180,15 +182,28 @@ export class HibritArena implements ArenaCizimi {
       const uzak = s / DERIN;
       const ton = Math.max(0, Math.min(KALABALIK.length - 1, Math.round(rng.aralik(1.2, 5.6) - uzak * 2)));
       const giysi = rng.sayi() < 0.06 ? [0x4a2a2c, 0x2a3048, 0x3e3a28][Math.floor(rng.sayi() * 3)]! : KALABALIK[Math.max(0, ton - 1)]!;
-      kisi.push({ i, j, ton, giysi, kol: rng.sayi() < 0.08 ? (rng.sayi() < 0.5 ? -1 : 1) : 0 });
+      kisi.push({ i, j, ton, giysi, kol: rng.sayi() < 0.16 ? (rng.sayi() < 0.5 ? -1 : 1) : 0 });
     }
     kisi.sort((p, q) => p.j - q.j);
     for (const k of kisi) {
       const bas = KALABALIK[k.ton]!;
-      for (let dj = 0; dj < 4; dj++) for (let di = -2; di <= 2; di++) if (!(dj === 0 && Math.abs(di) === 2)) koy(k.i + di, k.j + dj, k.giysi);
-      for (let dj = -3; dj < 0; dj++) for (let di = -1; di <= 1; di++) koy(k.i + di, k.j + dj, bas);
-      koy(k.i - 1, k.j - 3, KALABALIK[Math.max(0, k.ton - 2)]!);
-      if (k.kol) { koy(k.i + k.kol * 3, k.j, k.giysi); koy(k.i + k.kol * 3, k.j - 1, k.giysi); koy(k.i + k.kol * 3, k.j - 2, k.giysi); koy(k.i + k.kol * 3, k.j - 3, bas); }
+      const golge = KALABALIK[Math.max(0, k.ton - 2)]!;
+      // omuz + gövde 9 × 6 (köşeler yuvarlak), baş 5 × 5 (yuvarlak), sağ yarı bir ton koyu (ışık sol üstten)
+      for (let dj = 0; dj < 6; dj++) for (let di = -4; di <= 4; di++) {
+        if (dj === 0 && Math.abs(di) >= 3) continue;
+        if (dj === 1 && Math.abs(di) === 4) continue;
+        koy(k.i + di, k.j + dj, di >= 2 ? golge : k.giysi);
+      }
+      for (let dj = -5; dj < 0; dj++) for (let di = -2; di <= 2; di++) {
+        if ((dj === -5 || dj === -1) && Math.abs(di) === 2) continue;
+        koy(k.i + di, k.j + dj, di === 2 || (dj === -1 && di >= 1) ? golge : bas);
+      }
+      koy(k.i - 1, k.j - 4, KALABALIK[Math.min(KALABALIK.length - 1, k.ton + 1)]!);
+      if (k.kol) {
+        // kalkık kol (tezahürat)
+        const x0 = k.i + k.kol * 4;
+        for (let dj = -6; dj <= 1; dj++) koy(x0 + (dj < -3 ? k.kol : 0), k.j + dj, dj <= -6 ? bas : k.giysi);
+      }
     }
     // çanak çevresi: tribünün önünde koyu koruma duvarı (07 #1A1C28)
     for (let a = 0; a < Math.PI * 2; a += 0.4 / g.rx) {

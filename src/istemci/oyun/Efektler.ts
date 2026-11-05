@@ -51,6 +51,8 @@ export class Efektler {
   private hizG = new Graphics();
   /** referans 07: çarpışma sonrası topacın çevresinde parlak krem sarmal iz (zeminde) */
   private kivrimlar: Kivrim[] = [];
+  /** GU-C: sarmal zeminde (iz katmanı, topaçların ALTINDA); efekt katmanında topacın üstünden geçiyordu */
+  private kivrimG = new Graphics();
   /** pişmiş atlas kullanım sayacı (doğrulama) */
   readonly atlasSayac: Record<string, number> = {};
   private atlasDenetimSn = 0;
@@ -60,6 +62,7 @@ export class Efektler {
 
   constructor(private sahne: Sahne, private gorseller: () => readonly TopacCizimi[]) {
     sahne.efektKatmani.addChild(this.hizG, this.parcaciklar.kap);
+    sahne.izKatmani.addChild(this.kivrimG);
     if (sahne.hibrit) void efektAtlasYukle("efekt-cekirdek");
     this.ekranFlas.rect(0, 0, SAHNE.genislik, SAHNE.yukseklik).fill(0xffffff);
     this.ekranFlas.alpha = 0;
@@ -82,6 +85,7 @@ export class Efektler {
     this.cizgiler = [];
     this.kivrimlar = [];
     this.hizG.clear();
+    this.kivrimG.clear();
     for (const s of this.soklar) s.g.destroy();
     this.soklar = [];
     this.flasKalanMs = 0;
@@ -529,6 +533,7 @@ export class Efektler {
       h.moveTo(c.x + c.dx * bas, c.y + c.dy * bas).lineTo(c.x + c.dx * (bas + c.uz * (1 - t)), c.y + c.dy * (bas + c.uz * (1 - t))).stroke({ width: 3, color: c.renk, alpha: 1 - t });
     }
     this.cizgiler = this.cizgiler.filter((c) => c.t < c.sure);
+    const kg = this.kivrimG.clear();
     for (const kv of this.kivrimlar) {
       kv.t += ydt;
       const t = Math.min(1, kv.t / kv.sure);
@@ -542,8 +547,8 @@ export class Efektler {
         const [x0, y0] = nokta(u0);
         const [x1, y1] = nokta(u1);
         const al = sol * (0.35 + 0.65 * (u1 / Math.max(0.01, bas)));
-        h.moveTo(x0, y0).lineTo(x1, y1).stroke({ width: 5, color: 0xf6d9a8, alpha: al * 0.8 });
-        h.moveTo(x0, y0).lineTo(x1, y1).stroke({ width: 2, color: 0xfff6e2, alpha: al });
+        kg.moveTo(x0, y0).lineTo(x1, y1).stroke({ width: 5, color: 0xf6d9a8, alpha: al * 0.8 });
+        kg.moveTo(x0, y0).lineTo(x1, y1).stroke({ width: 2, color: 0xfff6e2, alpha: al });
       }
     }
     this.kivrimlar = this.kivrimlar.filter((k) => k.t < k.sure);

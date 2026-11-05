@@ -211,9 +211,12 @@ export class TopacYandan implements TopacCizimi {
     const kayma = 3 + ((disk.yukseklik - 50) / 15) * 2;
     const g = this.golge.clear();
     // referans 07: sol-alta uzayan koyu düşen gölge (ışık sağ üstten), pixel dither kenar + koyu çekirdek
-    g.poly(golgePoligon(-kayma - 16, kayma * 0.5 + 7, 38, 17, -0.32)).fill({ texture: ditherDokusu(), textureSpace: "global", color: 0x000000, alpha: 0.55 });
-    g.poly(golgePoligon(-kayma - 10, kayma * 0.4 + 4, 32, 14, -0.32)).fill({ color: 0x000000, alpha: 0.28 });
-    g.ellipse(0, 0, 24, 24 * k * 0.85).fill({ color: 0x000000, alpha: 0.3 });
+    // GU-C: daha uzun ve dolu: koyu çekirdek (düz renk) + yalnız kenarda dither saçağı; referans 07'de gölge topaçtan
+    // yaklaşık bir çap kadar sol-alta uzanır ve zeminde net bir leke olarak okunur
+    g.poly(golgePoligon(-kayma - 30, kayma * 0.5 + 13, 58, 21, -0.36)).fill({ texture: ditherDokusu(), textureSpace: "global", color: 0x000000, alpha: 0.42 });
+    g.poly(golgePoligon(-kayma - 26, kayma * 0.5 + 11, 50, 16, -0.36)).fill({ color: 0x120c10, alpha: 0.42 });
+    g.poly(golgePoligon(-kayma - 12, kayma * 0.4 + 5, 34, 13, -0.3)).fill({ color: 0x000000, alpha: 0.18 });
+    g.ellipse(0, 0, 26, 26 * k * 0.85).fill({ color: 0x000000, alpha: 0.32 });
     // takım çemberi zeminde elips (ux § 6.1): oyuncu düz, rakip kesikli
     const tc = this.takimCemberi.clear();
     const R = GORSEL.takimCemberi;
@@ -498,10 +501,13 @@ export class TopacYandan implements TopacCizimi {
     // okunur; tam beyazlama Element rengini siliyordu)
     if (this.flasKare > 0) {
       const f = this.flasG.clear();
-      const a = this.katman ? 0.22 : 0.55;
-      f.poly(yanBant(RG + 1, (RG + 1) * k, ustY, -H.ucUst)).fill({ color: 0xffffff, alpha: a });
-      f.ellipse(0, ustY, RG + 1, (RG + 1) * k).fill({ color: 0xffffff, alpha: a });
-      if (this.katman) f.ellipse(0, ustY, RG + 1, (RG + 1) * k).stroke({ width: 2, color: 0xfff6d0, alpha: 0.9 });
+      if (this.katman) {
+        // sprite kipi: yalnız parlak kenar (dolgu sprite'ı soluk/hayalet gösteriyordu)
+        f.ellipse(0, ustY, RG * 0.86, RG * 0.86 * this.spriteUst.k).stroke({ width: 2, color: 0xfff6d0, alpha: 0.95 });
+      } else {
+        f.poly(yanBant(RG + 1, (RG + 1) * k, ustY, -H.ucUst)).fill({ color: 0xffffff, alpha: 0.55 });
+        f.ellipse(0, ustY, RG + 1, (RG + 1) * k).fill({ color: 0xffffff, alpha: 0.55 });
+      }
       f.position.set(0, H.govdeAlt);
     }
   }

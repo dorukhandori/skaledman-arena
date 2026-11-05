@@ -106,8 +106,8 @@ class SeyirciEkrani {
       for (let i = 0; i < 2; i++) {
         const g = this.sahne.topacOlustur(d.profiller[i]!, i === 0 ? "oyuncu" : "rakip");
         this.gorseller.push(g);
-        const iz = new Iz(ELEMENT_RENK[d.profiller[i]!.element].acik);
-        this.sahne.izKatmani.addChild(iz.rope);
+        const iz = new Iz(ELEMENT_RENK[d.profiller[i]!.element].acik, this.sahne.hibrit ? this.sahne.k : 0);
+        this.sahne.izKatmani.addChild(iz.kap);
         this.izler.push(iz);
       }
     }
@@ -188,7 +188,7 @@ class SeyirciEkrani {
     this.bekle.classList.toggle("acik", !goster);
     if (!goster) this.bekleYaz();
     for (const gr of this.gorseller) gr.kok.visible = goster;
-    for (const z of this.izler) z.rope.visible = goster;
+    if (!goster) for (const z of this.izler) z.kap.visible = false;
     this.hud?.kok.style.setProperty("display", goster ? "" : "none");
     const S = this.sahne;
     S.boyutla(false, dt);
