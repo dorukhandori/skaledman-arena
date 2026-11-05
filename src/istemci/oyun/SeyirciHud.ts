@@ -12,7 +12,8 @@ import { ELEMENT_RENK } from "./renkler.ts";
 // D8 seyirci / OBS HUD'u (ux § 5): 960×540 mantıksal DOM katmanı. İki taraf SİMETRİK (sol = oyuncu 1, sağ = oyuncu 2),
 // iki tarafta da stamina YÜZDESİ, Enerji 3 dilim + Takım Enerjisi, Çatlak, takımın üç element simgesi (elenen çarpılı).
 // Yetenek yuvaları, takım yuvaları, Tab, ipuçları YOK. Ad 14 px, skor 28, süre 18, olay bandı 20; çizgiler ≥ 2 px.
-// Alt şerit (y 484-532): iki tarafın üç parça kartı (Çekirdek + Lv + element simgesi, Gövde · Disk · Uç), aktif vurgulu.
+// Alt köşeler (GU-E; y 450-532): iki tarafın üç parça kartı dikey yığın (Çekirdek + Lv + element simgesi; aktif kartta
+// Gövde · Disk · Uç), aktif vurgulu. Çanağın oynanabilir elipsiyle kesişmez (test/kamera.test.ts).
 // Kullanıcı adları yalnız `textContent` ile basılır (XSS); innerHTML yalnız kendi SVG'lerimiz.
 
 const STIL = `
@@ -54,13 +55,17 @@ const STIL = `
 .sh .bant .els { display:inline-block; vertical-align:-3px; margin-left:6px; }
 .sh .gs { position:absolute; left:330px; top:220px; width:300px; height:80px; text-align:center; font:900 48px/80px system-ui; letter-spacing:2px; color:#fff; text-shadow:0 3px 0 #050d10,0 0 12px rgba(0,0,0,.6); opacity:0; }
 .sh .gs.acik { opacity:1; } .sh .gs small { font-size:30px; }
-.sh .kartlar { position:absolute; top:484px; height:48px; display:flex; gap:5px; }
-.sh .kartlar.sol { left:8px; } .sh .kartlar.sag { left:486px; }
-.sh .kart { position:relative; width:150px; height:44px; padding:3px 6px; box-sizing:border-box; background:rgba(12,25,29,.9); border:2px solid #24414b; border-radius:6px; overflow:hidden; }
-.sh .kart .ust { display:flex; align-items:center; gap:4px; font-size:12px; line-height:16px; font-weight:900; white-space:nowrap; }
+/* GU-E (sahip kararı 3): parça kartları köşelerde dikey yığın, büyük çanağın (oynanabilir elips y 69–526, x 41–919) dışında.
+   Aktif kart iki satır (Çekirdek + Lv / Gövde · Disk · Uç), diğerleri tek satır: yığın y 450–532, x 8–148 ve 812–952 (simge 14 px). */
+.sh .kartlar { position:absolute; bottom:8px; width:140px; display:flex; flex-direction:column; gap:3px; }
+.sh .kartlar.sol { left:8px; } .sh .kartlar.sag { left:812px; }
+.sh .kart { position:relative; width:140px; height:20px; padding:1px 6px; box-sizing:border-box; background:rgba(12,25,29,.9); border:2px solid #24414b; border-radius:6px; overflow:hidden; }
+.sh .kart .ust { height:14px; display:flex; align-items:center; gap:4px; font-size:12px; line-height:14px; font-weight:900; white-space:nowrap; }
+.sh .kart .ust .ca { min-width:0; overflow:hidden; text-overflow:ellipsis; }
 .sh .kart .ust .lv { color:#ffcf5a; margin-left:auto; }
-.sh .kart .alt { font-size:10px; line-height:13px; color:#c9d4d7; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
-.sh .kart.aktif { border:3px solid #f4cf47; padding:2px 5px; }
+.sh .kart .alt { display:none; font-size:10px; line-height:11px; color:#c9d4d7; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px; }
+.sh .kart.aktif { height:36px; border:3px solid #f4cf47; padding:1px 5px; }
+.sh .kart.aktif .alt { display:block; padding-right:10px; }
 .sh .kart.aktif::after { content:"▲"; position:absolute; right:4px; bottom:1px; font-size:9px; color:#f4cf47; }
 .sh .kart.elendi { opacity:.45; } .sh .kart.elendi .ust span.ca { text-decoration:line-through; text-decoration-thickness:2px; }
 `;
@@ -218,7 +223,7 @@ export class SeyirciHud {
         const u = tk.uyeler[k]!;
         const c = this.kartlar[i]![k]!;
         const pr = u.profil.parcalar;
-        this.yaz(c.ik, elementSvg(u.profil.element, 16, { capraz: u.elendi === 1 }), true);
+        this.yaz(c.ik, elementSvg(u.profil.element, 14, { capraz: u.elendi === 1 }), true);
         this.yaz(c.ca, parcaAdi(pr.cekirdek));
         const lv = u.seviye ?? this.seviyeler[i]?.[k] ?? (k === tk.aktif ? d.seviye[i] : null);
         this.yaz(c.lv, lv ? `Lv.${lv}` : "");

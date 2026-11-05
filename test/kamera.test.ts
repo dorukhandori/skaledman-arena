@@ -50,4 +50,19 @@ describe("hibrit kamera izdüşümü", () => {
       }
     }
   });
+  it("GU-E: seyirci (OBS) HUD kutuları da oynanabilir elipsin dışında (alt parça kartları köşelerde dikey yığın)", () => {
+    // SeyirciHud mantıksal kutuları (kenarlık dahil, Playwright ölçümü): paneller, skor, süre, sol/sağ parça kartı yığını
+    // (aktif 36 + 2 × 20 + 2 × 3 boşluk)
+    const kutular: [number, number, number, number][] = [
+      [8, 8, 308, 86], [652, 8, 952, 86], [394, 6, 570, 44], [428, 44, 536, 66], [8, 450, 148, 532], [812, 450, 952, 532],
+    ];
+    for (const [x0, y0, x1, y1] of kutular) {
+      for (let i = 0; i <= 20; i++) {
+        for (let j = 0; j <= 20; j++) {
+          const s = ekrandanSime(hibrit, x0 + ((x1 - x0) * i) / 20, y0 + ((y1 - y0) * j) / 20);
+          expect(Math.hypot(s.x, s.z) < 240, `seyirci kutu ${x0},${y0}`).toBe(false);
+        }
+      }
+    }
+  });
 });
