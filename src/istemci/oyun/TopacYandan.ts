@@ -22,6 +22,8 @@ import { govdeKaymasi, kareIndeksi } from "./topacKare.ts";
 // Graphics üstte kalır. Atlas yoksa ya da yüklenemezse aşağıdaki yordamsal çizim YEDEKtir. Sim'e hiçbir şey yazmaz.
 
 const TAM = Math.PI * 2;
+/** Hibrit topaçta squash genliği çarpanı (HIS.squash × bu; düz görünüm tam genliği kullanır). GU-D: 0,5 */
+const SQUASH_GENLIK = 0.5;
 /** Topaç dikey ölçüleri (dünya px, zeminden yukarı). Üç çeyrek bakış: topacın kendi elips oranı KT (zeminin 0,62'sinden
  *  dik; uç ve disk gövdenin altından görünsün, referans 07). */
 const H = {
@@ -242,7 +244,9 @@ export class TopacYandan implements TopacCizimi {
     const a = Math.atan2(e.y, e.x);
     this.govdeKap.rotation = a;
     this.icKap.rotation = -a;
-    this.squashD = { sx, sy, sure, kalan: sure };
+    // GU-D: pixel sprite'ta tam squash (kritik 0,7 × 1,3) topacı yamultup yıldızla birlikte komşusunu örtüyordu: yarı genlik
+    const k = SQUASH_GENLIK;
+    this.squashD = { sx: 1 + (sx - 1) * k, sy: 1 + (sy - 1) * k, sure, kalan: sure };
   }
 
   catlakAyarla(oran: number): void { this.catlakSeviye = oran >= 0.9 ? 2 : oran >= 0.75 ? 1 : 0; }

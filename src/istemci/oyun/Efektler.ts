@@ -16,7 +16,8 @@ export const ATLAS_ESIK = { ortakEnerji: 60, elementEnerji: 150, elementStamina:
 // Görsel hitstop: çarpışan topaçların RENDER konumu bekler, sim akmaya devam eder; bitince kritik sönümlü yetişme.
 
 interface Sok { g: Graphics; t: number; sure: number; x: number; y: number; r0: number; r1: number; renk: number; renk2: number | null; kalinlik: number }
-interface Yildiz { x: number; y: number; t: number; sure: number; r: number; n: number; aci: number; renk: number }
+/** `ex, ey`: temas normalinin ekran yönü; `f`: ışınların normal boyunca basıklığı (1 = yuvarlak; GU-D: yıldız iki topacın arasında dar) */
+interface Yildiz { x: number; y: number; t: number; sure: number; r: number; n: number; aci: number; renk: number; ex: number; ey: number; f: number }
 interface HizCizgisi { x: number; y: number; dx: number; dy: number; t: number; sure: number; renk: number; uz: number }
 interface Kivrim { x: number; y: number; a0: number; yon: number; t: number; sure: number }
 interface KonumDurumu { hold: { x: number; y: number } | null; kalanMs: number; nx: number; ny: number; x: number; y: number; ilk: boolean }
@@ -218,10 +219,10 @@ export class Efektler {
   }
 
   /** Işınsal yıldız patlaması (referans 07 temas noktası). */
-  private yildiz(x: number, y: number, r: number, n: number, sure: number, renk = 0xfff3b0): void {
+  private yildiz(x: number, y: number, r: number, n: number, sure: number, renk = 0xfff3b0, ex = 1, ey = 0, f = 1): void {
     if (!this.sahne.hibrit) return;
     if (this.yildizlar.length > 8) this.yildizlar.shift();
-    this.yildizlar.push({ x, y, t: 0, sure, r, n, aci: this.rng.aralik(0, Math.PI), renk });
+    this.yildizlar.push({ x, y, t: 0, sure, r, n, aci: this.rng.aralik(0, Math.PI), renk, ex, ey, f });
   }
 
   /** Topacın arkasında kısa hız çizgileri, kendi renginde (referans 07 kırmızı/mavi çizgiler). */
@@ -279,7 +280,8 @@ export class Efektler {
         this.kivilcim(x, hy, o.nx, o.nz, n, [r0.acik, r1.acik, 0xffffff, r0.vurgu, r1.vurgu], hiz);
         // GU-04: yıldız patlaması + iki yanda topaçların renginde hız çizgileri; ağır/kritikte pişmiş kıvılcım sheet'i
         const e = S.ekranYon(o.nx, o.nz);
-        this.yildiz(x, hy, sd === "kritik" ? 34 : sd === "agir" ? 24 : 13, sd === "hafif" ? 6 : 10, sd === "kritik" ? 0.2 : 0.14);
+        // GU-D: ışınlar normal boyunca %40'a basık (referans 07: yıldız iki topacın arasında dar, topaçları örtmez)
+        this.yildiz(x, hy, sd === "kritik" ? 34 : sd === "agir" ? 24 : 13, sd === "hafif" ? 6 : 10, sd === "kritik" ? 0.2 : 0.14, undefined, e.x, e.y, 0.4);
         const ta = d.topaclar[0]!;
         const tb = d.topaclar[1]!;
         if (sd !== "hafif" || dash) {
@@ -294,7 +296,8 @@ export class Efektler {
           if (this.kivrimlar.length > 3) this.kivrimlar.shift();
           this.kivrimlar.push({ x: S.ekranX(tj.x), y: S.ekranY(tj.z), a0: Math.atan2(y - S.ekranY(tj.z), x - S.ekranX(tj.x)), yon: d.profiller[j]!.donus === "sol" ? -1 : 1, t: 0, sure: sd === "kritik" ? 0.6 : 0.45 });
         }
-        if (sd === "kritik") this.sheet("efekt-cekirdek", "kritik", x, hy, e.x < 0);
+        // GU-D: kritik sheet'i ×0,6 (tam boyda halkası iki topacın üst yüzünü örtüyordu)
+        if (sd === "kritik") this.sheet("efekt-cekirdek", "kritik", x, hy, e.x < 0, 0.6);
         else if (sd === "agir") this.sheet("efekt-cekirdek", "kivilcim", x, hy, e.x < 0);
         if (sd !== "hafif" && (o.taraflar[0].element === "simsek" || o.taraflar[1].element === "simsek")) this.sheet("efekt-simsek", "simsek-carpma", x, hy, e.x < 0, 0.6);
         if (sd !== "hafif") {
@@ -520,8 +523,12 @@ export class Efektler {
       for (let k = 0; k < y.n; k++) {
         const aci = y.aci + (k / y.n) * Math.PI * 2;
         const uz = r * (k % 2 ? 0.55 : 1);
-        const c = Math.cos(aci), si = Math.sin(aci);
-        h.poly([y.x + c * uz, y.y + si * uz, y.x - si * 2.2, y.y + c * 2.2, y.x + si * 2.2, y.y - c * 2.2]).fill({ color: k % 2 ? 0xffc23d : y.renk, alpha: a });
+        const c0 = Math.cos(aci), s0 = Math.sin(aci);
+        // normal boyunca bileşen f ile basılır: ışınlar topaçların üstüne değil, aralarındaki dik yarığa uzanır
+        const bo = (c0 * y.ex + s0 * y.ey) * y.f;
+        const dk = -c0 * y.ey + s0 * y.ex;
+        const c = bo * y.ex - dk * y.ey, si = bo * y.ey + dk * y.ex;
+        h.poly([y.x + c * uz, y.y + si * uz, y.x - s0 * 2.2, y.y + c0 * 2.2, y.x + s0 * 2.2, y.y - c0 * 2.2]).fill({ color: k % 2 ? 0xffc23d : y.renk, alpha: a });
       }
       h.circle(y.x, y.y, 6 * (1 - t) + 2).fill({ color: 0xffffff, alpha: a });
     }
