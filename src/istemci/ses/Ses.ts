@@ -81,19 +81,38 @@ class SesCephesi {
       }
     }
     try { sound.add("muzik-arena", { url: `${taban}ses/kayit/atari-dongu.ogg`, preload: true, loop: true, loaded: (hata) => { if (!hata) { this.yuklenen.add("muzik-arena"); if (this.muzikIstek) this.muzikBaslat(); } } }); } catch { /* müzik yok */ }
+    // MOBIL-1: iOS Safari / Android Chrome ses bağlamını yalnız "etkinleştiren" olayda açar (dokunmatikte pointerdown
+    // DEĞİL: pointerup / touchend / click). Bağlam "running" olana kadar her etkileşimde yeniden denenir; iOS arka plandan
+    // dönüşte bağlamı "interrupted" bırakır, sonraki dokunuş yine açar.
     const ac = () => this.kilidiAc();
-    window.addEventListener("pointerdown", ac, { once: true, capture: true });
-    window.addEventListener("keydown", ac, { once: true, capture: true });
+    for (const ad of ["pointerdown", "pointerup", "touchend", "click", "keydown"]) window.addEventListener(ad, ac, { capture: true, passive: true });
+    // pil: sekme gizliyken sesler duraklar (maç sürer; görüntü/girdi zaten durur), dönüşte sürer
+    document.addEventListener("visibilitychange", () => {
+      try { if (document.hidden) sound.pauseAll(); else sound.resumeAll(); } catch { /* ses yok */ }
+    });
   }
 
-  /** İlk kullanıcı etkileşimi: ses bağlamını sürdür. */
+  private sessizCalindi = false;
+  /** Kullanıcı etkileşimi: ses bağlamını sürdür (bağlam çalışana kadar her etkileşimde). */
   kilidiAc(): void {
-    if (this.kilitAcik) return;
     this.kilitAcik = true;
     try {
       const ctx = (sound.context as unknown as { audioContext?: AudioContext }).audioContext;
-      if (ctx && ctx.state === "suspended") void ctx.resume().catch(() => {});
+      if (!ctx || ctx.state === "running") return;
+      void ctx.resume().catch(() => {});
+      // eski iOS: bağlam ancak etkileşim içinde bir kaynak çalınınca açılır → 1 örneklik sessiz tampon
+      if (!this.sessizCalindi) {
+        this.sessizCalindi = true;
+        const k = ctx.createBufferSource();
+        k.buffer = ctx.createBuffer(1, 1, 22050);
+        k.connect(ctx.destination);
+        k.start(0);
+      }
     } catch { /* ses yok: sessiz */ }
+  }
+  /** Ses bağlamının durumu (debug / test). */
+  get baglamDurumu(): string {
+    try { return (sound.context as unknown as { audioContext?: AudioContext }).audioContext?.state ?? "yok"; } catch { return "yok"; }
   }
 
   private muzikIstek = false;

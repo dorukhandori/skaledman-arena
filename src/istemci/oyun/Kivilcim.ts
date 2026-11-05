@@ -1,6 +1,7 @@
 import { Graphics } from "pixi.js";
 import type { SusRastgele } from "./SusRastgele.ts";
 import { KIVILCIM_OLCEK, birikmeCarpani, patlamaAdedi } from "./his.ts";
+import { efektTavani } from "../mobil/cihaz.ts";
 
 // GU-E çarpışma kıvılcımı (referans 07/08): temas noktasında pixel-art kıvılcım demeti. Yordamsal (atlas gerekmez);
 // hibrit sahne dünyayı 480×270 önbelleğe `nearest` çizdiği için 2 px kalınlık = 1 sanat pikseli, koordinatlar 2 px
@@ -16,7 +17,7 @@ import { KIVILCIM_OLCEK, birikmeCarpani, patlamaAdedi } from "./his.ts";
 export const KIVILCIM_RENK = { beyaz: 0xffffff, krem: 0xfff6c8, sari: 0xffd84a, altin: 0xffb02e, turuncu: 0xff7a1e, kor: 0xb8401a } as const;
 /** Eşzamanlı kıvılcım tavanı (parçacık bütçesi 400'ün yanında; çizgiler ayrı Graphics). GU-F: 260 → 150 (referans 07'de
  *  tek çarpışmada ~15-20 çizgi; art arda çarpışmalar bulutlaşmasın). */
-export const KIVILCIM_TAVANI = 150;
+export const KIVILCIM_TAVANI = efektTavani(150); // MOBIL-1: mobil cihaz sınıfında 83
 
 interface Kv { x: number; y: number; h: number; vx: number; vy: number; vh: number; t: number; omur: number; uz: number; kalin: number; nokta: boolean; sekti: boolean }
 interface Flas { x: number; y: number; t: number; sure: number; r: number; ex: number; ey: number; f: number; uclar: number[]; aci: number; parlak: number }

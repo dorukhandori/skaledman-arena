@@ -381,8 +381,8 @@ export class MacEkrani {
   get sonucAcik(): boolean { return this.sonucOrt.classList.contains("acik"); }
   /** Debug: Enerji'yi doldurur (uçtan uca doğrulama; yalnız ?debug). */
   enerjiDoldur(i = this.yerel, miktar = ENERJI_TAVAN): void { this.dunya.topaclar[i]!.enerji = Math.min(ENERJI_TAVAN, miktar); }
-  get ses(): { sayac: Record<string, number>; calinan: Record<string, number>; yuklenen: string[]; hatalar: string[]; acik: boolean; bagli: boolean } {
-    return { sayac: { ...Ses.sayac }, calinan: { ...Ses.calinan }, yuklenen: [...Ses.yuklenen], hatalar: [...Ses.hatalar], acik: Ses.acikMi, bagli: Ses.bagliMi };
+  get ses(): { sayac: Record<string, number>; calinan: Record<string, number>; yuklenen: string[]; hatalar: string[]; acik: boolean; bagli: boolean; baglam: string } {
+    return { sayac: { ...Ses.sayac }, calinan: { ...Ses.calinan }, yuklenen: [...Ses.yuklenen], hatalar: [...Ses.hatalar], acik: Ses.acikMi, bagli: Ses.bagliMi, baglam: Ses.baglamDurumu };
   }
   get gorselSayac(): YetenekGorsel["sayac"] { return { ...this.yetenekGorsel.sayac }; }
   get ayar(): OyunAyarlari { return { ...this.ayarlar }; }

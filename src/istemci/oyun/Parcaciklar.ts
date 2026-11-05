@@ -1,9 +1,11 @@
 import { Particle, ParticleContainer, Texture } from "pixi.js";
+import { efektTavani } from "../mobil/cihaz.ts";
 
 // Parçacık sistemi (05 § 5, pixel planı § 5.3): tek ParticleContainer, sabit havuz, canlı TAVAN 400.
 // Tavan dolunca en yaşlı parçacık yeniden kullanılır. Parçacık verisi sim dışıdır; rastgelelik çağırandan (tohumlu).
 
-export const PARCACIK_TAVANI = 400;
+/** Masaüstü 400; MOBIL-1: mobil cihaz sınıfında (dokunmatik / ≤ 4 çekirdek / ≤ 2 GB) %55 → 220 (orta telefon akıcı kalsın). */
+export const PARCACIK_TAVANI = efektTavani(400);
 
 interface Kayit { p: Particle; vx: number; vy: number; omur: number; kalan: number; boy: number; surt: number; canli: boolean }
 

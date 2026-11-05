@@ -91,7 +91,9 @@ async function ana() {
     app = new Application();
     // D8 seyirci `&seffaf=1`: tuval saydam (OBS tarayıcı kaynağı)
     const seffaf = ad === "seyirci" && /[#&?]seffaf=1/.test(location.href);
-    await app.init({ resizeTo: kok, background: 0x0b1418, backgroundAlpha: seffaf ? 0 : 1, antialias: false, roundPixels: true, preference: "webgl" });
+    // MOBIL-1: tuval çözünürlüğü bilinçli olarak 1 (CSS pikseli; DPR 2-3 telefonda bile): dünya zaten 480×270 pixel
+    // önbelleğinden `nearest` büyütülür, yüksek DPR yalnız doluluk maliyeti getirirdi (GPU/pil). Keskin kalan HUD DOM'dadır.
+    await app.init({ resizeTo: kok, background: 0x0b1418, backgroundAlpha: seffaf ? 0 : 1, antialias: false, roundPixels: true, preference: "webgl", resolution: 1, autoDensity: false });
     kok.insertBefore(app.canvas, ustYazi);
   }
   const modul = await EKRANLAR[ad]();
