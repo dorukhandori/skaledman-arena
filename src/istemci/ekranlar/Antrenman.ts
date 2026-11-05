@@ -16,6 +16,7 @@ import type { EkranBaglami } from "../main.ts";
 import { MISAFIR_EGITIM, apiPost, git, sakla } from "../hesap.ts";
 import { type MacEkrani, egitimBaslat } from "./Mac.ts";
 import { kalin } from "./arayuz.ts";
+import { dokunmatikMetin, dokunmatikMi, dokunmatikTus } from "../mobil/cihaz.ts";
 
 // Antrenman eğitimi (D5, ux § 4.2, tide G-22 / O-1 b: misafire açık, giriş sonda). Maç sunumunun kendisi (MacEkrani)
 // çevrimdışı sim + eğitim kancaları: bot "Antrenman Kuklası" (hareketsiz → yavaş; 5. adımda yavaş alan yeteneği),
@@ -219,7 +220,9 @@ class AntrenmanEgitimi {
   private adimGoster(a: number): void {
     this.gosterilen = a;
     const t = EGITIM_ADIMLARI[a]!;
-    this.serit.innerHTML = `<span class="no">${a + 1}/6</span><span class="kb">${t.tus}</span><span>${kalin(t.metin)}</span>`;
+    // MOBIL-1: dokunmatikte klavye terimleri dokunma karşılığıyla (metin paylaşılan veride değişmez)
+    const dk = dokunmatikMi();
+    this.serit.innerHTML = `<span class="no">${a + 1}/6</span><span class="kb">${dk ? dokunmatikTus(t.tus) : t.tus}</span><span>${kalin(dk ? dokunmatikMetin(t.metin) : t.metin)}</span>`;
     this.serit.dataset["adim"] = String(a + 1);
     this.nabizGosterilen = false;
     const hud = this.mac.hudKok;

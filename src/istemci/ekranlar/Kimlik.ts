@@ -3,6 +3,7 @@ import type { EkranBaglami } from "../main.ts";
 import { BakimHatasi, HESAP_HATA, apiGet, apiPost, git, sonrakiEkran, type Ben } from "../hesap.ts";
 import { anaEylem, bakimKatmani, ekranKok, el, kalin } from "./arayuz.ts";
 import { cekirdekIllustrasyonu } from "./pikselTopac.ts";
+import { dokunmatikMetin, dokunmatikMi } from "../mobil/cihaz.ts";
 
 // GU-10 (menü dili v2, maket b-giris / referans 01): sol panelde ışıyan Çekirdek, sağda form paneli; lento yerine sol üstte
 // DEVRAN plakası; ana düğme bronz-turuncu (K-2; referanstaki yeşil değil).
@@ -61,7 +62,7 @@ export function karsilama(b: EkranBaglami): void {
   kart.style.textAlign = "center";
   el("h2", "k-plaka", kart, "Hoş geldin");
   const p = el("div", "", kart);
-  p.innerHTML = UC_CUMLE.map((c) => `<p>${kalin(c)}</p>`).join("");
+  p.innerHTML = UC_CUMLE.map((c) => `<p>${kalin(dokunmatikMi() ? dokunmatikMetin(c) : c)}</p>`).join("");
   const mesaj = new URLSearchParams(location.search).get("mesaj");
   if (mesaj === "oda" || location.hash.startsWith("#oda=")) el("p", "hata", kart, "Odaya katılmak için kayıt ol ya da giriş yap.");
   if (mesaj === "cikis") el("p", "alt", kart, "Çıkış yaptın.");

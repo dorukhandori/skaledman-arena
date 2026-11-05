@@ -11,6 +11,7 @@ import { ELEMENT_RENK, KOKEN_RENK } from "./renkler.ts";
 import { metinOlcegiOku } from "../ekranlar/arayuz.ts";
 import { ayarlariOku } from "./Ayarlar.ts";
 import { Ses } from "../ses/Ses.ts";
+import type { Daire, DugmeAdi } from "./dokunmatik.ts";
 
 // Maç HUD'u (ux § 2: H1-H15, 960×540 mantıksal DOM katmanı; konum ve boyutlar tablodan birebir).
 // Yazı boyutları: ad 10 · sayı 10 · tuş rozeti 10 · bekleme 12 · süre 14 · skor 20 · olay bandı 16.
@@ -207,6 +208,21 @@ const STIL = `
 .mh.o125 .sure { font-size:20px; } .mh.o150 .sure { font-size:30px; line-height:26px; }
 .mh.o125 .etk, .mh.o125 .en em, .mh.o125 .yv .tus { font-size:20px; line-height:14px; } .mh.o150 .etk, .mh.o150 .en em, .mh.o150 .yv .tus { font-size:24px; line-height:16px; }
 .mh.o125 .bant { font-size:30px; } .mh.o150 .bant { font-size:30px; }
+/* MOBIL-1 dokunmatik: yuvalar + Shift/Space rozetleri sağ alt baş parmak kavisinde dokunma düğmesi görseli olur (yerleri
+   DokunmatikKontrol hesaplar, hizala() mantıksal px'e çevirir; isabet katmanda); yuva adları ve klavye rozetleri gizli;
+   H8 takım yuvaları kendi panelinin altına çıkar (kavisle çakışmasın); ses düğmesi katmana taşınır (44 px). */
+.mh.dokunmatik .ya, .mh.dokunmatik .sd, .mh.dokunmatik .yv .tus.kl { display:none; }
+.mh.dokunmatik .yv { opacity:.9; border-radius:50%; clip-path:none; }
+.mh.dokunmatik .yv .k { border-radius:0 0 50% 50% / 0 0 30% 30%; }
+.mh.dokunmatik .yv.elmas::before { left:50%; top:50%; transform:translate(-50%,-50%) rotate(45deg) scale(var(--dki,1)); }
+.mh.dokunmatik.dk-kapali .yv { display:none; }
+.mh.dokunmatik .yv .ic { transform:scale(var(--dki,1)); }
+.mh.dokunmatik .yv.yok { display:none; }
+.mh.dokunmatik .yv .ad-dk { position:absolute; left:0; right:0; bottom:-14px; font-family:"m5x7",ui-monospace,monospace; font-size:16px; line-height:12px; color:#fbf2c3; text-shadow:1px 1px 0 #05050a; transform:scale(var(--dki,1)); transform-origin:50% 0; }
+.mh .yv .ad-dk { display:none; } .mh.dokunmatik .yv .ad-dk { display:block; }
+.mh.dokunmatik .yv.yuvarlak .ad-dk { bottom:auto; top:-14px; transform-origin:50% 100%; }
+.mh.dokunmatik .bant.asagi { top:84px; }
+.mh.dokunmatik .yv.ortusme { opacity:.45; }
 /* Yüksek kontrast HUD (ux § 6.3): opak panel, 2 px beyaz çerçeve */
 .mh.kontrast .pn, .mh.kontrast .skor, .mh.kontrast .sure, .mh.kontrast .bant, .mh.kontrast .yv, .mh.kontrast .tk, .mh.kontrast .ds, .mh.kontrast .ip { background:#000; border:2px solid #fff; box-shadow:none; }
 .mh.kontrast .pn .lv, .mh.kontrast .en em, .mh.kontrast .yv .tus, .mh.kontrast .ya { color:#fff; }
@@ -377,7 +393,8 @@ export class MacHud {
   ortusmeAyarla(kutular: { x0: number; y0: number; x1: number; y1: number }[]): void {
     const ogeler: [HTMLElement, number, number, number, number][] = [
       [this.paneller[this.yerel === 0 ? 0 : 1]!.kok, 8, 8, 296, 72], [this.paneller[this.yerel === 0 ? 1 : 0]!.kok, 664, 8, 952, 72],
-      [this.skor, 400, 4, 560, 42], [this.sure, 432, 44, 528, 66], [this.dash, H7.x[0], H7.y, H7.x[0] + 44, H7.y + 44], [this.sekme, H7.x[1], H7.y, H7.x[1] + 44, H7.y + 44],
+      [this.skor, 400, 4, 560, 42], [this.sure, 432, 44, 528, 66],
+      ...(this.dkYer ? this.dkKutular : [[this.dash, H7.x[0], H7.y, H7.x[0] + 44, H7.y + 44], [this.sekme, H7.x[1], H7.y, H7.x[1] + 44, H7.y + 44]] as [HTMLElement, number, number, number, number][]),
     ];
     for (const [e, x0, y0, x1, y1] of ogeler) {
       const kes = kutular.some((k) => k.x0 < x1 && k.x1 > x0 && k.y0 < y1 && k.y1 > y0);
@@ -394,6 +411,68 @@ export class MacHud {
 
   hizala(x: number, y: number, olcek: number): void {
     this.kok.style.transform = `translate(${x}px, ${y}px) scale(${olcek})`;
+    if (this.dkYer) this.dokunmatikUygula(x, y, olcek);
+  }
+
+  // ---- MOBIL-1 dokunmatik düzen ----
+  private dkYer: Record<DugmeAdi, Daire> | null = null;
+  private dkAnahtar = "";
+  private dkKutular: [HTMLElement, number, number, number, number][] = [];
+
+  /** Dokunmatik düzeni aç: yuvalar/rozetler düğme görseli, H8 kendi panelinin altına, etiketler dokunmatik dilinde. */
+  dokunmatikAc(): void {
+    this.kok.classList.add("dokunmatik");
+    for (const [r, ad] of [[this.dash, "DASH"], [this.sekme, "SEKME"]] as const) {
+      const s = r.querySelector(".ic > span:first-child");
+      if (s) s.textContent = ad;
+    }
+    // ad etiketi .k (bekleme süpürmesi, ilk çocuk) ile .ic (simge, son çocuk) arasına: guncelle() ikisini sırayla okur
+    for (let k = 0; k < 4; k++) {
+      const y = this.yuvalar[k]!;
+      const ad = document.createElement("span");
+      ad.className = "ad-dk";
+      ad.textContent = k === 2 ? "ULTİ" : k === 3 ? "TAKIM" : "";
+      y.insertBefore(ad, y.children[1] ?? null);
+    }
+    for (let k = 0; k < 3; k++) {
+      const t = this.takim[k]!;
+      t.style.left = `${(this.yerel === 0 ? 8 : 808) + k * 50}px`;
+      t.style.top = "84px";
+    }
+  }
+
+  /** Tur arası / bitiş: düğme görselleri gizli (seçim paneli ve sonuç alanı serbest). */
+  dokunmatikDugmeler(acik: boolean): void { this.kok.classList.toggle("dk-kapali", !acik); }
+
+  /** Düğme yerleri (DokunmatikKontrol katmanı CSS px'i; katman ile HUD aynı #sahne kökünde). */
+  dokunmatikYer(yer: Record<DugmeAdi, Daire>): void { this.dkYer = yer; }
+
+  private dokunmatikUygula(x: number, y: number, olcek: number): void {
+    const yer = this.dkYer!;
+    const anahtar = `${x}|${y}|${olcek}|${JSON.stringify(yer)}`;
+    if (anahtar === this.dkAnahtar) return;
+    this.dkAnahtar = anahtar;
+    this.dkKutular = [];
+    const esle: [HTMLElement, DugmeAdi][] = [[this.yuvalar[0]!, "y1"], [this.yuvalar[1]!, "y2"], [this.yuvalar[2]!, "y3"], [this.yuvalar[3]!, "y4"], [this.dash, "dash"], [this.sekme, "sekme"]];
+    for (const [e, ad] of esle) {
+      const d = yer[ad];
+      const L = (d.x - d.r - x) / olcek;
+      const T = (d.y - d.r - y) / olcek;
+      const S = (2 * d.r) / olcek;
+      e.style.left = `${L}px`;
+      e.style.top = `${T}px`;
+      e.style.width = `${S}px`;
+      e.style.height = `${S}px`;
+      e.style.setProperty("--dki", String(Math.max(1, S / 44)));
+      this.dkKutular.push([e, L, T, L + S, T + S]);
+    }
+  }
+
+  /** GERİ ÇEK düğmesinin yeri (CSS px, sol üst): H8'in yanında, panel tarafına göre. */
+  geriCekYeri(c: { x: number; y: number; olcek: number }): { x: number; y: number } {
+    const s = c.olcek;
+    const y = c.y + 84 * s + (44 * s - 44) / 2;
+    return this.yerel === 0 ? { x: c.x + 158 * s, y } : { x: c.x + 802 * s - 104, y };
   }
 
   private yaz(e: HTMLElement, s: string, html = false): void {

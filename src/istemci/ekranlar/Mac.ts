@@ -29,6 +29,10 @@ import type { AgMaci } from "../ag/AgMaci.ts";
 import { AgKatmani } from "../ag/AgKatmani.ts";
 import { parca3bIkonEl } from "./pikselTopac.ts";
 import { ikonlariYukselt } from "../atolye3d/ikonOnbellek.ts";
+import { DokunmatikKontrol } from "../oyun/DokunmatikKontrol.ts";
+import { yuvaYetenegi } from "../../paylasilan/sim/yetenek.ts";
+import { dokunmatikMi } from "../mobil/cihaz.ts";
+import { tamEkranDegistir, tamEkranVar, uyanikTut } from "../mobil/kabuk.ts";
 
 // Bota karşı tam maç (D2, çevrimdışı): geri sayım → tur → tur arası (H14 seçimi) → … → bitti → sonuç ekranı.
 // Sim paylaşılan kod (mac.ts, adim.ts), bot paylaşılan kod (bot.ts); bu dosya yalnız sunum ve girdi.
@@ -141,6 +145,11 @@ const STIL = `
 .ms .ck em { width:100%; text-align:center; font-style:normal; color:var(--gold); }
 .ms .hlk { display:inline-flex; gap:4px; } .ms .hl { width:10px; height:10px; box-shadow:inset 0 0 0 2px var(--halka-sonuk); }
 .ms .hl.on { background:var(--halka); box-shadow:none; } .ms .hl.yeni { background:var(--halka-cekirdek); box-shadow:0 0 0 2px var(--halka); }
+/* MOBIL-1: çerçeve telefonda küçülür (×0,7); düğmeler en az 44 CSS px (--dk = 1 / ölçek) */
+html[data-dokunmatik] .ms button { min-height:max(56px, calc(44px * var(--dk, 1))); }
+html[data-dokunmatik] .ms .ay button, html[data-dokunmatik] .ms .bsk .acl button { min-height:calc(44px * var(--dk, 1)); }
+html[data-dokunmatik] .ms .menu { top:50%; transform:translateY(-50%); max-height:532px; overflow-y:auto; overscroll-behavior:contain; }
+html[data-dokunmatik] .ms .menu .dg { gap:6px; }
 `;
 
 const BITIS_AD = { durma: "DURMA", ringOut: "RING OUT", parcalanma: "PARÇALANMA", berabere: "BERABERE" } as const;
@@ -284,6 +293,8 @@ export class MacEkrani {
   private agZamanlayici = 0;
   private agKatman: AgKatmani | null = null;
   private rovansIstendi = false;
+  /** MOBIL-1: dokunmatik denetim (yalnız dokunmatik cihazda) */
+  private dokun: DokunmatikKontrol | null = null;
 
   constructor(private b: EkranBaglami, private ag: AgMaci | null = null, private kancalar: CevrimiciKancalar | null = null, private egitim: EgitimKancalari | null = null) {
     if (ag) { this.yerel = ag.yerel; this.rakip = 1 - ag.yerel; }
@@ -308,6 +319,17 @@ export class MacEkrani {
     this.yetenekGorsel.ruh.topacKonumu = (i) => { const g = this.gorseller[i]; return g ? { x: g.kok.x, y: g.kok.y } : null; };
     // iptal bölgesi: alt şerit (mantıksal y > 492, ux § 1)
     this.girdi.iptalBolgesi = (px, py) => { const c = this.sahne.cerceve(); return (py - c.y) / c.olcek > 492; };
+    if (dokunmatikMi()) {
+      this.dokun = new DokunmatikKontrol(b.ustYazi, this.girdi, {
+        menu: () => this.menuAcKapa(),
+        ses: () => this.sesDegistir(),
+        geriCek: () => this.geriCek(),
+        k: () => this.sahne.k,
+        ben: () => { const t = this.dunya.topaclar[this.yerel]!; return { x: t.x, z: t.z }; },
+        fare: (e) => this.girdi.fareOlayi(e),
+      });
+    }
+    uyanikTut(true);
     this.ayarlariUygula();
     Ses.yukle();
     Ses.muzikBaslat();
@@ -342,7 +364,15 @@ export class MacEkrani {
   get yerelIndeks(): number { return this.yerel; }
   /** son karede basılı tutulan yuva (eğitim nişan vurgusu) */
   get basiliYuva(): number { return this.girdi.basiliYuva; }
-  durdur(): void { Ses.muzikDurdur(); this.b.app.ticker.stop(); window.clearInterval(this.agZamanlayici); window.removeEventListener("keydown", this.tus, { capture: true }); }
+  durdur(): void {
+    Ses.muzikDurdur(); this.b.app.ticker.stop(); window.clearInterval(this.agZamanlayici); window.removeEventListener("keydown", this.tus, { capture: true });
+    this.dokun?.yokEt(); this.dokun = null; uyanikTut(false);
+  }
+  /** Debug (MOBIL-1 doğrulama): dokunmatik katman sayaçları ve düğme yerleri. */
+  get dokunmatik(): { sayac: DokunmatikKontrol["sayac"]; yer: DokunmatikKontrol["yer"]; yon: { x: number; z: number }; nisan: { x: number; z: number }; eziliyor: boolean } | null {
+    if (!this.dokun) return null;
+    return { sayac: { ...this.dokun.sayac }, yer: this.dokun.yer, yon: this.girdi.dokunYonu ?? { x: 0, z: 0 }, nisan: this.girdi.nisanNoktasi(this.sahne, this.dunya.topaclar[this.yerel]!), eziliyor: this.girdi.nisanEziliyor };
+  }
 
   // ---- hata ayıklama kancaları (Playwright) ----
   get durum(): Dunya { return this.dunya; }
@@ -454,6 +484,7 @@ export class MacEkrani {
     this.hud = new MacHud(this.b.ustYazi, this.yerel, this.yerel === 0 ? adlar : hudAdlari);
     this.hud.kartSecildi = (k) => this.secimIste(k);
     this.hud.sesTik = () => this.sesDegistir();
+    if (this.dokun) this.hud.dokunmatikAc();
     this.b.ustYazi.appendChild(this.ust); // sonuç/menü HUD'un üstünde
   }
 
@@ -504,14 +535,20 @@ export class MacEkrani {
     if (this.menuAcik) return;
     if (e.code === "Tab") {
       e.preventDefault();
-      if (e.repeat || d.mac.faz !== "tur") return;
-      if (geriCekAcik(d, this.yerel)) this.bekleyenDegistir = siradakiUye(d.takimlar![this.yerel]!);
-      else this.hud.bantGoster(d.topaclar[this.yerel]!.geriCekKalan > 0 ? "Geri çekiliyor…" : d.takimlar![this.yerel]!.geriCekBekleme > 0 ? "Geri çek beklemede." : "Geri çekmek için stamina %25'in altında olmalı.", 1.6);
+      if (!e.repeat) this.geriCek();
       return;
     }
     const m = /^Digit([1-3])$/.exec(e.code) ?? /^Numpad([1-3])$/.exec(e.code);
     if (m && d.mac.faz === "turArasi") this.secimIste(Number(m[1]) - 1);
   };
+
+  /** Tab ve dokunmatik GERİ ÇEK: stamina %25 altındaysa sıradaki üyeyle değiş, değilse nedenini bantta söyle. */
+  private geriCek(): void {
+    const d = this.dunya;
+    if (d.mac.faz !== "tur" || this.menuAcik) return;
+    if (geriCekAcik(d, this.yerel)) this.bekleyenDegistir = siradakiUye(d.takimlar![this.yerel]!);
+    else this.hud.bantGoster(d.topaclar[this.yerel]!.geriCekKalan > 0 ? "Geri çekiliyor…" : d.takimlar![this.yerel]!.geriCekBekleme > 0 ? "Geri çek beklemede." : "Geri çekmek için stamina %25'in altında olmalı.", 1.6);
+  }
 
   private tusBirak = (e: KeyboardEvent): void => {
     if (e.code === "Enter" && this.teslimTutma >= 0) this.teslimBirak();
@@ -544,11 +581,16 @@ export class MacEkrani {
       devam.addEventListener("click", () => this.menuAcKapa(false));
       const ayar = el("button", "", dg, "Ayarlar");
       ayar.addEventListener("click", () => { this.menuGoster("ayarlar"); });
+      if (this.dokun && tamEkranVar()) {
+        const te = el("button", "", dg, document.fullscreenElement ? "Tam ekrandan çık" : "Tam ekran");
+        te.dataset["eylem"] = "tam-ekran";
+        te.addEventListener("click", () => { tamEkranDegistir(); this.menuAcKapa(false); });
+      }
       if (!this.egitim) {
         const teslim = el("button", "", dg, "Teslim ol");
         teslim.addEventListener("click", () => { this.menuGoster("teslim"); });
       }
-      el("div", "not", m, "Maç durmaz. Esc ile kapat.");
+      el("div", "not", m, this.dokun ? "Maç durmaz." : "Maç durmaz. Esc ile kapat.");
       queueMicrotask(() => devam.focus());
     } else if (adim === "ayarlar") {
       // ux § 6.2 erişilebilirlik + § 1.3 nişan + ses: düğmeye bas = sıradaki seçenek (klavye: Tab + Enter)
@@ -774,8 +816,10 @@ export class MacEkrani {
     const S = this.sahne;
     S.boyutla(false, dt);
     const c = S.cerceve();
+    if (this.dokun) this.hud.dokunmatikYer(this.dokun.yer);
     this.hud.hizala(c.x, c.y, c.olcek);
     this.ust.style.transform = `translate(${c.x}px, ${c.y}px) scale(${c.olcek})`;
+    if (this.dokun) this.dokunmatikGuncelle(d, c);
     this.efektler.guncelle(dt, d);
     d.topaclar.forEach((t, i) => {
       const o = this.onceki[i] ?? t;
@@ -800,7 +844,7 @@ export class MacEkrani {
     kenarUyarisiCiz(this.kenarUyari, d, this.yerel, S, this.zaman);
     // H9 nişan (yalnız Fare modu; "Hareket yönü" modunda çizgi çizilmez) + H13 telegraf + dekaller + Ulti anı
     const basili = this.menuAcik ? -1 : this.girdi.basiliYuva;
-    const nisan = basili >= 0 && basili < 3 && this.girdi.nisanModu === "fare" ? { yuva: basili, ...this.girdi.nisanNoktasi(S, d.topaclar[this.yerel]!) } : null;
+    const nisan = basili >= 0 && basili < 3 && (this.girdi.nisanModu === "fare" || this.girdi.dokunmatik) ? { yuva: basili, ...this.girdi.nisanNoktasi(S, d.topaclar[this.yerel]!) } : null;
     this.yetenekGorsel.guncelle(d, dt, nisan);
     this.hud.guncelle(d, dt, basili);
     if (S.hibrit) {
@@ -811,6 +855,30 @@ export class MacEkrani {
       }));
     }
     this.sesKancalari(dt);
+  }
+
+  /** MOBIL-1: dokunmatik katmanın durumu (oto-nişan adayları, faz, Menü/Ses/GERİ ÇEK yerleri, --dk ölçeği). */
+  private dokunmatikGuncelle(d: Dunya, c: { x: number; y: number; olcek: number }): void {
+    const dk = this.dokun!;
+    const r = d.topaclar[this.rakip]!;
+    this.girdi.rakipler = [{ x: r.x, z: r.z, aktif: aktifMi(r) }];
+    const tk = d.takimlar?.[this.yerel];
+    const faz = d.mac.faz;
+    const s = c.olcek;
+    const dkStr = String(1 / s);
+    if (this.ust.style.getPropertyValue("--dk") !== dkStr) { this.ust.style.setProperty("--dk", dkStr); this.hud.kok.style.setProperty("--dk", dkStr); }
+    const dugmeler = faz === "tur" || faz === "geriSayim";
+    this.hud.dokunmatikDugmeler(dugmeler);
+    dk.guncelle({
+      dugmeler,
+      y4: yuvaYetenegi(d, this.yerel, 3) >= 0,
+      geriCek: faz === "tur" && !!tk && geriCekAcik(d, this.yerel),
+      kilitli: this.menuAcik || this.sonucAcik || faz === "bitti",
+      geriCekYeri: this.hud.geriCekYeri(c),
+      menuYeri: { x: Math.round(c.x + 396 * s - 48), y: Math.round(c.y + 4 * s) },
+      sesYeri: { x: Math.round(c.x + 564 * s + 4), y: Math.round(c.y + 4 * s) },
+      sesAcik: Ses.acikMi,
+    });
   }
 
   /** Sim olayı olmayan ses kancaları: geri sayım, son 10 sn tıkı, kenar uyarısı (≤ 2 Hz). */
