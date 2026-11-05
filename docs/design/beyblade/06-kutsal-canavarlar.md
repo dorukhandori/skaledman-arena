@@ -2,6 +2,8 @@
 
 Sahip (2026-11-05): *"oyunda bulunan kutsal canavarlar, onların dövüş içerisinde tetiklenmesi ve bu canavarların görünümü çok özel ve heybetli olmalı. ... tüm pipelineları kullanmakta serbestsin, tripo dahil."*
 
+**Sahip kararları (2026-11-05):** (1) Kapsam pixel planı § 4 gibi: ilk sürümde canavar **yalnız Ulti'de**, element başına 1 Ata. Özel Yetenek'teki ruh belirmesi (§ 1, Bağlı belirme) kodda hazır ama `RUH_PORTRE_OZEL_YETENEK = false` bayrağıyla kapalı; 21 portre varlık olarak depoda. (2) § 2'deki altı Ata türü **onaylandı**.
+
 Bu belge `00-lore-cercevesi.md` § 3 (ruh taksonomisi) ve `01-arena-eslemesi.md` § 4.3'ü (ruh silueti) **somutlaştırır**. Oyuncuya görünen ad **Ruh**; "kutsal canavar" lore ve belge dilidir (`04-sozluk.md`). Sim'e dokunmaz: her şey istemci sunumudur ve sunucunun zaten yolladığı `yetenekBasladi` olayından tetiklenir (ağ maliyeti 0 bayt).
 
 ## 1. Üç belirme kademesi
@@ -17,7 +19,7 @@ Neden böyle: Özel Yetenek maçta birkaç kez olur, Ulti maç başına bir kez.
 
 ### 1.1 Okunabilirlik kuralları (ux § 2.2 ile uyumlu)
 
-- Canavar **topaçların altında, zeminin üstünde** çizilir (`zeminKatmani` ile `nesneKatmani` arası). Topaç, telegraf halkası ve nişan çizgisi her zaman canavarın önündedir.
+- Canavar **topaçların altında, zeminin üstünde** çizilir: hibrit sunumda basık zemin düzleminin (`zeminDuzlem`) içinde, dekal ve telegraftan önce; düzlemin basıklığı (1/k) ve kamera yakınlığı (1/B) ters ölçekle telafi edilir, canavar dik durur ve dünya ile birlikte pikselleşir. Topaç, telegraf halkası ve nişan çizgisi her zaman canavarın önündedir.
 - Bağlı belirme saydamlığı en çok 0,85, Tam rezonans 0,9; topaçların bulunduğu çember içinde canavar gövdesi 0,55'e iner (merkez maskesi).
 - Oyun durmaz, ara sahne yok, kamera yalnız %4 yakınlaşır (01 § 4.3). Ulti telegrafı canavarla aynı anda okunur; canavar telegrafın **yerine** geçmez.
 - Rakibin canavarı aynı görünür; ad bandı rakip renginde (TAKIM_RENK) çerçevelenir. "Kim çağırdı" sorusu banttan ve canavarın hangi topacın arkasından çıktığından okunur.

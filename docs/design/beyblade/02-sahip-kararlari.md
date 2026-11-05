@@ -33,6 +33,7 @@ Dokuz ekranın referans görünümü (Gemini `gemini-3.1-flash-image` ile üreti
 
 Sahip istedi, tüm üretim hatlarına (Tripo dahil) izin verdi. Varsayılanlar:
 
-- Özel Yetenek'te çekirdeğin ruhu, Ulti'de elementin **Ata**'sı belirir (`06-kutsal-canavarlar.md`).
-- Altı Ata'nın türleri: Alaz Bizonu, Çakım Geyiği, Yel Vatozu, Dip Nautilusu, Dağ Mamutu, Ayaz Ayısı. Adlar geçici, sahip değiştirebilir.
+- Ulti'de elementin **Ata**'sı belirir (`06-kutsal-canavarlar.md`).
+- Altı Ata'nın türleri **onaylandı**: Alaz Bizonu (Kor), Çakım Geyiği (Şimşek), Yel Vatozu (Kasırga), Dip Nautilusu (Girdap), Dağ Mamutu (Kaya), Ayaz Ayısı (Don).
+- Kapsam = pixel planı § 4: ilk sürümde canavar yalnız Ulti'de. Özel Yetenek'te ruh portresi `RUH_PORTRE_OZEL_YETENEK = false` ile kapalı, sonraki sürümde açılır.
 - Atölye'nin ipucu karakteri **Pergel** (`docs/ux/bilgic-pergel.md`). Adı ve kişiliği sahip onayı bekliyor.
