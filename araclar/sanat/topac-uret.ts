@@ -35,15 +35,16 @@ const HAM = join(KOK, ".cache", "topac-ham");
 const CIKTI = join(KOK, "public", "topac");
 const META = join(KOK, "veri", "topac-gorsel.json");
 
-/** Sanat kamerası. 1 sprite pikseli = 1 sanat pikseli maçta: topaç kökü ×1,2, dünya ×1,44, pixel önbelleği ×0,5. */
+/** Sanat kamerası. 1 sprite pikseli = 1 sanat pikseli maçta: topaç kökü × KAMERA.topacCizimOlcek, dünya × KAMERA.yakinlik, pixel önbelleği ×0,5. */
 export const SANAT = {
   /** GU-C: 26° → 36°: üst yüz (eş merkezli sırtlar + amblem) referans 07 gibi okunur, yan bant hâlâ görünür */
   yukselti: 36,
   birim: 1 / (KAMERA.topacCizimOlcek * KAMERA.yakinlik * KAMERA.pikselCozunurluk),
-  kareW: 64,
-  kareH: 64,
-  capaX: 32,
-  capaY: 54,
+  /** GU-D: çanak ×1,83 ile birim 1,16 → 1,01 (topaç sprite'ı ×1,14 iri); 64×64 kare taşıyordu → 76×72 */
+  kareW: 76,
+  kareH: 72,
+  capaX: 38,
+  capaY: 60,
   superOrnek: 4,
   inceKare: 32,
   periyotKare: 8,
@@ -700,7 +701,7 @@ async function main(): Promise<void> {
   const sirali = Object.fromEntries(tumIdler.filter((id) => parcalar[id]).map((id) => [id, parcalar[id]!]));
   const meta = {
     surum: 1,
-    aciklama: "ART-1 topaç sprite atlas metası (araclar/sanat/topac-uret.ts üretir; elle düzenleme). Sayfalar public/topac/ altında, satır başına 8 kare (bulanık disk 3), kare 64×64, çapa = uç temas noktası.",
+    aciklama: "ART-1 topaç sprite atlas metası (araclar/sanat/topac-uret.ts üretir; elle düzenleme). Sayfalar public/topac/ altında, satır başına 8 kare (bulanık disk 3), kare SANAT.kareW×kareH (meta kamera.kare), çapa = uç temas noktası.",
     kamera: { yukselti: SANAT.yukselti, birim: SANAT.birim, kare: [SANAT.kareW, SANAT.kareH], capa: [SANAT.capaX, SANAT.capaY], govdeTabanZ: SANAT.govdeTabanZ },
     periyotKare: SANAT.periyotKare,
     diskKare: SANAT.diskKare,

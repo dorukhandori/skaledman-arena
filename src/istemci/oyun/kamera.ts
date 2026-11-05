@@ -8,16 +8,18 @@ export type KameraKipi = "hibrit" | "duz";
  * Yakınlık tek düze ölçektir (x ve z aynı), yalnız z ayrıca zOrani ile basılır. Değerler sabit (tahmin; sahip kararı).
  */
 export const KAMERA = {
-  /** GU-C: 0,62 → 0,56. Referans 07'nin çanak elipsi ölçüldü: ışıyan halka 1170 × 625 px → basıklık ≈ 0,53; biraz daha
-   *  basık elips aynı dikey bantta (HUD şeritleri arası) daha geniş çanak demek. Topaç sprite'ı 36° (sin ≈ 0,59) ile uyumlu. */
-  zOrani: 0.56,
-  /** İkinci tur ×1,44 (zOranı 0,62 ile HUD şeritlerine sığan en büyük). GU-C: zOranı 0,56 ile ×1,6 sığar: oynanabilir
-   *  elips (R=240) yine süre plakası (y ≤ 62) ile Shift/Space (y ≥ 494) arasında, yatayda ekranın %80'i (test/kamera.test.ts). */
-  yakinlik: 1.6,
-  /** çanak merkezinin dünya kayması (px): üstte uzak duvar + tribün için yer */
-  kaymaY: 5,
-  /** Topaç çizim ölçeği (sim yarıçapı 30 sabit; yalnız çizim iri: referans 07). GU-C: yakınlık ×1,6 ile ekrandaki boyut
-   *  aynı kalsın (1,08 · 1,6 = 1,2 · 1,44): sprite pikseli = sanat pikseli kuralı (topac-uret SANAT.birim) bozulmaz. */
+  /** GU-C 0,62 → 0,56; GU-D → 0,52. Referans 07'nin ışıyan halkası 1170 × 625 px (basıklık ≈ 0,52–0,53): daha basık elips
+   *  aynı dikey bantta (süre plakası ile ekranın alt kenarı arası) daha geniş çanak demek. */
+  zOrani: 0.52,
+  /** İkinci tur ×1,44, GU-C ×1,6, GU-D ×1,83 (sahip: "çanak büyüsün"). Shift/Space alt ortadan yetenek yuvalarının üstüne
+   *  taşındı (MacHud), alt orta boş (referans 07 gibi): oynanabilir elips (R = 240) y 69–526, x 41–919 ve hiçbir HUD
+   *  plakasının altına girmez; ışıyan halka (0,85 R) ekranın %78'i (önce %68). test/kamera.test.ts sınar. */
+  yakinlik: 1.83,
+  /** çanak merkezinin dünya kayması (px): üstte uzak duvar + tribün için yer; GU-D: alt orta boşaldı, çanak aşağı (ekranY 297) */
+  kaymaY: 15,
+  /** Topaç çizim ölçeği (sim yarıçapı 30 sabit; yalnız çizim iri: referans 07). Çanakla orantılı kalır (GU-D: 1,08 sabit,
+   *  topaç ekranda çanakla birlikte ×1,14 büyür); sprite pikseli = sanat pikseli kuralı için sprite seti
+   *  SANAT.birim = 1 / (topacCizimOlcek · yakinlik · pikselCozunurluk) ile yeniden üretilir (npm run topac:uret). */
   topacCizimOlcek: 1.08,
   /** Sekme yüksekliği (dünya px, ekranda yukarı) */
   sekmeYukseklik: 16,

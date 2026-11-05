@@ -231,7 +231,10 @@ export function catlakSvg(oran: number): string {
   return `<svg viewBox="0 0 24 24" width="24" height="24" style="opacity:${s === 0 ? 0.45 : 1}" aria-label="Çatlak ${s}/3"><circle cx="12" cy="12" r="10" fill="#3a4246" stroke="${renk}" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="#8d989e"/><path d="${cizgi}" stroke="#fff" stroke-width="1.7" fill="none"/></svg>`;
 }
 
-export const BITIS_AD = { durma: "DURMA", ringOut: "RING OUT", parcalanma: "PARÇALANMA", berabere: "BERABERE" } as const;
+/** H7 Shift/Space mantıksal konumu (960×540): yetenek yuvası 1-2'nin üstü. Çanak (kamera.ts) bu kutuya girmez (test). */
+export const H7 = { x: [8, 58], y: 430 } as const;
+
+export const BITIS_AD ={ durma: "DURMA", ringOut: "RING OUT", parcalanma: "PARÇALANMA", berabere: "BERABERE" } as const;
 export const sinifOran = (o: number) => (o < AYAR.kritikEsik ? "kirmizi" : o <= 0.6 ? "amber" : "");
 
 interface Panel { enKok: HTMLElement; kok: HTMLElement; ik: HTMLElement; ad: HTMLElement; lv: HTMLElement; ekip: HTMLElement; dolgu: HTMLElement; sayi: HTMLElement; unlem: HTMLElement; enerji: HTMLElement[]; takimDilim: HTMLElement; enerjiYazi: HTMLElement; ct: HTMLElement }
@@ -288,9 +291,10 @@ export class MacHud {
       el("div", "ic", y);
       this.yuvalar.push(y);
     }
-    // H7
-    for (const [r, ad, x] of [[this.dash, "Shift", 428], [this.sekme, "Space", 488]] as const) {
+    // H7 (GU-D): alt ortadan yetenek yuvalarının üstüne (sol alt köşe; alt orta referans 07 gibi boş, çanak büyüdü)
+    for (const [r, ad, x] of [[this.dash, "Shift", H7.x[0]], [this.sekme, "Space", H7.x[1]]] as const) {
       r.style.left = `${x}px`;
+      r.style.top = `${H7.y}px`;
       el("div", "k", r);
       const ic = el("div", "ic", r);
       el("span", "", ic, ad);
@@ -373,7 +377,7 @@ export class MacHud {
   ortusmeAyarla(kutular: { x0: number; y0: number; x1: number; y1: number }[]): void {
     const ogeler: [HTMLElement, number, number, number, number][] = [
       [this.paneller[this.yerel === 0 ? 0 : 1]!.kok, 8, 8, 296, 72], [this.paneller[this.yerel === 0 ? 1 : 0]!.kok, 664, 8, 952, 72],
-      [this.skor, 400, 4, 560, 42], [this.sure, 432, 44, 528, 66], [this.dash, 428, 494, 472, 538], [this.sekme, 488, 494, 532, 538],
+      [this.skor, 400, 4, 560, 42], [this.sure, 432, 44, 528, 66], [this.dash, H7.x[0], H7.y, H7.x[0] + 44, H7.y + 44], [this.sekme, H7.x[1], H7.y, H7.x[1] + 44, H7.y + 44],
     ];
     for (const [e, x0, y0, x1, y1] of ogeler) {
       const kes = kutular.some((k) => k.x0 < x1 && k.x1 > x0 && k.y0 < y1 && k.y1 > y0);

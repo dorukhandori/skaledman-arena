@@ -57,9 +57,9 @@ export class Sahne {
   olcek = 1;
   /** D8 seyirci/OBS (ux § 5): sabit 960×540, tam sayı ölçek (≥ 1 iken) — yayın ölçeklemesinde bulanıklık yok. */
   tamSayiOlcek = false;
-  /** z basıklığı (hibrit KAMERA.zOrani = 0,56; düz 1) */
+  /** z basıklığı (hibrit KAMERA.zOrani; düz 1) */
   readonly k: number;
-  /** kamera yakınlığı (hibrit KAMERA.yakinlik = 1,6; düz 1) */
+  /** kamera yakınlığı (hibrit KAMERA.yakinlik; düz 1) */
   readonly yakinlik: number;
   /** çanak merkezinin dünya y'si */
   readonly my: number;

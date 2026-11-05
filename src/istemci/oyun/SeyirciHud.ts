@@ -44,8 +44,9 @@ const STIL = `
 .sh .en span.tk.dustu { border-style:dashed; border-color:#6d7a7f; } .sh .en span.tk.dustu i { background:#6d7a7f; }
 .sh .ct { position:absolute; left:264px; top:46px; width:24px; height:24px; }
 .sh .pn.sag .ct { left:8px; }
-.sh .skor { position:absolute; left:394px; top:6px; width:172px; height:40px; text-align:center; font:900 28px/36px system-ui; letter-spacing:1px; background:rgba(12,25,29,.92); border:2px solid #050d10; border-radius:8px; }
-.sh .sure { position:absolute; left:428px; top:50px; width:104px; height:26px; text-align:center; font:800 18px/22px system-ui; font-variant-numeric:tabular-nums; background:rgba(12,25,29,.88); border:2px solid #050d10; border-radius:6px; }
+.sh .skor { position:absolute; left:394px; top:6px; width:172px; height:32px; text-align:center; font:900 28px/32px system-ui; letter-spacing:1px; background:rgba(12,25,29,.92); border:2px solid #050d10; border-radius:8px; }
+/* GU-D: skor + süre y ≤ 66 (çanak ×1,83: oynanabilir elipsin üst ucu y 69, plakanın altına girmesin) */
+.sh .sure { position:absolute; left:428px; top:44px; width:104px; height:18px; text-align:center; font:800 17px/18px system-ui; font-variant-numeric:tabular-nums; background:rgba(12,25,29,.88); border:2px solid #050d10; border-radius:6px; }
 .sh .sure.son { color:#ff5a3a; text-decoration:underline; text-decoration-thickness:2px; }
 .sh .sure.ani { color:#fff; background:#a3260a; font-size:15px; }
 .sh .bant { position:absolute; left:190px; top:96px; width:580px; height:42px; text-align:center; font:900 20px/38px system-ui; letter-spacing:.5px; background:rgba(5,13,16,.9); border:2px solid #f4cf47; border-radius:8px; opacity:0; transition:opacity .15s; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding:0 10px; }

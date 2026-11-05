@@ -159,6 +159,8 @@ class TopacLab {
       const g: TopacCizimi = hibrit ? this.sahne.topacOlustur(this.profiller[YEREL], "yok") : new TopacGorsel(this.profiller[YEREL], "yok", kap, kap);
       g.kok.position.set(hibrit ? 480 + (104 - 480) / B : 104, hibrit ? 270 + (y + 16 - 270) / B : y);
       if (!hibrit) kap.addChild(g.kok);
+      // GU-D: çanak ×1,83 ile önizleme sütunu yakın dudağın üstüne düşer; dudak örtmesin diye efekt katmanında çizilir
+      else this.sahne.efektKatmani.addChild(g.kok);
       const t = new Text({ text: k.ad, style: { fill: 0xf3f1e8, fontSize: 11, fontWeight: "700", fontFamily: "system-ui" } });
       t.anchor.set(0.5, 0);
       t.position.set(104, y + 44);

@@ -31,7 +31,7 @@ const STIL = `
 .hud .bant { position:absolute; left:240px; top:84px; width:480px; height:36px; text-align:center; font:800 16px/36px "Nunito Sans",system-ui; letter-spacing:1px; background:rgba(5,13,16,.82); border:2px solid #f4cf47; border-radius:8px; opacity:0; transition:opacity .15s; }
 .hud .bant.acik { opacity:1; }
 .hud .rz { position:absolute; top:494px; width:44px; height:44px; border:3px solid #f2e8b0; border-radius:6px; background:rgba(12,25,29,.9); font-size:10px; font-weight:800; text-align:center; overflow:hidden; }
-.hud .rz.dash { left:428px; } .hud .rz.sekme { left:488px; }
+.hud .rz.dash { left:8px; } .hud .rz.sekme { left:58px; } /* GU-D: sol alt köşe (alt orta boş, çanak büyüdü) */
 .hud .rz.bekle { border-color:#4a5a60; color:#a3b2b6; }
 .hud .rz.yetmez { border-style:dashed; }
 .hud .rz .k { position:absolute; left:0; right:0; bottom:0; background:rgba(5,13,16,.75); }

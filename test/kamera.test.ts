@@ -24,11 +24,30 @@ describe("hibrit kamera izdüşümü", () => {
       }
     }
   });
-  it("çanak (R = 240) referans 07 gibi ekranı doldurur ama oynanabilir elips HUD'a (süre plakası y 66, Shift/Space y 494) girmez", () => {
+  it("çanak (R = 240) referans 07 gibi ekranı doldurur ama oynanabilir elips hiçbir maç HUD plakasının altına girmez", () => {
     const ust = simdenEkrana(hibrit, 0, -240).y;
     const alt = simdenEkrana(hibrit, 0, 240).y;
-    expect(ust).toBeGreaterThan(62);
-    expect(alt).toBeLessThan(494);
-    expect(simdenEkrana(hibrit, 240, 0).x - simdenEkrana(hibrit, -240, 0).x).toBeGreaterThan(740); // GU-C: ekranın %77+ 
+    expect(ust).toBeGreaterThan(66); // süre plakasının alt kenarı
+    expect(alt).toBeLessThan(538); // ekranın alt kenarı (alt orta boş: GU-D Shift/Space sol alta taşındı)
+    const genislik = simdenEkrana(hibrit, 240, 0).x - simdenEkrana(hibrit, -240, 0).x;
+    expect(genislik).toBeLessThan(960); // duvar ekranda kalır
+    // GU-D: ışıyan halka (kuşak dış kenarı 0,85 R) referans 07'de ekranın ~%82'si; bizde ≥ %77
+    expect((0.85 * genislik) / 960).toBeGreaterThan(0.77);
+    // MacHud mantıksal kutuları (960×540; H7 = MacHud.H7): paneller, skor, süre, ses, yetenek yuvaları + adları, Shift/Space, takım
+    const kutular: [number, number, number, number][] = [
+      [8, 8, 296, 72], [664, 8, 952, 72], [400, 4, 560, 42], [432, 42, 528, 66], [572, 10, 600, 38],
+      [6, 476, 204, 538], [8, 430, 52, 474], [58, 430, 102, 474], [796, 480, 940, 538],
+    ];
+    const icinde = (lx: number, ly: number) => {
+      const s = ekrandanSime(hibrit, lx, ly);
+      return Math.hypot(s.x, s.z) < 240;
+    };
+    for (const [x0, y0, x1, y1] of kutular) {
+      for (let i = 0; i <= 20; i++) {
+        for (let j = 0; j <= 20; j++) {
+          expect(icinde(x0 + ((x1 - x0) * i) / 20, y0 + ((y1 - y0) * j) / 20), `kutu ${x0},${y0}`).toBe(false);
+        }
+      }
+    }
   });
 });
