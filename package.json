@@ -23,7 +23,10 @@
     "d5:akis": "tsx araclar/d5-akis.ts",
     "d6:akis": "tsx araclar/d6-akis.ts",
     "d7:akis": "tsx araclar/d7-akis.ts",
-    "krediler:uret": "tsx araclar/krediler-uret.ts"
+    "krediler:uret": "tsx araclar/krediler-uret.ts",
+    "d8:akis": "tsx araclar/d8-akis.ts",
+    "qa:bot": "tsx araclar/qa-bot.ts",
+    "qa:cokme": "tsx araclar/qa-cokme.ts"
   },
   "dependencies": {
     "@colyseus/monitor": "0.18.7",

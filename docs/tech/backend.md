@@ -185,3 +185,18 @@ Lv.3, Yapay ömrü bitti, parça sayısı) moddan bağımsız. İstemci hiçbir 
 
 **Hızlı maç:** `mod:"hizli"` odası `joinOrCreate`; bekleme 60 sn; `botIste` 30-60 sn arası sunucu saatiyle kabul (bot
 takımı üç başlangıç seti Lv.2, `oyuncular[1] = null`, `mac.bot = 1`). Seçimde `aktif_takim` varsayılan (D6).
+
+## 9. D8: hesap silme, maç geçmişi, seyirci, krediler
+**Göç 4** (`PRAGMA user_version` 3 → 4): `mac.silinen_a`, `mac.silinen_b` (INTEGER, 0/1), `INDEX mac_a(a)`, `INDEX mac_b(b)`.
+
+| Uç | Ne |
+|---|---|
+| `DELETE /api/hesap {sifre}` | Origin + oturum + şifre (scrypt doğrulama, kaba kuvvet sınırı `sil:<ip>:<id>`). Tek işlemde (`Depo.hesapSil`, BEGIN IMMEDIATE): oturum, takım, Çekirdek XP günlüğü, Çekirdek, parça, Altın defteri, başarım, başarım kümesi, oyuncu silinir; `mac` satırlarında kimlik NULL + `silinen_*` = 1, kazanan silinen ise NULL (rakibin kaydı mağlubiyet/galibiyet olarak kalır). Çerez temizlenir. 200 `{ok, silindi}` · 401 `oturum` (misafir / ikinci çağrı) · 401 `yanlis` · 429. Depo düzeyinde idempotent (yoksa false). |
+| `GET /api/maclar` | son 20 maç: mod, tarih, rakip adı (silinmiş → "Silinmiş oyuncu", bot → "Devran botu"), skor (benim tarafım önce), sonuç, süre |
+| `GET /api/izle/:kod` | oda ya da yayın kodu → `{durum: "var", kod: <yayın kodu>}` · `{durum: "yok"}` |
+| Colyseus `izle` | seyirci odası (netcode.md § 12) |
+| Colyseus `gTakimEnerji {miktar}` | **yalnız NODE_ENV ≠ production**: gönderenin Takım Enerjisini ayarlar (uçtan uca test) |
+
+Gizlilik metni `docs/gizlilik.md` (istemci `/gizlilik` sayfası aynı dosyadan). Krediler: `src/paylasilan/krediler.ts`
+(`docs/art/krediler.md` tabloları + `veri/manifest-*.json` kaynak eşleşmesi + yazılım/yazı tipi lisansları); sayfa `/krediler`,
+denetim `npm run krediler:uret` (atıfı eksik manifest kaynağı → çıkış 1). Yedek: `deploy/yedek.sh` + `devran-yedek.timer`.

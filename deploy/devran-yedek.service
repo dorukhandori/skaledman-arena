@@ -1,0 +1,17 @@
+# Devran SQLite günlük yedeği (D8). Kurulum: sudo cp deploy/devran-yedek.{service,timer} /etc/systemd/system/ &&
+# sudo systemctl daemon-reload && sudo systemctl enable --now devran-yedek.timer
+[Unit]
+Description=Devran SQLite yedeği
+
+[Service]
+Type=oneshot
+User=devran
+Group=devran
+WorkingDirectory=/opt/devran
+Environment=VERI_DIZINI=/opt/devran/veri-db
+Environment=YEDEK_DIZINI=/opt/devran/yedek
+ExecStart=/opt/devran/deploy/yedek.sh
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/opt/devran/yedek
+ReadOnlyPaths=/opt/devran/veri-db

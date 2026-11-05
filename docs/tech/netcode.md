@@ -111,3 +111,24 @@ RTT: SDK saatinin yumuşatılmış girdi-ack RTT'si, yoksa ping ortalaması.
   cezası: RTO 200 ms + tek yön, sıra korunur), patlama penceresi, `kes(ms)`; yön başına bayt sayacı. Sayfa da vekilden
   açılır (aynı köken), gecikme yalnız oyun trafiğine.
 - `npm run ag:matris` (N0-N6, kopma 2/10/25 sn, üçüncü bağlantı, AFK, 60 sn bekleme), `npm run ag:ekran` (DPR 2).
+- D8: `npm run ag:matris -- N2 --tekrar=10 --port=2631 --cikti=…` (profil başına N maç, paralel koşu için ayrı port ve çıktı);
+  lobi "Hızlı maç" sekmesiyle açıldığı için otomasyon önce "Oda kodu" sekmesine tıklar (D7 sonrası bozulmuştu, düzeltildi).
+
+## 12. D8: protokol 6, Takım Ultisi, seyirci odası
+- **Protokol 6:** dünya şemasına `takimEnerjisi0/1` (f32, önceden yer tutucu 0) ve `takimUlti0/1` (u8) bağlandı; wire hash
+  bunları kapsar (sunucu f32 yuvarlamasıyla aynı Dunya). Oda şemasına `izleKod` (oda modunda ev sahibinin yayın kodu).
+  Girdi şeması değişmedi: Takım Ultisi `yuva = 3` (tuş 4) + `atesle`.
+- **Seyirci odası `izle`** (`src/sunucu/odalar/IzleOdasi.ts`, `defineRoom(IzleOdasi).filterBy(["kod"])`): yayın kodu başına
+  tek oda, `maxClients = 50` (`SEYIRCI_SINIRI`); dolu odanın yanına ikincisi açılmaz (onCreate 409 "dolu"). Katılma
+  `{ v, kod }` (`IzleKatilmaSema`), **bilet yok, misafir serbest**, Origin + sürüm denetlenir. Seyircinin her mesajı
+  `onMessage("*")` ile yok sayılır (girdi şeması yok). Durum `IzleSema`: faz, `kod` (yalnız bekleme fazında dolu; maç başlayınca
+  boş), maç no, oyuncular (ad, takım kodu, bağlı, bot; **oturum kimliği / ack yok**), dünya (aynı `DunyaSema`), son maç skoru.
+  Altın/başarım bilgisi seyirciye gitmez.
+- **Yansıtma:** maç odası her yamasında (`yamaYay`: 20 Hz, adım hizalı) yayına bağlı seyirci odasının durumunu `dunyayiYaz` ile
+  günceller ve `broadcastPatch` yapar; olay paketleri hash alanları atılarak iletilir. Seyirci istemcisi (`IzleAgi`) girdi
+  yollamaz, **iki topacı da 100 ms geriden** ara değerler (rakip modeliyle aynı), geri kalanı son sunucu durumundan.
+- **Yayın kodu** (`src/sunucu/izleKayit.ts`, süreç içi): ev sahibinin ilk oda kodu; aynı ev sahibi yeni oda açınca yayın yeni
+  odaya taşınır (OBS bağlantısı değişmez), arada seyirci "Sıradaki maç bekleniyor" + son skor görür. Kaynaksız yayın 6 saat
+  hatırlanır; oda kodu üreticisi yayın kodlarını yeniden vermez. `GET /api/izle/:kod` oda ya da yayın kodunu yayın koduna çözer.
+- Ölçüm: oda adımı (`odaAdimSureleri`, sim + yama + seyirci yansıtma) p50/p95/p99 ve seyirci sayısı `[olcum …]` günlük satırında
+  ve `/api/olcum`'da. D8 sayıları: `docs/production/raporlar/D8.md`.

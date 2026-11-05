@@ -12,8 +12,12 @@ import { join } from "node:path";
 import { AgSimulatoru, type AgProfili, simetrik } from "./ag-simulatoru.ts";
 import { TABAN, bekle, bekleKosul, ev, hesapHazirla, istatistik, istemciAc, kayitDogrula, odayiKur, ozetAl, tikla, type Istemci } from "./ag-ortak.ts";
 
-const CIKTI = "docs/production/raporlar/D4-ag-matris.json";
 const arg = process.argv.slice(2);
+const argDeger = (ad: string): string | undefined => arg.find((a) => a.startsWith(`--${ad}=`))?.slice(ad.length + 3);
+/** D8: --cikti=yol (paralel koşu için ayrı dosya), --tekrar=N (profil başına N maç), --port=taban (A taban, B taban+1) */
+const CIKTI = argDeger("cikti") ?? "docs/production/raporlar/D4-ag-matris.json";
+const TEKRAR = Math.max(1, Number(argDeger("tekrar") ?? 1) | 0);
+const PORT = Number(argDeger("port") ?? 2611) | 0;
 const secili = arg.filter((a) => /^N\d$/.test(a));
 /** --deney=40: istemcide 8 < fark ≤ 40 br yumuşak (atlama eşiği deneyi); sonuçlar "<profil>-d40" anahtarında */
 const deney = Number((arg.find((a) => a.startsWith("--deney=")) ?? "").slice(8)) || 0;
@@ -57,16 +61,18 @@ async function macBitti(s: Istemci, ms: number): Promise<void> {
   await bekleKosul(s.sayfa, `(() => { const ag = window.__lobi && window.__lobi.agMaci; return !!(ag && ag.sunucu && ag.sunucu.mac.macSonucu); })()`, ms);
 }
 
-async function profilKos(ad: string): Promise<void> {
+async function profilKos(ad: string, sira = 0): Promise<void> {
   const p = PROFILLER[ad]!;
-  const vA = new AgSimulatoru(2611, TABAN, p.a);
-  const vB = new AgSimulatoru(2612, TABAN, p.b);
+  const vA = new AgSimulatoru(PORT, TABAN, p.a);
+  const vB = new AgSimulatoru(PORT + 1, TABAN, p.b);
   await vA.baslat(); await vB.baslat();
   const a = await istemciAc("A");
   const b = await istemciAc("B");
   const t0 = Date.now();
   try {
-    const kod = await odayiKur(a, b, 2611, 2612, `oto=kenar&debug&cizim=yok&takim=0${ekDeney}`, `oto=dolas&debug&cizim=yok&takim=1${ekDeney}`);
+    // D8: botlar yetenek kullanır (Takım Ultisi dahil); kip sırayla değişir
+    const kipler = [["kenar", "dolas"], ["dolas", "dayaniklilik"], ["dayaniklilik", "kenar"]][sira % 3]!;
+    const kod = await odayiKur(a, b, PORT, PORT + 1, `oto=${kipler[0]}&debug&cizim=yok&takim=0${ekDeney}`, `oto=${kipler[1]}&debug&cizim=yok&takim=1${ekDeney}`);
     console.log(`[${ad}] oda ${kod}, maç başlıyor (${p.not})`);
     await bekleKosul(a.sayfa, `window.__lobi.asama === "mac"`, 30000);
     const macBas = Date.now();
@@ -84,7 +90,7 @@ async function profilKos(ad: string): Promise<void> {
       A: istemciSatiri(oa.olcum as Record<string, any>, ka), B: istemciSatiri(ob.olcum as Record<string, any>, kb),
       sunucu: so, bantA, bantB, konsolHata: [...a.hatalar, ...b.hatalar], adimA: oa.adim, adimB: ob.adim,
     };
-    sonuclar[deney ? `${ad}-d${deney}` : ad] = satir;
+    sonuclar[`${deney ? `${ad}-d${deney}` : ad}${TEKRAR > 1 ? `#${sira + 1}` : ""}`] = satir;
     kaydet();
     const A = satir.A as Record<string, any>;
     const B = satir.B as Record<string, any>;
@@ -201,6 +207,8 @@ async function beklemeKos(): Promise<void> {
   try {
     await hesapHazirla(a, null);
     await a.sayfa.goto(`${TABAN}?ekran=lobi&debug`);
+    await bekleKosul(a.sayfa, `!!document.querySelector("[data-mod=oda]")`, 20000);
+    await tikla(a.sayfa, "[data-mod=oda]");
     await bekleKosul(a.sayfa, `!!document.querySelector("[data-eylem=oda-ac]")`, 20000);
     await tikla(a.sayfa, "[data-eylem=oda-ac]");
     await bekleKosul(a.sayfa, `!!document.querySelector("[data-kod]")`, 20000);
@@ -217,7 +225,15 @@ async function beklemeKos(): Promise<void> {
 }
 
 const hepsi = !secili.length && !arg.includes("--kopma") && !arg.includes("--ucuncu") && !arg.includes("--bekleme");
-for (const ad of hepsi ? Object.keys(PROFILLER) : secili) await profilKos(ad);
+for (const ad of hepsi ? Object.keys(PROFILLER) : secili) {
+  for (let k = 0; k < TEKRAR; k++) {
+    try { await profilKos(ad, k); } catch (e) {
+      sonuclar[`${ad}#${k + 1}`] = { profil: ad, hata: String((e as Error)?.message ?? e).slice(0, 300) };
+      kaydet();
+      console.log(`[${ad} #${k + 1}] HATA`, e);
+    }
+  }
+}
 if (hepsi || arg.includes("--kopma")) await kopmaKos();
 if (hepsi || arg.includes("--ucuncu")) await ucuncuKos();
 if (hepsi || arg.includes("--bekleme")) await beklemeKos();

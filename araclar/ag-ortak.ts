@@ -61,11 +61,16 @@ export async function odayiKur(a: Istemci, b: Istemci, portA: number | null, por
   await hesapHazirla(a, portA);
   await hesapHazirla(b, portB);
   await a.sayfa.goto(adres(portA, ekA));
+  // D7 sonrası lobi "Hızlı maç" sekmesiyle açılır: önce "Oda kodu" sekmesi
+  await bekleKosul(a.sayfa, `!!document.querySelector("[data-eylem=oda-ac], [data-mod=oda]")`, 20000);
+  await ev(a.sayfa, `(() => { if (!document.querySelector("[data-eylem=oda-ac]")) document.querySelector("[data-mod=oda]").click(); return 1; })()`);
   await bekleKosul(a.sayfa, `!!document.querySelector("[data-eylem=oda-ac]")`, 20000);
   await tikla(a.sayfa, "[data-eylem=oda-ac]");
   await bekleKosul(a.sayfa, `!!document.querySelector("[data-kod]")`, 20000);
   const kod = await ev<string>(a.sayfa, `document.querySelector("[data-kod]").dataset.kod`);
   await b.sayfa.goto(`${adres(portB, ekB)}#oda=${kod}`);
+  await bekleKosul(b.sayfa, `!!document.querySelector("[data-eylem=katil], [data-mod=oda]")`, 20000);
+  await ev(b.sayfa, `(() => { if (!document.querySelector("[data-eylem=katil]")) document.querySelector("[data-mod=oda]").click(); return 1; })()`);
   await bekleKosul(b.sayfa, `!!document.querySelector("[data-eylem=katil]")`, 20000);
   await tikla(b.sayfa, "[data-eylem=katil]");
   for (const s of [a, b]) await bekleKosul(s.sayfa, `!!document.querySelector("[data-eylem=hazir]")`, 20000);

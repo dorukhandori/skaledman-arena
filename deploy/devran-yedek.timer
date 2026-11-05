@@ -1,0 +1,11 @@
+# Her gün 04:30 Türkiye saati (UTC 01:30; günlük sayaçlar 04:00'da sıfırlanır, yedek ondan sonra).
+[Unit]
+Description=Devran SQLite günlük yedeği
+
+[Timer]
+OnCalendar=*-*-* 01:30:00 UTC
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target
