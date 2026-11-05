@@ -17,3 +17,22 @@ export const KAMERA = {
   /** pixel görünüm: dünya bu çözünürlükte (0,5 → 480×270) önbelleğe çizilir, `nearest` büyütülür */
   pikselCozunurluk: 0.5,
 } as const;
+
+/** İzdüşüm parametreleri (Sahne kipine göre): k = z basıklığı, B = yakınlık, my = çanak merkezinin dünya y'si. */
+export interface Izdusum { k: number; B: number; my: number }
+const MX = 480;
+const MY = 270;
+
+/** Sim (x, z) → mantıksal ekran (sarsıntı/zoom darbesi hariç). Saf işlev: test edilir (test/kamera.test.ts). */
+export function simdenEkrana(p: Izdusum, x: number, z: number): { x: number; y: number } {
+  const wx = MX + x;
+  const wy = p.my + z * p.k;
+  return { x: MX + (wx - MX) * p.B, y: MY + (wy - MY) * p.B };
+}
+
+/** Mantıksal ekran → sim (zemin düzlemi; fare nişanı: z = ekran / zOranı). simdenEkrana'nın tersi. */
+export function ekrandanSime(p: Izdusum, lx: number, ly: number): { x: number; z: number } {
+  const wx = MX + (lx - MX) / p.B;
+  const wy = MY + (ly - MY) / p.B;
+  return { x: wx - MX, z: (wy - p.my) / p.k };
+}

@@ -6,7 +6,7 @@ import { SusRastgele } from "./SusRastgele.ts";
 import { type TakimIsareti, TopacGorsel } from "./TopacGorsel.ts";
 import { TopacYandan } from "./TopacYandan.ts";
 import type { ArenaCizimi, TopacCizimi } from "./cizimTurleri.ts";
-import { KAMERA, type KameraKipi } from "./kamera.ts";
+import { KAMERA, type KameraKipi, ekrandanSime } from "./kamera.ts";
 
 /** Mantıksal tuval 960×540; arena merkezi (480, 270). 1 sim birimi = 1 mantıksal piksel (axiom karar 3). */
 export const SAHNE = {
@@ -137,12 +137,7 @@ export class Sahne {
 
   /** Tuval pikseli (CSS) → sim noktası (zemin düzlemi; ters dönüşüm: z = (ekran − merkez) / zOrani). */
   ekrandanDunyaya(px: number, py: number): { x: number; z: number } {
-    const lx = (px - this.kok.x) / this.olcek;
-    const ly = (py - this.kok.y) / this.olcek;
-    const B = this.yakinlik;
-    const wx = SAHNE.merkezX + (lx - SAHNE.merkezX) / B;
-    const wy = SAHNE.merkezY + (ly - SAHNE.merkezY) / B;
-    return { x: wx - SAHNE.merkezX, z: (wy - this.my) / this.k };
+    return ekrandanSime({ k: this.k, B: this.yakinlik, my: this.my }, (px - this.kok.x) / this.olcek, (py - this.kok.y) / this.olcek);
   }
 
   /** Mantıksal çerçevenin CSS konumu (DOM HUD hizalaması için). */

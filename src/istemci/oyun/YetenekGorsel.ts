@@ -83,7 +83,7 @@ export class YetenekGorsel {
     sahne.ustDuzlem.addChild(this.ust);
     sahne.efektKatmani.addChild(this.ustEkran);
     sahne.ekranKatmani.addChild(this.kenar);
-    this.ipucu = new Text({ text: "Sekme: Space", style: { fontFamily: "system-ui, sans-serif", fontSize: 11, fontWeight: "800", fill: 0xffffff, stroke: { color: 0x050d10, width: 3 } } });
+    this.ipucu = new Text({ text: "Sekme: Space", style: { fontFamily: sahne.hibrit ? "m5x7, system-ui, sans-serif" : "system-ui, sans-serif", fontSize: sahne.hibrit ? 16 : 11, fontWeight: sahne.hibrit ? "400" : "800", fill: 0xffffff, stroke: { color: 0x050d10, width: 3 } } });
     this.ipucu.anchor.set(0.5, 0);
     this.ipucu.visible = false;
     // metin pixel önbelleğine girmez (okunurluk): ekran katmanında, dünya → ekran çevrimiyle

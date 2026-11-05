@@ -176,7 +176,7 @@ export class HibritArena implements ArenaCizimi {
         const i0 = Math.round(cx + Math.cos(a) * rx);
         const j0 = Math.round(cy + Math.sin(a) * ry - yuk) + 2;
         const ton = Math.max(0, Math.min(KALABALIK.length - 1, Math.round(rng.aralik(1.2, 5.6) - uzak * 2)));
-        const giysi = rng.sayi() < 0.12 ? [0x5a2a2a, 0x2a3a5a, 0x4a4a2a][Math.floor(rng.sayi() * 3)]! : KALABALIK[Math.max(0, ton - 1)]!;
+        const giysi = rng.sayi() < 0.06 ? [0x4a2a2c, 0x2a3048, 0x3e3a28][Math.floor(rng.sayi() * 3)]! : KALABALIK[Math.max(0, ton - 1)]!;
         const bas = KALABALIK[ton]!;
         for (let dj = 0; dj < 4; dj++) for (let di = -2; di <= 2; di++) if (!(dj === 0 && Math.abs(di) === 2)) koy(i0 + di, j0 + dj, giysi);
         for (let dj = -3; dj < 0; dj++) for (let di = -1; di <= 1; di++) koy(i0 + di, j0 + dj, bas);
