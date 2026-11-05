@@ -19,6 +19,7 @@ import { parcaPikselIkonu, pikselTopac } from "./pikselTopac.ts";
 import { pergelKur } from "../bilgic/Pergel.ts";
 import { ikonCizeriBagla } from "../atolye3d/ikonOnbellek.ts";
 import { sonMacDurumu } from "../bilgic/secim.ts";
+import { dokunmatikMi } from "../mobil/cihaz.ts";
 
 // Atölye (D6, US-2.1; ux § 3.2 ana ekran) · ATOLYE3D: referans 03'ün birebir düzeni (docs/design/beyblade/gorunum/03-atolye.jpg).
 // Sol: parça ızgarası (4 ikonlu sekme ÇEKİRDEK / GÖVDE / DİSK / UÇ, 4 sütunlu ikon ızgarası, takılı parça turuncu çerçeve;
@@ -610,7 +611,8 @@ class AtolyeEkrani {
       const t = el("button", "k-dugme kucuk", fs, "Temizle");
       t.addEventListener("click", () => { this.filtre = { element: "", koken: "", tip: "", sahiplik: "hepsi" }; this.solCiz(); });
     }
-    el("span", "ipucu k-e16", fs, "Üstüne gel: önizle").setAttribute("aria-hidden", "true");
+    // MOBIL-1: dokunmatikte üzerine gelme yok; dokunuş doğrudan takar (uzun bas: parça adı ipucu)
+    el("span", "ipucu k-e16", fs, dokunmatikMi() ? "Dokun: tak · uzun bas: ad" : "Üstüne gel: önizle").setAttribute("aria-hidden", "true");
     const f = el("div", "filtre", s);
     f.hidden = !this.filtreAcik;
     const secim = (ad: string, anahtar: keyof Filtre, secenekler: [string, string][]) => {

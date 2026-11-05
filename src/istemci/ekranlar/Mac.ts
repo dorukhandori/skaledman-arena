@@ -95,7 +95,7 @@ const STIL = `
 .ms .ac[data-altin] { outline:none; cursor:default; }
 .ms .ac[data-altin] ul { position:absolute; left:0; top:100%; z-index:5; display:none; min-width:220px; margin:4px 0 0; padding:8px 10px; list-style:none; text-align:left;
   background:var(--panel); box-shadow:inset 0 0 0 2px var(--bronz), 0 4px 0 var(--golge); color:var(--ink); font-size:32px; }
-.ms .ac[data-altin]:hover ul, .ms .ac[data-altin]:focus-within ul, .ms .ac[data-altin]:focus ul { display:block; }
+.ms .ac[data-altin]:hover ul, .ms .ac[data-altin]:focus-within ul, .ms .ac[data-altin]:focus ul, .ms .ac[data-altin].acik ul { display:block; }
 .ms .ac[data-altin] .dokum { color:var(--soluk); font-size:32px; text-transform:uppercase; }
 .ms .ac ul li { display:flex; justify-content:space-between; gap:12px; } .ms .ac ul li.c { color:#ffb070; }
 .ms .ck0 { padding:8px 8px; background:var(--panel-0); box-shadow:inset 0 0 0 2px var(--bronz), inset 0 0 0 4px var(--harc); }
@@ -953,6 +953,8 @@ export class MacEkrani {
     altin.dataset["altin"] = "1";
     altin.tabIndex = 0; // KM-6: gelir dökümü ikinci katta (odak / üzerine gel)
     altin.setAttribute("aria-label", "Altın: döküm için odaklan");
+    // MOBIL-1: üzerine gelme olmayan cihazda dokunuş dökümü aç/kapa yapar
+    altin.addEventListener("click", () => altin.classList.toggle("acik"));
     const cek = el("div", "ac ck0 pah satir", od);
     cek.dataset["odul"] = "1";
     const bas = el("div", "bsr satir", od);

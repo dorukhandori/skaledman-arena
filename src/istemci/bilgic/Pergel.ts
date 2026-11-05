@@ -1,6 +1,7 @@
 import { ayarlariOku, bitenMacSayisi } from "../oyun/Ayarlar.ts";
 import { el, kalin } from "../ekranlar/arayuz.ts";
 import { type Ipucu, IPUCLARI } from "./ipuclari.ts";
+import { dokunmatikMi } from "../mobil/cihaz.ts";
 import { kayitOku, kayitYaz, oturumOkuPergel, oturumYazPergel } from "./depo.ts";
 import {
   GEZINTI_BEKLEME_MS, ILK_BELIRME_MS, type AtolyeDurumu,
@@ -101,7 +102,8 @@ export function pergelKur(g: PergelGirdi): () => void {
   balon.setAttribute("aria-atomic", "true");
   const metin = el("p", "p-metin", balon);
   const dg = el("div", "p-dugmeler", balon);
-  el("span", "p-kisayol", dg, "H: başka ipucu");
+  // MOBIL-1: klavye kısayolu dokunmatikte yok; rozete dokunmak aynı işi görür
+  el("span", "p-kisayol", dg, dokunmatikMi() ? "Rozete dokun: başka ipucu" : "H: başka ipucu");
   const tamam = el("button", "k-dugme kucuk p-dugme", dg, "Tamam");
   tamam.type = "button";
   img.src = "/bilgic/anlatiyor.png";

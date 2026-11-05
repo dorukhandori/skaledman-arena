@@ -12,6 +12,7 @@ import { pikselTopac, topac3bIkonu } from "./pikselTopac.ts";
 import { ikonGozle } from "../atolye3d/ikonOnbellek.ts";
 import type { TopacProfili } from "../../paylasilan/veri/profil.ts";
 import { aramaCanagi, oynaYayi, sureHalkasi, vsZemini } from "./lobiCizim.ts";
+import { dokunmatikMi } from "../mobil/cihaz.ts";
 
 // Lobi (D4, ux § 3.3) · GU-08 + GU-14 menü dili v2 "Kuşak Taşı" (maketler docs/art/maketler/menu-v2/b-oyna, b-lobi,
 // b-ara0..2, b-vs, b-takim, b-oda). İşlev aynı: Oda aç (kod + Kodu kopyala + Bağlantıyı kopyala `#oda=ABCDEFGH`, QR yer
@@ -358,10 +359,15 @@ class LobiEkrani {
     alan.setAttribute("aria-label", "Oda kodu");
     alan.autocomplete = "off";
     alan.spellcheck = false;
+    // MOBIL-1: mobil klavye büyük harfle açılır, öneri/düzeltme yok, Enter tuşu "Git"
+    alan.inputMode = "text";
+    alan.setAttribute("autocapitalize", "characters");
+    alan.setAttribute("autocorrect", "off");
+    alan.enterKeyHint = "go";
     const hash = location.hash.startsWith("#oda=") ? odaKoduCoz(location.hash) : null;
     if (hash) alan.value = odaKoduBicimle(hash);
     const satir = el("div", "lb-katil-satir", p);
-    el("span", "k-e16 k-soluk k-buyuk", satir, "Yapıştır: Ctrl+V");
+    el("span", "k-e16 k-soluk k-buyuk", satir, dokunmatikMi() ? "Yapıştır: alana uzun bas" : "Yapıştır: Ctrl+V");
     const katB = dugme(satir, hash ? "ana kisa yazi20" : "orta", "Katıl", "katil");
     const ciz = () => {
       const i = alan.value.indexOf("#oda=");

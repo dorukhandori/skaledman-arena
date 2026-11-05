@@ -1,4 +1,5 @@
 import type { HisAyarlari } from "./Efektler.ts";
+import { dokunmatikMi } from "../mobil/cihaz.ts";
 
 // Ayarlar (ux § 6.2 erişilebilirlik + § 1.3 nişan + ses). Yalnız bu tarayıcı (localStorage); oturum açılınca
 // sunucu profili (D5). İlk açılışta `prefers-reduced-motion` açıksa efektler "Azaltılmış" ön ayarıyla başlar.
@@ -25,7 +26,8 @@ export const AYAR_SECENEKLERI: { [K in keyof OyunAyarlari]: { ad: string; secene
   hitstop: { ad: "Vuruş duraklaması", secenekler: [{ deger: "tam", ad: "Tam" }, { deger: "yari", ad: "Yarı" }, { deger: "kapali", ad: "Kapalı" }] },
   yavasZoom: { ad: "Yavaş çekim ve zoom", secenekler: [{ deger: "acik", ad: "Açık" }, { deger: "kapali", ad: "Kapalı" }] },
   parcacik: { ad: "Parçacık yoğunluğu", secenekler: [{ deger: "tam", ad: "Tam" }, { deger: "az", ad: "Az" }] },
-  nisan: { ad: "Nişan", secenekler: [{ deger: "fare", ad: "Fare" }, { deger: "hareket", ad: "Hareket yönü" }] },
+  // MOBIL-1: dokunmatikte "fare" değeri oto-nişan (en yakın rakip + sürükleyerek ezme) demek; değer aynı, ad farklı
+  nisan: { ad: "Nişan", secenekler: [{ deger: "fare", ad: dokunmatikMi() ? "Oto" : "Fare" }, { deger: "hareket", ad: "Hareket yönü" }] },
   ses: { ad: "Ses (M)", secenekler: [{ deger: "acik", ad: "Açık" }, { deger: "kapali", ad: "Kapalı" }] },
   kontrast: { ad: "Yüksek kontrast HUD", secenekler: [{ deger: "kapali", ad: "Kapalı" }, { deger: "acik", ad: "Açık" }] },
   duzGorunum: { ad: "Düz görünüm (sonraki maç)", secenekler: [{ deger: "kapali", ad: "Kapalı" }, { deger: "acik", ad: "Açık" }] },
