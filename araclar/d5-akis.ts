@@ -196,8 +196,11 @@ try {
 
   // 8. A: OYNA → Lobi → Oda aç (otomatik oynanış için ?oto)
   await tikla(a, "[data-eylem=oyna]");
-  await bekleKosul(a, `!!document.querySelector("[data-eylem=oda-ac]")`, 20000);
+  // D7+ (GU-08): Oyna varsayılanı Hızlı maç; oda için sol sütunda "Oda kodu" modu seçilir
+  await bekleKosul(a, `!!document.querySelector("[data-mod=oda]")`, 20000);
   await git(a, "?ekran=lobi&oto=kenar");
+  await bekleKosul(a, `!!document.querySelector("[data-mod=oda]")`, 20000);
+  await tikla(a, "[data-mod=oda]");
   await bekleKosul(a, `!!document.querySelector("[data-eylem=oda-ac]")`, 20000);
   await goruntu(a, "lobi");
   await tikla(a, "[data-eylem=oda-ac]");
