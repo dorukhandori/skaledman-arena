@@ -72,15 +72,15 @@ const IKON = [
 const IKON_BIRIM: Record<Tur, number> = { govde: 1.5, disk: 1.45, uc: 0.5, cekirdek: 0.42 };
 const IKON_DY: Record<Tur, number> = { govde: 11, disk: 8, uc: 9, cekirdek: 18 };
 
-type Tur = "govde" | "disk" | "uc" | "cekirdek";
+export type Tur = "govde" | "disk" | "uc" | "cekirdek";
 type Sinif = "boya" | "boya2" | "metal" | "koyu" | "altin" | "kubbe" | "cerceve" | "lastik" | "beyaz" | "amblem";
 const SINIF_AD: Sinif[] = ["boya", "boya", "boya2", "metal", "koyu", "altin", "kubbe", "cerceve", "lastik", "beyaz", "amblem"];
 /** GU-C: Çekirdek amblemi (pişirmede üst yüze basılır; render sınıfı değil) */
 const AMBLEM_KOD = 10;
-const ELEMENTLER: ElementAdi[] = ["kor", "kasirga", "simsek", "girdap", "kaya", "don"];
+export const ELEMENTLER: ElementAdi[] = ["kor", "kasirga", "simsek", "girdap", "kaya", "don"];
 
-interface Parca3B { tur: Tur; simetri: number; kiral?: boolean; profil?: number[][]; R0?: number; [k: string]: unknown }
-interface KatalogParca { id: string; ad: string; tur: Tur; element: ElementAdi | null; koken?: KokenAdi; kanat?: number; yukseklik?: number }
+export interface Parca3B { tur: Tur; simetri: number; kiral?: boolean; profil?: number[][]; R0?: number; [k: string]: unknown }
+export interface KatalogParca { id: string; ad: string; tur: Tur; element: ElementAdi | null; koken?: KokenAdi; kanat?: number; yukseklik?: number }
 
 // ------------------------------------------------------------------ palet
 
@@ -106,9 +106,9 @@ function kokenRampa(k: KokenAdi): Rampa {
   return [renkKaristir(r.ikinci, 0x000000, 0.62), renkKaristir(r.ikinci, 0x000000, 0.3), r.ikinci, r.isik, renkKaristir(r.isik, 0xffffff, 0.6)];
 }
 
-interface Boya { ad: string; element: ElementAdi | null; koken: KokenAdi | null }
+export interface Boya { ad: string; element: ElementAdi | null; koken: KokenAdi | null }
 
-function rampa(s: Sinif, b: Boya): Rampa {
+export function rampa(s: Sinif, b: Boya): Rampa {
   const e = b.element ?? "kor";
   switch (s) {
     case "boya": return elementRampa(e);
@@ -133,6 +133,8 @@ interface Katman {
   n: Float32Array; // normal xyz
   d: Float32Array; // kamera derinliği (birim)
   px: Float32Array; // dünya konumu xyz
+  /** Mac hattı (_t geçişi): doku albedosu parlaklığı 0..1; yoksa ton yalnız ışıktan */
+  t?: Float32Array;
 }
 
 async function oku16(dosya: string): Promise<{ v: Uint16Array; w: number; h: number }> {
@@ -154,13 +156,15 @@ function kameraVektor(g: Gorus): { C: number[]; d: number[]; u: number[] } {
 async function katmanOku(onEk: string, g: Gorus, ss: number): Promise<Katman> {
   const N = await oku16(`${onEk}_n.png`);
   const V = await oku16(`${onEk}_v.png`);
+  const T = existsSync(`${onEk}_t.png`) ? await oku16(`${onEk}_t.png`) : null;
   const W = N.w / ss, H = N.h / ss;
   const k: Katman = { w: W, h: H, a: new Float32Array(W * H), c: new Uint8Array(W * H), n: new Float32Array(W * H * 3), d: new Float32Array(W * H), px: new Float32Array(W * H * 3) };
+  if (T) k.t = new Float32Array(W * H);
   const kam = kameraVektor(g);
   const say = new Uint8Array(16);
   for (let y = 0; y < H; y++) {
     for (let x = 0; x < W; x++) {
-      let a = 0, nx = 0, ny = 0, nz = 0, dmin = 1e9;
+      let a = 0, nx = 0, ny = 0, nz = 0, dmin = 1e9, tl = 0;
       say.fill(0);
       for (let sy = 0; sy < ss; sy++) {
         for (let sx = 0; sx < ss; sx++) {
@@ -175,6 +179,7 @@ async function katmanOku(onEk: string, g: Gorus, ss: number): Promise<Katman> {
           say[c] = say[c]! + 1;
           const d = 120 + (V.v[i + 1]! / 65535) * 160;
           if (d < dmin) dmin = d;
+          if (T) tl += (T.v[i]! * 0.3 + T.v[i + 1]! * 0.59 + T.v[i + 2]! * 0.11) / 65535;
         }
       }
       const j = y * W + x;
@@ -186,6 +191,7 @@ async function katmanOku(onEk: string, g: Gorus, ss: number): Promise<Katman> {
       const u = Math.hypot(nx, ny, nz) || 1;
       k.n[j * 3] = nx / u; k.n[j * 3 + 1] = ny / u; k.n[j * 3 + 2] = nz / u;
       k.d[j] = dmin;
+      if (k.t) k.t[j] = tl / a;
       const sxw = (x + 0.5 - W / 2) * g.birim;
       const syw = (H / 2 - (y + 0.5)) * g.birim;
       const t = dmin - 200;
@@ -204,6 +210,8 @@ const bayer = (x: number, y: number): number => BAYER[(y & 3) * 4 + (x & 3)]!;
 
 /** Sabit nokta ışık: sol üst, öne doğru (referans 07: parlak sol üst, koyu sağ alt). */
 // GU-C: eşikler düştü: üst yüz açık tonda (referans 07'de üst yüz parlak turuncu, yan bant koyu)
+/** Mac hattı: doku albedosu tonu bu üsle modüle eder (sınıf medyanına oran, sınırlı); oluk/kenar el boyası okunur */
+export const ALBEDO = { us: 0.8, enAz: 0.55, enCok: 1.4 };
 export const ISIK = { konum: [-75, -60, 120], ortam: 0.18, esik: [0.5, 0.71], parlamaUs: 26, parlamaEsik: 0.62, dither: 0.025 };
 const PARLAK: Partial<Record<Sinif, number>> = { boya: 1, metal: 1.15, altin: 1.1, kubbe: 1.2, cerceve: 1, beyaz: 1 };
 
@@ -293,6 +301,15 @@ function golgele(k: Katman, yukselti: number, icCizgi = true, amblem: string[] |
   const deger = new Float32Array(w * h);
   const e = (yukselti * Math.PI) / 180;
   const Vx = 0, Vy = -Math.cos(e), Vz = Math.sin(e);
+  const tMed = new Float32Array(16);
+  if (k.t) {
+    for (let c = 1; c < 16; c++) {
+      const v: number[] = [];
+      for (let j = 0; j < w * h; j++) if (k.a[j]! >= 0.5 && k.c[j] === c) v.push(k.t[j]!);
+      v.sort((a, b) => a - b);
+      tMed[c] = v.length ? Math.max(0.02, v[v.length >> 1]!) : 1;
+    }
+  }
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
       const j = y * w + x;
@@ -305,6 +322,7 @@ function golgele(k: Katman, yukselti: number, icCizgi = true, amblem: string[] |
       lx /= lu; ly /= lu; lz /= lu;
       const dif = Math.max(0, nx * lx + ny * ly + nz * lz);
       let v = ISIK.ortam + (1 - ISIK.ortam) * dif;
+      if (k.t) v *= Math.pow(Math.min(ALBEDO.enCok, Math.max(ALBEDO.enAz, k.t[j]! / tMed[c]!)), ALBEDO.us);
       v += (bayer(x, y) - 0.5) * 2 * ISIK.dither;
       let ton = v < ISIK.esik[0]! ? 1 : v < ISIK.esik[1]! ? 2 : 3;
       const p = PARLAK[s];
@@ -377,7 +395,7 @@ function golgele(k: Katman, yukselti: number, icCizgi = true, amblem: string[] |
   return out;
 }
 
-type RGBA = Uint8ClampedArray;
+export type RGBA = Uint8ClampedArray;
 
 function renklendir(kod: Uint8Array, boya: Boya): RGBA {
   const out = new Uint8ClampedArray(kod.length * 4);
@@ -452,7 +470,7 @@ function bulaniklastir(kareler: RGBA[], palet: number[], w: number, h: number, o
 }
 
 /** 1 px dış çizgi (4 komşulu): saydam pikselin opak komşusu varsa çizgi rengi. */
-function disCizgi(img: RGBA, w: number, h: number, renk: number): RGBA {
+export function disCizgi(img: RGBA, w: number, h: number, renk: number): RGBA {
   const out = img.slice();
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
@@ -472,7 +490,7 @@ function disCizgi(img: RGBA, w: number, h: number, renk: number): RGBA {
 
 // ------------------------------------------------------------------ parça pişirme
 
-interface ParcaMeta {
+export interface ParcaMeta {
   tur: Tur;
   simetri: number;
   periyotDerece: number;
@@ -488,7 +506,7 @@ interface ParcaMeta {
   bayt: number;
 }
 
-function anaSinif(t: Tur): Sinif {
+export function anaSinif(t: Tur): Sinif {
   return t === "govde" ? "boya" : t === "disk" ? "metal" : t === "uc" ? "koyu" : "cerceve";
 }
 
@@ -498,7 +516,7 @@ function paletBirlesik(siniflar: Set<number>, boya: Boya): number[] {
   return [...p];
 }
 
-async function pngYaz(dosya: string, rgba: RGBA, w: number, h: number): Promise<number> {
+export async function pngYaz(dosya: string, rgba: RGBA, w: number, h: number): Promise<number> {
   mkdirSync(dirname(dosya), { recursive: true });
   const buf = await sharp(Buffer.from(rgba.buffer, rgba.byteOffset, rgba.byteLength), { raw: { width: w, height: h, channels: 4 } })
     .png({ palette: true, colours: 256, dither: 0, effort: 10, compressionLevel: 9 })
@@ -507,7 +525,7 @@ async function pngYaz(dosya: string, rgba: RGBA, w: number, h: number): Promise<
   return buf.length;
 }
 
-function yapistir(hedef: RGBA, hw: number, kaynak: RGBA, kw: number, kh: number, ox: number, oy: number): void {
+export function yapistir(hedef: RGBA, hw: number, kaynak: RGBA, kw: number, kh: number, ox: number, oy: number): void {
   for (let y = 0; y < kh; y++) {
     for (let x = 0; x < kw; x++) {
       const s = (y * kw + x) * 4;
@@ -518,7 +536,7 @@ function yapistir(hedef: RGBA, hw: number, kaynak: RGBA, kw: number, kh: number,
   }
 }
 
-function ustOlcu(spec: Parca3B): { ustZ: number; disYaricap: number } {
+export function ustOlcu(spec: Parca3B): { ustZ: number; disYaricap: number } {
   const prof = (spec.profil as number[][] | undefined) ?? [[0, 0]];
   const tor = spec.torna as number[][] | undefined;
   if (tor) return { ustZ: tor[tor.length - 1]![1]!, disYaricap: Math.max(...tor.map((t) => t[0]!)) };
@@ -526,7 +544,14 @@ function ustOlcu(spec: Parca3B): { ustZ: number; disYaricap: number } {
   return { ustZ: prof[prof.length - 1]![1]!, disYaricap: (spec.R0 ?? 0) + loblar.reduce((s, l) => s + Math.max(0, l.genlik), 0) };
 }
 
-async function parcaPisir(id: string, spec: Parca3B, kat: KatalogParca | undefined): Promise<{ meta: ParcaMeta; onizleme: Map<string, RGBA[][]> }> {
+export interface PisirSecenek {
+  /** ham render kökü (varsayılan .cache/topac-ham) */
+  ham?: string;
+  /** false: biçim A sayfalarını public/'e yazma (Mac hattı kareleri kendisi biçim B şeridi yapar) */
+  yaz?: boolean;
+}
+
+export async function parcaPisir(id: string, spec: Parca3B, kat: KatalogParca | undefined, sec: PisirSecenek = {}): Promise<{ meta: ParcaMeta; onizleme: Map<string, RGBA[][]> }> {
   const S = SANAT;
   const g: Gorus = { yukselti: S.yukselti, birim: S.birim, w: S.kareW, h: S.kareH, cx: S.capaX, cy: S.capaY };
   const yonler: ("s" | "l")[] = spec.kiral ? ["s", "l"] : ["s"];
@@ -549,7 +574,7 @@ async function parcaPisir(id: string, spec: Parca3B, kat: KatalogParca | undefin
     const ince: Uint8Array[] = [];
     const siniflar = new Set<number>();
     for (let k = 0; k < M; k++) {
-      const kat_ = await katmanOku(join(HAM, spec.tur, id, yon, String(k).padStart(2, "0")), g, S.superOrnek);
+      const kat_ = await katmanOku(join(sec.ham ?? HAM, spec.tur, id, yon, String(k).padStart(2, "0")), g, S.superOrnek);
       // Disk Gövde'nin altında gölgede: en açık ton 3 (vurgu yok) (referans 07'de Gövde altı koyu bant, gri "birikinti" değil)
       const kod = golgele(kat_, S.yukselti, true, spec.tur === "cekirdek" ? AMBLEMLER[kat?.element ?? "kor"] : null, spec.tur === "disk" ? 3 : 4);
       for (const v of kod) if (v) siniflar.add(v >> 3);
@@ -588,7 +613,7 @@ async function parcaPisir(id: string, spec: Parca3B, kat: KatalogParca | undefin
   }
   let bayt = 0;
   const ad = spec.tur === "govde" ? `${spec.tur}/${id}-{boya}.png` : `${spec.tur}/${id}.png`;
-  for (let bi = 0; bi < boyalar.length; bi++) {
+  for (let bi = 0; bi < boyalar.length && sec.yaz !== false; bi++) {
     bayt += await pngYaz(join(CIKTI, ad.replace("{boya}", boyalar[bi]!.ad)), sayfalar[bi]!, F * W, satirSayisi * H);
   }
   const o = ustOlcu(spec);
@@ -770,4 +795,4 @@ async function setLevhasi(sonuc: Map<string, { meta: ParcaMeta; onizleme: Map<st
   await sharp(Buffer.from(levha.buffer), { raw: { width: tw, height: th, channels: 4 } }).resize(tw * 3, th * 3, { kernel: "nearest" }).png().toFile(join(KOK, "docs/art/topac-parca-seti.png"));
 }
 
-await main();
+if (process.argv[1]?.endsWith("topac-uret.ts")) await main();

@@ -789,6 +789,42 @@
    "lisans": "CC0 (bizim)",
    "tarih": "2026-11-05",
    "durum": "entegre"
+  },
+  {
+   "ad": "topac.mac-katmanlar",
+   "dosya": "public/topac/<tur>/<parcaId>.json + <parcaId>-<keskin|bulanik|disk>-<s|l>[-<boya>].png (biçim B; liste veri/topac-gorsel.json bicimB)",
+   "olay": "Maç topaç katman sprite'ları, Mac hattı (Tripo modeli simetrik dilim; biçim A bulut sayfalarının önüne geçer)",
+   "kaynak": "kendi üretimimiz, yapay zekâ üretimi (Gemini gemini-3.1-flash-image konsept → Tripo image-to-model v3.1 → Blender 5.2 simetrik dilim + veri render → araclar/sanat/topac-mac.ts pişirici)",
+   "arac": "Gemini, Tripo (ücretli hizmet), Blender 5.2 (GPL; yalnız araç), sharp",
+   "lisans": "bizim (yapay zekâ çıktısı; hizmet koşullarına göre çıktı kullanıcıya ait)",
+   "yapayZeka": true,
+   "bayt": 268588,
+   "tarih": "2026-11-05",
+   "durum": "entegre (Parti 1: ok-govde, hafif-disk, duz-uc, kor-goktasi)"
+  },
+  {
+   "ad": "topac.mac-model",
+   "dosya": "public/topac/model/<parcaId>.glb (liste veri/topac-model.json glb)",
+   "olay": "Atölye 3B parça modeli (sınıf adlı malzemeler, toon gölgeleme çalışma zamanında); listede olmayan parça parametrik",
+   "kaynak": "kendi üretimimiz, yapay zekâ üretimi (aynı hat; Blender'da simetrik dilim + azaltma, doku yok)",
+   "arac": "Gemini, Tripo (ücretli hizmet), Blender 5.2 (GPL; yalnız araç)",
+   "lisans": "bizim (yapay zekâ çıktısı)",
+   "yapayZeka": true,
+   "bayt": 1459492,
+   "tarih": "2026-11-05",
+   "durum": "entegre (Parti 1)"
+  },
+  {
+   "ad": "topac.mac-ikon",
+   "dosya": "public/topac/ikon/<parcaId>-48.png, -24.png",
+   "olay": "Parça ikonu (Gemini 2B pixel art → anahtarla → 48/24 kuantize); menüler şu an Atölye 3B ikon önbelleğini kullanıyor, bu dosyalar bağlı değil",
+   "kaynak": "kendi üretimimiz, yapay zekâ üretimi (Gemini gemini-3.1-flash-image → araclar/sanat/anahtarla.py → topac-mac.ts)",
+   "arac": "Gemini, Pillow, sharp",
+   "lisans": "bizim (yapay zekâ çıktısı)",
+   "yapayZeka": true,
+   "bayt": 3885,
+   "tarih": "2026-11-05",
+   "durum": "varlık (bağlı değil)"
   }
  ],
  "kamera": {

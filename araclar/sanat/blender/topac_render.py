@@ -422,4 +422,5 @@ def main():
         json.dump(ozet, f, ensure_ascii=False, indent=1)
 
 
-main()
+if __name__ == "__main__":  # topac_glb_render.py yardımcıları içe aktarır
+    main()

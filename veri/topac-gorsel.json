@@ -22,7 +22,12 @@
   "govde",
   "cekirdek"
  ],
- "bicimB": [],
+ "bicimB": [
+  "ok-govde",
+  "hafif-disk",
+  "duz-uc",
+  "kor-goktasi"
+ ],
  "parcalar": {
   "ok-govde": {
    "tur": "govde",

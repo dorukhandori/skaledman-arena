@@ -1,0 +1,26 @@
+{
+ "set": {
+  "cekirdek": "kor-goktasi",
+  "govde": "ok-govde",
+  "disk": "hafif-disk",
+  "uc": "duz-uc"
+ },
+ "atlas": true,
+ "ilkTopac": {
+  "govde": null
+ },
+ "hesap": [
+  201,
+  200,
+  201,
+  200
+ ],
+ "glbIstek": [
+  "200 /topac/model/ok-govde.glb",
+  "200 /topac/model/duz-uc.glb",
+  "200 /topac/model/kor-goktasi.glb",
+  "200 /topac/model/hafif-disk.glb"
+ ],
+ "bicimBIstek": 23,
+ "hatalar": []
+}

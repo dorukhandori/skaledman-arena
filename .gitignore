@@ -21,3 +21,6 @@ docs/research/
 
 # Üretim ham dosyaları (Gemini/Tripo/Blender), depo dışı
 art-source/
+
+# Python bayt kodu (Blender betikleri içe aktarırken)
+__pycache__/

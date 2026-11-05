@@ -14,5 +14,6 @@ Ham dosyalar `art-source/` (depo dışı, `.gitignore`); oyuna giren çıktı `p
 | 4. Kare işleme | `render_ata.py` (Blender) | Normalize, element renginde kenar ışığı, 3/4 kamera; 24 kare (yükseliş/kükreme/döngü) ya da `yonler` modu (4 yön kontrolü) | yok |
 | 5. Piksel sayfa | `sayfala.py` | 176 px hücre, ortak 40 renk palet, 1 px koyu kontur, 6×4 ızgara + json | yok |
 | Pano | `pano2.py` | Gözle kontrol için kontak sayfası | yok |
+| Topaç parçaları | `topac-mac.ts` (+ `blender/topac_glb_render.py`) | Tripo GLB'yi eksene çevirir, 360/n dilimden simetrileştirir, `topac-uret.ts` pişiricisiyle biçim B şeritleri, Atölye GLB'si (`public/topac/model/`), 48/24 ikon, kontakt levha; `bicimB` ve `glb` listelerini günceller. Parça ayarı dosyadaki `MAC` tablosunda. Kayıt `docs/art/topac-uretim-kaydi.md` | yok |
 
 Topaç parçası için öneri: 2B ikon (Atölye/Market) adım 1-2 yeterli; üstten bakış maç sprite'ı kod ile döndüğü için tek kare üstten görünüm (`topac-pixel-plani.md`) adım 1-2, katmanlı 3B patlatılmış görünüm gerekiyorsa 3-5.

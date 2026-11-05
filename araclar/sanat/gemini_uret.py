@@ -69,8 +69,50 @@ PERGEL_IFADE = {
 }
 
 
+# Topaç parçaları (docs/art/topac-uretim-istegi.md § 2). Gruplar: topac-ikon | topac-tripo | topac:<id> | topac-tripo:<id>
+TOPAC = ("High-quality 16-bit pixel art game sprite of a single mechanical spinning-top PART, crisp hard-edged pixels, no "
+         "anti-aliasing, limited palette, bold 1-pixel dark outline in a darker shade of the part's own color (not pure black), "
+         "rich cel shading with 4 tones, light from the upper left (bright top-left rim, darker lower-right side). Three-quarter "
+         "view from above (camera about 45 degrees above the horizon), the part centered and filling about 80 percent of the "
+         "frame, its rotation axis vertical. Original design, no logos, no text, no brand or toy-line styling, no animal, bird, "
+         "dragon or wing shapes. Perfectly flat uniform solid magenta (#FF00FF) background edge to edge, no gradient, no ground, "
+         "no cast shadow, no border. Square image. Part: ")
+TOPAC_TRIPO = ("Clean stylized 3D game asset concept render of a single mechanical spinning-top part, a solid machined object, "
+               "three-quarter view from above (camera about 40 degrees above the horizon), rotation axis vertical, centered, "
+               "chunky readable shapes with crisp bevels, hand-painted texture look, even soft studio lighting, plain flat "
+               "pure white background, no ground, no shadow, no text, no logo. Original design, no animal, bird, dragon or "
+               "wing shapes. {sim} Part: ")
+# (n, ikon tarifi (katalog Element rengi), Tripo tarifi (Gövde orta gri: palet takası § 4))
+TOPAC_PARCA = {
+ "ok-govde": (3,
+  "the attack ring of a spinning top: a thick round disc body with three broad arrowhead blades swept back, a raised ridge "
+  "along each blade, two concentric engraved grooves, a polished steel hub ring in the center with an empty socket, painted "
+  "glowing ember orange enamel.",
+  "the attack ring of a spinning top: a thick round disc body with three broad arrowhead blades swept back clockwise, a "
+  "raised ridge along each blade, two concentric engraved grooves on the top face, a polished steel hub ring in the center "
+  "with an empty round socket, the blades and body painted in plain medium grey enamel, the hub bright steel."),
+ "hafif-disk": (7,
+  "a thin polished steel weight disc for a spinning top with seven small square lock tabs around its rim and one raised "
+  "ring on top, brushed metal.",
+  "a thin flat polished steel weight disc (a washer-like ring with a large center hole) for a spinning top with seven small "
+  "square lock tabs around its outer rim and one raised ring on its top face, brushed dark steel."),
+ "duz-uc": (6,
+  "the tip of a spinning top: a short dark gunmetal cone with six ribs ending in a wide flat rubber foot.",
+  "the tip of a spinning top: a short dark gunmetal cone, widest at the top, with six vertical ribs, narrowing down to a "
+  "wide flat black rubber foot at the bottom."),
+ "kor-goktasi": (6,
+  "a small six-faceted glowing ember-red gemstone set in a gold bezel ring, the core of a spinning top.",
+  "a small six-faceted pyramid-shaped ember-red gemstone set in a thick round gold bezel ring, seen from above, the core "
+  "cap of a spinning top."),
+}
+TOPAC_KOK = KOK + "/topac"
+TOPAC_KAYIT = TOPAC_KOK + "/manifest.jsonl"
+
+
 def kaydet(satir):
-    with open(KAYIT, "a") as f:
+    os.makedirs(os.path.dirname(KAYIT), exist_ok=True)
+    yol = TOPAC_KAYIT if "/topac/" in satir.get("dosya", "") else KAYIT
+    with open(yol, "a") as f:
         f.write(json.dumps(satir, ensure_ascii=False) + "\n")
 
 
@@ -110,6 +152,8 @@ def uret(ad, prompt, cikti, oran="1:1", refler=()):
 def isler(gruplar):
     out = []
     hepsi = not gruplar
+    for d in ("ikon-ham", "tripo", "glb"):
+        os.makedirs(f"{TOPAC_KOK}/{d}", exist_ok=True)
     for rid, (bg, tarif) in RUHLAR.items():
         if hepsi or "portre" in gruplar or rid in gruplar:
             p = PORTRE.format(bg=bg) + tarif + (ATA_EK if rid.startswith("ata-") else "")
@@ -125,6 +169,12 @@ def isler(gruplar):
             p = ("Same character as in the reference image, identical face, hair, glasses, outfit, palette and pixel art style, "
                  "same framing and flat magenta background. ") + PERGEL + PERGEL_IFADE[k]
             out.append((f"pergel:{k}", p, f"{KOK}/bilgic/{k}.png", "1:1", (ref,)))
+    for pid, (n, ikon, tripo) in TOPAC_PARCA.items():
+        if "topac-ikon" in gruplar or f"topac:{pid}" in gruplar:
+            out.append((f"topac-ikon:{pid}", TOPAC + ikon, f"{TOPAC_KOK}/ikon-ham/{pid}.png", "1:1", ()))
+        if "topac-tripo" in gruplar or f"topac-tripo:{pid}" in gruplar:
+            sim = f"Perfectly radially symmetric around the vertical axis with {n} identical repeating features."
+            out.append((f"topac-tripo:{pid}", TOPAC_TRIPO.format(sim=sim) + tripo, f"{TOPAC_KOK}/tripo/{pid}.png", "1:1", ()))
     return out
 
 

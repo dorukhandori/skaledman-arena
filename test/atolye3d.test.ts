@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { PARCALAR } from "../src/paylasilan/veri/katalog.ts";
 import { ARALIK, BOS_OLCU, EN_AZ_EGIM, patlatilmisTabanlar, EN_COK_EGIM, KATMAN_ETIKET, KATMAN_SIRASI, VARSAYILAN_EGIM, gorunumOlay, ilkDurum, katmanKaymasi, tusIsler } from "../src/istemci/atolye3d/durum.ts";
@@ -164,9 +165,12 @@ describe("Atölye 3B odak / klavye durum makinesi", () => {
 describe("Atölye 3B GLB kancası", () => {
   it("liste boş: istek yok, parametrik", async () => {
     let istek = 0;
-    const r = await modelSec("ok-govde", GLB_LISTESI, async () => { istek++; return "glb"; }, () => "param");
+    const r = await modelSec("ok-govde", new Set<string>(), async () => { istek++; return "glb"; }, () => "param");
     expect(r).toEqual({ kaynak: "parametrik", model: "param" });
     expect(istek).toBe(0);
+  });
+  it("veri/topac-model.json listesindeki her kimliğin GLB dosyası var (yoksa Atölye 404 alır)", () => {
+    for (const id of GLB_LISTESI) expect(existsSync(`public${glbYolu(id)}`), id).toBe(true);
   });
   it("listede ve yüklenirse GLB; yükleme başarısızsa parametrik yedek", async () => {
     const liste = new Set(["ok-govde"]);
