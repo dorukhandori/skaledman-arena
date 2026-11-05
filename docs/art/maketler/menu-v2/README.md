@@ -1,6 +1,6 @@
 # Menü dili v2 maketleri (2026-11-05) · yer tutucu sanat, nihai değil
 
-Bağlam, teşhis, kaynaklar ve karar: [`../../menu-tasarim-arastirma.md`](../../menu-tasarim-arastirma.md). Önerilen yön **B · Kuşak Taşı** (arena taşı, bronz kakma, ışıyan Kuşak halkası).
+Bağlam, teşhis, kaynaklar ve karar: [`../../menu-tasarim-arastirma.md`](../../menu-tasarim-arastirma.md). **Karar (2026-11-05, sahip onayı): Yön B · Kuşak Taşı** (arena taşı, bronz kakma, ışıyan Kuşak halkası).
 
 | Dosya | İçerik |
 |---|---|
@@ -11,6 +11,7 @@ Bağlam, teşhis, kaynaklar ve karar: [`../../menu-tasarim-arastirma.md`](../../
 | `b-takim.png` | Takım seçimi (20 sn): SEN · geri sayım halkası + 3 kart · RAKİP, HAZIR |
 | `b-oda.png` | Oda açıldı: kod karoları, KODU KOPYALA, 60 sn sayacı, QR yer tutucu, boş rakip kaidesi |
 | `b-sonuc.png` | Sonuç (Zafer): bronz plaka, bitiş tablosu, Altın · Çekirdek · Başarım, taş kıymığı |
+| `b-atolye.png` · `b-market.png` · `b-basarimlar.png` · `b-ilk-cekirdek.png` · `b-giris.png` | Komşu menüler aynı dilde: Atölye (blueprint orta sütun), Market (pazar ahşabı), Başarımlar (6 sekme, kalkan kart), İlk Çekirdek (taş niş + kaide), Giriş/Profil (bronz GİRİŞ) |
 | `a-lobi.png` · `a-vs.png` | Yön A · Tezgâh Planı (blueprint, pirinç, maskeleme bandı) |
 | `c-lobi.png` · `c-vs.png` | Yön C · Turnuva Tabelası (arcade, LED, çapraz bant) |
 | `onceki-sonra-*.png` | Bugünkü ekran (D4/D5/D7 görüntüsü) / yön B maketi + değişen öğeler: oyna, lobi, araniyor, bulundu, takim, oda, sonuc |

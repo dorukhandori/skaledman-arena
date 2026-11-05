@@ -504,4 +504,4 @@ Yer: [`docs/art/maketler/`](maketler/) (README orada). Hepsi **yer tutucu sanat,
 | `m4-kamera-kiyas.png` | M4 · şimdiki oyun / Hibrit maket / referans 07 yan yana; kayıp, kazanç, "fizik değişmez", önlemler ve dönüşüm şeması |
 
 
-**Menü dili v2 önerisi:** bkz. [`menu-tasarim-arastirma.md`](menu-tasarim-arastirma.md) (maketler `maketler/menu-v2/`).
+**Menü dili v2: karar (2026-11-05, sahip onayı): Yön B · Kuşak Taşı.** Kurallar, jetonlar, bileşen ölçüleri ve yazı tipleri (Jersey 10 OFL + m5x7 CC0): [`menu-tasarim-arastirma.md`](menu-tasarim-arastirma.md) § 5, § 6, § 9; maketler `maketler/menu-v2/b-*.png`. Bu bölümle çelişen menü maddelerinde (§ 3.2 yazı tipi adayı yok, § 4.3 panel) o belge kazanır.

@@ -1,6 +1,6 @@
 # Menü dili v2: teşhis, araştırma, üç yön, öneri
 
-**Tarih:** 2026-11-05 · **Şapka:** `@iris` (sanat yönetimi) + `@tide` (UX) · **Dal:** `devran-kod` · **Durum:** öneri; § 8'deki maddeler sahip kararı bekliyor. Oyun kodu (`src/`, `test/`, `veri/`, `public/`) değişmedi.
+**Tarih:** 2026-11-05 · **Şapka:** `@iris` (sanat yönetimi) + `@tide` (UX) · **Dal:** `devran-kod` · **Durum:** **karar (2026-11-05, sahip onayı): Yön B · Kuşak Taşı** (§ 9). § 8'deki varsayılanlar onaylandı. Oyun kodu (`src/`, `test/`, `veri/`, `public/`) değişmedi.
 **Sahibin geri bildirimi:** "Yalnız oyuncu bulma vs. menülerinin stilini beğenmedim. Çok AI slop duruyor."
 **Kapsam:** Oyna, Lobi (Hızlı maç / Oda kodu), Aranıyor, Rakip bulundu (VS), Takım seçimi, Oda açıldı, Sonuç. Komşu ekranlar (Atölye, Market, Başarımlar) aynı bileşenleri paylaşacağı için § 6'da var.
 **Sınırlar (değişmez):** `docs/design/tasarim-sutunlari.md` S1–S4 (kolay öğrenilir zor ustalaşılır, sadelik > lore, referans görsellere yakınlık, Dereceli gizli) ve `docs/design/sadelik-ilkeleri.md` S-1…S-11 (ekran başına tek ana eylem, kısa metin, ana düğme sabit yerde).
@@ -252,6 +252,39 @@ Arama: alçak dönme uğultusu döngüsü + her dilimde taş "tık". Bulundu: te
 
 **Ölçek kuralı:** `--o` = tam sayı UI ölçeği (`floor(min(innerWidth/480, innerHeight/270))`, en az 2). Tüm px değerleri `calc(Npx*var(--o))`. Kesirli ölçekte pixel font bulanıklaşır; bu yüzden tam sayı zorunlu.
 
+### 6.5 Kesin ölçüler (mantıksal px; ekranda × `--o`, varsayılan 4 @1080p)
+| Öğe | Ölçü | Ayrıntı |
+|---|---|---|
+| Ekran | 480×270 | kenar boşluğu 8, sütun arası 8 (sıkı ekranlarda 6) |
+| Üst lento | 480×26 + 1 px harç + 1 px koyu + 3 px dither gölge | derz her 61 px; üst 1 px `#7F7A74` |
+| Geri ◄ | 20×20 @ (5,3) | 1 px harç, üst 1 px `#C8665E`, alt/sağ 1 px `#5E1F1B`, üçgen 9 satır |
+| Başlık plakası | yükseklik 20, genişlik = metin + 20; @ (30,3) | 1 px `--bronz-0` dış, üst 1 px `--bronz-isik`, alt 1 px `--bronz-1`, uçlarda 2×2 perçin (iç 3 px) |
+| Altın yuvası | 80×20 @ (W−86,3) | sikke 8×8 @ +6,+4; rakam Jersey 20 sağa yaslı (−6) |
+| Taş panel | çerçeve 5 (dış 1 harç + 4 taş), iç alan 1 px koyu üst + 1 px `#9A9184` alt | köşe 1 px kesik; kenarda 2–3 çentik (2–4 px), tohumlu |
+| Ana düğme | 140×36 (Oyna/Lobi/Oda), 116×30 (tam ekran seçim), 112×30 (Sonuç) | 1 px `#1A0E08` + 1 px `--gold` + dolgu `--ana`, alt 4 px `--ana-alt` + 2 px dither; alt gölge 2 px; yazı Jersey 30 (uzun metinde 20) |
+| Normal / seçili düğme | 126×36 (mod), 104–132×20–28 (ikincil) | 1 px harç + 1 px `--bronz` (seçili: `--gold`, dolgu `#6B4226`); üst iç 1 px açık; yazı Jersey 20 ya da m5x7 16 (küçük) |
+| Basılı | +2 px aşağı, alt gölge yok | |
+| Kapalı | aynı ölçü; koyu taş dokusu + 1 px `#3A3640`; yazı `#6A6474` | kilit simgesi zorunlu |
+| Odak halkası | 2 px `#FFFFFF` + 1 px `#05050A`, öğenin 1 px dışında | basamaklı köşe |
+| Seçim çentiği | 4 köşede 6×1 + 1×6 L, `--gold`, iç tarafta 1 px harç | öğenin 2 px dışında |
+| Sekme | 74×22 (6'lı), 29×24 (ikonlu 4'lü) | seçili: altın çerçeve, alt kenar iç renkte (açık ağız) |
+| Izgara hücresi | 26–27 kare (Atölye), 40×30 (Market) + 11 px fiyat rozeti | 1 px harç + `#20263A` + üst 1 px `#2E3550` |
+| Fiyat / durum rozeti | yükseklik 11; fiyat: sikke + m5x7 16 altın, `#3B2C0C` / `#C9A33B`; kilit: `#20232F` / `#59607A`; gizli `#0C0D14` | |
+| Segment çubuk (stat) | genişlik 80–132 × 6 (iç 4); segment 3 + boşluk 1 | `#E8762F`, son 2 segment `#F2622F` |
+| Segment çubuk (başarım) | 90×7; segment 3 + 1 | devam `#E8762F`, tamam `--gold` |
+| Köken segmenti (İlk Çekirdek) | 5 × (5×6), boşluk 1 | köken rengi (`#D5B787` / `#C0793A` / `#6B8792`) |
+| Süre halkası (Takım) | 20 çentik, elips rx 28 · ry 21, çentik 3×3 (yanık: `--halka` + 1 px `#FFF0D8`) | iç elips 22×16 `#14111A`; rakam Jersey 30 |
+| Arama halkası | 12 dilim, elips rx 124 · ry 52, dilim aralığı 0,08 rad | 3 px (hale + halka + çekirdek) |
+| Oda sayacı | 20 × (5×6), boşluk 2 | |
+| Kod karosu | 28×34 (katıl) / 29×40 (paylaş); tire 6–7×3 | harf Jersey 30; katılda boş karo koyu, imleç 3×18 altın |
+| VS ad plakası | 170×30, her 3 satırda 1 px eğim | üst 2 satır `--bronz-isik`, alt 3 `--bronz-1`, 1 px `--bronz-0` kenar; ad Jersey 20; element rozeti 15×15 |
+| VS bölme | x = 240 − (y − 135)·0,35, ±2 px titreşim | 1 px harç + 1 px `#FFF0D8` + 1 px dither `--halka` |
+| Kaide | genişlik 48–86, üst 4 (açık taş) + gövde 10 | üst 1 px `#B3A796` |
+| Element rozeti | 11×11 (×2 = 22) + 2 px koyu çerçeve | 4 ton rampa, tek ağırlık |
+| Kalkan rozeti | 20×20 (başarım 24×22) | |
+| Topaç ikon (yer tutucu) | r 9 (mini), 17–18 (kart), 32 (VS) | sanat hattı gelene kadar |
+| Yazı | Jersey 10: 20 / 30 / 40 (+1 / +2 / +2 px harf arası); m5x7: 16 / 32 | etiket BÜYÜK HARF; açıklama ≤ 40 karakter |
+
 ### 6.2 Erişilebilirlik
 - **Kontrast ≥ 4,5:1:** § 5.2 ölçümleri. Rakip pembesi metinde açık tona alınır.
 - **Odak halkası:** 2 px beyaz + 1 px koyu, her bileşende görünür, çentikle karışmaz. `:focus-visible`.
@@ -291,8 +324,8 @@ Sıra önerisi: GU-01 (temel, tek stil kaynağı) → GU-08 + GU-14 (sahibin şi
 
 ---
 
-## 8. Sahip kararı bekleyen maddeler
-| # | Soru | Varsayılan (itiraz yoksa) |
+## 8. Sahip kararları (2026-11-05: varsayılanların tamamı onaylandı, § 9)
+| # | Soru | Karar |
 |---|---|---|
 | KM-1 | Menü dili yönü: A Tezgâh / **B Kuşak Taşı** / C Turnuva / karma | **B** |
 | KM-2 | Yazı tipi çifti: Jersey 10 (OFL) başlık + m5x7 (CC0) etiket; Pixelify Sans bırakılır | evet |
@@ -302,3 +335,18 @@ Sıra önerisi: GU-01 (temel, tek stil kaynağı) → GU-08 + GU-14 (sahibin şi
 | KM-6 | Sonuç ekranında gelir dökümü ikinci kata (Altın kartına odak) alınsın mı | evet |
 | KM-7 | Sonuç konfetisi yerine taş kıymığı + kıvılcım | evet |
 | KM-8 | Kick seyirci ekranı için C'nin VS temposu (daha büyük ad, bant) ayrı bir "seyirci VS" olarak alınsın mı | hayır (ilk sürümde tek VS) |
+
+---
+
+## 9. Karar kaydı (2026-11-05)
+- **Sahip onayı:** "Önerilenler güzel" (koordinatör oturumu üzerinden iletildi); bu oturumda sahip maketlere "Güzel" dedi. **Yön B · Kuşak Taşı** menü dili v2 olarak kabul edildi. KM-1…KM-8 § 8'deki karar sütunu gibi.
+- **Bağlayıcı olanlar:** § 5 kuralları (malzeme, jetonlar, yazı ölçeği, ızgara, hâller, animasyon, ses), § 6.1 bileşen envanteri ve § 6.5 kesin ölçüler, § 4.2 yazı tipi kararı (Jersey 10 OFL + m5x7 CC0; Pixelify Sans, Press Start 2P (Türkçe metinde), VT323 ve Silkscreen kullanılmaz).
+- **Uygulama:** kod tarafı ana oturumun alt ajanlarında (menüler; maç HUD/arena ayrı). Bu belge ve `maketler/menu-v2/b-*.png` uygulamanın görsel otoritesidir; çelişkide sadelik ilkeleri ve tasarım sütunları kazanır.
+- **Maket kapsamı:** önerilen akış + komşu menüler: Oyna, Lobi, Aranıyor (3 kare), VS, Takım seçimi, Oda, Sonuç, **Atölye, Market, Başarımlar, İlk Çekirdek, Giriş/Profil** (`b-atolye.png`, `b-market.png`, `b-basarimlar.png`, `b-ilk-cekirdek.png`, `b-giris.png`).
+
+### 9.1 Komşu menüler için dil notları (maketlerden)
+- **Atölye (03):** kabuk taş (lento, paneller), orta sütun **blueprint yeri** (referans 03): patlatılmış dikey parça görünümü + ölçü çizgisi, parça adları solda. Sağda 6 çubuk (C-1 kasıtlı fark korunur; turuncu segment, değer Jersey 20 turuncu). Sol: 4 parça sekmesi + 4×3 ızgara (seçili altın + çentik, kilit, ??? silüet). Alt şerit: takımın 3 topacı (seçili altın), MARKET · BAŞARIMLAR ikincil, **OYNA** ana sağ alt. Ana ekran olduğu için ◄ yok.
+- **Market (04):** yer **pazar ahşabı** (flama, tahta tezgâh; yer tutucu), kabuk aynı. 2×2 raf, asılı ahşap tabela, raf başına 4 hücre: fiyat rozeti (sikke + rakam), kilit + "3/10", ??? siyah silüet. "GÜNÜN PARÇASI -%30" bronz plaka. **SATIN AL** ana sağ alt, seçili parça adı + fiyat solda tek satır.
+- **Başarımlar (05):** 6 sekme (seçili altın çerçeve, alt kenarsız), 4×2 kart: kalkan rozet + ad + "6/10" + segment çubuk; tamamlanan altın çubuk + "TAMAM" + çentik; kilitli gri taş + kilit. **MARKETE GİT** ana sağ alt.
+- **İlk Çekirdek (02):** yer **taş tapınak nişleri**; üstte topaç ikon çerçevesi, kaide üstünde köken renkli küre, köken plakası, 2 satır segment çubuk (köken renginde). Seçili: altın çerçeve + çentik. **SEÇ** alt orta; tek satır "SEÇMEDİĞİN İKİSİ MARKETTE".
+- **Giriş/Profil (01):** sol panel parlayan Çekirdek illüstrasyonu (yer tutucu halkalar), sağ "PROFİL OLUŞTUR": ad alanı, 6 element arması, 14 renk şeridi (seçili beyaz çerçeve), **GİRİŞ** ana: referanstaki yeşil değil bronz-turuncu (K-2, tek ana eylem rengi).
