@@ -21,6 +21,7 @@ const STIL = `
 .gn .liste button[aria-current=true] { --ks: inset 0 0 0 var(--p) var(--gold), inset 0 calc(2 * var(--p)) 0 0 #8a5a34; background-color:var(--secili); }
 .gn .liste button svg { width:calc(11 * var(--p)); height:calc(11 * var(--p)); }
 .gn .liste small { color:var(--soluk); display:block; }
+.gn .liste button[aria-current=true] small { color:var(--ink); }
 .gn .bas { display:flex; gap:calc(6 * var(--p)); align-items:center; }
 .gn .bas h3 { margin:0; }
 .gn .bas svg { width:calc(22 * var(--p)); height:calc(22 * var(--p)); }
@@ -38,7 +39,7 @@ const STIL = `
 .gn .yt3 { display:flex; flex-direction:column; gap:calc(3 * var(--p)); margin-top:calc(3 * var(--p)); }
 .gn .yet { padding:calc(3 * var(--p)) calc(4 * var(--p)); background:var(--hucre); box-shadow:inset 0 0 0 var(--p) #3f8f60; line-height:.875; }
 .gn .yet b { color:var(--ink); text-transform:uppercase; }
-.gn .yet.kilitli { box-shadow:inset 0 0 0 var(--p) #3a3f55; background:#11141f; color:#6a6474; }
+.gn .yet.kilitli { box-shadow:inset 0 0 0 var(--p) #3a3f55; background:#11141f; color:var(--kilitli-yazi); }
 .gn .yet .kl { float:right; color:var(--gold); text-transform:uppercase; }
 .gn .not { color:var(--soluk); margin-top:calc(3 * var(--p)); line-height:.875; }
 html[data-yazi-buyuk] .gn .dz { grid-template-columns:1fr; }

@@ -23,7 +23,7 @@ const STIL = `
   font:400 var(--y-16)/.75 var(--font-etiket); text-transform:uppercase; display:flex; flex-direction:column; align-items:center; gap:var(--p); }
 .bs .sekme[aria-selected=true] { color:var(--ink); background:var(--panel); min-height:calc(24 * var(--p)); margin-bottom:calc(-1 * var(--p));
   box-shadow:inset var(--p) var(--p) 0 0 var(--gold), inset calc(-1 * var(--p)) 0 0 0 var(--gold), var(--odak-g, 0 0 0 0 transparent); }
-.bs .sekme small { font-size:var(--y-16); color:#6a7088; }
+.bs .sekme small { font-size:var(--y-16); color:var(--soluk); }
 .bs .cerceve { flex:1; padding:calc(8 * var(--p)); }
 .bs .izg { display:grid; grid-template-columns:repeat(4, 1fr); gap:calc(8 * var(--p)); align-content:start; }
 .bs .kart { position:relative; display:grid; grid-template-columns:calc(26 * var(--p)) 1fr; grid-template-rows:auto auto 1fr auto; gap:calc(2 * var(--p)) calc(6 * var(--p)); padding:calc(6 * var(--p));
@@ -32,12 +32,12 @@ const STIL = `
 .bs .kart.tamam::before { content:""; position:absolute; inset:calc(-4 * var(--p)); pointer-events:none; --c:var(--gold); --u:calc(6 * var(--p)); --k:var(--p);
   background:linear-gradient(var(--c),var(--c)) 0 0 / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 0 0 / var(--k) var(--u) no-repeat, linear-gradient(var(--c),var(--c)) 100% 0 / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 100% 0 / var(--k) var(--u) no-repeat,
     linear-gradient(var(--c),var(--c)) 0 100% / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 0 100% / var(--k) var(--u) no-repeat, linear-gradient(var(--c),var(--c)) 100% 100% / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 100% 100% / var(--k) var(--u) no-repeat; }
-.bs .kart.sifir, .bs .kart.gizli { background:#171a24; color:#6a6474; }
+.bs .kart.sifir, .bs .kart.gizli { background:#171a24; color:var(--kilitli-yazi); }
 .bs .kart.pasif { opacity:.6; filter:grayscale(1); }
 .bs .kart .rozetK { grid-row:1 / 3; display:flex; align-items:flex-start; justify-content:center; }
 .bs .kart.sifir .k-kalkan, .bs .kart.gizli .k-kalkan { filter:grayscale(1) brightness(.6); }
 .bs .kart h4 { margin:0; font:400 var(--y-16)/.75 var(--font-etiket); color:var(--ink); }
-.bs .kart.sifir h4, .bs .kart.gizli h4 { color:#6a6474; }
+.bs .kart.sifir h4, .bs .kart.gizli h4 { color:var(--kilitli-yazi); }
 .bs .kart .ac { display:none; }
 .bs .kart .ilr { grid-column:1 / -1; grid-row:4; display:grid; grid-template-columns:1fr auto; gap:calc(2 * var(--p)) calc(4 * var(--p)); align-items:center; }
 .bs .kart .ilr .sayi { grid-column:1 / -1; grid-row:1; color:var(--soluk); }
@@ -45,7 +45,7 @@ const STIL = `
 .bs .kart.tamam .ilr .cubukc i { background:repeating-linear-gradient(90deg, var(--gold) 0 calc(3 * var(--p)), transparent calc(3 * var(--p)) calc(4 * var(--p))); }
 .bs .kart .ilr .tamamY { color:var(--gold); }
 .bs .kart .odl { grid-column:2; grid-row:2 / 4; display:flex; align-items:flex-start; gap:calc(2 * var(--p)); flex-wrap:wrap; color:#e2c98e; line-height:.875; }
-.bs .kart.sifir .odl, .bs .kart.gizli .odl { color:#6a6474; }
+.bs .kart.sifir .odl, .bs .kart.gizli .odl { color:var(--kilitli-yazi); }
 .bs .kart .odl b { font-weight:400; color:var(--gold); }
 .bs .kart .odl a { color:var(--turuncu); }
 .bs .kart .zr { display:none; }

@@ -9,10 +9,9 @@ import { type TopacProfili, topacProfiliKur } from "../../paylasilan/veri/profil
 import type { Parca, Tip } from "../../paylasilan/veri/semalar.ts";
 import type { EkranBaglami } from "../main.ts";
 import { type AtolyeCekirdegi, type AtolyeGorunumu, BakimHatasi, GORULEN_SEVIYE, HESAP_HATA, apiIstek, apiPost, atolyeGetir, git, oku, sakla } from "../hesap.ts";
-import { elementSvg } from "../oyun/elementSimge.ts";
 import { ELEMENT_RENK } from "../oyun/renkler.ts";
 import { TopacOnizleme } from "../oyun/TopacOnizleme.ts";
-import { anaEylem, bakimKatmani, ekranKok, el } from "./arayuz.ts";
+import { acilirMenu, anaEylem, bakimKatmani, ekranKok, el, gelistirAcik } from "./arayuz.ts";
 import { parcaPikselIkonu, pikselTopac } from "./pikselTopac.ts";
 
 // Atölye (D6, US-2.1; ux § 3.2 ana ekran, geri oku yok). Sol: envanter (Çekirdek / Gövde / Disk / Uç sekmeleri, filtre:
@@ -29,7 +28,7 @@ const BOS_SEKME = "Burada henüz parça yok. Market'ten alabilir ya da başarım
 const STIL = `
 .at.k-zemin { overflow:hidden; }
 .at .k-govde { min-height:0; }
-.at .kutu { overflow:auto; min-height:0; scrollbar-width:thin; scrollbar-color:var(--bronz-1) var(--panel-0); }
+.at .kutu { overflow-y:auto; overflow-x:hidden; min-height:0; scrollbar-width:thin; scrollbar-color:var(--bronz-1) var(--panel-0); }
 .at .kart.at-kart { min-height:0; width:100%; max-width:none; padding:0 0 calc(42 * var(--p)); position:relative; flex:1; display:flex; flex-direction:column; }
 .at .uc3 { flex:1; min-height:0; }
 .at .k-govde { padding-top:calc(8 * var(--p)); align-items:stretch; }
@@ -41,24 +40,28 @@ const STIL = `
 .at h3 { margin:0 0 calc(4 * var(--p)); font:400 var(--y-16)/.75 var(--font-etiket); color:var(--gold); letter-spacing:0; }
 .at h3.k-plaka { font:400 var(--y-20)/1 var(--font-baslik); letter-spacing:var(--yp); color:var(--ink); margin:0 0 calc(4 * var(--p)); max-width:100%; overflow:hidden; text-overflow:ellipsis; }
 .at .sekmeler { display:flex; gap:calc(2 * var(--p)); margin-bottom:calc(4 * var(--p)); }
-.at .sekmeler button { flex:1; min-height:calc(18 * var(--p)); padding:calc(2 * var(--p)); cursor:pointer; border:var(--p) solid var(--harc); border-radius:0;
+.at .sekmeler button { flex:1 1 0; min-width:0; min-height:calc(18 * var(--p)); padding:calc(2 * var(--p)); cursor:pointer; border:var(--p) solid var(--harc); border-radius:0;
   background:var(--panel-0); color:var(--soluk); font:400 var(--y-16)/.75 var(--font-etiket); text-transform:uppercase; box-shadow:inset 0 0 0 var(--p) #3a3f55, var(--odak-g, 0 0 0 0 transparent); }
 .at .sekmeler button[aria-selected=true] { color:var(--ink); background:var(--hucre); box-shadow:inset 0 0 0 var(--p) var(--gold), var(--odak-g, 0 0 0 0 transparent); }
-.at .filtre { display:grid; grid-template-columns:1fr 1fr; gap:calc(2 * var(--p)); margin-bottom:calc(4 * var(--p)); }
+.at .filtre-satir { display:flex; gap:calc(3 * var(--p)); margin-bottom:calc(3 * var(--p)); }
+.at .filtre { display:grid; grid-template-columns:1fr; gap:calc(2 * var(--p)); margin-bottom:calc(4 * var(--p)); padding:calc(3 * var(--p)); background:#100e16; box-shadow:inset 0 0 0 var(--p) var(--bronz-1); }
+.at .filtre select, .at .dene select { text-transform:uppercase; font:400 var(--y-16)/1 var(--font-etiket); }
+.at .filtre option, .at .dene option { text-transform:uppercase; background:var(--panel); color:var(--ink); }
 .at .filtre select { min-height:calc(16 * var(--p)); padding:var(--p) calc(12 * var(--p)) var(--p) calc(3 * var(--p)); }
-.at .liste { display:grid; grid-template-columns:1fr 1fr; gap:calc(3 * var(--p)); padding:var(--p); align-content:start; }
+.at .liste { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); overflow-x:hidden; gap:calc(3 * var(--p)); padding:var(--p); align-content:start; }
 .at .pc { position:relative; text-align:left; padding:calc(2 * var(--p)) calc(3 * var(--p)); display:flex; flex-direction:column; align-items:flex-start; gap:var(--p); cursor:pointer;
   background:var(--hucre); color:var(--ink); border:var(--p) solid var(--harc); border-radius:0; box-shadow:inset 0 var(--p) 0 0 var(--hucre-isik), var(--odak-g, 0 0 0 0 transparent); font:400 var(--y-16)/.75 var(--font-etiket); text-transform:uppercase; }
 .at .pc .k-parca { align-self:center; margin:var(--p) 0; }
 .at .pc .ad { display:flex; gap:calc(2 * var(--p)); align-items:center; text-transform:uppercase; color:var(--ink); }
-.at .pc .et { color:var(--soluk); }
+.at .pc .et { color:var(--soluk); align-self:flex-start; }
+.at .pc .ad { line-height:.875; overflow-wrap:anywhere; }
 .at .pc.takili { box-shadow:inset 0 0 0 var(--p) var(--gold), var(--odak-g, 0 0 0 0 transparent); }
 .at .pc.market .et:first-of-type { color:var(--gold); }
 .at .pc.kilitli { background:#171a26; color:var(--soluk); }
 .at .pc.kilitli .et:first-of-type { color:#ffb070; }
 .at .pc.kilitli .k-parca, .at .pc.gizli .k-parca { opacity:.35; }
 .at .pc.gizli { background:#0e1018; }
-.at .pc.gizli .ad { color:#6a7088; }
+.at .pc.gizli .ad { color:var(--kilitli-yazi); }
 .at .pc .silu { display:none; }
 .at .pc .tk { color:var(--gold); text-transform:uppercase; }
 .at .pc .kilit-ik { position:absolute; right:calc(3 * var(--p)); top:calc(3 * var(--p)); }
@@ -68,11 +71,12 @@ const STIL = `
 .at .orta { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:calc(8 * var(--p)); }
 .at .blueprint-yer { padding:calc(4 * var(--p)); box-shadow:inset 0 0 0 var(--p) #1d3760; }
 .at h3[data-secili-baslik] { display:inline-flex; }
-.at canvas.onz { width:100%; height:calc(84 * var(--p)); border:var(--p) solid #1d3760; background:transparent; display:block; }
-.at .yuvalar4 { display:grid; grid-template-columns:repeat(2,1fr); gap:calc(2 * var(--p)); margin-top:calc(4 * var(--p)); }
-.at .yuva4 { padding:calc(2 * var(--p)); text-align:left; display:flex; flex-direction:column; gap:var(--p); cursor:pointer; min-height:calc(20 * var(--p)); white-space:nowrap; text-overflow:ellipsis; border-radius:0;
+.at canvas.onz { width:100%; height:calc(60 * var(--p)); border:var(--p) solid #1d3760; background:transparent; display:block; }
+.at .yuvalar4 { display:grid; grid-template-columns:1fr; gap:calc(2 * var(--p)); margin-top:calc(4 * var(--p)); }
+.at .yuva4 { padding:calc(2 * var(--p)); text-align:left; display:flex; flex-direction:column; gap:var(--p); cursor:pointer; min-height:calc(14 * var(--p)); white-space:normal; flex-direction:row; justify-content:space-between; align-items:baseline; gap:calc(4 * var(--p)); text-align:right; border-radius:0;
   background:#0f1e36; color:var(--ink); border:var(--p) solid #2a4a7a; font:400 var(--y-16)/.75 var(--font-etiket); text-transform:uppercase; box-shadow:var(--odak-g, 0 0 0 0 transparent); overflow:hidden; }
-.at .yuva4 small { color:#8fb0d8; font-size:var(--y-16); }
+.at .yuva4 small { color:#a8c4e8; font-size:var(--y-16); text-align:left; flex:none; }
+.at .yuva4 span { overflow-wrap:anywhere; }
 .at .yuva4[aria-pressed=true] { border-color:var(--gold); }
 .at .yuva4.eksik { border-style:dashed; border-color:#ffb070; }
 .at .cubuk { display:grid; grid-template-columns:1fr auto auto; grid-template-rows:auto auto; gap:var(--p) calc(4 * var(--p)); align-items:end; margin:0 0 calc(3 * var(--p)); }
@@ -95,7 +99,17 @@ const STIL = `
 .at .bilgi { padding:calc(3 * var(--p)) calc(4 * var(--p)); background:#11141f; box-shadow:inset 0 0 0 var(--p) #3a3f55; color:var(--soluk); margin:calc(3 * var(--p)) 0; line-height:.875; }
 .at .yon { display:flex; gap:calc(3 * var(--p)); align-items:center; margin:calc(3 * var(--p)) 0; text-transform:uppercase; flex-wrap:wrap; }
 .at .yon button[aria-checked=true] { --ks: inset 0 0 0 var(--p) var(--gold), inset 0 calc(2 * var(--p)) 0 0 #8a5a34; background-color:var(--secili); }
-.at .dene { display:flex; gap:calc(4 * var(--p)); align-items:center; margin-top:calc(6 * var(--p)); flex-wrap:wrap; }
+.at .dene { display:flex; gap:calc(4 * var(--p)); align-items:center; margin-top:calc(4 * var(--p)); flex-wrap:wrap; }
+.at .blueprint-yer { position:relative; }
+.at .ayrinti { position:absolute; inset:calc(24 * var(--p)) calc(3 * var(--p)) calc(3 * var(--p)); z-index:3; overflow:auto; display:flex; flex-direction:column; gap:calc(4 * var(--p)); padding:calc(5 * var(--p)); box-shadow:inset 0 0 0 var(--p) var(--bronz), 0 calc(2 * var(--p)) 0 var(--golge); }
+.at .ayrinti .ayr-bas { color:var(--gold); text-transform:uppercase; }
+.at .cubuk-sutun { min-width:0; display:flex; flex-direction:column; }
+.at .dene-satir { display:flex; gap:calc(3 * var(--p)); flex-wrap:wrap; margin-top:auto; padding-top:calc(4 * var(--p)); }
+.at .takim-bas { display:flex; align-items:center; gap:calc(3 * var(--p)); margin-bottom:calc(4 * var(--p)); }
+.at .takim-bas .takim-adi { max-width:100%; white-space:normal; text-align:left; justify-content:flex-start; }
+.at .takim-menu { display:flex; flex-direction:column; gap:calc(4 * var(--p)); margin-bottom:calc(4 * var(--p)); box-shadow:inset 0 0 0 var(--p) var(--bronz); }
+.at .cark-ozet { min-height:calc(4 * var(--p)); margin:calc(4 * var(--p)) 0 0; }
+.at .cubuk-sutun .uyari, .at .cubuk-sutun .bilgi { padding:calc(2 * var(--p)) calc(4 * var(--p)); margin:0 0 calc(3 * var(--p)); }
 .at .dene select { width:auto; }
 .at .tkm { display:flex; flex-direction:column; gap:calc(4 * var(--p)); }
 .at .tkart { display:grid; grid-template-columns:auto 1fr auto; gap:calc(4 * var(--p)); align-items:center; padding:calc(3 * var(--p)); background:var(--hucre); border:var(--p) solid #3a3f55; cursor:grab; text-align:left;
@@ -192,10 +206,23 @@ class AtolyeEkrani {
   private oyna!: HTMLButtonElement;
   private neden!: HTMLElement;
   private surukleKaynak = -1;
+  /** ikinci kat (sadelik S-9): filtre paneli, topaç ayrıntısı, takım menüsü */
+  private filtreAcik = false;
+  private ayrintiAcik = false;
+  private takimMenuAcik = false;
 
   constructor(private b: EkranBaglami, v: AtolyeGorunumu) {
     this.v = v;
-    const { kok, kart } = ekranKok(b.ustYazi, "Atölye", { kim: true });
+    const { kok, kart, lento } = ekranKok(b.ustYazi, "Atölye", { kim: true });
+    // lento: Daha fazla (Çekirdek Günlüğü, Profil; Topaç Lab yalnız ?gelistir=1) — ad menü başlığında (taş üstünde metin yok)
+    const ogeler: [string, string, () => void][] = [
+      ["Çekirdek Günlüğü", "gunluk", () => git("gunluk", `&c=${this.yuvalar()[this.secili]?.cekirdek?.id ?? ""}`)],
+      ["Profil", "profil", () => git("profil")],
+    ];
+    if (gelistirAcik()) ogeler.push(["Topaç Lab", "topac-lab", () => git("topac-lab")]);
+    const menu = acilirMenu(lento, "Daha fazla", b.ben?.girisli ? b.ben.oyuncu.ad : null, ogeler, "daha-fazla");
+    const ayarlar = lento.querySelector("a.k-dugme");
+    lento.insertBefore(menu, ayarlar ? ayarlar.nextSibling : lento.querySelector(".k-cuzdan"));
     kok.classList.add("at");
     kart.className = "kart at-kart";
     this.kart = kart;
@@ -290,17 +317,6 @@ class AtolyeEkrani {
   // ---- iskelet ----
   private iskelet(): void {
     const k = this.kart;
-    const ust = el("div", "ust", k);
-    el("span", "alt k-e16", ust, `${this.v.cekirdekler.length} Çekirdek · ${this.v.parcalar.length} parça`);
-    const baglar = el("div", "baglar", ust);
-    const gunluk = el("button", "", baglar, "Çekirdek Günlüğü");
-    gunluk.dataset["eylem"] = "gunluk";
-    gunluk.addEventListener("click", () => git("gunluk", `&c=${this.yuvalar()[this.secili]?.cekirdek?.id ?? ""}`));
-    const pr = el("button", "", baglar, "Profil");
-    pr.dataset["eylem"] = "profil";
-    pr.addEventListener("click", () => git("profil"));
-    const lab = el("button", "", baglar, "Topaç Lab");
-    lab.addEventListener("click", () => git("topac-lab"));
     const q = new URLSearchParams(location.search);
     if (q.get("mesaj") === "ilkdevir") el("div", "toast", k, "İlk Devir başarımı: Market açıldı.").setAttribute("role", "status");
     const uc3 = el("div", "uc3", k);
@@ -361,7 +377,20 @@ class AtolyeEkrani {
         (this.sol.querySelector(`[data-sekme=${this.sekme}]`) as HTMLElement | null)?.focus();
       });
     });
+    // dört filtre tek "Filtre" düğmesinin arkasında (ikinci kat); etkin filtre sayısı düğmede
+    const etkin = (["element", "koken", "tip"] as const).filter((x) => this.filtre[x]).length + (this.filtre.sahiplik !== "hepsi" ? 1 : 0);
+    const fs = el("div", "filtre-satir", s);
+    const fd = el("button", `k-dugme kucuk${this.filtreAcik ? " secili" : ""}`, fs, etkin ? `Filtre · ${etkin}` : "Filtre");
+    fd.dataset["eylem"] = "filtre";
+    fd.dataset["odak"] = "filtre";
+    fd.setAttribute("aria-expanded", String(this.filtreAcik));
+    fd.addEventListener("click", () => { this.filtreAcik = !this.filtreAcik; this.solCiz(); (this.sol.querySelector("[data-eylem=filtre]") as HTMLElement | null)?.focus(); });
+    if (etkin) {
+      const t = el("button", "k-dugme kucuk", fs, "Temizle");
+      t.addEventListener("click", () => { this.filtre = { element: "", koken: "", tip: "", sahiplik: "hepsi" }; this.solCiz(); });
+    }
     const f = el("div", "filtre", s);
+    f.hidden = !this.filtreAcik;
     const secim = (ad: string, anahtar: keyof Filtre, secenekler: [string, string][]) => {
       const sel = el("select", "", f);
       sel.setAttribute("aria-label", ad);
@@ -371,10 +400,10 @@ class AtolyeEkrani {
       sel.value = this.filtre[anahtar];
       sel.addEventListener("change", () => { (this.filtre as unknown as Record<string, string>)[anahtar] = sel.value; this.solCiz(); });
     };
-    secim("Element", "element", [["", "Element"], ...ELEMENT_CARKI.map((e): [string, string] => [e, ELEMENT_RENK[e].ad])]);
-    secim("Köken", "koken", [["", "Köken"], ...Object.entries(KOKEN_AD)]);
-    secim("Tip eğilimi", "tip", [["", "Tip"], ...Object.entries(TIP_AD)]);
-    secim("Sahiplik", "sahiplik", [["hepsi", "Hepsi"], ["sahip", "Sahip olunan"], ["kilitli", "Kilitli"]]);
+    secim("Element", "element", [["", "Element: hepsi"], ...ELEMENT_CARKI.map((e): [string, string] => [e, ELEMENT_RENK[e].ad])]);
+    secim("Köken", "koken", [["", "Köken: hepsi"], ...Object.entries(KOKEN_AD)]);
+    secim("Tip eğilimi", "tip", [["", "Tip: hepsi"], ...Object.entries(TIP_AD)]);
+    secim("Sahiplik", "sahiplik", [["hepsi", "Sahiplik: hepsi"], ["sahip", "Sahip olunan"], ["kilitli", "Kilitli"]]);
     const liste = el("div", "liste", s);
     liste.setAttribute("role", "listbox");
     liste.setAttribute("aria-label", `${YUVA_AD[this.sekme]} parçaları`);
@@ -400,9 +429,15 @@ class AtolyeEkrani {
       const ad = el("span", "ad", d);
       if (elm && g.durum !== "gizli") { const r = el("span", "k-el", ad); r.dataset["el"] = elm; }
       el("span", "", ad, g.ad);
-      el("span", "et", d, g.etiket);
+      // tek kısa durum satırı (S-7); tam metin aria-label ve ipucunda
+      const fiyat = /(\d+)\s*Altın/.exec(g.etiket)?.[1];
+      const ilr = /(\d+\/\d+)/.exec(g.etiket)?.[1];
+      const kisa = g.durum === "sahip" ? (o.takili ? "" : "Sende") : g.durum === "market" ? (fiyat ?? "Market") : g.durum === "kilitli" ? (ilr ?? "Kilitli") : "???";
+      const et = el("span", `et${g.durum === "market" ? " k-rozet fiyat" : g.durum === "sahip" && !o.takili ? " k-rozet sende" : ""}`, d, kisa);
+      et.title = g.etiket;
+      d.title = `${g.ad} · ${g.etiket}`;
       if (g.durum !== "gizli") el("span", "et tipEt", d, `${TIP_AD[o.parca.tipEgilimi]}${o.parca.tur === "cekirdek" ? ` · ${KOKEN_AD[o.parca.koken]}` : ""}`).hidden = true; // sadelik: tip bilgisi aria-label'da
-      if (o.takili) el("span", "tk", d, `${o.takili}. topaçta`);
+      if (o.takili) el("span", "tk k-rozet tamam", d, `${o.takili}. topaç`).title = `${o.takili}. topaçta takılı`;
       const takilabilir = g.durum === "sahip";
       d.setAttribute("aria-label", `${g.okunan}${o.takili ? ` ${o.takili}. topaçta takılı.` : ""}${takilabilir ? ` Enter: ${this.secili + 1}. topaca tak.` : ""}`);
       if (!takilabilir) d.setAttribute("aria-disabled", "true");
@@ -423,7 +458,7 @@ class AtolyeEkrani {
       });
       dugmeler.push(d);
     });
-    if (this.v.gelistirme) this.gelistirmePaneli(s);
+    if (this.v.gelistirme && gelistirAcik()) this.gelistirmePaneli(s);
     if (odak) (s.querySelector(`[data-odak="${odak}"]`) as HTMLElement | null)?.focus();
   }
 
@@ -519,19 +554,25 @@ class AtolyeEkrani {
         d.title = "Delete: çıkar";
       }
     }
-    const cikarSatiri = el("div", "eylemler", solK);
+    // ikinci kat: topaç ayrıntısı (Uç deseni, yön, Yapay yön seçimi, Dene rakibi, parça çıkar)
+    const ayr = el("div", "ayrinti k-ic", solK);
+    ayr.hidden = !this.ayrintiAcik;
+    ayr.dataset["ayrinti"] = "1";
+    el("div", "ayr-bas k-e16", ayr, "Ayrıntı");
+    const cikarSatiri = el("div", "eylemler", ayr);
     const ct = this.taslak[this.secili]![this.sekme];
     if (ct !== null) {
       const c = el("button", "", cikarSatiri, `${YUVA_AD[this.sekme]} çıkar`);
       c.dataset["eylem"] = "cikar";
       c.addEventListener("click", () => this.cikar(this.sekme));
     }
-    // sağ sütun: çubuklar
-    const sagK = el("div", "", ikili);
-    if (y.durum === "bos") el("div", "bilgi", sagK, "Bu yuva boş. Envanterden bir Çekirdek tak.");
-    if (y.durum === "eksik") el("div", "uyari", sagK, "").innerHTML = `${UYARI_SVG}<span>${this.eksikMetni()}</span>`;
-    if (odunc) el("div", "bilgi", sagK, "Ödünç topaç: Lv.1, tecrübe ve başarım almaz. Kendi Çekirdeğini takınca yerini alır.");
-    if (y.durum === "devreDisi") el("div", "uyari kirmizi", sagK, "").innerHTML = `${UYARI_SVG}<span>${y.cekirdek ? cekirdekBul(y.cekirdek.tanimId).ad : "Çekirdek"}: ömrü bitti. Maça girişte yerine ödünç topaç girer.</span>`;
+    // sağ sütun: çubuklar (kısa durum satırı; uzun açıklama ipucunda)
+    const sagK = el("div", "cubuk-sutun", ikili);
+    const kisaNot = (sinif: string, metin: string, uzun: string) => { const n = el("div", sinif, sagK, metin); n.title = uzun; n.setAttribute("aria-label", uzun); return n; };
+    if (y.durum === "bos") kisaNot("bilgi", "Yuva boş: Çekirdek tak", "Bu yuva boş. Envanterden bir Çekirdek tak.");
+    if (y.durum === "eksik") kisaNot("uyari", "! Parça eksik", this.eksikMetni());
+    if (odunc) kisaNot("bilgi", "Ödünç · Lv.1", "Ödünç topaç: Lv.1, tecrübe ve başarım almaz. Kendi Çekirdeğini takınca yerini alır.");
+    if (y.durum === "devreDisi") kisaNot("uyari kirmizi", "! Ömrü bitti", `${y.cekirdek ? cekirdekBul(y.cekirdek.tanimId).ad : "Çekirdek"}: ömrü bitti. Maça girişte yerine ödünç topaç girer.`);
     const p = y.profil;
     if (p) {
       const oz = profilCubuklari(p);
@@ -562,31 +603,35 @@ class AtolyeEkrani {
         if (fk !== 0) fe.innerHTML = `${fk > 0 ? ART_SVG : AZAL_SVG} ${fk > 0 ? "+" : "−"}${Math.abs(fk)}`;
         fe.setAttribute("aria-label", fk === 0 ? "" : `${fk > 0 ? "arttı" : "azaldı"} ${Math.abs(fk)}`);
       }
-      const et = el("div", "etiketler", sagK);
+      const et = el("div", "etiketler", ayr);
       el("span", "etk", et, `Uç: ${oz.desenAd}`).dataset["etiket"] = "desen";
       el("span", "etk", et, `Yön: ${oz.donus === "sol" ? "Sola döner" : "Sağa döner"}${oz.ciftYon ? " (çift yön)" : ""}`).dataset["etiket"] = "yon";
       const tip = el("div", "tip", sagK);
       tip.dataset["tip"] = oz.tip;
-      tip.innerHTML = `Tip: <b></b> <span class="yt"></span>`;
+      // tip tek sözcük; "yakın tip" kalktı (sadelik § 2.1)
+      tip.innerHTML = `Tip: <b></b>`;
       tip.querySelector("b")!.textContent = oz.tipAd;
-      tip.querySelector("span")!.textContent = oz.tip === "denge" ? `· en çok ${oz.yakinTipAd}'a yakın` : `· sonra ${oz.yakinTipAd}'a yakın`;
       // element uyumu (tuning § 12): aynı ×1,10 / komşu ×1,00 / diğer ×0,80; Yapay'da ceza yok
       if (p.uyumCarpani < 1) {
         const u = el("div", "uyari", sagK);
         u.dataset["uyum"] = "uyumsuz";
         u.setAttribute("role", "status");
-        u.innerHTML = `${UYARI_SVG}<span><b>Enerji dolumu yavaşlar.</b> ${ELEMENT_RENK[p.govdeElement].ad} Gövde, ${ELEMENT_RENK[p.element].ad} Çekirdeğe uzak (×0,80).</span>`;
+        u.innerHTML = `<span>! Uyumsuz: Enerji yavaş</span>`;
+        const uzun = `Enerji dolumu yavaşlar. ${ELEMENT_RENK[p.govdeElement].ad} Gövde, ${ELEMENT_RENK[p.element].ad} Çekirdeğe uzak (×0,80).`;
+        u.title = uzun; u.setAttribute("aria-label", uzun);
       } else if (p.uyumCarpani > 1) {
         const u = el("div", "uyari iyi", sagK);
         u.dataset["uyum"] = "ayni";
-        u.textContent = `Element uyumu: Gövde ve Çekirdek ${ELEMENT_RENK[p.element].ad}. Enerji dolumu hızlanır (×1,10).`;
+        u.textContent = "Uyum: Enerji +%10";
+        const uzun = `Element uyumu: Gövde ve Çekirdek ${ELEMENT_RENK[p.element].ad}. Enerji dolumu hızlanır (×1,10).`;
+        u.title = uzun; u.setAttribute("aria-label", uzun);
       }
       // Yapay yön seçimi (maç öncesi; sim'e takım koduyla `yon`)
       if (y.cekirdek && y.cekirdek.ciftYon && y.durum === "sahip") {
-        const yn = el("div", "yon", sagK);
+        const yn = el("div", "yon", ayr);
         yn.setAttribute("role", "radiogroup");
         yn.setAttribute("aria-label", "Dönüş yönü");
-        el("span", "", yn, "Dönüş yönü:");
+        el("span", "", yn, "Yön:");
         for (const [deger, ad] of [["sag", "Sağ"], ["sol", "Sol"]] as const) {
           const d = el("button", "", yn, ad);
           d.setAttribute("role", "radio");
@@ -595,24 +640,30 @@ class AtolyeEkrani {
           d.dataset["odak"] = `yon-${deger}`;
           d.addEventListener("click", () => void this.yonSec(y.cekirdek!, deger));
         }
-        el("span", "yt", yn, "Yapay: maç öncesi seçilir");
+        yn.title = "Yapay: maç öncesi seçilir";
       }
     }
-    // Dene
-    const dn = el("div", "dene", o);
+    // Dene: rakip seçimi ayrıntıda; DENE · 30 SN ve AYRINTI çubuk sütununda
+    const dn = el("div", "dene", ayr);
     const sel = el("select", "", dn);
     sel.setAttribute("aria-label", "Antrenman rakibi");
     sel.dataset["odak"] = "dene-bot";
-    for (const [deger, ad] of [["pasif", "Rakip: Hareketsiz hedef"], ["kukla", "Rakip: Kukla (yavaş)"], ["dolas", "Rakip: Dolaşan"], ["kenar", "Rakip: Kenara iten"]] as const) { const op = el("option", "", sel, ad); op.value = deger; }
+    for (const [deger, ad] of [["pasif", "Rakip: Hedef"], ["kukla", "Rakip: Kukla"], ["dolas", "Rakip: Dolaşan"], ["kenar", "Rakip: İten"]] as const) { const op = el("option", "", sel, ad); op.value = deger; }
     sel.value = oku("devran.deneBot.v1") ?? "kukla";
-    const dene = el("button", "", dn, "Dene: 30 sn Antrenman");
+    const ds = el("div", "dene-satir", sagK);
+    const dene = el("button", "", ds, "Dene · 30 sn");
     dene.dataset["eylem"] = "dene";
     dene.dataset["odak"] = "dene";
     dene.disabled = !p;
+    dene.title = "30 sn Antrenman: sonuç sayılmaz, Altın ve tecrübe yok.";
     dene.addEventListener("click", () => this.dene(sel.value));
-    el("span", "yt", dn, "Sonuç sayılmaz, Altın ve tecrübe yok.");
+    const ad = el("button", `k-dugme kucuk${this.ayrintiAcik ? " secili" : ""}`, ds, "Ayrıntı");
+    ad.dataset["eylem"] = "ayrinti";
+    ad.dataset["odak"] = "ayrinti";
+    ad.setAttribute("aria-expanded", String(this.ayrintiAcik));
+    ad.addEventListener("click", () => { this.ayrintiAcik = !this.ayrintiAcik; this.ortaCiz(); (this.orta.querySelector("[data-eylem=ayrinti]") as HTMLElement | null)?.focus(); });
     if (this.uyari) {
-      const u = el("div", "uyari", o);
+      const u = el("div", "uyari", sagK);
       u.dataset["cakisma"] = "1";
       u.setAttribute("role", "alert");
       u.innerHTML = `${UYARI_SVG}<span></span>`;
@@ -655,8 +706,17 @@ class AtolyeEkrani {
     const s = this.sag;
     const odak = document.activeElement instanceof HTMLElement && s.contains(document.activeElement) ? document.activeElement.dataset["odak"] ?? "" : "";
     s.innerHTML = "";
-    el("h3", "", s, "Takım");
-    const adS = el("div", "adsatir", s);
+    // başlık: takım adı düğmesi → takım menüsü (ikinci kat: ad, kayıtlı takımlar, aktif, yeni)
+    const bas = el("div", "takim-bas", s);
+    const tm = el("button", `k-dugme kucuk takim-adi${this.takimMenuAcik ? " secili" : ""}`, bas, `${this.takimAdi} ▾`);
+    tm.dataset["eylem"] = "takim-menu";
+    tm.dataset["odak"] = "takim-menu";
+    tm.setAttribute("aria-expanded", String(this.takimMenuAcik));
+    tm.setAttribute("aria-label", `Takım: ${this.takimAdi}. Takım menüsü`);
+    tm.addEventListener("click", () => { this.takimMenuAcik = !this.takimMenuAcik; this.sagCiz(); (this.sag.querySelector("[data-eylem=takim-menu]") as HTMLElement | null)?.focus(); });
+    const menu = el("div", "takim-menu k-ic", s);
+    menu.hidden = !this.takimMenuAcik;
+    const adS = el("div", "adsatir", menu);
     const giris = el("input", "", adS);
     giris.type = "text";
     giris.maxLength = 20;
@@ -726,10 +786,15 @@ class AtolyeEkrani {
         if (Number.isInteger(kaynak)) this.tasi(kaynak, k);
       });
     });
-    const alt = el("div", "altsira", s);
-    alt.insertAdjacentHTML("beforeend", this.cark(yv));
-    const kyK = el("div", "", alt);
-    el("h3", "", kyK, "Kayıtlı takımlar").style.marginTop = ".3rem";
+    // element çarkı yerine: Takım Ultisi oluşunca rozet (üç kendi Çekirdeği); çark verisi data-cark'ta (araçlar)
+    const cr = el("div", "cark-ozet", s);
+    cr.dataset["cark"] = yv.map((y) => { const t = y.cekirdek?.tanimId ?? y.oduncCekirdek; return t ? cekirdekBul(t).element : "-"; }).join(",");
+    if (yv.every((y) => y.durum === "sahip")) {
+      const r = el("span", "k-rozet tamam", cr, "Takım Ultisi");
+      r.title = "Üç kendi Çekirdeğin hazır: maçta Takım Enerjisi dolunca Takım Ultisi açılır.";
+    }
+    const kyK = el("div", "", menu);
+    el("h3", "", kyK, "Kayıtlı takımlar");
     const ky = el("div", "kayitli", kyK);
     for (const t of this.v.takimlar) {
       const d = el("button", "", ky);
@@ -747,18 +812,19 @@ class AtolyeEkrani {
       });
     }
     const ey = el("div", "eylemler", s);
-    const kaydet = el("button", "bir", ey, this.degisti ? "Kaydet *" : "Kaydet");
+    const eyM = el("div", "eylemler", menu);
+    const kaydet = el("button", "", ey, this.degisti ? "Kaydet *" : "Kaydet");
     kaydet.dataset["eylem"] = "kaydet";
     kaydet.dataset["odak"] = "kaydet";
     const hatalar = this.degerlendirme().hatalar;
     if (hatalar.length) { kaydet.setAttribute("aria-disabled", "true"); kaydet.title = takimHataMetni(hatalar[0]!); }
     kaydet.addEventListener("click", () => void this.kaydet());
-    const aktif = el("button", "", ey, this.takimNo === this.v.aktifTakim ? "Aktif takım" : "Aktif yap");
+    const aktif = el("button", "", eyM, this.takimNo === this.v.aktifTakim ? "Aktif takım" : "Aktif yap");
     aktif.dataset["eylem"] = "aktif";
     aktif.disabled = this.takimNo === this.v.aktifTakim;
     aktif.addEventListener("click", () => void this.aktifYap());
     if (this.v.takimlar.length < this.v.takimTavani) {
-      const yeni = el("button", "", ey, "Yeni takım");
+      const yeni = el("button", "", eyM, "Yeni takım");
       yeni.dataset["eylem"] = "yeni-takim";
       yeni.addEventListener("click", () => void this.yeniTakim());
     }
@@ -766,28 +832,6 @@ class AtolyeEkrani {
     dm.setAttribute("role", "status");
     dm.dataset["durumSatiri"] = "1";
     if (odak) (s.querySelector(`[data-odak="${odak}"]`) as HTMLElement | null)?.focus();
-  }
-
-  /** Element çarkı (Kor–Kasırga–Şimşek–Girdap–Kaya–Don): takımın üç elementi numaralı; renk tek kanal değil (silüet + sayı). */
-  private cark(yv: YuvaGorunumu[]): string {
-    const R = 46, cx = 70, cy = 62;
-    const nokta = ELEMENT_CARKI.map((e, k) => {
-      const a = -Math.PI / 2 + (k / 6) * Math.PI * 2;
-      return { e, x: cx + Math.cos(a) * R, y: cy + Math.sin(a) * R };
-    });
-    const takim = yv.map((y) => { const t = y.cekirdek?.tanimId ?? y.oduncCekirdek; return t ? (cekirdekBul(t).element as ElementAdi) : null; });
-    let s = `<svg class="cark" viewBox="0 0 140 124" width="128" height="114" role="img" aria-label="Element çarkı: ${takim.map((e, k) => `${k + 1}. ${e ? ELEMENT_RENK[e].ad : "boş"}`).join(", ")}" data-cark="${takim.map((e) => e ?? "-").join(",")}">`;
-    s += `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="#24414b" stroke-width="2"/>`;
-    const secili = takim.map((e) => (e ? nokta.find((n) => n.e === e)! : null)).filter((n): n is (typeof nokta)[number] => !!n);
-    if (secili.length >= 2) s += `<polygon points="${secili.map((n) => `${n.x},${n.y}`).join(" ")}" fill="rgba(244,207,71,.12)" stroke="#f4cf47" stroke-width="1.5" stroke-dasharray="3 2"/>`;
-    for (const n of nokta) {
-      const sira = takim.map((e, k) => (e === n.e ? k + 1 : 0)).filter(Boolean);
-      const on = sira.length > 0;
-      s += `<g transform="translate(${n.x - 9},${n.y - 9})" opacity="${on ? 1 : 0.4}">${elementSvg(n.e, 18).replace('class="els"', 'class="els" x="0" y="0"')}</g>`;
-      if (on) s += `<circle cx="${n.x + 10}" cy="${n.y - 9}" r="6" fill="#f4cf47" stroke="#050d10"/><text x="${n.x + 10}" y="${n.y - 6.3}" font-size="8" font-weight="900" text-anchor="middle" fill="#2a2104">${sira.join("")}</text>`;
-    }
-    s += `<text x="${cx}" y="${cy + 3}" font-size="7.5" text-anchor="middle" fill="#a3b2b6">Takım Ultisi D8</text></svg>`;
-    return s;
   }
 
   sec(k: number, odakla = false): void {

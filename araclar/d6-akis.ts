@@ -38,6 +38,17 @@ async function istemci(ad: string): Promise<Istemci> {
 const ev = <R>(s: S, kod: string): Promise<R> => s.evaluate(kod);
 const bekleKosul = (s: S, kod: string, ms: number) => s.waitForFunction(kod, null, { timeout: ms });
 const tikla = (s: S, sec: string) => s.click(sec);
+/** GU-A2 ikinci kat: hedef görünmüyorsa açan düğmeye bas (filtre · ayrıntı · takım menüsü · daha fazla). */
+const KAT: [RegExp, string][] = [[/data-filtre/, "[data-eylem=filtre]"], [/\.dene select|data-yon=/, "[data-eylem=ayrinti]"], [/data-takim-adi|ad-kaydet|yeni-takim|data-kayitli-takim|data-eylem=aktif/, "[data-eylem=takim-menu]"], [/data-eylem=gunluk/, "[data-eylem=daha-fazla]"]];
+async function ikinciKat(s: S, sec: string): Promise<void> {
+  const k = KAT.find(([r]) => r.test(sec));
+  if (!k) return;
+  const gorunur = await s.evaluate(`(() => { const e = document.querySelector(${JSON.stringify(sec)}); return !!e && !!(e.offsetWidth || e.offsetHeight); })()`);
+  if (!gorunur && (await s.$(k[1]))) await s.click(k[1]);
+}
+const tiklaK = async (s: S, sec: string) => { await ikinciKat(s, sec); await s.click(sec); };
+const secK = async (s: S, sec: string, v: string) => { await ikinciKat(s, sec); await s.selectOption(sec, v); };
+const doldurK = async (s: S, sec: string, v: string) => { await ikinciKat(s, sec); await s.fill(sec, v); };
 async function goruntu(s: S, ad: string): Promise<void> {
   const yol = `${KLASOR}/D6-${ad}.png`;
   try { await s.screenshot({ path: yol, timeout: 60000 }); }
@@ -140,17 +151,17 @@ try {
   kayit["cekirdekSekmesi"] = await ev(a, `[...document.querySelectorAll(".liste [data-parca]")].map((x) => x.dataset.parca + ":" + x.dataset.durum + ":" + x.querySelector(".et").textContent)`);
   await goruntu(a, "kilitli-gizli");
   await tikla(a, "[data-sekme=govde]");
-  await a.selectOption("[data-filtre=sahiplik]", "kilitli");
+  await secK(a, "[data-filtre=sahiplik]", "kilitli");
   await bekle(300);
   kayit["govdeKilitli"] = await ev(a, `[...document.querySelectorAll(".liste [data-parca]")].map((x) => x.getAttribute("aria-label"))`);
   await goruntu(a, "envanter-filtre");
   await tikla(a, "[data-sekme=disk]");
-  await a.selectOption("[data-filtre=sahiplik]", "hepsi");
-  await a.selectOption("[data-filtre=element]", "kor");
+  await secK(a, "[data-filtre=sahiplik]", "hepsi");
+  await secK(a, "[data-filtre=element]", "kor");
   await bekle(300);
   kayit["bosSekme"] = await ev(a, `(document.querySelector("[data-bos-sekme]") || {}).textContent || ""`);
   await goruntu(a, "bos-sekme");
-  await a.selectOption("[data-filtre=element]", "");
+  await secK(a, "[data-filtre=element]", "");
   // klavye: sekmeler ok tuşlarıyla
   await a.focus("[data-sekme=disk]");
   await a.keyboard.press("ArrowRight");
@@ -176,7 +187,7 @@ try {
   kayit["uyumGeri"] = await ev(a, `(document.querySelector("[data-uyum]") || {}).dataset?.uyum || ""`);
 
   // 5. Dene (Düz Uç) → Atölye (taslak korunur) → Dene (İğne Uç)
-  await a.selectOption(".dene select", "pasif");
+  await secK(a, ".dene select", "pasif");
   await tikla(a, "[data-eylem=dene]");
   const duz = await deneOyna(a, "duz", true);
   await goruntu(a, "dene-sonuc");
@@ -186,7 +197,7 @@ try {
   await tikla(a, "[data-sekme=uc]");
   await tikla(a, ".liste [data-parca=igne-uc]");
   await bekle(200);
-  await a.selectOption(".dene select", "pasif");
+  await secK(a, ".dene select", "pasif");
   await tikla(a, "[data-eylem=dene]");
   const igne = await deneOyna(a, "igne");
   await tikla(a, ".dn .son [data-eylem=atolye]");
@@ -221,27 +232,27 @@ try {
   await bekle(200);
   kayit["klavyeSirasi"] = await ev(a, `[...document.querySelectorAll("[data-takim-yuva] b")].map((x) => x.textContent)`);
   // ad + kaydet
-  await a.fill("[data-takim-adi]", "Kaya ve Kor");
+  await doldurK(a, "[data-takim-adi]", "Kaya ve Kor");
   await tikla(a, "[data-eylem=kaydet]");
   await bekleKosul(a, `document.querySelector("[data-durum-satiri]").textContent.includes("kaydedildi")`, 10000);
   await goruntu(a, "takim-paneli");
   kayit["kaydet"] = await ev(a, `({ durum: document.querySelector("[data-durum-satiri]").textContent, cark: document.querySelector("[data-cark]").dataset.cark, oyna: document.querySelector("[data-eylem=oyna]").getAttribute("aria-disabled") })`);
   // yeni takım + yeniden adlandır
-  await tikla(a, "[data-eylem=yeni-takim]");
+  await tiklaK(a, "[data-eylem=yeni-takim]");
   await bekleKosul(a, `document.querySelectorAll("[data-kayitli-takim]").length === 2`, 10000);
-  await a.fill("[data-takim-adi]", "Deneme Takımı");
-  await tikla(a, "[data-eylem=ad-kaydet]");
+  await doldurK(a, "[data-takim-adi]", "Deneme Takımı");
+  await tiklaK(a, "[data-eylem=ad-kaydet]");
   await bekleKosul(a, `document.querySelector("[data-durum-satiri]").textContent.includes("Deneme Takımı")`, 10000);
   kayit["ikinciTakim"] = await ev(a, `({ kayitli: [...document.querySelectorAll("[data-kayitli-takim]")].map((x) => x.textContent), neden: document.querySelector("#oyna-neden").textContent })`);
   await goruntu(a, "kayitli-takimlar");
-  await tikla(a, "[data-kayitli-takim='0']");
-  await tikla(a, "[data-eylem=aktif]").catch(() => {});
+  await tiklaK(a, "[data-kayitli-takim='0']");
+  await tiklaK(a, "[data-eylem=aktif]").catch(() => {});
   await bekle(300);
 
   // 7. B: Yapay yön seçimi (sol)
   await git(b, "?ekran=atolye");
   await atolyeHazir(b);
-  await tikla(b, "[data-yon=sol]");
+  await tiklaK(b, "[data-yon=sol]");
   await bekleKosul(b, `document.querySelector("[data-yon=sol]").getAttribute("aria-checked") === "true" || document.querySelector("[data-durum-satiri]").textContent.includes("sola")`, 10000);
   await git(b, "?ekran=atolye");
   await atolyeHazir(b);
@@ -249,7 +260,7 @@ try {
   await goruntu(b, "yapay-yon");
 
   // 8. Çekirdek Günlüğü (Lv.2)
-  await tikla(a, "[data-eylem=gunluk]");
+  await tiklaK(a, "[data-eylem=gunluk]");
   await bekleKosul(a, `!!document.querySelector("[data-gunluk-ad]")`, 20000);
   kayit["gunlukLv2"] = await ev(a, `({ sev: document.querySelector("[data-seviye]").textContent, sonraki: document.querySelector("[data-sonraki]").textContent, yet: [...document.querySelectorAll("[data-yetenek-yuva]")].map((x) => x.dataset.yetenekYuva + ":" + x.dataset.acik) })`);
   await goruntu(a, "gunluk-lv2");

@@ -30,9 +30,9 @@ const STIL = `
 .mk .gunun { align-self:center; display:inline-flex; align-items:center; justify-content:center; gap:calc(8 * var(--p)); height:calc(22 * var(--p)); padding:0 calc(14 * var(--p)); cursor:pointer; margin:0;
   border:0 solid transparent; border-image:var(--k-plaka) 6 fill / calc(6 * var(--p)) / 0 round; color:var(--ink); font:400 var(--y-16)/.75 var(--font-etiket); text-transform:uppercase; box-shadow:var(--odak-g, 0 0 0 0 transparent); }
 .mk .gunun .b { font:400 var(--y-20)/1 var(--font-baslik); letter-spacing:var(--yp); text-shadow:var(--p) var(--p) 0 var(--bronz-0); }
-.mk .gunun .ind { color:#ffb070; }
+.mk .gunun .ind { color:var(--ink); }
 .mk .gunun b { font-weight:400; color:var(--ink); }
-.mk .gunun s { color:#e8d9b0; }
+.mk .gunun s { color:var(--ink); }
 .mk .raflar { flex:1; display:grid; grid-template-columns:1fr 1fr; gap:calc(8 * var(--p)) calc(10 * var(--p)); align-content:start; }
 .mk .raf { position:relative; padding:calc(13 * var(--p)) calc(8 * var(--p)) calc(6 * var(--p)); margin-top:calc(9 * var(--p)); background:var(--panel) var(--k-doku-panel) 0 0 / calc(32 * var(--p));
   box-shadow:inset 0 0 0 var(--p) var(--harc), inset 0 0 0 calc(4 * var(--p)) #6b4226, inset 0 0 0 calc(5 * var(--p)) var(--harc), 0 calc(3 * var(--p)) 0 0 #2a170a; }

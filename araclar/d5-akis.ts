@@ -166,6 +166,7 @@ try {
   await bekleKosul(a, `!!document.querySelector("[data-eylem=basla]")`, 20000);
   await tikla(a, "[data-deger=kaya]");
   await tikla(a, "[data-deger='#2fb8e8']");
+  await tikla(a, "[data-eylem=destek-kanali]");
   await a.fill("#a-kanal", "ayse_yayin");
   await goruntu(a, "profil");
   await tikla(a, "[data-eylem=basla]");
@@ -173,7 +174,8 @@ try {
   await bekleKosul(a, `!!document.querySelector("[data-eylem=sec-maden]")`, 20000);
   await bekle(2500);
   await goruntu(a, "ilk-cekirdek");
-  await tikla(a, "[data-eylem=sec-maden]");
+  await tikla(a, "[data-ck=maden]");
+  await tikla(a, "[data-eylem=sec]");
   // 6. Atölye (misafir eğitimi → İlk Devir)
   await bekleKosul(a, `!!document.querySelector("[data-eylem=oyna]")`, 20000);
   kayit["atolye"] = await ev(a, `({ oynaSoluk: document.querySelector("[data-eylem=oyna]").getAttribute("aria-disabled") === "true", odunc: [...document.querySelectorAll(".at .yv")].map((y) => y.dataset.odunc), toast: (document.querySelector(".at .toast") || {}).textContent || "" })`);
@@ -189,7 +191,8 @@ try {
   await bekleKosul(b, `!!document.querySelector("[data-eylem=basla]")`, 20000);
   await tikla(b, "[data-eylem=basla]");
   await bekleKosul(b, `!!document.querySelector("[data-eylem=sec-yapay]")`, 20000);
-  await tikla(b, "[data-eylem=sec-yapay]");
+  await tikla(b, "[data-ck=yapay]");
+  await tikla(b, "[data-eylem=sec]");
   await bekleKosul(b, `!!(window.__egitim)`, 30000);
   kayit["bEgitimeGitti"] = true;
   await tikla(b, "[data-eylem=atla]");

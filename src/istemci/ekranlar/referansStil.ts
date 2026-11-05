@@ -29,7 +29,7 @@ export const REF_STIL = `
 .rf .rozet.gizli { background:#0c0d14; color:#c8c8d0; box-shadow:inset 0 0 0 var(--p) #2c2f3c; }
 .rf .cubukc { height:calc(5 * var(--p)); background:#0d0f18; box-shadow:inset 0 0 0 var(--p) var(--harc); overflow:hidden; position:relative; }
 .rf .cubukc i { display:block; height:100%; background:repeating-linear-gradient(90deg, var(--turuncu) 0 calc(3 * var(--p)), transparent calc(3 * var(--p)) calc(4 * var(--p))); }
-.rf .yt { color:#7d7688; }
+.rf .yt { color:var(--soluk); }
 .rf .modal { position:fixed; inset:0; z-index:40; display:flex; align-items:center; justify-content:center; background:rgba(8,7,12,.78); }
 .rf .modal .kutu { width:min(calc(260 * var(--p)), calc(100% - 2 * var(--kenar))); padding:calc(8 * var(--p)) calc(10 * var(--p)); background:#2a1610;
   box-shadow:inset 0 0 0 var(--p) var(--harc), inset 0 0 0 calc(2 * var(--p)) var(--turuncu), inset 0 0 0 calc(3 * var(--p)) var(--harc); }

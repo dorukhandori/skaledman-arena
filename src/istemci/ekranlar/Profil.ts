@@ -21,7 +21,7 @@ const STIL = `
 .pf .sec[aria-checked=true]::before { content:""; position:absolute; inset:calc(-3 * var(--p)); pointer-events:none; --c:var(--gold); --u:calc(5 * var(--p)); --k:var(--p);
   background:linear-gradient(var(--c),var(--c)) 0 0 / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 0 0 / var(--k) var(--u) no-repeat, linear-gradient(var(--c),var(--c)) 100% 0 / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 100% 0 / var(--k) var(--u) no-repeat,
     linear-gradient(var(--c),var(--c)) 0 100% / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 0 100% / var(--k) var(--u) no-repeat, linear-gradient(var(--c),var(--c)) 100% 100% / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 100% 100% / var(--k) var(--u) no-repeat; }
-.pf .renk { width:calc(8 * var(--p)); height:calc(8 * var(--p)); box-shadow:inset 0 0 0 var(--p) var(--harc); }
+.pf .renk { width:calc(10 * var(--p)); height:calc(10 * var(--p)); box-shadow:inset 0 0 0 var(--p) var(--harc); }
 .pf .onizleme { display:flex; align-items:center; gap:calc(6 * var(--p)); padding:calc(2 * var(--p)) calc(6 * var(--p)); margin-top:calc(4 * var(--p)); background:#11141f; border:var(--p) solid; text-transform:uppercase; }
 .pf .onizleme b { font:400 var(--y-20)/1 var(--font-baslik); letter-spacing:var(--yp); color:var(--ink); }
 .pf .kart { flex-basis:calc(300 * var(--p)) !important; }
@@ -137,18 +137,27 @@ export function baslat(b: EkranBaglami): void {
   el("label", "", kart, "Renk");
   radyoGrubu(kart, "Renk", RENKLER, (v, d) => {
     const k = RENKLER.indexOf(v);
-    d.innerHTML = `<span class="renk" style="background:${v}"></span><span>${RENK_AD[k]}</span>`;
+    d.innerHTML = `<span class="renk" style="background:${v}"></span>`; // renk adı ARIA'da (sadelik § 2.9)
+    d.title = RENK_AD[k]!;
     d.setAttribute("aria-label", `Renk: ${RENK_AD[k]}`);
   }, (v) => { renk = v; guncelle(); }, (RENKLER as readonly string[]).includes(renk) ? (renk as (typeof RENKLER)[number]) : RENKLER[0]);
-  const l = el("label", "", kart, "Destek kanalı (isteğe bağlı)");
+  // destek kanalı ikinci katta (sadelik § 2.9): düğmeyle açılır; doluysa açık başlar
+  const kd = el("button", "", kart, "Destek kanalı ▾");
+  kd.type = "button";
+  kd.dataset["eylem"] = "destek-kanali";
+  const kk = el("div", "kanal-kutu", kart);
+  kk.hidden = !ben.oyuncu.destekKanali;
+  kd.setAttribute("aria-expanded", String(!kk.hidden));
+  kd.addEventListener("click", () => { kk.hidden = !kk.hidden; kd.setAttribute("aria-expanded", String(!kk.hidden)); if (!kk.hidden) kanal.focus(); });
+  const l = el("label", "", kk, "Destek kanalı (isteğe bağlı)");
   l.htmlFor = "a-kanal";
-  const kanal = el("input", "", kart);
+  const kanal = el("input", "", kk);
   kanal.type = "text";
   kanal.id = "a-kanal";
   kanal.maxLength = 25;
   kanal.placeholder = "Kick kanal adı";
   kanal.value = ben.oyuncu.destekKanali ?? "";
-  el("div", "ipucu", kart, "Desteklediğin yayıncının kanalı. Şimdilik yalnız profilde görünür.");
+  el("div", "ipucu", kk, "Yayıncının kanalı. Yalnız profilde görünür.");
   kart.appendChild(on);
   guncelle();
   const h = el("div", "hata", kart);

@@ -40,10 +40,10 @@ const STIL = `
 .ekr .bilgi ul { margin:calc(2 * var(--p)) 0 calc(3 * var(--p)) calc(10 * var(--p)); padding:0; }
 .ekr .bilgi li { margin:var(--p) 0; }
 .ekr .bilgi code { font:400 var(--y-16)/1 var(--font-etiket); color:var(--gold); background:#100e16; padding:0 var(--p); }
-.ekr .bilgi table { width:100%; border-collapse:collapse; margin:calc(2 * var(--p)) 0 calc(6 * var(--p)); }
-.ekr .bilgi th, .ekr .bilgi td { text-align:left; vertical-align:top; padding:calc(2 * var(--p)) calc(3 * var(--p)); border-bottom:var(--p) solid #2a3146; }
+.ekr .bilgi table { width:100%; table-layout:fixed; border-collapse:collapse; margin:calc(2 * var(--p)) 0 calc(6 * var(--p)); }
+.ekr .bilgi th, .ekr .bilgi td { overflow-wrap:anywhere; text-align:left; vertical-align:top; padding:calc(2 * var(--p)) calc(3 * var(--p)); border-bottom:var(--p) solid #2a3146; }
 .ekr .bilgi th { color:var(--gold); text-transform:uppercase; font-weight:400; }
-.ekr .bilgi pre { white-space:pre-wrap; font:400 var(--y-16)/.875 var(--font-etiket); background:#100e16; padding:calc(4 * var(--p)); color:var(--soluk); }
+.ekr .bilgi pre { white-space:pre-wrap; overflow-wrap:anywhere; font:400 var(--y-16)/.875 var(--font-etiket); background:#100e16; padding:calc(4 * var(--p)); color:var(--soluk); }
 .ekr .bilgi .bos { color:var(--soluk); }
 `;
 function stil(): void { const s = document.createElement("style"); s.textContent = STIL; document.head.appendChild(s); }

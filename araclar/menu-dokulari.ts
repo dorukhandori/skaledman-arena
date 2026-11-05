@@ -135,7 +135,7 @@ for (const tohum of [1, 2, 3]) {
     if (y === H - 2) { t.nokta(x, y, BRONZ[1]!); continue; }
     if (x === 1) { t.nokta(x, y, BRONZ[3]!); continue; }
     if (x === W - 2) { t.nokta(x, y, BRONZ[1]!); continue; }
-    t.nokta(x, y, ton([BRONZ[1]!, BRONZ[2]!, BRONZ[3]!], 0.35 + 0.45 * n(x, y), x, y));
+    t.nokta(x, y, ton([BRONZ[1]!, BRONZ[2]!], 0.45 + 0.4 * (n(x, y) - 0.5), x, y)); // metin ≥ 4,5:1 (mürekkep / #8F6538 = 4,8)
   }
   for (const [x, y] of [[3, 3], [W - 5, 3], [3, H - 5], [W - 5, H - 5]] as const) { t.nokta(x, y, BRONZ[4]!); t.nokta(x + 1, y, BRONZ[3]!); t.nokta(x, y + 1, BRONZ[3]!); t.nokta(x + 1, y + 1, BRONZ[0]!); }
   for (const [x, y] of [[0, 0], [W - 1, 0], [0, H - 1], [W - 1, H - 1]] as const) { const i = (y * W + x) * 4; t.p[i + 3] = 0; }
@@ -154,7 +154,7 @@ dolgu("doku-secili", [0x5a3018, 0x6b3c1f, 0x7c4a2a], 63);
 dolgu("doku-normal", [0x1f2638, 0x262d40, 0x2c3347], 64);
 dolgu("doku-kapali", [0x18161d, 0x1e1b24, 0x25222b], 65);
 dolgu("doku-geri", [0x822f2b, 0x9a3d38, 0xa84843], 66);
-dolgu("doku-bronz", [BRONZ[1]!, BRONZ[2]!, BRONZ[3]!], 67);
+dolgu("doku-bronz", [BRONZ[1]!, BRONZ[2]!], 67);
 
 // 6) ahşap (Market rafı, referans 04): 64×16 yatay kalas, damar
 {

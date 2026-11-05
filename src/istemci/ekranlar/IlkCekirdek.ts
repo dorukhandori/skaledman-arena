@@ -35,19 +35,22 @@ const STIL = `
   background:var(--panel); box-shadow:inset 0 0 0 var(--p) var(--harc), inset 0 0 0 calc(2 * var(--p)) var(--turuncu); font:400 var(--y-20)/1 var(--font-baslik); letter-spacing:var(--yp); }
 .ic .ck.secili h3 { box-shadow:inset 0 0 0 var(--p) var(--harc), inset 0 0 0 calc(2 * var(--p)) var(--gold); }
 .ic .ck .kk { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
-.ic canvas.onz { order:0; width:calc(72 * var(--p)); height:calc(40 * var(--p)); background:var(--panel-0); box-shadow:inset 0 0 0 var(--p) var(--bronz); image-rendering:pixelated; }
+.ic canvas.onz { order:0; width:calc(64 * var(--p)); height:calc(32 * var(--p)); background:var(--panel-0); box-shadow:inset 0 0 0 var(--p) var(--bronz); image-rendering:pixelated; }
 .ic .ck.secili canvas.onz { box-shadow:inset 0 0 0 var(--p) var(--gold); }
 .ic .kure-yer { order:1; display:flex; flex-direction:column; align-items:center; margin-top:0; }
 .ic .kure-yer .k-kaide { width:calc(62 * var(--p)); margin-top:calc(-3 * var(--p)); }
 .ic .cb { order:5; align-self:stretch; display:grid; grid-template-columns:1fr auto; gap:calc(2 * var(--p)) calc(6 * var(--p)); align-items:center; padding:calc(3 * var(--p)) calc(5 * var(--p));
   background:var(--panel); border:calc(3 * var(--p)) solid transparent; border-image:var(--k-tas-cerceve) 5 fill / calc(3 * var(--p)) / 0 round; }
-.ic .ps { order:6; color:var(--soluk); text-transform:none; min-height:calc(18 * var(--p)); text-align:center; line-height:.875; }
+.ic .ps { order:6; color:var(--soluk); text-transform:none; text-align:center; line-height:.875; }
 .ic .yet { order:7; color:var(--ink); text-transform:none; text-align:center; line-height:.875; }
 .ic .not { order:8; color:#ffb070; background:#2a1a08; box-shadow:inset 0 0 0 var(--p) #6b4a1a; padding:calc(2 * var(--p)) calc(4 * var(--p)); text-transform:none; line-height:.875; }
 .ic .bos { order:8; min-height:calc(12 * var(--p)); }
+.ic .ck { cursor:pointer; }
+.ic .ck:focus-visible { outline:calc(2 * var(--p)) solid #fff; outline-offset:calc(2 * var(--p)); }
+.ic .sec-satir { display:flex; justify-content:center; margin-top:calc(4 * var(--p)); }
 .ic .ck button { order:4; }
 .ic .ck button.k-dugme { min-height:calc(18 * var(--p)); font-size:var(--y-20); letter-spacing:var(--yp); padding:calc(2 * var(--p)) calc(10 * var(--p)) calc(4 * var(--p)); min-width:0; }
-.ic .alt-yazi { text-align:center; color:var(--soluk); text-transform:uppercase; margin-top:calc(8 * var(--p)); }
+.ic .alt-yazi { text-align:center; color:var(--soluk); text-transform:uppercase; margin-top:calc(4 * var(--p)); }
 html[data-yazi-buyuk] .ic .kartlar { grid-template-columns:1fr; }
 `;
 const KOKEN_SEG: Record<string, string> = { goktasi: "#d5b787", maden: "#c0793a", yapay: "#6b8792", karanlik: "#8a5cb8" };
@@ -137,7 +140,8 @@ export function baslat(b: EkranBaglami): void {
   const h = el("div", "hata", kart);
   h.setAttribute("role", "alert");
   const oniz: Onizleme[] = [];
-  let ilk: HTMLButtonElement | null = null;
+  let secili: KartVerisi | null = null;
+  let ilkKart: HTMLElement | null = null;
   veriler.forEach((v, k) => {
     const p = v.profil;
     const c = el("section", `ck${k === 0 ? " secili" : ""}`, izgara);
@@ -149,7 +153,7 @@ export function baslat(b: EkranBaglami): void {
     bas.querySelector("span:last-child")!.textContent = cekirdekBul(v.set.cekirdek).ad;
     el("div", "kk", c, `${KOKEN_AD[p.koken]} · ${ELEMENT_RENK[p.element].ad} · ${TIP_AD[p.tip] ?? p.tip} · Lv.2`);
     const ky = el("div", "kure-yer", c);
-    ky.appendChild(kokenKuresi(p.koken, 11));
+    ky.appendChild(kokenKuresi(p.koken, 9));
     el("div", "k-kaide", ky);
     const cv = el("canvas", "onz", c);
     cv.setAttribute("aria-label", `${cekirdekBul(v.set.cekirdek).ad}: 5 saniyelik hareket önizlemesi`);
@@ -171,45 +175,64 @@ export function baslat(b: EkranBaglami): void {
       for (let i = 0; i < 5; i++) el("i", i < dolu ? "dolu" : "", kap);
     });
     el("div", "ps", c, PASIF[p.koken] ?? "");
-    el("div", "yet", c, `Yetenek: ${v.yetenek} · Lv.3'te Özel Yetenek: ${v.ozel}`);
-    if (p.koken === "yapay") el("div", "not", c, "Ömrü sınırlı: 30 maç sonra yenilenmesi gerekir.");
+    // yetenek bilgisi ikinci katta (kart ipucu + ARIA; sadelik § 2.2)
+    c.title = `Yetenek: ${v.yetenek} · Lv.3'te Özel Yetenek: ${v.ozel}`;
+    if (p.koken === "yapay") el("div", "not", c, "30 maç ömür").title = "Ömrü sınırlı: 30 maç sonra yenilenmesi gerekir.";
     else el("div", "bos", c);
-    const d = el("button", k === 0 ? "k-dugme ana" : "k-dugme", c, "Bunu seç");
-    d.dataset["eylem"] = `sec-${v.set.id}`;
-    d.setAttribute("aria-label", `Bunu seç: ${cekirdekBul(v.set.cekirdek).ad}`);
-    ilk ??= d;
-    d.addEventListener("focus", () => {
-      for (const x of izgara.querySelectorAll("button")) x.classList.toggle("ana", x === d);
-      for (const x of izgara.querySelectorAll(".ck")) x.classList.toggle("secili", x === c);
-    });
-    d.addEventListener("click", async () => {
-      for (const x of izgara.querySelectorAll("button")) (x as HTMLButtonElement).disabled = true;
-      h.textContent = "";
-      try {
-        const r = await apiPost("/api/ilk-cekirdek", { set: v.set.id });
-        if (r.durum !== 201 && r.veri.hata !== "var") { h.textContent = HESAP_HATA[r.veri.hata ?? "bicim"] ?? HESAP_HATA["bicim"]!; return; }
-        for (const o of oniz) o.durdur();
-        // misafirken Antrenman eğitimini bu tarayıcıda bitirdiyse İlk Devir bildirilir (tide O-1 b)
-        if (oku(MISAFIR_EGITIM) === "1") {
-          await apiPost("/api/egitim-bitti");
-          sakla(MISAFIR_EGITIM, null);
-          git("atolye", "&mesaj=ilkdevir");
-        } else git("antrenman");
-      } catch (e) {
-        if (e instanceof BakimHatasi) bakimKatmani(() => location.reload());
-      } finally {
-        for (const x of izgara.querySelectorAll("button")) (x as HTMLButtonElement).disabled = false;
-      }
-    });
+    // kart = seçim (radyo); onay tek SEÇ düğmesiyle (S-2)
+    c.tabIndex = k === 0 ? 0 : -1;
+    c.setAttribute("role", "radio");
+    c.setAttribute("aria-checked", String(k === 0));
+    c.setAttribute("aria-label", `${cekirdekBul(v.set.cekirdek).ad}. ${PASIF[p.koken] ?? ""} Yetenek: ${v.yetenek}.${p.koken === "yapay" ? " Ömrü 30 maç." : ""}`);
+    c.dataset["ck"] = v.set.id;
+    const sec = () => {
+      secili = v;
+      for (const x of izgara.querySelectorAll<HTMLElement>(".ck")) { const on = x === c; x.classList.toggle("secili", on); x.setAttribute("aria-checked", String(on)); x.tabIndex = on ? 0 : -1; }
+      secD.dataset["eylem"] = "sec";
+      secD.dataset["set"] = v.set.id;
+      secD.setAttribute("aria-label", `Seç: ${cekirdekBul(v.set.cekirdek).ad}`);
+    };
+    c.addEventListener("click", sec);
+    c.addEventListener("focus", sec);
+    if (k === 0) ilkKart = c;
   });
+  izgara.setAttribute("role", "radiogroup");
+  izgara.setAttribute("aria-label", "İlk Çekirdek");
   el("div", "alt-yazi k-e16", kart, "Seçmediğin ikisi Market'te");
-  // ok tuşları kartlar arasında (ux § 6.4)
+  const secS = el("div", "sec-satir", kart);
+  const secD = el("button", "k-dugme ana", secS, "Seç");
+  secD.type = "button";
+  secD.dataset["eylem"] = "sec";
+  secD.addEventListener("click", async () => {
+    const v = secili;
+    if (!v) return;
+    secD.disabled = true;
+    h.textContent = "";
+    try {
+      const r = await apiPost("/api/ilk-cekirdek", { set: v.set.id });
+      if (r.durum !== 201 && r.veri.hata !== "var") { h.textContent = HESAP_HATA[r.veri.hata ?? "bicim"] ?? HESAP_HATA["bicim"]!; return; }
+      for (const o of oniz) o.durdur();
+      // misafirken Antrenman eğitimini bu tarayıcıda bitirdiyse İlk Devir bildirilir (tide O-1 b)
+      if (oku(MISAFIR_EGITIM) === "1") {
+        await apiPost("/api/egitim-bitti");
+        sakla(MISAFIR_EGITIM, null);
+        git("atolye", "&mesaj=ilkdevir");
+      } else git("antrenman");
+    } catch (e) {
+      if (e instanceof BakimHatasi) bakimKatmani(() => location.reload());
+    } finally {
+      secD.disabled = false;
+    }
+  });
+  // ok tuşları kartlar arasında (ux § 6.4); Enter = SEÇ
   izgara.addEventListener("keydown", (e) => {
-    const dg = [...izgara.querySelectorAll("button")];
-    const i = dg.indexOf(document.activeElement as HTMLButtonElement);
+    const dg = [...izgara.querySelectorAll<HTMLElement>(".ck")];
+    const i = dg.indexOf(document.activeElement as HTMLElement);
     if (i < 0) return;
     if (e.key === "ArrowRight") { e.preventDefault(); dg[(i + 1) % dg.length]!.focus(); }
     if (e.key === "ArrowLeft") { e.preventDefault(); dg[(i + dg.length - 1) % dg.length]!.focus(); }
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); secD.click(); }
   });
-  queueMicrotask(() => ilk?.focus());
+  (ilkKart as HTMLElement | null)?.click();
+  queueMicrotask(() => (ilkKart as HTMLElement | null)?.focus());
 }

@@ -2,7 +2,10 @@
    işaretlemenin (.ekr, .rf, .tam-katman, .ust-bant) yeni dile eşlenmesi ve ekran başına yerleşim. Gradyan / gölge / parlama yok. */
 
 /* ---- ekran kökü ---- */
-.ekr.k-zemin { display: flex; flex-direction: column; padding: 0; }
+.ekr.k-zemin { display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+/* ikinci tur: sayfa kayması yok; uzun içerik panelin İÇİNDE kayar */
+.ekr .k-govde { min-height: 0; overflow: hidden; padding-bottom: var(--kenar); }
+.ekr .kart { max-height: 100%; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; scrollbar-color: var(--bronz-1) var(--panel-0); }
 .ekr .k-govde { align-items: center; justify-content: flex-start; padding-top: calc(14 * var(--p)); }
 .ekr .kart { width: min(calc(420 * var(--p)), 100%); }
 .ekr .kart.dar { width: min(calc(270 * var(--p)), 100%); }
@@ -16,13 +19,13 @@
 .ekr p, .rf p { margin: calc(2 * var(--p)) 0; }
 .ekr b, .rf b { font-weight: 400; color: var(--gold); }
 .ekr .alt { color: var(--soluk); margin-bottom: calc(6 * var(--p)); }
-.ekr label { display: block; margin: calc(6 * var(--p)) 0 calc(2 * var(--p)); color: var(--soluk); text-transform: uppercase; font-weight: 400; }
+.ekr label { display: block; margin: calc(4 * var(--p)) 0 calc(2 * var(--p)); color: var(--soluk); text-transform: uppercase; font-weight: 400; }
 .ekr .ipucu, .rf .ipucu { color: var(--soluk); margin-top: var(--p); }
 .ekr .hata, .rf .hata { min-height: calc(10 * var(--p)); color: var(--tehlike-yazi); margin-top: calc(2 * var(--p)); font-weight: 400; }
-.ekr .satir { display: flex; gap: calc(6 * var(--p)); align-items: center; flex-wrap: wrap; margin-top: calc(8 * var(--p)); }
+.ekr .satir { display: flex; gap: calc(6 * var(--p)); align-items: center; flex-wrap: wrap; margin-top: calc(6 * var(--p)); }
 .ekr a, .rf a { color: var(--gold); }
 .ekr a.k-dugme, .rf a.k-dugme { color: var(--ink); }
-.ekr .yt, .rf .yt { color: #7d7688; }
+.ekr .yt, .rf .yt { color: var(--soluk); }
 .ekr input.k-alan { width: 100%; }
 .ekr .k-dugme.ana { margin-left: auto; }
 .ekr .satir .k-dugme.ana { order: 9; }

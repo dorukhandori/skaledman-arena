@@ -80,7 +80,7 @@ const STIL = `
 .ms td small { color:var(--soluk); margin-left:10px; font-size:32px; }
 .ms .tablo .yk { margin-top:3px; color:var(--soluk); text-align:right; }
 .ms .satir { opacity:0; transition:opacity 83ms steps(1); } .ms .satir.gor { opacity:1; }
-.ms .oduller { display:grid; grid-template-columns:170px 180px 1fr; gap:12px; margin-top:6px; padding:4px 12px; height:180px; overflow:hidden; align-items:start; line-height:28px; }
+.ms .oduller { display:grid; grid-template-columns:170px 180px 1fr; gap:12px; margin-top:6px; padding:4px 12px; height:180px; overflow:visible; align-items:start; line-height:28px; }
 .ms .oduller .yt { color:var(--soluk); font-size:32px; line-height:26px; }
 .ms .ac { position:relative; display:flex; flex-direction:column; align-items:center; text-align:center; gap:2px; }
 .ms .ac b.bas { font:400 32px/1 var(--font-etiket); color:var(--gold); text-transform:uppercase; font-weight:400; }
@@ -93,7 +93,7 @@ const STIL = `
 .ms .ac[data-altin] .dokum { color:var(--soluk); font-size:32px; text-transform:uppercase; }
 .ms .ac ul li { display:flex; justify-content:space-between; gap:12px; } .ms .ac ul li.c { color:#ffb070; }
 .ms .ck0 { padding:8px 8px; background:var(--panel-0); box-shadow:inset 0 0 0 2px var(--bronz), inset 0 0 0 4px var(--harc); }
-.ms .bsr { display:flex; flex-direction:column; gap:4px; max-height:164px; overflow:hidden; }
+.ms .bsr { display:flex; flex-direction:column; gap:4px; max-height:164px; overflow-y:auto; scrollbar-width:thin; scrollbar-color:var(--bronz-1) var(--panel-0); }
 .ms .bsk { display:grid; grid-template-columns:30px 1fr; gap:0 8px; align-items:center; padding:4px 8px; line-height:26px; background:var(--panel-0); box-shadow:inset 0 0 0 2px var(--bronz-1); }
 .ms .bsk.tamam { box-shadow:inset 0 0 0 2px var(--turuncu); background:#2a1610; }
 .ms .bsk .ad { font:400 32px/1.05 var(--font-etiket); color:var(--ink); text-transform:uppercase; }
@@ -113,7 +113,7 @@ const STIL = `
 .ms button:disabled { color:var(--kapali-yazi); background-color:var(--tas-2); text-shadow:none; box-shadow:inset 0 0 0 2px var(--cerceve-0); cursor:default; }
 .ms button.bir:disabled { font-size:40px; }
 .ms button:focus-visible { outline:4px solid #fff; outline-offset:2px; }
-.ms .ipc { position:absolute; right:-120px; bottom:20px; line-height:28px; text-align:right; color:#5e5866; text-transform:uppercase; }
+.ms .ipc { position:absolute; right:-120px; bottom:20px; line-height:28px; text-align:right; color:var(--soluk); text-transform:uppercase; }
 .ms .konfeti { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
 .ms .konfeti i { position:absolute; top:-10px; width:6px; height:6px; animation:dusus steps(12) forwards; }
 @keyframes dusus { to { transform:translateY(560px); opacity:.25; } }

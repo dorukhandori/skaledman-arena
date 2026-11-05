@@ -8,6 +8,7 @@ import { DUZ_YAZI, OLCEKLER, METIN_OLCEGI, duzYaziOku, duzYaziUygula, ekranKok, 
 
 export function ayarlar(b: EkranBaglami): void {
   const { kart } = ekranKok(b.ustYazi, "Ayarlar");
+  kart.classList.add("genis");
   geriDugmesi(kart, b.ben?.girisli ? "atolye" : "karsilama");
   el("h2", "k-plaka", kart, "Ayarlar");
   el("label", "", kart, "Metin ölçeği (menüler ve maç HUD'u)");
@@ -36,7 +37,7 @@ export function ayarlar(b: EkranBaglami): void {
   el("label", "", kart, "Maç ayarları");
   const iz = el("div", "", kart);
   iz.style.display = "grid";
-  iz.style.gridTemplateColumns = "1fr calc(110 * var(--p))";
+  iz.style.gridTemplateColumns = "1fr calc(80 * var(--p)) 1fr calc(80 * var(--p))";
   iz.style.gap = "calc(3 * var(--p)) calc(8 * var(--p))";
   iz.style.alignItems = "center";
   iz.style.textTransform = "uppercase";
@@ -55,7 +56,7 @@ export function ayarlar(b: EkranBaglami): void {
       goster();
     });
   }
-  el("p", "yt", kart, "Bu tarayıcıda saklanır. Maç içinde Esc › Ayarlar aynı ayarları açar.");
+  el("p", "yt", kart, "Bu tarayıcıda saklanır. Maçta: Esc › Ayarlar.");
   // D8: bilgi bağlantıları + hesap silme (iki adım, şifre onayı; misafirde yok)
   const bilgi = el("div", "satir", kart);
   const gz = el("a", "", bilgi, "Gizlilik");

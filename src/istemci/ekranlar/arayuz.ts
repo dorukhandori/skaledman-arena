@@ -23,9 +23,14 @@ export function stilEkle(): void {
   window.addEventListener("resize", () => olcekUygula());
 }
 
-/** Tam sayı UI ölçeği: floor(min(W/480, H/270)), en az 2; yazı ölçeği metin ölçeğiyle tam sayıya yukarı yuvarlanır. */
+/**
+ * Tam sayı UI ölçeği: floor(min(W/640, H/360)), en az 2 → mantıksal alan her zaman ≥ 640×360 (1280×720 ×2, 1920×1080 ×3,
+ * 2560×1440 ×4). İkinci tur kararı (GU-A § 6): maket ızgarası 480×270 iken 1080p'de ×4 yoğun ekranlarda (Atölye) sayfa
+ * kaymasına ve kesilen metne yol açıyordu; 640×360 her iki çözünürlükte aynı yerleşimi verir. Yazı ölçeği metin ölçeğiyle
+ * tam sayıya yukarı yuvarlanır.
+ */
 export function olcekHesapla(w: number, h: number, metin = 1): { o: number; yo: number } {
-  const o = Math.max(2, Math.floor(Math.min(w / 480, h / 270)));
+  const o = Math.max(2, Math.floor(Math.min(w / 640, h / 360)));
   const yo = metin <= 1 ? o : Math.max(o + 1, Math.ceil(o * metin - 0.01));
   return { o, yo };
 }
@@ -92,8 +97,7 @@ export function lentoKur(kok: HTMLElement, s: LentoSecenek): HTMLElement {
   el("span", "k-bosluk", l);
   const ben = sonBen?.girisli ? sonBen : null;
   if (s.kim && ben) {
-    const ad = el("span", "k-e16 k-soluk k-buyuk", l, ben.oyuncu.ad);
-    ad.dataset["kim"] = "1";
+    // metin taş üstünde durmaz (§ 5.1): oyuncu adı "Daha fazla" menüsünün başlığında
     const ay = el("a", "k-dugme kucuk", l, "Ayarlar");
     ay.href = "?ekran=ayarlar";
     const c = el("button", "k-dugme kucuk", l, "Çıkış");
@@ -108,6 +112,40 @@ export function lentoKur(kok: HTMLElement, s: LentoSecenek): HTMLElement {
     a.setAttribute("aria-label", `Bakiye ${ben.altin} Altın: Market`);
   }
   return l;
+}
+
+/**
+ * Açılır menü (ikinci kat; sadelik S-9): düğme + liste. Liste düğmenin altında, Esc ya da dışarı tıklama kapatır.
+ * `ogeler`: [etiket, eylem anahtarı, tıklama] (eylem → data-eylem).
+ */
+export function acilirMenu(ust: HTMLElement, etiket: string, baslik: string | null, ogeler: [string, string, () => void][], anahtar = "menu"): HTMLElement {
+  const kap = el("div", "k-menu", ust);
+  const d = el("button", "k-dugme kucuk", kap, etiket);
+  d.type = "button";
+  d.dataset["eylem"] = anahtar;
+  d.setAttribute("aria-haspopup", "true");
+  d.setAttribute("aria-expanded", "false");
+  const liste = el("div", "k-menu-liste", kap);
+  liste.setAttribute("role", "menu");
+  liste.hidden = true;
+  if (baslik) el("div", "k-menu-baslik k-e16", liste, baslik);
+  for (const [ad, eylem, f] of ogeler) {
+    const o = el("button", "k-dugme kucuk", liste, ad);
+    o.type = "button";
+    o.setAttribute("role", "menuitem");
+    o.dataset["eylem"] = eylem;
+    o.addEventListener("click", () => { kapat(); f(); });
+  }
+  const kapat = () => { liste.hidden = true; d.setAttribute("aria-expanded", "false"); };
+  d.addEventListener("click", (e) => { e.stopPropagation(); liste.hidden = !liste.hidden; d.setAttribute("aria-expanded", String(!liste.hidden)); if (!liste.hidden) liste.querySelector<HTMLButtonElement>("button")?.focus(); });
+  document.addEventListener("click", (e) => { if (!kap.contains(e.target as Node)) kapat(); });
+  kap.addEventListener("keydown", (e) => { if (e.key === "Escape" && !liste.hidden) { e.stopPropagation(); kapat(); d.focus(); } });
+  return kap;
+}
+
+/** Geliştirici araçları yalnız `?gelistir=1` ile (sadelik S-10). */
+export function gelistirAcik(): boolean {
+  return new URLSearchParams(location.search).get("gelistir") === "1";
 }
 
 /** Lento Altın yuvasını güncelle (Market satın alma sonrası). */
