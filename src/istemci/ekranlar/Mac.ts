@@ -302,6 +302,8 @@ export class MacEkrani {
     this.sahne.efektKatmani.addChild(this.kenarUyari);
     this.girdi = new OyuncuGirdisi(b.app.canvas, () => b.app.screen);
     this.yetenekGorsel = new YetenekGorsel(this.sahne, this.yerel);
+    // kutsal canavar hologramı topacın çizildiği yerden çıkar (RuhGorsel, docs/art/ruh-entegrasyon-notu.md)
+    this.yetenekGorsel.ruh.topacKonumu = (i) => { const g = this.gorseller[i]; return g ? { x: g.kok.x, y: g.kok.y } : null; };
     // iptal bölgesi: alt şerit (mantıksal y > 492, ux § 1)
     this.girdi.iptalBolgesi = (px, py) => { const c = this.sahne.cerceve(); return (py - c.y) / c.olcek > 492; };
     this.ayarlariUygula();

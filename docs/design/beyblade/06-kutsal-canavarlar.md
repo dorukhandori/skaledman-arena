@@ -2,7 +2,7 @@
 
 Sahip (2026-11-05): *"oyunda bulunan kutsal canavarlar, onların dövüş içerisinde tetiklenmesi ve bu canavarların görünümü çok özel ve heybetli olmalı. ... tüm pipelineları kullanmakta serbestsin, tripo dahil."*
 
-**Sahip kararları (2026-11-05):** (1) Kapsam pixel planı § 4 gibi: ilk sürümde canavar **yalnız Ulti'de**, element başına 1 Ata. Özel Yetenek'teki ruh belirmesi (§ 1, Bağlı belirme) kodda hazır ama `RUH_PORTRE_OZEL_YETENEK = false` bayrağıyla kapalı; 21 portre varlık olarak depoda. (2) § 2'deki altı Ata türü **onaylandı**.
+**Sahip kararları (2026-11-05):** (1) Kapsam pixel planı § 4 gibi: ilk sürümde canavar **yalnız Ulti'de**, element başına 1 Ata. Özel Yetenek'teki ruh belirmesi (§ 1, Bağlı belirme) kodda hazır ama `RUH_PORTRE_OZEL_YETENEK = false` bayrağıyla kapalı; 21 portre varlık olarak depoda. (2) § 2'deki altı Ata türü **onaylandı**. (3) Ata **hologram** olarak belirir: topacın tam ortasından (çekirdekten) yukarı **V biçimli hologram ışığı** yansır, kutsal canavarın hologramı bu V'nin içinde alttan yukarı şekillenir (§ 1.2).
 
 Bu belge `00-lore-cercevesi.md` § 3 (ruh taksonomisi) ve `01-arena-eslemesi.md` § 4.3'ü (ruh silueti) **somutlaştırır**. Oyuncuya görünen ad **Ruh**; "kutsal canavar" lore ve belge dilidir (`04-sozluk.md`). Sim'e dokunmaz: her şey istemci sunumudur ve sunucunun zaten yolladığı `yetenekBasladi` olayından tetiklenir (ağ maliyeti 0 bayt).
 
@@ -16,6 +16,17 @@ Bu belge `00-lore-cercevesi.md` § 3 (ruh taksonomisi) ve `01-arena-eslemesi.md`
 | **Takım rezonansı** | Takım Ultisi (kademe 4, sezon 2) | Takımın üç ruhu | Üç portre 0,2 s arayla yay hâlinde yükselir | 1,4 s |
 
 Neden böyle: Özel Yetenek maçta birkaç kez olur, Ulti maç başına bir kez. En pahalı ve en heybetli görüntü en nadir ana saklanır; böylece Ata her göründüğünde "olay" olur. Yetenek (kademe 1) sık olduğundan canavar çıkarmaz.
+
+### 1.2 Hologram belirmesi (Ulti, sahip kararı 2026-11-05)
+
+| An | Süre | Görünüm |
+|---|---|---|
+| V açılır | 0-0,18 s | Tepe noktası çağıran topacın çekirdeğinde; kollar yukarı açılır, iç yarı saydam element rengi, kenarlar parlak, içinde yukarı akan tarama çizgileri |
+| Şekillenme | 0,1-0,52 s | Canavar 12 yatay şeritte alttan yukarı belirir; yeni şerit kısa kayar, şekillenme cephesinde beyaz çizgi |
+| Tutuş | telegraf + 0,9 s | Kükreme karesinde zeminde tek halka ve küçük sarsıntı; titreme, iki kısa kayma (glitch) |
+| Çıkış | 0,35 s | Şeritler yukarıdan söner, V kapanır |
+
+Hologram topacın **çizildiği** yeri her kare izler ve topacın üstünde, yarı saydam çizilir. Doku önceden pişirilmiş hologram sayfasıdır (element tonu, tarama satırı, parlak kenar). Ekranda tam ×2 ölçekle, piksel ızgarasına oturtulur. Topaç uzak kenardaysa (hologram üst HUD'a taşacaksa) yarım boy sayfa kullanılır. Ad bandı alt-ortada tek satırdır: "ATA KOR UYANDI · Alaz Bizonu".
 
 ### 1.1 Okunabilirlik kuralları (ux § 2.2 ile uyumlu)
 

@@ -548,7 +548,7 @@ export class YetenekGorsel {
     this.simsekCiz(dt);
     this.siluetIlerlet(dt);
     this.ruh.onYukle(d);
-    this.ruh.ilerle(dt);
+    this.ruh.ilerle(dt, d);
     this.kenarCiz(dt);
     this.ipucu.visible = !!ipucu && this.ipucuAcik;
     if (ipucu && this.ipucuAcik) {
