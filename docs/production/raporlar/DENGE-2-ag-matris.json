@@ -1,0 +1,314 @@
+{
+ "N0": {
+  "profil": "N0",
+  "not": "temel",
+  "kod": "QLRJNJWC",
+  "macSureSn": 48.326,
+  "sonuc": {
+   "kazanan": 0,
+   "neden": "puan",
+   "puan": [
+    4,
+    2
+   ]
+  },
+  "tick": 2911,
+  "A": {
+   "wireHash": "49/49",
+   "wireSapma": 0,
+   "yenidenOynatma": "48/48 son eşit",
+   "yenidenOynatmaSapma": 0,
+   "uzlasma": {
+    "yokSay": 509,
+    "yumusak": 146,
+    "buyuk": 5,
+    "darbeYumusak": 0,
+    "deneyYumusak": 5,
+    "sicrama": 0
+   },
+   "buyukPer10": 3.5714285714285716,
+   "sicramaPer10": 0,
+   "gorunurSicrama": 0,
+   "gorunurPer10": 0,
+   "carpismalar": 14,
+   "varis": {
+    "n": 14,
+    "ort": 2.2142857142857144,
+    "p50": 2,
+    "p95": 5,
+    "enFazla": 5
+   },
+   "isleme": {
+    "n": 14,
+    "ort": 13.928571428571429,
+    "p50": 11,
+    "p95": 38,
+    "enFazla": 38
+   },
+   "rtt": {
+    "n": 49,
+    "ort": 12.10204081632653,
+    "p50": 12,
+    "p95": 14,
+    "enFazla": 29
+   },
+   "hayalet": 0,
+   "ayirma": 49,
+   "yenidenOynatmaEnFazla": 2,
+   "yamalar": 1014,
+   "kopma": 0
+  },
+  "B": {
+   "wireHash": "49/49",
+   "wireSapma": 0,
+   "yenidenOynatma": "48/48 son eşit",
+   "yenidenOynatmaSapma": 0,
+   "uzlasma": {
+    "yokSay": 494,
+    "yumusak": 160,
+    "buyuk": 6,
+    "darbeYumusak": 1,
+    "deneyYumusak": 5,
+    "sicrama": 0
+   },
+   "buyukPer10": 4.285714285714286,
+   "sicramaPer10": 0,
+   "gorunurSicrama": 0,
+   "gorunurPer10": 0,
+   "carpismalar": 14,
+   "varis": {
+    "n": 14,
+    "ort": 2,
+    "p50": 2,
+    "p95": 5,
+    "enFazla": 5
+   },
+   "isleme": {
+    "n": 14,
+    "ort": 21.214285714285715,
+    "p50": 28,
+    "p95": 37,
+    "enFazla": 37
+   },
+   "rtt": {
+    "n": 49,
+    "ort": 15.224489795918368,
+    "p50": 12,
+    "p95": 15,
+    "enFazla": 165
+   },
+   "hayalet": 0,
+   "ayirma": 52,
+   "yenidenOynatmaEnFazla": 2,
+   "yamalar": 995,
+   "kopma": 0
+  },
+  "sunucu": {
+   "oda": "QLRJNJWC",
+   "adim": 2911,
+   "p50": 0.06183299999975134,
+   "p95": 0.14388699999835808,
+   "p99": 0.3660539999982575,
+   "enFazla": 8.099255000000994,
+   "odaP50": 0.14354300000195508,
+   "odaP95": 0.606378999997105,
+   "odaP99": 1.3711790000015753,
+   "seyirci": 0,
+   "sayac": {
+    "birlestirme": 0,
+    "borc": 389,
+    "tasima": 398,
+    "notr": 0,
+    "dondurma": 0,
+    "hukmen": 0
+   },
+   "tick": 2911,
+   "sonHash": "c499536d6033da57"
+  },
+  "bantA": [
+   {
+    "yol": "/FuIP5R_a_/QLRJNJWC?sessionId=GY5poQIgx",
+    "sureMs": 50889,
+    "asagiBayt": 183191,
+    "yukariBayt": 42014,
+    "asagiCerceve": 1157,
+    "yukariCerceve": 2962,
+    "kayipCerceve": 0,
+    "asagiKBs": 3.515444613521586,
+    "yukariKBs": 0.8062507983061172
+   }
+  ],
+  "bantB": [
+   {
+    "yol": "/FuIP5R_a_/QLRJNJWC?sessionId=_aWujMqoX",
+    "sureMs": 49805,
+    "asagiBayt": 182823,
+    "yukariBayt": 41688,
+    "asagiCerceve": 1137,
+    "yukariCerceve": 2958,
+    "kayipCerceve": 0,
+    "asagiKBs": 3.5847422133821905,
+    "yukariKBs": 0.8174066358799318
+   }
+  ],
+  "konsolHata": [],
+  "adimA": 2958,
+  "adimB": 2955
+ },
+ "N1": {
+  "profil": "N1",
+  "not": "iyi",
+  "kod": "DUZMAXPW",
+  "macSureSn": 97.98,
+  "sonuc": {
+   "kazanan": 0,
+   "neden": "aniOlum",
+   "puan": [
+    4,
+    2
+   ]
+  },
+  "tick": 5888,
+  "A": {
+   "wireHash": "99/99",
+   "wireSapma": 0,
+   "yenidenOynatma": "98/98 son eşit",
+   "yenidenOynatmaSapma": 0,
+   "uzlasma": {
+    "yokSay": 1088,
+    "yumusak": 492,
+    "buyuk": 22,
+    "darbeYumusak": 3,
+    "deneyYumusak": 17,
+    "sicrama": 2
+   },
+   "buyukPer10": 3.548387096774194,
+   "sicramaPer10": 0.3225806451612903,
+   "gorunurSicrama": 0,
+   "gorunurPer10": 0,
+   "carpismalar": 62,
+   "varis": {
+    "n": 62,
+    "ort": 41.33870967741935,
+    "p50": 41,
+    "p95": 45,
+    "enFazla": 46
+   },
+   "isleme": {
+    "n": 62,
+    "ort": 60.67741935483871,
+    "p50": 60,
+    "p95": 75,
+    "enFazla": 78
+   },
+   "rtt": {
+    "n": 99,
+    "ort": 90.65656565656566,
+    "p50": 91,
+    "p95": 93,
+    "enFazla": 101
+   },
+   "hayalet": 0,
+   "ayirma": 168,
+   "yenidenOynatmaEnFazla": 7,
+   "yamalar": 2007,
+   "kopma": 0
+  },
+  "B": {
+   "wireHash": "99/99",
+   "wireSapma": 0,
+   "yenidenOynatma": "98/98 son eşit",
+   "yenidenOynatmaSapma": 0,
+   "uzlasma": {
+    "yokSay": 1142,
+    "yumusak": 432,
+    "buyuk": 28,
+    "darbeYumusak": 2,
+    "deneyYumusak": 24,
+    "sicrama": 2
+   },
+   "buyukPer10": 4.516129032258064,
+   "sicramaPer10": 0.3225806451612903,
+   "gorunurSicrama": 1,
+   "gorunurPer10": 0.16129032258064516,
+   "carpismalar": 62,
+   "varis": {
+    "n": 62,
+    "ort": 41.24193548387097,
+    "p50": 41,
+    "p95": 46,
+    "enFazla": 46
+   },
+   "isleme": {
+    "n": 62,
+    "ort": 59.70967741935484,
+    "p50": 63,
+    "p95": 74,
+    "enFazla": 81
+   },
+   "rtt": {
+    "n": 99,
+    "ort": 91.74747474747475,
+    "p50": 91,
+    "p95": 94,
+    "enFazla": 192
+   },
+   "hayalet": 0,
+   "ayirma": 222,
+   "yenidenOynatmaEnFazla": 6,
+   "yamalar": 1988,
+   "kopma": 0
+  },
+  "sunucu": {
+   "oda": "DUZMAXPW",
+   "adim": 5888,
+   "p50": 0.05667900000116788,
+   "p95": 0.11801099999865983,
+   "p99": 0.2528019999881508,
+   "enFazla": 2.1466789999976754,
+   "odaP50": 0.11955099999613594,
+   "odaP95": 0.4649809999973513,
+   "odaP99": 1.0343029999930877,
+   "seyirci": 0,
+   "sayac": {
+    "birlestirme": 0,
+    "borc": 1572,
+    "tasima": 1584,
+    "notr": 0,
+    "dondurma": 0,
+    "hukmen": 0
+   },
+   "tick": 5888,
+   "sonHash": "b3d869b4ddba6537"
+  },
+  "bantA": [
+   {
+    "yol": "/FuIP5R_a_/DUZMAXPW?sessionId=m_V8rJQRr",
+    "sureMs": 100620,
+    "asagiBayt": 389560,
+    "yukariBayt": 85940,
+    "asagiCerceve": 2322,
+    "yukariCerceve": 5991,
+    "kayipCerceve": 0,
+    "asagiKBs": 3.7808555704631286,
+    "yukariKBs": 0.8340864763466507
+   }
+  ],
+  "bantB": [
+   {
+    "yol": "/FuIP5R_a_/DUZMAXPW?sessionId=7rjN2yfj3",
+    "sureMs": 99694,
+    "asagiBayt": 389192,
+    "yukariBayt": 85746,
+    "asagiCerceve": 2302,
+    "yukariCerceve": 5989,
+    "kayipCerceve": 0,
+    "asagiKBs": 3.8123689740606252,
+    "yukariKBs": 0.8399334776917367
+   }
+  ],
+  "konsolHata": [],
+  "adimA": 5938,
+  "adimB": 5937
+ }
+}
