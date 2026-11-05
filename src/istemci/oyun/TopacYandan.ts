@@ -71,21 +71,6 @@ function golgePoligon(cx: number, cy: number, rx: number, ry: number, aci: numbe
   return p;
 }
 
-let dither: Texture | null = null;
-/** 2×2 dama dither dokusu (dünya pikseli 3: sanat ızgarasında ~2 px; düşen gölge kenarı). */
-function ditherDokusu(): Texture {
-  if (dither) return dither;
-  const c = document.createElement("canvas");
-  c.width = 6; c.height = 6;
-  const x = c.getContext("2d")!;
-  x.fillStyle = "#fff";
-  x.fillRect(0, 0, 3, 3); x.fillRect(3, 3, 3, 3);
-  dither = Texture.from(c);
-  dither.source.scaleMode = "nearest";
-  dither.source.addressMode = "repeat";
-  return dither;
-}
-
 /** Yan bandın açı aralığı (0 = sağ uç, π = sol uç; ön yarı). Işık sol üstten: sol dilim açık, sağ dilim koyu. */
 function yanBantAralik(rx: number, ry: number, yUst: number, yAlt: number, a0: number, a1: number): number[] {
   const p: number[] = [];
@@ -220,7 +205,8 @@ export class TopacYandan implements TopacCizimi {
     // referans 07: sol-alta uzayan koyu düşen gölge (ışık sağ üstten), pixel dither kenar + koyu çekirdek
     // GU-C: daha uzun ve dolu: koyu çekirdek (düz renk) + yalnız kenarda dither saçağı; referans 07'de gölge topaçtan
     // yaklaşık bir çap kadar sol-alta uzanır ve zeminde net bir leke olarak okunur
-    g.poly(golgePoligon(-kayma - 30, kayma * 0.5 + 13, 58, 21, -0.36)).fill({ texture: ditherDokusu(), textureSpace: "global", color: 0x000000, alpha: 0.42 });
+    // GU-E (sahip kararı 4: dolu koyu leke): dış saçak da düz dolgu; Bayer dama yok
+    g.poly(golgePoligon(-kayma - 30, kayma * 0.5 + 13, 58, 21, -0.36)).fill({ color: 0x120c10, alpha: 0.2 });
     g.poly(golgePoligon(-kayma - 26, kayma * 0.5 + 11, 50, 16, -0.36)).fill({ color: 0x120c10, alpha: 0.42 });
     g.poly(golgePoligon(-kayma - 12, kayma * 0.4 + 5, 34, 13, -0.3)).fill({ color: 0x000000, alpha: 0.18 });
     g.ellipse(0, 0, 26, 26 * k * 0.85).fill({ color: 0x000000, alpha: 0.32 });
