@@ -1,0 +1,13 @@
+{
+ "cekilen": [
+  "docs/production/raporlar/ekran/GU-C-01-normal-sonra.png",
+  "docs/production/raporlar/ekran/GU-C-02-carpisma-sonra.png",
+  "docs/production/raporlar/ekran/GU-C-03-sarmal-iz-sonra.png",
+  "docs/production/raporlar/ekran/GU-C-kiyas-07-sonra.png",
+  "docs/production/raporlar/ekran/GU-C-kiyas-08-sonra.png"
+ ],
+ "cozunurluk": "1280×720 CSS, DPR 2 (2560×1440)",
+ "atlas": true,
+ "carpismaVn": 578.5903770848316,
+ "hatalar": []
+}
