@@ -131,6 +131,61 @@ function geometriAl(id: string, ayna: boolean): { geo: BufferGeometry; yaricap: 
   return { geo, ...u };
 }
 
+/**
+ * Mac hattı GLB'leri (ATOLYE3D § 6): kimlik başına bir kez yüklenir, parametrik ölçüye oturtulur (yatay yarıçap ve taban),
+ * malzeme adından sınıf alır. Yüklenmiş olan `glbHazir`dan eşzamanlı okunur: ikon çizimi (`tekKare`) parçayı kurup hemen
+ * attığı için eşzamansız takas ikonlara hiç ulaşmıyordu; ikon önbelleği önce `hazirla` ile bekler.
+ */
+const glbHazir = new Map<string, BufferGeometry[]>();
+const glbSoz = new Map<string, Promise<BufferGeometry[] | null>>();
+
+function glbNormalle(kok: Object3D, tur: KatmanTuru, yaricap: number, yAlt: number): BufferGeometry[] {
+  kok.updateMatrixWorld(true);
+  const kutu = new Box3().setFromObject(kok);
+  const yari = Math.max(kutu.max.x - kutu.min.x, kutu.max.z - kutu.min.z) / 2 || 1;
+  const olcek = yaricap / yari;
+  const cx = (kutu.max.x + kutu.min.x) / 2, cz = (kutu.max.z + kutu.min.z) / 2;
+  const geolar: BufferGeometry[] = [];
+  kok.traverse((o) => {
+    const m = o as Mesh;
+    if (!m.isMesh) return;
+    const g = (m.geometry as BufferGeometry).clone();
+    g.applyMatrix4(m.matrixWorld);
+    g.translate(-cx, -kutu.min.y, -cz);
+    g.scale(olcek, olcek, olcek);
+    g.translate(0, yAlt, 0);
+    if (!g.getAttribute("normal")) g.computeVertexNormals();
+    const ad = (Array.isArray(m.material) ? m.material[0]?.name : m.material?.name) ?? "";
+    const sn = (ad in SINIF_KOD ? ad : tur === "govde" ? "boya" : tur === "disk" ? "metal" : tur === "uc" ? "koyu" : "cerceve") as Sinif;
+    const say = g.getAttribute("position").count;
+    g.setAttribute("sinif", new BufferAttribute(new Float32Array(say).fill(SINIF_KOD[sn]), 1));
+    g.computeBoundingSphere();
+    geolar.push(g);
+  });
+  return geolar;
+}
+
+/** Listedeki parçanın GLB geometrisi (tek yükleme, paylaşılır); listede değilse ya da yüklenemezse null (parametrik kalır). */
+function glbGeometrisi(id: string): Promise<BufferGeometry[] | null> {
+  let p = glbSoz.get(id);
+  if (!p) {
+    const s = PARCALAR_3B[id];
+    const g = geometriAl(id, false);
+    p = !s || !g || !GLB_LISTESI.has(id) ? Promise.resolve(null) : modelSec(id, GLB_LISTESI, async (url) => {
+      const { GLTFLoader } = await import("three/examples/jsm/loaders/GLTFLoader.js");
+      return (await new GLTFLoader().loadAsync(url)).scene as Object3D;
+    }, () => null).then((sec) => {
+      if (sec.kaynak !== "glb" || !sec.model) return null;
+      const geolar = glbNormalle(sec.model, s.tur, g.yaricap, g.yAlt);
+      if (!geolar.length) return null;
+      glbHazir.set(id, geolar);
+      return geolar;
+    }).catch(() => null);
+    glbSoz.set(id, p);
+  }
+  return p;
+}
+
 /** Disk üst yüzü (Gövde tabanı buna oturur); Disk yoksa 16. */
 function diskUst(id: string | null): number {
   const s = id ? PARCALAR_3B[id] : undefined;
@@ -219,8 +274,12 @@ export class Goruntuleyici implements Cizer {
     if (!g) return null;
     const grup = new Group();
     const n: ParcaNesnesi = { id, grup, malzemeler: [], meshler: [], yaricap: g.yaricap, yAlt: g.yAlt, yUst: g.yUst, giris: null, cikis: null };
-    this.meshEkle(n, g.geo, tur, boya);
-    if (GLB_LISTESI.has(id)) void this.glbDene(n, tur, boya);
+    const hazir = glbHazir.get(id);
+    if (hazir) for (const geo of hazir) this.meshEkle(n, geo, tur, boya);
+    else {
+      this.meshEkle(n, g.geo, tur, boya);
+      if (GLB_LISTESI.has(id)) void this.glbDene(n, tur, boya);
+    }
     return n;
   }
 
@@ -237,41 +296,20 @@ export class Goruntuleyici implements Cizer {
     n.meshler.push(mesh);
   }
 
-  /** GLB kancası: listedeyse yükle, parametrik ağı değiştir; yükleme başarısızsa parametrik kalır. */
+  /** GLB kancası (canlı sahne): listedeyse yükle, parametrik ağı değiştir; yükleme başarısızsa parametrik kalır. */
   private async glbDene(n: ParcaNesnesi, tur: KatmanTuru, boya: Boya): Promise<void> {
-    const s = await modelSec(n.id, GLB_LISTESI, async (url) => {
-      const { GLTFLoader } = await import("three/examples/jsm/loaders/GLTFLoader.js");
-      return (await new GLTFLoader().loadAsync(url)).scene as Object3D;
-    }, () => null);
-    if (s.kaynak !== "glb" || !s.model) return;
-    const kok = s.model;
-    kok.updateMatrixWorld(true);
-    const kutu = new Box3().setFromObject(kok);
-    const yari = Math.max(kutu.max.x - kutu.min.x, kutu.max.z - kutu.min.z) / 2 || 1;
-    const olcek = n.yaricap / yari;
-    const cx = (kutu.max.x + kutu.min.x) / 2, cz = (kutu.max.z + kutu.min.z) / 2;
-    const geolar: BufferGeometry[] = [];
-    kok.traverse((o) => {
-      const m = o as Mesh;
-      if (!m.isMesh) return;
-      const g = (m.geometry as BufferGeometry).clone();
-      g.applyMatrix4(m.matrixWorld);
-      g.translate(-cx, -kutu.min.y, -cz);
-      g.scale(olcek, olcek, olcek);
-      g.translate(0, n.yAlt, 0);
-      if (!g.getAttribute("normal")) g.computeVertexNormals();
-      const ad = (Array.isArray(m.material) ? m.material[0]?.name : m.material?.name) ?? "";
-      const sn = (ad in SINIF_KOD ? ad : tur === "govde" ? "boya" : tur === "disk" ? "metal" : tur === "uc" ? "koyu" : "cerceve") as Sinif;
-      const say = g.getAttribute("position").count;
-      g.setAttribute("sinif", new BufferAttribute(new Float32Array(say).fill(SINIF_KOD[sn]), 1));
-      geolar.push(g);
-    });
-    if (!geolar.length) return;
+    const geolar = await glbGeometrisi(n.id);
+    if (!geolar) return;
     for (const c of [...n.grup.children]) n.grup.remove(c);
     for (const m of n.malzemeler) m.dispose();
     n.malzemeler = []; n.meshler = [];
     for (const g of geolar) this.meshEkle(n, g, tur, boya);
     this.kirli = true;
+  }
+
+  /** İkon çizmeden önce: listedeki parçaların GLB'lerini yükle (sonraki `ikon` / `topacIkonu` eşzamanlı GLB'yi çizer). */
+  async hazirla(idler: readonly string[]): Promise<void> {
+    await Promise.all(idler.filter((id) => GLB_LISTESI.has(id)).map((id) => glbGeometrisi(id)));
   }
 
   private parcaAt(n: ParcaNesnesi): void {

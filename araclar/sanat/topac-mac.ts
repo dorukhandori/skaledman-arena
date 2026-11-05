@@ -5,6 +5,7 @@
 //   ... --render-yok    # .cache/topac-mac-ham önbelleğini kullan, yalnız pişir
 //   ... --ikon-yok      # ikonları atla
 //   ... --yalniz-ikon   # yalnız ikon (GLB'si olmayan parametrik Disk/Uç)
+//   ... --liste         # yalnız bicimB / glb listeleri ve GLB içerik özeti
 //
 // Girdi (depo dışı, art-source/topac/): glb/<id>.glb (tripo_model.mjs --alan topac), ikon-ham/<id>.png (gemini_uret.py topac-ikon).
 // Çıktı: public/topac/<tur>/<id>.json + <id>-<kademe>-<yon>[-<boya>].png (biçim B), public/topac/ikon/<id>-48.png / -24.png,
@@ -260,6 +261,16 @@ async function turLevhasi(tur: "govde" | "cekirdek", parcalar: [string, Onizleme
 
 // ------------------------------------------------------------------ liste metaları
 
+/**
+ * GLB içerik özeti: liste sırasıyla tüm GLB baytlarının FNV-1a 32'si (ikonOnbellek.GLB_OZETI; GLB değişince menülerin
+ * localStorage 3B ikon önbelleği geçersizleşir). test/ikon-onbellek.test.ts aynı hesabı dosyalarla eşler.
+ */
+export function glbOzeti(liste: readonly string[]): string {
+  let h = 0x811c9dc5;
+  for (const id of liste) for (const x of readFileSync(join(CIKTI, "model", `${id}.glb`))) { h ^= x; h = Math.imul(h, 0x01000193) >>> 0; }
+  return h.toString(16).padStart(8, "0");
+}
+
 /** Üretilen kimlikleri veri/topac-gorsel.json `bicimB` ve veri/topac-model.json `glb` listelerine ekler (sıra katalog sırası). */
 function listeleriGuncelle(idler: string[], katalogSirasi: string[]): void {
   const sirala = (l: string[]) => katalogSirasi.filter((id) => l.includes(id));
@@ -268,8 +279,9 @@ function listeleriGuncelle(idler: string[], katalogSirasi: string[]): void {
   g.bicimB = sirala([...new Set([...(g.bicimB ?? []), ...idler])]);
   writeFileSync(gorsel, JSON.stringify(g, null, 1) + "\n");
   const model = join(KOK, "veri/topac-model.json");
-  const m = JSON.parse(readFileSync(model, "utf8")) as { glb: string[] };
+  const m = JSON.parse(readFileSync(model, "utf8")) as { glb: string[]; ozet?: string };
   m.glb = sirala([...new Set([...m.glb, ...idler.filter((id) => existsSync(join(CIKTI, "model", `${id}.glb`)))])]);
+  m.ozet = glbOzeti(m.glb);
   writeFileSync(model, JSON.stringify(m, null, 1) + "\n");
   console.log(`bicimB: ${g.bicimB.length} parça, glb: ${m.glb.length} parça`);
 }
@@ -283,6 +295,7 @@ async function main(): Promise<void> {
   const specler = (JSON.parse(readFileSync(join(KOK, "kaynak/topac/parcalar-3b.json"), "utf8")) as { parcalar: Record<string, Parca3B> }).parcalar;
   const katalog = new Map((JSON.parse(readFileSync(join(KOK, "veri/parcalar.json"), "utf8")) as { parcalar: KatalogParca[] }).parcalar.map((p) => [p.id, p]));
   for (const id of idler) if (!specler[id]) throw new Error(`bilinmeyen parça: ${id}`);
+  if (arg.includes("--liste")) { listeleriGuncelle(idler, [...katalog.keys()]); return; }
   if (arg.includes("--yalniz-ikon")) {
     // GLB'siz parçalar (parametrik kalan Disk/Uç): yalnız Gemini ikonu → 48/24
     for (const id of idler) { await ikonUret(id, specler[id]!.tur, katalog.get(id)); console.log(`ikon: ${id}`); }
@@ -317,4 +330,4 @@ async function main(): Promise<void> {
   }
 }
 
-await main();
+if (process.argv[1]?.endsWith("topac-mac.ts")) await main();

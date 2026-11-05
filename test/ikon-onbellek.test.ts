@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import { describe, expect, it } from "vitest";
-import { MODEL_OZETI, parcaBoyasi } from "../src/istemci/atolye3d/ikonOnbellek.ts";
+import { GLB_OZETI, MODEL_OZETI, parcaBoyasi } from "../src/istemci/atolye3d/ikonOnbellek.ts";
 
 // TEMIZLIK #4: ortak 3B ikon önbelleği (three.js'siz modül).
 
@@ -10,6 +10,12 @@ describe("3B ikon önbelleği", () => {
     let h = 0x811c9dc5;
     for (const x of b) { h ^= x; h = Math.imul(h, 0x01000193) >>> 0; }
     expect(h.toString(16).padStart(8, "0")).toBe(MODEL_OZETI);
+  });
+  it("GLB_OZETI veri/topac-model.json listesindeki GLB dosyalarıyla eşleşir (GLB değişince eski ikonlar dönmesin)", () => {
+    const { glb } = JSON.parse(fs.readFileSync("veri/topac-model.json", "utf8")) as { glb: string[] };
+    let h = 0x811c9dc5;
+    for (const id of glb) for (const x of fs.readFileSync(`public/topac/model/${id}.glb`)) { h ^= x; h = Math.imul(h, 0x01000193) >>> 0; }
+    expect(GLB_OZETI).toBe(glb.length ? h.toString(16).padStart(8, "0") : "-");
   });
   it("modül three.js ve model JSON'unu statik içe almaz (ana paket büyümesin)", () => {
     const kod = fs.readFileSync("src/istemci/atolye3d/ikonOnbellek.ts", "utf8");

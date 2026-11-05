@@ -3,6 +3,7 @@ import type { ElementAdi, KokenAdi } from "../../paylasilan/kurallar/ayar.ts";
 import { parcaBul } from "../../paylasilan/veri/katalog.ts";
 import type { Boya } from "./palet.ts";
 import type { TopacKurulumu } from "./tipler.ts";
+import modelListesi from "../../../veri/topac-model.json";
 
 // Ortak 3B ikon önbelleği (TEMIZLIK #4). Atölye 3B'nin tek kare parça / topaç ikonu (Goruntuleyici.ikon) Market,
 // Başarımlar, Lobi takım kartları ve maç sonu "Market'te açıldı" kartında da kullanılır.
@@ -12,6 +13,8 @@ import type { TopacKurulumu } from "./tipler.ts";
 // - WebGL yoksa / `?webgl=0` / çizim başarısızsa null: yordamsal ikon yerinde kalır.
 
 interface IkonCizer {
+  /** çizmeden önce parçaların GLB'lerini yükler (Goruntuleyici.hazirla); yoksa parametrik çizilir */
+  hazirla?(idler: readonly string[]): Promise<void>;
   ikon(parcaId: string, boya: Boya, boyut: number): HTMLCanvasElement | null;
   topacIkonu(k: TopacKurulumu, boyut: number): HTMLCanvasElement | null;
 }
@@ -28,11 +31,16 @@ let depo: { surum: string; ikonlar: Record<string, string> } | null = null;
  * model JSON'unu içe almaz (Market paketine girmesin); test/ikon-onbellek.test.ts dosyayla eşleştiğini denetler.
  */
 export const MODEL_OZETI = "6935820b";
-/** Çizim kuralı (Goruntuleyici.tekKare: kamera, kontur) değişince artır. */
-export const IKON_SURUMU = 1;
+/** Çizim kuralı (Goruntuleyici.tekKare: kamera, kontur) değişince artır. 2: ikonlar GLB'yi bekleyip çizer. */
+export const IKON_SURUMU = 2;
+/**
+ * Mac hattı GLB'lerinin içerik özeti (veri/topac-model.json `ozet`, araclar/sanat/topac-mac.ts yazar; test dosyalarla eşler):
+ * GLB eklenince ya da değişince eski parametrik ikonlar localStorage'dan dönmesin.
+ */
+export const GLB_OZETI: string = (modelListesi as { ozet?: string }).ozet ?? "-";
 
 function modelSurumu(): string {
-  return `${KATALOG_OZETI}:${MODEL_OZETI}:${IKON_SURUMU}`;
+  return `${KATALOG_OZETI}:${MODEL_OZETI}:${GLB_OZETI}:${IKON_SURUMU}`;
 }
 
 function depoOku(): { surum: string; ikonlar: Record<string, string> } {
@@ -70,13 +78,14 @@ async function cizer(): Promise<IkonCizer | null> {
   return kendi;
 }
 
-function uret(anahtar: string, ciz: (c: IkonCizer) => HTMLCanvasElement | null): Promise<string | null> {
+function uret(anahtar: string, idler: readonly string[], ciz: (c: IkonCizer) => HTMLCanvasElement | null): Promise<string | null> {
   let p = bellek.get(anahtar);
   if (p) return p;
   const kayitli = depoOku().ikonlar[anahtar];
   if (kayitli) { p = Promise.resolve(kayitli); bellek.set(anahtar, p); return p; }
-  p = cizer().then((c) => {
+  p = cizer().then(async (c) => {
     if (!c) return null;
+    try { await c.hazirla?.(idler); } catch { /* GLB yok: parametrik çizilir */ }
     try {
       const cv = ciz(c);
       if (!cv) return null;
@@ -100,12 +109,12 @@ export function parcaBoyasi(parcaId: string, govdeElement?: string | null): Boya
 }
 
 export function parcaIkonUrl(parcaId: string, boya: Boya, boyut: number): Promise<string | null> {
-  return uret(`p:${parcaId}:${boya.element ?? "-"}:${boya.koken ?? "-"}:${boyut}`, (c) => c.ikon(parcaId, boya, boyut));
+  return uret(`p:${parcaId}:${boya.element ?? "-"}:${boya.koken ?? "-"}:${boyut}`, [parcaId], (c) => c.ikon(parcaId, boya, boyut));
 }
 
 export function topacIkonUrl(k: TopacKurulumu, boyut: number): Promise<string | null> {
   if (!k.cekirdek && !k.govde) return Promise.resolve(null);
-  return uret(`t:${k.cekirdek}:${k.govde}:${k.disk}:${k.uc}:${k.element ?? "-"}:${k.koken ?? "-"}:${k.sol ? 1 : 0}:${boyut}`, (c) => c.topacIkonu(k, boyut));
+  return uret(`t:${k.cekirdek}:${k.govde}:${k.disk}:${k.uc}:${k.element ?? "-"}:${k.koken ?? "-"}:${k.sol ? 1 : 0}:${boyut}`, [k.cekirdek, k.govde, k.disk, k.uc].filter((x): x is string => !!x), (c) => c.topacIkonu(k, boyut));
 }
 
 /**

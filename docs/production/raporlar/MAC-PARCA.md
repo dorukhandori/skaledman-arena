@@ -35,7 +35,7 @@ her kimliğin dosyası var. `__pycache__/` `.gitignore`'a (d8 varlık taraması 
 **Bilinen sınırlar:**
 - **İkonlar bağlı değil.** Menüler (Atölye ızgarası, Market, Başarımlar, Lobi) TEMIZLIK #4'ten beri Atölye 3B ikon önbelleğini
   kullanıyor; brief'teki "menü iki yolu da dener" kodda yok. `public/topac/ikon/<id>-48/-24.png` üretildi, kullanılmıyor.
-- **3B ikonlar GLB'yi görmüyor.** `Goruntuleyici.tekKare` parçayı eşzamanlı kurup hemen atıyor; GLB yüklemesi eşzamansız olduğu için
+- ~~**3B ikonlar GLB'yi görmüyor.**~~ **Çözüldü** (aşağıda "İkonlar GLB'den"). `Goruntuleyici.tekKare` parçayı eşzamanlı kurup hemen atıyor; GLB yüklemesi eşzamansız olduğu için
   ikonlar parametrik modelden çiziliyor (Atölye sahnesi GLB'yi gösteriyor). Ayrıca localStorage ikon önbelleği sürümü GLB listesini
   içermiyor. Düzeltme Atölye kodunda (GLB önyükleme + sürüme liste özeti): ayrı iş.
 - GLB'ler 350-380 KB (19 000 üçgen); yalnız Atölye'de seçili parça için iner. 27 parça ≈ 10 MB.
@@ -86,5 +86,20 @@ görünüyor, biçim B istekleri 32, konsol hatası 0. Kapılar: `npm test` 487 
 ## Sonuç
 
 18 parça Mac hattında (8 Gövde, 8 Çekirdek, Hafif Disk, Düz Uç), 18 Atölye GLB'si, 27 ikon. Toplam ≈ $3,11 Gemini + 760 Tripo kredisi
-(brief tahmini ≈ $3,2 + 1 280). Açık işler: ikonların ve 3B ikon önbelleğinin GLB'ye bağlanması (Atölye kodu), Savrulan ve Kor Kalbi
+(brief tahmini ≈ $3,2 + 1 280). Açık işler: Savrulan ve Kor Kalbi
 isteğe bağlı yeniden üretim, çekim betiğinde takım ayarının oyuncuya uygulanması.
+
+## İkonlar GLB'den (menü 3B ikon önbelleği)
+
+Sorun: `Goruntuleyici.tekKare` parçayı eşzamanlı kurup hemen atıyordu; GLB eşzamansız takaslandığı için Market, Atölye ızgarası,
+Başarımlar ve Lobi ikonları hep parametrik modelden çiziliyordu. localStorage ikon önbelleği sürümü de GLB'leri içermiyordu.
+
+- `Goruntuleyici.ts`: modül düzeyinde GLB önbelleği (`glbGeometrisi`: kimlik başına tek yükleme, `glbNormalle` ile parametrik
+  yarıçap ve tabana oturtma, malzeme adından sınıf). Yüklenmiş GLB `parcaKur`'da eşzamanlı kullanılır; canlı sahne eskisi gibi
+  önce parametrik çizip takaslar. Yeni `hazirla(idler)` GLB'leri bekler.
+- `ikonOnbellek.ts`: çizmeden önce `hazirla` (parça ikonu için parça, topaç ikonu için dört katman). Sürüm `IKON_SURUMU` 2 ve
+  `GLB_OZETI` (veri/topac-model.json `ozet`: listedeki GLB baytlarının FNV-1a 32'si, `topac-mac.ts` yazar, `--liste` yalnız onu yapar).
+- Test: `GLB_OZETI` dosyalarla eşleşir (GLB değişip özet güncellenmezse kırmızı).
+- Çalışma zamanı (`ekran/MAC-IKON-market.png`): Market'te Mac parçaları GLB biçiminde (Düz Uç nervürlü, Hafif Disk çıkıntılı,
+  Gövdeler kendi silüetinde); parametrik kalan Uç/Disk'ler düz. 18 GLB isteği 200, tüm ikonlar yükseltildi, konsol hatası 0.
+- Bilinen: sol dönüş ikonu/sahnesi GLB'de aynalanmıyor (önceki davranış; `<id>-l.glb` sözleşmede sahip kararı).
