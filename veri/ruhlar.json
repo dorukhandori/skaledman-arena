@@ -251,7 +251,7 @@
    "yetenek": "kor-atilisi",
    "yetenekAilesi": "karanlik-yagmuru",
    "ozelYetenek": "Karanlık Yağmuru",
-   "ulti": null,
+   "ulti": "ata-kozu",
    "ata": false
   },
   {
@@ -264,7 +264,7 @@
    "yetenek": "taklit-sicrayis",
    "yetenekAilesi": "taklit-sicrayis",
    "ozelYetenek": "Taklit Sıçrayış",
-   "ulti": null,
+   "ulti": "ata-kozu",
    "ata": false
   },
   {
@@ -277,7 +277,7 @@
    "yetenek": "taklit-sicrayis",
    "yetenekAilesi": "taklit-sicrayis",
    "ozelYetenek": "Taklit Sıçrayış",
-   "ulti": null,
+   "ulti": "ata-savrugu",
    "ata": false
   }
  ]

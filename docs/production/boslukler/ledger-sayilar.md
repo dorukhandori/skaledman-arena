@@ -19,7 +19,7 @@
 | 10 | Kozmetik Disk (Takım Ultisi, Konuk) 5 Disk'e sığmaz | 03 § 4.1 | `acilanGorunum` alanı (görünüm katmanı), ayrı parça yok. `@iris` |
 | 11 | Kriz Alevi "ilk 20 sn Enerji x0,8" maç başı mı, giriş başı mı belli değil | 00 § 2.4 | **Sahaya giriş başına 12 s**; Kor Kalbi'nde yok. Aksi hâlde 3 topaç de ceza yer |
 | 12 | 4.7'nin 18 ailesi her elemente Yetenek/Ulti vermiyor (Kasırga, Girdap, Kaya'da Yetenek yok; Ulti yalnız 2 element) | 00 § 4.7 | 11 ek aile (`eksikTamamlama:true`), toplam 29. `@helix` isim onayı |
-| 13 | 3.5 "Ulti teması" sütunu aslında Özel Yetenek adları (Közyağmuru = 4.7 #2 Özel) | 00 § 3.5 vs § 4.7 | `ruh.ozelYetenek` o adlar, `ruh.ulti` = elemente özgü "Ata ..." ulti (sezon 2); Yapay/Karanlık ulti `null` |
+| 13 | 3.5 "Ulti teması" sütunu aslında Özel Yetenek adları (Közyağmuru = 4.7 #2 Özel) | 00 § 3.5 vs § 4.7 | `ruh.ozelYetenek` o adlar, `ruh.ulti` = elemente özgü "Ata ..." ulti (sezon 2); Yapay/Karanlık ulti `null` → **2026-11-05 (TEMIZLIK #1, sahip "hepsini yap")**: Yapay ve Karanlık ruhlar da elementlerinin Ata Ultisini alır (Döküm Sarmalbaykuş → Ata Savruğu; Külkartal, Döküm Karacal → Ata Közü) |
 | 14 | Eritme "3 -> 1 rastgele aynı raf" katman bağsız arbitraj açar | 03 § 3.1 | Çıktı katmanı <= girdilerin en düşüğü; ya da Altın %30; Hizip/Karanlık eritilemez |
 | 15 | "Galibiyet Sıralaması x5: Ulti kullanmadan" ama Ulti ilk sürümde yok | 03 § 4.1 | `sabir`: Özel Yetenek kullanmadan 5 galibiyet |
 | 16 | 90 sn sonunda ne olacağı belirsiz (ani ölüm "dolunca") | 01 § 2.3 | Önde olan kazanır; eşitse ani ölüm 22 s |

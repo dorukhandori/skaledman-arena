@@ -80,6 +80,20 @@ describe("veri: şemalar ve şablonlar (tuning § 21)", () => {
       if (y.kademe === 3) expect(y.telegrafSn).toBe(0.9);
     }
   });
+
+  it("8 Çekirdeğin hepsi Lv.3'te Yetenek, Özel Yetenek ve Ulti'yi çözer (Kasırga Döküm → Ata Savruğu)", () => {
+    expect(CEKIRDEKLER).toHaveLength(8);
+    for (const c of CEKIRDEKLER) {
+      const p = topacProfiliKur(c.id, "ok-govde", "hafif-disk", "duz-uc");
+      expect(p.yetenekler.map((n) => YETENEK_SIM[n]?.kademe), c.id).toEqual([1, 2, 3]);
+      const ulti = YETENEKLER[p.yetenekler[2]]!;
+      expect(ulti.element, c.id).toBe(c.element);
+      const d = sakin(p, P.K, 300);
+      d.seviye = [3, 3];
+      for (const yuva of [0, 1, 2]) expect(yuvaDurumu(d, 0, yuva), `${c.id} yuva ${yuva}`).toBeNull();
+    }
+    expect(YETENEKLER[P.B.yetenekler[2]]!.id).toBe("ata-savrugu");
+  });
 });
 
 describe("Enerji (tuning § 8, § 11)", () => {
