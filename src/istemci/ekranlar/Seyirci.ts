@@ -20,18 +20,19 @@ import { Ses } from "../ses/Ses.ts";
 // oyuncu görünümüyle birebir aynı dünya sunumu (telegraf, Ulti, Takım Ultisi, bitiş efektleri). Maç dışı: tek ekran
 // "Sıradaki maç bekleniyor" + son skor; bekleme fazında katılma kodu (maç başlayınca gizli).
 
+// GU menü dili v2: seyirci bekleme kartı (960×540 çerçeve, 480×270 mantıksal × 2; Kick 720p'de okunur).
 const STIL = `
 body.seyirci, body.seyirci * { cursor:none !important; }
 body.seyirci.seffaf, body.seyirci.seffaf #sahne { background:transparent !important; }
-.sy { position:absolute; left:0; top:0; width:960px; height:540px; transform-origin:0 0; pointer-events:none; font-family:"Nunito Sans",system-ui,sans-serif; color:#f3f1e8; }
-.sy .bekle { position:absolute; left:230px; top:170px; width:500px; padding:22px 24px; box-sizing:border-box; text-align:center; background:rgba(12,25,29,.94); border:2px solid #24414b; border-radius:12px; display:none; }
+.sy { position:absolute; left:0; top:0; width:960px; height:540px; transform-origin:0 0; pointer-events:none; font:400 32px/.875 var(--font-etiket); color:var(--ink); }
+.sy .bekle { position:absolute; left:210px; top:150px; width:540px; padding:22px 24px; box-sizing:border-box; text-align:center; border:10px solid transparent; border-image:var(--k-tas-cerceve) 5 fill / 10px / 0 round; display:none; text-transform:uppercase; }
 .sy .bekle.acik { display:block; }
-.sy .bekle h1 { margin:0; font:900 26px/32px system-ui; letter-spacing:.5px; }
-.sy .bekle .son { margin-top:12px; font:800 20px/26px system-ui; color:#ffcf5a; }
-.sy .bekle .son span { color:#f3f1e8; }
-.sy .bekle .kod { margin-top:14px; font:800 16px/22px system-ui; color:#c9d4d7; }
-.sy .bekle .kod b { display:block; margin-top:4px; font:900 34px/40px ui-monospace,monospace; letter-spacing:3px; color:#fff; }
-.sy .bekle .alt { margin-top:8px; font:700 13px/18px system-ui; color:#a3b2b6; }
+.sy .bekle h1 { margin:0; font:400 40px/48px var(--font-baslik); letter-spacing:2px; }
+.sy .bekle .son { margin-top:14px; font:400 40px/48px var(--font-baslik); color:var(--gold); letter-spacing:2px; }
+.sy .bekle .son span { color:var(--ink); }
+.sy .bekle .kod { margin-top:14px; color:var(--soluk); }
+.sy .bekle .kod b { display:block; margin-top:8px; font:400 60px/64px var(--font-baslik); letter-spacing:6px; color:var(--gold); font-weight:400; }
+.sy .bekle .alt { margin-top:10px; color:var(--soluk); }
 `;
 
 function el<K extends keyof HTMLElementTagNameMap>(etiket: K, sinif = "", ust?: HTMLElement, metin = ""): HTMLElementTagNameMap[K] {

@@ -2,6 +2,31 @@ import { odaKoduCoz } from "../../ag/protokol.ts";
 import type { EkranBaglami } from "../main.ts";
 import { BakimHatasi, HESAP_HATA, apiGet, apiPost, git, sonrakiEkran, type Ben } from "../hesap.ts";
 import { anaEylem, bakimKatmani, ekranKok, el, kalin } from "./arayuz.ts";
+import { cekirdekIllustrasyonu } from "./pikselTopac.ts";
+
+// GU-10 (menü dili v2, maket b-giris / referans 01): sol panelde ışıyan Çekirdek, sağda form paneli; lento yerine sol üstte
+// DEVRAN plakası; ana düğme bronz-turuncu (K-2; referanstaki yeşil değil).
+const KIMLIK_STIL = `
+.kml .k-govde { flex-direction:row; justify-content:center; align-items:stretch; gap:calc(12 * var(--p)); padding-top:calc(8 * var(--p)); }
+.kml .kml-sol { flex:0 1 calc(200 * var(--p)); display:flex; align-items:center; justify-content:center; min-height:calc(200 * var(--p)); }
+.kml .kart { flex:0 1 calc(260 * var(--p)); width:auto; }
+.kml .kart.dar { width:auto; }
+.kml .kart > h2:first-of-type { display:flex; justify-content:center; }
+.kml .kart > p, .kml .kart > div > p { text-transform:none; line-height:1; }
+.kml .kart p b { color:var(--ink); }
+html[data-yazi-buyuk] .kml .kml-sol { display:none; }
+`;
+let kimlikStil = false;
+/** iki panelli kimlik ekranı: sol illüstrasyon + sağ form kartı (kart döner) */
+export function kimlikKok(ust: HTMLElement, etiket: string): HTMLDivElement {
+  if (!kimlikStil) { kimlikStil = true; const st = document.createElement("style"); st.textContent = KIMLIK_STIL; document.head.appendChild(st); }
+  const { kok, kart, govde } = ekranKok(ust, etiket, { baslik: "Devran", yer: "lacivert", cuzdan: false });
+  kok.classList.add("kml");
+  const sol = el("div", "k-panel kml-sol");
+  sol.appendChild(cekirdekIllustrasyonu(64));
+  govde.insertBefore(sol, kart);
+  return kart;
+}
 
 // Karşılama, Kayıt, Giriş (D5; sahip kararı 2026-11-04: Kick OAuth en sona, kimlik ad + şifre).
 // ux § 4.1 üç cümle (üçüncüsü Kick yerine kayıt), § 7 mikro-kopya; tide O-1 (b): "Antrenmanı dene" misafire açık.
@@ -30,12 +55,10 @@ function girisSonrasi(ben: Ben): void {
 
 export function karsilama(b: EkranBaglami): void {
   if (b.ben?.girisli) { girisSonrasi(b.ben); return; }
-  const { kart } = ekranKok(b.ustYazi, "Karşılama");
+  const kart = kimlikKok(b.ustYazi, "Karşılama");
   kart.classList.add("dar");
   kart.style.textAlign = "center";
-  kart.style.marginTop = "3rem";
-  const h = el("h2", "", kart, "DEVRAN");
-  h.style.fontSize = "2.6rem";
+  el("h2", "k-plaka", kart, "Hoş geldin");
   const p = el("div", "", kart);
   p.innerHTML = UC_CUMLE.map((c) => `<p>${kalin(c)}</p>`).join("");
   const mesaj = new URLSearchParams(location.search).get("mesaj");
@@ -85,11 +108,11 @@ async function yenile(): Promise<Ben> {
 
 export function kayit(b: EkranBaglami): void {
   if (b.ben?.girisli) { girisSonrasi(b.ben); return; }
-  const { kart } = ekranKok(b.ustYazi, "Kayıt ol");
+  const kart = kimlikKok(b.ustYazi, "Kayıt ol");
   kart.classList.add("dar");
   const geri = el("button", "geri", kart, "◄ Geri");
   geri.addEventListener("click", () => git("karsilama", donusEki()));
-  el("h2", "", kart, "Kayıt ol");
+  el("h2", "k-plaka", kart, "Kayıt ol");
   el("div", "alt", kart, "Adın arenada görünür. Şifren yalnız sende kalır.");
   const ad = alan(kart, "Oyuncu adı", "text", "ad", "3-16 karakter");
   ad.girdi.maxLength = 16;
@@ -140,11 +163,11 @@ export function kayit(b: EkranBaglami): void {
 
 export function giris(b: EkranBaglami): void {
   if (b.ben?.girisli) { girisSonrasi(b.ben); return; }
-  const { kart } = ekranKok(b.ustYazi, "Giriş yap");
+  const kart = kimlikKok(b.ustYazi, "Giriş yap");
   kart.classList.add("dar");
   const geri = el("button", "geri", kart, "◄ Geri");
   geri.addEventListener("click", () => git("karsilama", donusEki()));
-  el("h2", "", kart, "Giriş yap");
+  el("h2", "k-plaka", kart, "Giriş yap");
   el("div", "alt", kart, "Kayıtlı adın ve şifrenle gir.");
   const ad = alan(kart, "Oyuncu adı", "text", "ad");
   ad.girdi.maxLength = 16;

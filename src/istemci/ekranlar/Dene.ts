@@ -22,23 +22,23 @@ const SURE_SN = 30;
 const IVME_PENCERE = 30; // adım (0,5 sn)
 const KAYMA_PENCERE = 60; // adım (1 sn)
 
+// GU menü dili v2: Dene katmanı maç çerçevesinde (960×540 = 480×270 mantıksal × 2).
 const STIL = `
-.dn { position:absolute; inset:0; pointer-events:none; }
-.dn .ust { position:absolute; left:304px; top:76px; width:352px; padding:4px 8px; background:rgba(5,13,16,.9); border:2px solid #7fd3ff; border-radius:8px;
-  font:700 11px/1.35 system-ui; color:#f3f1e8; text-align:center; }
-.dn .ust b { color:#7fd3ff; }
-.dn .olc { position:absolute; left:8px; top:160px; width:200px; padding:6px 8px; background:rgba(5,13,16,.88); border:1px solid #24414b; border-radius:6px; font:700 10px/1.45 system-ui; color:#c9d3d6; }
-.dn .olc b { color:#f3f1e8; font-variant-numeric:tabular-nums; }
-.dn .son { position:absolute; left:230px; top:110px; width:500px; padding:16px 20px; background:#0c191d; border:3px solid #050d10; border-radius:12px;
-  box-shadow:0 0 0 2px #7fd3ff, 0 10px 30px rgba(0,0,0,.6); font:600 14px/1.45 system-ui; color:#f3f1e8; pointer-events:auto; display:none; }
+.dn { position:absolute; inset:0; pointer-events:none; font:400 32px/.875 var(--font-etiket); color:var(--ink); }
+.dn .ust { position:absolute; left:290px; top:72px; width:380px; padding:6px 10px; background:var(--panel); box-shadow:inset 0 0 0 2px var(--sen), 0 4px 0 var(--golge); text-align:center; text-transform:uppercase; }
+.dn .ust b { color:var(--sen); font-weight:400; }
+.dn .olc { position:absolute; left:8px; top:160px; width:220px; padding:8px 10px; border:10px solid transparent; border-image:var(--k-tas-cerceve) 5 fill / 10px / 0 round; color:var(--soluk); text-transform:uppercase; }
+.dn .olc b { color:var(--ink); font-weight:400; font-variant-numeric:tabular-nums; }
+.dn .son { position:absolute; left:210px; top:100px; width:540px; padding:18px 22px; border:10px solid transparent; border-image:var(--k-tas-cerceve) 5 fill / 10px / 0 round; pointer-events:auto; display:none; }
 .dn .son.acik { display:block; }
-.dn .son h3 { margin:0 0 6px; font:900 20px/1.1 system-ui; color:#7fd3ff; }
-.dn .son table { width:100%; border-collapse:collapse; margin:6px 0; font-size:13px; }
-.dn .son td { padding:3px 4px; border-bottom:1px solid #24414b; } .dn .son td:last-child { text-align:right; font-weight:800; font-variant-numeric:tabular-nums; }
-.dn .son .dgd { display:flex; gap:10px; justify-content:center; margin-top:10px; }
-.dn .son button { padding:8px 14px; background:#173039; color:#f3f1e8; border:2px solid #050d10; border-radius:8px; font:800 14px system-ui; cursor:pointer; }
-.dn .son button.bir { background:#f4cf47; color:#2a2104; }
-.dn .son button:focus-visible { outline:3px solid #fff; outline-offset:2px; }
+.dn .son h3 { margin:0 0 10px; font:400 40px/1 var(--font-baslik); letter-spacing:2px; color:var(--sen); text-transform:uppercase; }
+.dn .son table { width:100%; border-collapse:collapse; margin:6px 0; text-transform:uppercase; }
+.dn .son td { padding:2px 4px; height:30px; border-bottom:2px solid #2a3146; } .dn .son td:last-child { text-align:right; color:var(--turuncu); font:400 40px/28px var(--font-baslik); }
+.dn .son .dgd { display:flex; gap:14px; justify-content:center; margin-top:14px; }
+.dn .son button { flex:none; min-height:48px; padding:4px 20px; margin:0; cursor:pointer; border:2px solid var(--harc); border-radius:0; background-color:var(--panel-2); color:var(--ink); font:400 40px/1 var(--font-baslik); letter-spacing:2px; text-transform:uppercase; box-shadow:inset 0 0 0 2px var(--bronz), inset 0 4px 0 0 #3a4258, 0 4px 0 0 var(--golge); pointer-events:auto; }
+.dn .son button.bir { background-color:var(--ana); color:var(--ana-yazi); border-color:var(--ana-kenar); text-shadow:2px 2px 0 var(--ana-alt); box-shadow:inset 0 0 0 2px var(--gold), inset 0 -10px 0 0 var(--ana-alt), 0 4px 0 0 var(--golge); padding-bottom:12px; }
+.dn .son button:active { transform:translateY(4px); }
+.dn .son button:focus-visible { outline:4px solid #fff; outline-offset:2px; }
 `;
 
 interface DeneSecimi { cekirdek: string; govde: string; disk: string; uc: string; yon: "sag" | "sol"; seviye: number; ad: string }

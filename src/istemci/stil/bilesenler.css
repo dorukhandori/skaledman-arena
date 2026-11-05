@@ -115,7 +115,7 @@ h1.k-plaka, h2.k-plaka, h3.k-plaka { margin: 0; }
 .k-dugme.orta { min-height: calc(28 * var(--p)); }
 .k-dugme.mod { min-height: calc(36 * var(--p)); width: 100%; }
 .k-dugme:hover:not(:disabled) { --ks: inset 0 0 0 var(--p) var(--bronz-isik), inset 0 calc(2 * var(--p)) 0 0 #46506a; }
-.k-dugme.secili, .k-dugme[aria-pressed="true"], .k-dugme[aria-selected="true"] {
+.k-dugme.secili, .k-dugme[aria-pressed="true"], .k-dugme[aria-selected="true"], .k-dugme[aria-checked="true"] {
   --ks: inset 0 0 0 var(--p) var(--gold), inset 0 calc(2 * var(--p)) 0 0 #8a5a34;
   background: var(--secili) url("./doku/doku-secili.png") 0 0 / calc(32 * var(--p)) calc(32 * var(--p));
 }

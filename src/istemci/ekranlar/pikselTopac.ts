@@ -174,3 +174,35 @@ export function parcaIkonHtml(tur: string, element: string | null | undefined, k
   const c = parcaPikselIkonu(tur, element, koken, katman, gizli);
   return `<img class="k-parca" alt="" aria-hidden="true" src="${c.toDataURL()}" style="width:calc(${24 * olcek} * var(--p));height:calc(${18 * olcek} * var(--p));image-rendering:pixelated">`;
 }
+
+/** Giriş/Profil sol panel (referans 01): ışıyan Çekirdek illüstrasyonu (eş merkezli bronz halkalar + Kuşak halkası + çekirdek ışığı). */
+export function cekirdekIllustrasyonu(R = 60): HTMLCanvasElement {
+  const W = R * 2 + 8;
+  const c = document.createElement("canvas");
+  c.width = W; c.height = W;
+  c.className = "k-illus";
+  c.style.width = `calc(${W} * var(--p))`;
+  c.style.height = `calc(${W} * var(--p))`;
+  c.style.imageRendering = "pixelated";
+  c.setAttribute("aria-hidden", "true");
+  const g = c.getContext("2d")!;
+  const m = W / 2 - 0.5;
+  // halka bantları: dıştan içe (yarıçap oranı, ton)
+  const BANT: [number, string[]][] = [
+    [1.0, ["#2a1a0e", "#6b4a2a"]], [0.96, ["#fbbe88", "#fff0d8"]], [0.92, ["#6b4a2a", "#8f6538"]], [0.78, ["#8f6538", "#c08e52"]],
+    [0.62, ["#c08e52", "#e8c27a"]], [0.5, ["#2a1a0e", "#0c0b10"]], [0.4, ["#e8c27a", "#c08e52"]], [0.32, ["#fff0d8", "#fbbe88"]],
+  ];
+  for (let y = 0; y < W; y++) for (let x = 0; x < W; x++) {
+    const d = Math.hypot(x - m, y - m) / R;
+    if (d > 1.06) { if (d < 1.14 && ((x + y) & 1) === 0) { g.fillStyle = "#8a5a34"; g.fillRect(x, y, 1, 1); } continue; }
+    let renk = "#2a1a0e";
+    for (const [r, ton] of BANT) if (d <= r) { const ust = (y - m) < 0 ? 1 : 0; renk = ((x * 3 + y) & 3) === 0 ? ton[1 - ust]! : ton[ust]!; }
+    if (d > 1) renk = ((x + y) & 1) ? "#dca97c" : "#8a5a34";
+    g.fillStyle = renk; g.fillRect(x, y, 1, 1);
+  }
+  // halka parıltıları (yay kesitleri)
+  g.fillStyle = "#fff0d8";
+  for (let a = -2.4; a < -1.6; a += 0.01) g.fillRect(Math.round(m + Math.cos(a) * R * 0.7), Math.round(m + Math.sin(a) * R * 0.7), 1, 1);
+  for (let a = 0.5; a < 1.1; a += 0.01) g.fillRect(Math.round(m + Math.cos(a) * R * 0.7), Math.round(m + Math.sin(a) * R * 0.7), 1, 1);
+  return c;
+}

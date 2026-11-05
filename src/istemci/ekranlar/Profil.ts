@@ -1,9 +1,9 @@
 import { ELEMENT_CARKI, type ElementAdi } from "../../paylasilan/kurallar/ayar.ts";
 import type { EkranBaglami } from "../main.ts";
 import { BakimHatasi, HESAP_HATA, apiIstek, apiPost, git } from "../hesap.ts";
-import { elementSvg } from "../oyun/elementSimge.ts";
 import { ELEMENT_RENK } from "../oyun/renkler.ts";
-import { anaEylem, bakimKatmani, ekranKok, el } from "./arayuz.ts";
+import { anaEylem, bakimKatmani, el } from "./arayuz.ts";
+import { kimlikKok } from "./Kimlik.ts";
 
 // Profil (US-1.2, ux § 7): ad kayıttan gelir; arma = 6 element simgesinden biri, renk = profil çerçevesi, destek
 // kanalı (isteğe bağlı Kick kanal adı; bonus yok). İlk kez: düğme **Başla**. D6 Atölye › Profil (profil tamamsa):
@@ -13,12 +13,22 @@ const RENKLER = ["#f4cf47", "#e3350d", "#2fb8e8", "#7fe3a0", "#c58bff", "#f2a33a
 const RENK_AD = ["Altın", "Kızıl", "Gök", "Yeşim", "Eflatun", "Amber"];
 
 const STIL = `
-.pf .izgara { display:grid; grid-template-columns:repeat(6, 1fr); gap:.5rem; }
-.pf .sec { display:flex; flex-direction:column; align-items:center; gap:.25rem; padding:.55rem .2rem; font-size:.8rem; }
-.pf .sec[aria-checked=true] { background:#24414b; outline:3px solid #f4cf47; }
-.pf .renk { width:2.2rem; height:2.2rem; border-radius:50%; border:3px solid #050d10; }
-.pf .onizleme { display:flex; align-items:center; gap:.8rem; padding:.7rem; margin-top:1rem; border-radius:10px; background:#10222a; border:3px solid; }
-.pf .onizleme b { font-size:1.15rem; }
+.pf .izgara { display:grid; grid-template-columns:repeat(6, 1fr); gap:calc(3 * var(--p)); }
+.pf .sec { position:relative; display:flex; flex-direction:column; align-items:center; gap:calc(2 * var(--p)); padding:calc(3 * var(--p)) var(--p); cursor:pointer; margin:0;
+  background:var(--hucre); color:var(--soluk); border:var(--p) solid var(--harc); border-radius:0; box-shadow:inset 0 var(--p) 0 0 var(--hucre-isik), var(--odak-g, 0 0 0 0 transparent);
+  font:400 var(--y-16)/.75 var(--font-etiket); text-transform:uppercase; }
+.pf .sec[aria-checked=true] { color:var(--ink); box-shadow:inset 0 0 0 var(--p) var(--gold), var(--odak-g, 0 0 0 0 transparent); }
+.pf .sec[aria-checked=true]::before { content:""; position:absolute; inset:calc(-3 * var(--p)); pointer-events:none; --c:var(--gold); --u:calc(5 * var(--p)); --k:var(--p);
+  background:linear-gradient(var(--c),var(--c)) 0 0 / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 0 0 / var(--k) var(--u) no-repeat, linear-gradient(var(--c),var(--c)) 100% 0 / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 100% 0 / var(--k) var(--u) no-repeat,
+    linear-gradient(var(--c),var(--c)) 0 100% / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 0 100% / var(--k) var(--u) no-repeat, linear-gradient(var(--c),var(--c)) 100% 100% / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 100% 100% / var(--k) var(--u) no-repeat; }
+.pf .renk { width:calc(8 * var(--p)); height:calc(8 * var(--p)); box-shadow:inset 0 0 0 var(--p) var(--harc); }
+.pf .onizleme { display:flex; align-items:center; gap:calc(6 * var(--p)); padding:calc(2 * var(--p)) calc(6 * var(--p)); margin-top:calc(4 * var(--p)); background:#11141f; border:var(--p) solid; text-transform:uppercase; }
+.pf .onizleme b { font:400 var(--y-20)/1 var(--font-baslik); letter-spacing:var(--yp); color:var(--ink); }
+.pf .kart { flex-basis:calc(300 * var(--p)) !important; }
+.pf .kart > .alt { display:none; }
+.pf .kart label { margin:calc(4 * var(--p)) 0 calc(2 * var(--p)); }
+.pf .kart .satir { margin-top:calc(4 * var(--p)); }
+.pf .k-govde { padding-top:calc(4 * var(--p)); }
 `;
 
 /** Ok tuşlarıyla gezilen radyo grubu (ux § 6.4). */
@@ -55,11 +65,12 @@ function radyoGrubu<T extends string>(ust: HTMLElement, etiket: string, secenekl
 export function baslat(b: EkranBaglami): void {
   const ben = b.ben;
   if (!ben?.girisli) { git("karsilama"); return; }
-  const { kok, kart } = ekranKok(b.ustYazi, "Profil");
+  const kart = kimlikKok(b.ustYazi, "Profil");
+  const kok = kart.closest(".ekr") as HTMLElement;
   kok.classList.add("pf");
   const st = el("style"); st.textContent = STIL; document.head.appendChild(st);
   if (ben.oyuncu.profilTamam) { el("button", "geri", kart, "◄ Geri").addEventListener("click", () => git("atolye")); }
-  el("h2", "", kart, "Profil");
+  el("h2", "k-plaka", kart, ben.oyuncu.profilTamam ? "Profil" : "Profil oluştur");
   el("div", "alt", kart, "Arenada seni böyle tanırlar. Arma ve rengi sonra da değiştirebilirsin.");
   const duzenle = ben.oyuncu.profilTamam;
   let gorunenAd = ben.oyuncu.ad;
@@ -118,11 +129,11 @@ export function baslat(b: EkranBaglami): void {
   const on = el("div", "onizleme");
   const guncelle = () => {
     on.style.borderColor = renk;
-    on.innerHTML = `${elementSvg(arma, 36)}<b></b>`;
+    on.innerHTML = `<span class="k-el x2" data-el="${arma}"></span><b></b>`;
     on.querySelector("b")!.textContent = gorunenAd;
   };
   el("label", "", kart, "Arma").id = "l-arma";
-  radyoGrubu(kart, "Arma", ELEMENT_CARKI, (v, d) => { d.innerHTML = `${elementSvg(v, 28)}<span>${ELEMENT_RENK[v].ad}</span>`; d.setAttribute("aria-label", `Arma: ${ELEMENT_RENK[v].ad}`); }, (v) => { arma = v; guncelle(); }, arma);
+  radyoGrubu(kart, "Arma", ELEMENT_CARKI, (v, d) => { d.innerHTML = `<span class="k-el" data-el="${v}"></span><span>${ELEMENT_RENK[v].ad}</span>`; d.setAttribute("aria-label", `Arma: ${ELEMENT_RENK[v].ad}`); }, (v) => { arma = v; guncelle(); }, arma);
   el("label", "", kart, "Renk");
   radyoGrubu(kart, "Renk", RENKLER, (v, d) => {
     const k = RENKLER.indexOf(v);

@@ -23,36 +23,38 @@ import { kalin } from "./arayuz.ts";
 // saati durur. Adım eylemle biter, 12 sn'de tuş nabız atar, 25 sn'de kendiliğinden geçer. Öğretilmeyen HUD %40.
 // Bitince: girişliyse "İlk Devir" (sunucu yazar) → Market açıldı; misafirse "İlerlemeni kaydetmek için kayıt ol".
 
+// GU menü dili v2: eğitim katmanı maç çerçevesinde (960×540 = 480×270 mantıksal × 2): taş panel, pixel yazı, bronz tuş.
 const STIL = `
-.mh.egitim > * { opacity:.4; transition:opacity .2s; }
+.mh.egitim > * { opacity:.4; transition:opacity 83ms steps(1); }
 .mh.egitim > .vurgu { opacity:1; }
-.mh.egitim > .vurgu.nabiz, .eg .kb.nabiz { animation:egNabiz 1s ease-in-out infinite; }
-@keyframes egNabiz { 50% { box-shadow:0 0 0 3px #fff6c8, 0 0 14px #f4cf47; transform:scale(1.06); } }
-.eg { position:absolute; inset:0; pointer-events:none; }
-.eg .serit { position:absolute; left:160px; top:444px; width:640px; height:40px; display:flex; align-items:center; gap:10px; padding:0 10px;
-  background:rgba(5,13,16,.92); border:2px solid #f4cf47; border-radius:8px; font:700 13px/1.2 system-ui; color:#f3f1e8; }
-.eg .serit b { color:#f4cf47; }
-.eg .kb { flex:none; min-width:30px; height:24px; padding:0 6px; display:flex; align-items:center; justify-content:center; background:#173039;
-  border:2px solid #a3b2b6; border-bottom-width:4px; border-radius:5px; font:900 11px/1 ui-monospace,monospace; color:#fff; }
-.eg .no { flex:none; font:800 10px/1 system-ui; color:#a3b2b6; }
-.eg .atla { position:absolute; left:812px; top:448px; width:72px; height:32px; pointer-events:auto; padding:0; background:#173039; color:#f3f1e8;
-  border:2px solid #050d10; border-radius:8px; font:800 13px system-ui; cursor:pointer; box-shadow:0 3px 0 #050d10; }
-.eg .atla:focus-visible, .eg .kapanis button:focus-visible { outline:3px solid #fff; outline-offset:2px; }
-.eg .not { position:absolute; left:8px; top:76px; width:288px; padding:3px 6px; background:rgba(5,13,16,.9); border:1px solid #f4cf47; border-radius:5px; font:700 10px/1.3 system-ui; display:none; }
+.mh.egitim > .vurgu.nabiz, .eg .kb.nabiz { animation:egNabiz 1s steps(2) infinite; }
+@keyframes egNabiz { 50% { box-shadow:0 0 0 4px var(--halka); } }
+@media (prefers-reduced-motion: reduce) { .mh.egitim > .vurgu.nabiz, .eg .kb.nabiz { animation:none; box-shadow:0 0 0 4px var(--halka); } }
+.eg { position:absolute; inset:0; pointer-events:none; font:400 32px/.875 var(--font-etiket); color:var(--ink); }
+.eg .serit { position:absolute; left:150px; top:436px; width:660px; min-height:56px; display:flex; align-items:center; gap:14px; padding:0 14px; border:10px solid transparent; border-image:var(--k-tas-cerceve) 5 fill / 10px / 0 round; text-transform:uppercase; }
+.eg .serit b { color:var(--gold); font-weight:400; }
+.eg .kb { flex:none; min-width:40px; height:32px; padding:0 8px; display:flex; align-items:center; justify-content:center; background:var(--panel-2);
+  box-shadow:inset 0 0 0 2px var(--bronz), inset 0 -6px 0 0 var(--bronz-1); font:400 32px/1 var(--font-etiket); color:var(--ink); }
+.eg .no { flex:none; color:var(--soluk); }
+.eg .atla { position:absolute; left:822px; top:446px; width:96px; height:44px; pointer-events:auto; padding:0; cursor:pointer; border:2px solid var(--harc); border-radius:0;
+  background-color:var(--panel-2); color:var(--ink); font:400 32px/1 var(--font-etiket); text-transform:uppercase; box-shadow:inset 0 0 0 2px var(--bronz), 0 4px 0 0 var(--golge); }
+.eg .atla:focus-visible, .eg .kapanis button:focus-visible { outline:4px solid #fff; outline-offset:2px; }
+.eg .not { position:absolute; left:8px; top:76px; width:300px; padding:6px 10px; background:var(--panel); box-shadow:inset 0 0 0 2px var(--gold); display:none; line-height:.875; }
 .eg .not.acik { display:block; }
 .eg .ok4 { position:absolute; width:0; height:0; display:none; }
 .eg .ok4.acik { display:block; }
-.eg .ok4 i { position:absolute; width:0; height:0; border:7px solid transparent; }
-.eg .ok4 .u { left:-7px; top:-50px; border-bottom:10px solid #f4cf47; } .eg .ok4 .d { left:-7px; top:36px; border-top:10px solid #f4cf47; }
-.eg .ok4 .l { left:-50px; top:-7px; border-right:10px solid #f4cf47; } .eg .ok4 .r { left:36px; top:-7px; border-left:10px solid #f4cf47; }
-.eg .kapanis { position:absolute; left:230px; top:130px; width:500px; padding:18px 22px; background:#0c191d; border:3px solid #050d10; border-radius:12px;
-  box-shadow:0 0 0 2px #f4cf47, 0 10px 30px rgba(0,0,0,.6); font:600 15px/1.45 system-ui; color:#f3f1e8; pointer-events:auto; text-align:center; display:none; }
+.eg .ok4 i { position:absolute; width:0; height:0; border:8px solid transparent; }
+.eg .ok4 .u { left:-8px; top:-52px; border-bottom:12px solid var(--halka); } .eg .ok4 .d { left:-8px; top:36px; border-top:12px solid var(--halka); }
+.eg .ok4 .l { left:-52px; top:-8px; border-right:12px solid var(--halka); } .eg .ok4 .r { left:36px; top:-8px; border-left:12px solid var(--halka); }
+.eg .kapanis { position:absolute; left:210px; top:110px; width:540px; padding:20px 24px; border:10px solid transparent; border-image:var(--k-tas-cerceve) 5 fill / 10px / 0 round; pointer-events:auto; text-align:center; display:none; }
 .eg .kapanis.acik { display:block; }
-.eg .kapanis h3 { margin:0 0 8px; font:900 22px/1.1 system-ui; letter-spacing:1px; color:#f4cf47; }
-.eg .kapanis p { margin:6px 0; }
-.eg .kapanis .dg { display:flex; gap:10px; justify-content:center; margin-top:12px; }
-.eg .kapanis button { padding:8px 14px; background:#173039; color:#f3f1e8; border:2px solid #050d10; border-radius:8px; font:800 14px system-ui; cursor:pointer; }
-.eg .kapanis button.bir { background:#f4cf47; color:#2a2104; }
+.eg .kapanis h3 { margin:0 0 12px; font:400 40px/1 var(--font-baslik); letter-spacing:2px; color:var(--gold); text-transform:uppercase; }
+.eg .kapanis p { margin:8px 0; }
+.eg .kapanis .dg { display:flex; gap:14px; justify-content:center; margin-top:16px; }
+.eg .kapanis button { flex:none; min-height:48px; padding:4px 20px; margin:0; cursor:pointer; border:2px solid var(--harc); border-radius:0; background-color:var(--panel-2); color:var(--ink); font:400 40px/1 var(--font-baslik); letter-spacing:2px; text-transform:uppercase; box-shadow:inset 0 0 0 2px var(--bronz), inset 0 4px 0 0 #3a4258, 0 4px 0 0 var(--golge); pointer-events:auto; }
+.eg .kapanis button.bir { background-color:var(--ana); color:var(--ana-yazi); border-color:var(--ana-kenar); text-shadow:2px 2px 0 var(--ana-alt); box-shadow:inset 0 0 0 2px var(--gold), inset 0 -10px 0 0 var(--ana-alt), 0 4px 0 0 var(--golge); padding-bottom:12px; }
+.eg .kapanis button:active { transform:translateY(4px); }
+.eg .kapanis button:focus-visible { outline:4px solid #fff; outline-offset:2px; }
 `;
 
 function erimesiz(p: TopacProfili): TopacProfili {

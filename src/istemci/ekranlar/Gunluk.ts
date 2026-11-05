@@ -14,30 +14,34 @@ import { bakimKatmani, ekranKok, el, geriDugmesi } from "./arayuz.ts";
 // Lv.2 Yetenek, Lv.3 Özel Yetenek + Ulti (ilk sürümde tavan Lv.3; tuning § 14'teki "Lv.4 Ulti, sezon 2" SAPMA).
 
 const STIL = `
-.gn .kart { width:min(64rem,100%); }
-.gn .dz { display:grid; grid-template-columns:14rem 1fr; gap:1rem; margin-top:.6rem; }
-.gn .liste { display:flex; flex-direction:column; gap:.35rem; }
-.gn .liste button { text-align:left; display:flex; gap:.45rem; align-items:center; padding:.45rem .55rem; font-size:.85rem; box-shadow:none; }
-.gn .liste button[aria-current=true] { border-color:#f4cf47; background:#2a2a14; }
-.gn .liste small { color:#a3b2b6; display:block; font-size:.7rem; }
-.gn .bas { display:flex; gap:.8rem; align-items:center; }
-.gn .bas h3 { margin:0; font-size:1.25rem; }
-.gn .lv { font:900 1.6rem/1 system-ui; padding:.3rem .6rem; border-radius:8px; background:#24414b; }
-.gn .xp { height:.9rem; background:#1b2a30; border:1px solid #050d10; border-radius:4px; overflow:hidden; margin:.5rem 0 .2rem; }
-.gn .xp i { display:block; height:100%; background:#7fd3ff; }
-.gn .sonraki { margin:.5rem 0; padding:.55rem .7rem; border:2px solid #24414b; border-radius:8px; background:#10222a; font-size:.88rem; }
-.gn .defter { display:grid; grid-template-columns:repeat(3,1fr); gap:.4rem; margin:.6rem 0; }
-.gn .defter div { padding:.5rem; background:#10222a; border:2px solid #24414b; border-radius:8px; }
-.gn .defter b { display:block; font:900 1.3rem/1.1 system-ui; font-variant-numeric:tabular-nums; }
-.gn .defter span { font-size:.75rem; color:#a3b2b6; font-weight:700; }
-.gn .ruh { display:grid; grid-template-columns:8rem 1fr; gap:.8rem; padding:.7rem; border:3px solid #24414b; border-radius:12px; background:#0e1c21; }
-.gn .ruh .silu { width:8rem; height:8rem; border-radius:10px; background:#081114; display:flex; align-items:center; justify-content:center; }
-.gn .yt3 { display:flex; flex-direction:column; gap:.35rem; margin-top:.4rem; }
-.gn .yet { padding:.4rem .55rem; border-radius:8px; border:2px solid #3c6b58; background:#10222a; font-size:.82rem; }
-.gn .yet b { font-size:.88rem; }
-.gn .yet.kilitli { border-style:dashed; border-color:#5b666b; background:#0b1215; color:#7d8a8f; filter:grayscale(1); }
-.gn .yet .kl { float:right; font-size:.72rem; font-weight:900; }
-.gn .not { font-size:.74rem; color:#a3b2b6; margin-top:.4rem; }
+.gn .kart { width:min(calc(520 * var(--p)),100%); }
+.gn .dz { display:grid; grid-template-columns:calc(120 * var(--p)) 1fr; gap:calc(8 * var(--p)); margin-top:calc(4 * var(--p)); }
+.gn .liste { display:flex; flex-direction:column; gap:calc(3 * var(--p)); }
+.gn .liste button { justify-content:flex-start; text-align:left; gap:calc(4 * var(--p)); min-height:calc(24 * var(--p)); }
+.gn .liste button[aria-current=true] { --ks: inset 0 0 0 var(--p) var(--gold), inset 0 calc(2 * var(--p)) 0 0 #8a5a34; background-color:var(--secili); }
+.gn .liste button svg { width:calc(11 * var(--p)); height:calc(11 * var(--p)); }
+.gn .liste small { color:var(--soluk); display:block; }
+.gn .bas { display:flex; gap:calc(6 * var(--p)); align-items:center; }
+.gn .bas h3 { margin:0; }
+.gn .bas svg { width:calc(22 * var(--p)); height:calc(22 * var(--p)); }
+.gn .lv { font:400 var(--y-30)/1 var(--font-baslik); padding:calc(2 * var(--p)) calc(6 * var(--p)); color:var(--gold); background:#3b2c0c; box-shadow:inset 0 0 0 var(--p) #c9a33b; }
+.gn .xp { height:calc(6 * var(--p)); background:#0d0f18; box-shadow:inset 0 0 0 var(--p) var(--harc); margin:calc(4 * var(--p)) 0 calc(2 * var(--p)); position:relative; }
+.gn .xp i { position:absolute; left:var(--p); top:var(--p); bottom:var(--p); max-width:calc(100% - 2 * var(--p)); background:repeating-linear-gradient(90deg, var(--sen) 0 calc(3 * var(--p)), transparent calc(3 * var(--p)) calc(4 * var(--p))); }
+.gn .sonraki { margin:calc(4 * var(--p)) 0; padding:calc(4 * var(--p)) calc(6 * var(--p)); background:#11141f; box-shadow:inset 0 0 0 var(--p) var(--bronz-1); line-height:.875; }
+.gn .defter { display:grid; grid-template-columns:repeat(3,1fr); gap:calc(3 * var(--p)); margin:calc(4 * var(--p)) 0; }
+.gn .defter div { padding:calc(3 * var(--p)) calc(4 * var(--p)); background:var(--hucre); box-shadow:inset 0 var(--p) 0 0 var(--hucre-isik), inset 0 0 0 var(--p) var(--harc); }
+.gn .defter b { display:block; font:400 var(--y-20)/1 var(--font-baslik); color:var(--turuncu); }
+.gn .defter span { color:var(--soluk); text-transform:uppercase; }
+.gn .ruh { display:grid; grid-template-columns:calc(64 * var(--p)) 1fr; gap:calc(6 * var(--p)); padding:calc(5 * var(--p)); background:#11141f; box-shadow:inset 0 0 0 var(--p) var(--bronz-1); }
+.gn .ruh .silu { width:calc(64 * var(--p)); height:calc(64 * var(--p)); background:var(--panel-0); box-shadow:inset 0 0 0 var(--p) var(--harc); display:flex; align-items:center; justify-content:center; }
+.gn .ruh .silu svg { width:calc(56 * var(--p)); height:calc(56 * var(--p)); }
+.gn .yt3 { display:flex; flex-direction:column; gap:calc(3 * var(--p)); margin-top:calc(3 * var(--p)); }
+.gn .yet { padding:calc(3 * var(--p)) calc(4 * var(--p)); background:var(--hucre); box-shadow:inset 0 0 0 var(--p) #3f8f60; line-height:.875; }
+.gn .yet b { color:var(--ink); text-transform:uppercase; }
+.gn .yet.kilitli { box-shadow:inset 0 0 0 var(--p) #3a3f55; background:#11141f; color:#6a6474; }
+.gn .yet .kl { float:right; color:var(--gold); text-transform:uppercase; }
+.gn .not { color:var(--soluk); margin-top:calc(3 * var(--p)); line-height:.875; }
+html[data-yazi-buyuk] .gn .dz { grid-template-columns:1fr; }
 `;
 
 const TUR_AD: Record<Yetenek["tur"], string> = { hucum: "Hücum", savunma: "Savunma", alan: "Alan", sayac: "Sayaç" };
@@ -67,11 +71,11 @@ export function baslat(b: EkranBaglami): void {
 }
 
 function ciz(b: EkranBaglami, cekirdekler: AtolyeCekirdegi[]): void {
-  const { kok, kart } = ekranKok(b.ustYazi, "Çekirdek Günlüğü");
+  const { kok, kart } = ekranKok(b.ustYazi, "Çekirdek Günlüğü", { baslik: "Günlük" });
   kok.classList.add("gn");
   const st = el("style"); st.textContent = STIL; document.head.appendChild(st);
   geriDugmesi(kart);
-  el("h2", "", kart, "Çekirdek Günlüğü");
+  el("h2", "k-plaka", kart, "Çekirdek Günlüğü");
   el("div", "alt", kart, "Çekirdeğin büyümesi: seviye, defter ve ruhu.");
   const q = new URLSearchParams(location.search);
   let secili = cekirdekler.find((c) => String(c.id) === q.get("c")) ?? cekirdekler[0];

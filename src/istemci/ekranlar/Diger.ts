@@ -1,7 +1,7 @@
 import type { EkranBaglami } from "../main.ts";
 import { apiIstek, git } from "../hesap.ts";
 import { AYAR_SECENEKLERI, type OyunAyarlari, ayarlariOku, ayarlariYaz } from "../oyun/Ayarlar.ts";
-import { OLCEKLER, METIN_OLCEGI, ekranKok, el, geriDugmesi, metinOlcegiOku, metinOlcegiUygula } from "./arayuz.ts";
+import { DUZ_YAZI, OLCEKLER, METIN_OLCEGI, duzYaziOku, duzYaziUygula, ekranKok, el, geriDugmesi, metinOlcegiOku, metinOlcegiUygula } from "./arayuz.ts";
 
 // Ayarlar (metin ölçeği ux § 6.3 + maç ayarları ux § 6.2); ◄ geri → Atölye. D7: Market ve Başarımlar kendi
 // dosyalarında (Market.ts, Basarimlar.ts).
@@ -9,7 +9,7 @@ import { OLCEKLER, METIN_OLCEGI, ekranKok, el, geriDugmesi, metinOlcegiOku, meti
 export function ayarlar(b: EkranBaglami): void {
   const { kart } = ekranKok(b.ustYazi, "Ayarlar");
   geriDugmesi(kart, b.ben?.girisli ? "atolye" : "karsilama");
-  el("h2", "", kart, "Ayarlar");
+  el("h2", "k-plaka", kart, "Ayarlar");
   el("label", "", kart, "Metin ölçeği (menüler ve maç HUD'u)");
   const s = el("div", "satir", kart);
   s.setAttribute("role", "radiogroup");
@@ -24,11 +24,22 @@ export function ayarlar(b: EkranBaglami): void {
     dugmeler.push(d);
   }
   yaz();
+  // GU-01 erişilebilirlik: pixel yazı tipi yerine düz (sistem) yazı tipi
+  el("label", "", kart, "Yazı tipi");
+  const yt = el("div", "satir", kart);
+  yt.style.marginTop = "0";
+  const ytD = el("button", "", yt);
+  const ytYaz = () => { ytD.textContent = duzYaziOku() ? "Düz (okunurluk)" : "Pixel"; ytD.setAttribute("aria-pressed", String(duzYaziOku())); };
+  ytD.dataset["ayar"] = "duz-yazi";
+  ytD.addEventListener("click", () => { const y = !duzYaziOku(); try { localStorage.setItem(DUZ_YAZI, y ? "1" : "0"); } catch { /* kapalı */ } duzYaziUygula(); ytYaz(); });
+  ytYaz();
   el("label", "", kart, "Maç ayarları");
   const iz = el("div", "", kart);
   iz.style.display = "grid";
-  iz.style.gridTemplateColumns = "1fr 12rem";
-  iz.style.gap = ".4rem .8rem";
+  iz.style.gridTemplateColumns = "1fr calc(110 * var(--p))";
+  iz.style.gap = "calc(3 * var(--p)) calc(8 * var(--p))";
+  iz.style.alignItems = "center";
+  iz.style.textTransform = "uppercase";
   let a: OyunAyarlari = ayarlariOku();
   for (const anahtar of Object.keys(AYAR_SECENEKLERI) as (keyof OyunAyarlari)[]) {
     const t = AYAR_SECENEKLERI[anahtar];
@@ -59,9 +70,9 @@ export function ayarlar(b: EkranBaglami): void {
 function hesapSilBolumu(kart: HTMLElement): void {
   const kutu = el("div", "", kart);
   kutu.dataset["hesapSil"] = "1";
-  kutu.style.marginTop = "1.4rem";
-  kutu.style.borderTop = "2px solid #24414b";
-  kutu.style.paddingTop = ".8rem";
+  kutu.style.marginTop = "calc(10 * var(--p))";
+  kutu.style.borderTop = "var(--p) solid #2a3146";
+  kutu.style.paddingTop = "calc(6 * var(--p))";
   const ilk = el("button", "", kutu, "Hesabımı sil");
   ilk.dataset["eylem"] = "hesap-sil";
   ilk.addEventListener("click", () => {
@@ -76,9 +87,8 @@ function hesapSilBolumu(kart: HTMLElement): void {
     const hata = el("div", "hata", kutu);
     hata.setAttribute("role", "alert");
     const satir = el("div", "satir", kutu);
-    const sil = el("button", "", satir, "Kalıcı olarak sil");
+    const sil = el("button", "k-dugme tehlike", satir, "Kalıcı olarak sil");
     sil.dataset["eylem"] = "hesap-sil-onay";
-    sil.style.background = "#a3260a";
     const iptal = el("button", "", satir, "İptal");
     iptal.addEventListener("click", () => { kutu.replaceChildren(ilk); ilk.focus(); });
     sil.addEventListener("click", () => {

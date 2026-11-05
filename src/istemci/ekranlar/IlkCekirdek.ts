@@ -5,9 +5,9 @@ import { BASLANGIC_SETLERI, RUHLAR, YETENEKLER, cekirdekBul } from "../../paylas
 import { type TopacProfili, setProfili, topacProfiliKur } from "../../paylasilan/veri/profil.ts";
 import type { EkranBaglami } from "../main.ts";
 import { BakimHatasi, HESAP_HATA, MISAFIR_EGITIM, apiPost, git, oku, sakla } from "../hesap.ts";
-import { elementSvg } from "../oyun/elementSimge.ts";
 import { ELEMENT_RENK, KOKEN_RENK, renkCss } from "../oyun/renkler.ts";
 import { bakimKatmani, ekranKok, el } from "./arayuz.ts";
+import { kokenKuresi } from "./pikselTopac.ts";
 
 // İlk Çekirdek (US-1.3, tide G-33, ux § 7): 3 başlangıç kartı; her kartta AYNI dört çubuk (Saldırı, Savunma, Hız,
 // Stamina) + element + köken pasifi (tek cümle) + yetenek adı + 5 sn hareket önizlemesi (gerçek paylaşılan sim,
@@ -22,21 +22,35 @@ const KOKEN_AD: Record<string, string> = { goktasi: "Göktaşı", maden: "Maden"
 const TIP_AD: Record<string, string> = { saldirgan: "Saldırgan", kale: "Kale", denge: "Denge", dayanikli: "Dayanıklı" };
 
 const STIL = `
-.ic .kartlar { display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem; margin-top:.6rem; }
-.ic .ck { display:flex; flex-direction:column; gap:.45rem; padding:.9rem; background:#10222a; border:3px solid #050d10; border-radius:12px; box-shadow:0 0 0 2px #24414b; }
-.ic .ck:focus-within { box-shadow:0 0 0 3px #f4cf47; }
-.ic .ck h3 { display:flex; align-items:center; gap:.45rem; margin:0; font-size:1.1rem; }
-.ic .ck .kk { font-size:.78rem; color:#a3b2b6; font-weight:700; letter-spacing:.5px; }
-.ic canvas { width:100%; aspect-ratio:11/8; background:#081114; border-radius:8px; border:2px solid #050d10; }
-.ic .cb { display:grid; grid-template-columns:4.6rem 1fr; gap:.25rem .5rem; align-items:center; font-size:.78rem; }
-.ic .cb .c { height:.6rem; background:#1b2a30; border:1px solid #050d10; border-radius:3px; overflow:hidden; }
-.ic .cb .c i { display:block; height:100%; background:#f2e8b0; }
-.ic .ps { font-size:.8rem; min-height:2.4rem; }
-.ic .yet { font-size:.8rem; color:#c9d3d6; }
-.ic .not { font-size:.78rem; color:#ffcf9a; background:#2a1a08; border:1px solid #6b4a1a; border-radius:6px; padding:.3rem .45rem; }
-.ic .bos { min-height:1.9rem; }
-.ic .ck button { margin-top:auto; }
+.ic .k-govde { padding-top:calc(8 * var(--p)); }
+.ic .kart.ic-kart { width:100%; max-width:calc(560 * var(--p)); padding:0; border:0; border-image:none; background:none; }
+.ic .ust-not { text-align:center; color:var(--soluk); text-transform:uppercase; margin:0 0 calc(6 * var(--p)); }
+.ic .kartlar { display:grid; grid-template-columns:repeat(3, 1fr); gap:calc(16 * var(--p)); }
+.ic .ck { position:relative; display:flex; flex-direction:column; align-items:center; gap:calc(3 * var(--p)); padding:calc(6 * var(--p)) calc(6 * var(--p)) calc(6 * var(--p));
+  background:#0e0d12; box-shadow:inset 0 0 0 var(--p) var(--harc), inset 0 0 0 calc(2 * var(--p)) #1e1b24; text-transform:uppercase; }
+.ic .ck.secili::before { content:""; position:absolute; inset:calc(-5 * var(--p)); pointer-events:none; --c:var(--gold); --u:calc(8 * var(--p)); --k:var(--p);
+  background:linear-gradient(var(--c),var(--c)) 0 0 / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 0 0 / var(--k) var(--u) no-repeat, linear-gradient(var(--c),var(--c)) 100% 0 / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 100% 0 / var(--k) var(--u) no-repeat,
+    linear-gradient(var(--c),var(--c)) 0 100% / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 0 100% / var(--k) var(--u) no-repeat, linear-gradient(var(--c),var(--c)) 100% 100% / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 100% 100% / var(--k) var(--u) no-repeat; }
+.ic .ck h3 { order:3; width:max-content; max-width:100%; white-space:nowrap; display:flex; align-items:center; justify-content:center; gap:calc(3 * var(--p)); margin:0; padding:calc(3 * var(--p)) calc(10 * var(--p)); min-width:calc(110 * var(--p));
+  background:var(--panel); box-shadow:inset 0 0 0 var(--p) var(--harc), inset 0 0 0 calc(2 * var(--p)) var(--turuncu); font:400 var(--y-20)/1 var(--font-baslik); letter-spacing:var(--yp); }
+.ic .ck.secili h3 { box-shadow:inset 0 0 0 var(--p) var(--harc), inset 0 0 0 calc(2 * var(--p)) var(--gold); }
+.ic .ck .kk { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+.ic canvas.onz { order:0; width:calc(72 * var(--p)); height:calc(40 * var(--p)); background:var(--panel-0); box-shadow:inset 0 0 0 var(--p) var(--bronz); image-rendering:pixelated; }
+.ic .ck.secili canvas.onz { box-shadow:inset 0 0 0 var(--p) var(--gold); }
+.ic .kure-yer { order:1; display:flex; flex-direction:column; align-items:center; margin-top:0; }
+.ic .kure-yer .k-kaide { width:calc(62 * var(--p)); margin-top:calc(-3 * var(--p)); }
+.ic .cb { order:5; align-self:stretch; display:grid; grid-template-columns:1fr auto; gap:calc(2 * var(--p)) calc(6 * var(--p)); align-items:center; padding:calc(3 * var(--p)) calc(5 * var(--p));
+  background:var(--panel); border:calc(3 * var(--p)) solid transparent; border-image:var(--k-tas-cerceve) 5 fill / calc(3 * var(--p)) / 0 round; }
+.ic .ps { order:6; color:var(--soluk); text-transform:none; min-height:calc(18 * var(--p)); text-align:center; line-height:.875; }
+.ic .yet { order:7; color:var(--ink); text-transform:none; text-align:center; line-height:.875; }
+.ic .not { order:8; color:#ffb070; background:#2a1a08; box-shadow:inset 0 0 0 var(--p) #6b4a1a; padding:calc(2 * var(--p)) calc(4 * var(--p)); text-transform:none; line-height:.875; }
+.ic .bos { order:8; min-height:calc(12 * var(--p)); }
+.ic .ck button { order:4; }
+.ic .ck button.k-dugme { min-height:calc(18 * var(--p)); font-size:var(--y-20); letter-spacing:var(--yp); padding:calc(2 * var(--p)) calc(10 * var(--p)) calc(4 * var(--p)); min-width:0; }
+.ic .alt-yazi { text-align:center; color:var(--soluk); text-transform:uppercase; margin-top:calc(8 * var(--p)); }
+html[data-yazi-buyuk] .ic .kartlar { grid-template-columns:1fr; }
 `;
+const KOKEN_SEG: Record<string, string> = { goktasi: "#d5b787", maden: "#c0793a", yapay: "#6b8792", karanlik: "#8a5cb8" };
 
 interface KartVerisi { set: (typeof BASLANGIC_SETLERI)[number]; profil: TopacProfili; yetenek: string; ozel: string }
 
@@ -73,15 +87,19 @@ class Onizleme {
   };
   private ciz(): void {
     const c = this.c;
-    const w = (c.width = c.clientWidth * devicePixelRatio);
-    const h = (c.height = c.clientHeight * devicePixelRatio);
+    // mantıksal çözünürlük (pixel dili): tuval CSS'te tam sayı ölçekle büyür (image-rendering: pixelated)
+    const uo = Number(getComputedStyle(document.documentElement).getPropertyValue("--o")) || 2;
+    const w = (c.width = Math.max(1, Math.round(c.clientWidth / uo)));
+    const h = (c.height = Math.max(1, Math.round(c.clientHeight / uo)));
+    const devicePixelRatio = 0.5;
     const g = c.getContext("2d")!;
     const R = this.d.arenaYaricap;
     const o = (Math.min(w, h) * 0.46) / R;
-    g.fillStyle = "#081114"; g.fillRect(0, 0, w, h);
+    g.imageSmoothingEnabled = false;
+    g.fillStyle = "#171c29"; g.fillRect(0, 0, w, h);
     g.save(); g.translate(w / 2, h / 2);
-    g.beginPath(); g.arc(0, 0, R * o, 0, Math.PI * 2); g.fillStyle = "#12262c"; g.fill();
-    g.lineWidth = 3 * devicePixelRatio; g.strokeStyle = "#2f5560"; g.stroke();
+    g.beginPath(); g.arc(0, 0, R * o, 0, Math.PI * 2); g.fillStyle = "#4a4446"; g.fill();
+    g.lineWidth = 3 * devicePixelRatio; g.strokeStyle = "#fbbe88"; g.stroke();
     this.d.topaclar.forEach((t, i) => {
       const p = this.d.profiller[i]!;
       const renk = i === 0 ? renkCss(ELEMENT_RENK[p.element].orta) : "#6f8085";
@@ -102,11 +120,12 @@ export function baslat(b: EkranBaglami): void {
   const ben = b.ben;
   if (!ben?.girisli) { git("karsilama"); return; }
   if (ben.cekirdekler.length) { git("atolye"); return; }
-  const { kok, kart } = ekranKok(b.ustYazi, "İlk Çekirdek");
+  const { kok, kart, lento } = ekranKok(b.ustYazi, "İlk Çekirdek", { yer: "tapinak", cuzdan: false });
   kok.classList.add("ic");
+  lento.style.justifyContent = "center";
+  kart.className = "kart ic-kart";
   const st = el("style"); st.textContent = STIL; document.head.appendChild(st);
-  el("h2", "", kart, "İlk Çekirdeğini seç");
-  el("div", "alt", kart, "Çekirdek topacının kalbidir: elementi, kökeni ve yeteneği ondan gelir. Seçilmeyen ikisi sonra Market'te ucuza durur.");
+  el("h2", "k-gizli-baslik", kart, "İlk Çekirdeğini seç").style.cssText = "position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)";
   const veriler: KartVerisi[] = BASLANGIC_SETLERI.map((set) => {
     const c = cekirdekBul(set.cekirdek);
     const ruh = RUHLAR.find((r) => r.id === c.ruh);
@@ -121,15 +140,18 @@ export function baslat(b: EkranBaglami): void {
   let ilk: HTMLButtonElement | null = null;
   veriler.forEach((v, k) => {
     const p = v.profil;
-    const c = el("section", "ck", izgara);
+    const c = el("section", `ck${k === 0 ? " secili" : ""}`, izgara);
     c.setAttribute("aria-labelledby", `ck-${k}`);
     c.dataset["set"] = v.set.id;
     const bas = el("h3", "", c);
     bas.id = `ck-${k}`;
-    bas.innerHTML = `${elementSvg(p.element, 22)}<span></span>`;
-    bas.querySelector("span")!.textContent = cekirdekBul(v.set.cekirdek).ad;
+    bas.innerHTML = `<span class="k-el" data-el="${p.element}"></span><span></span>`;
+    bas.querySelector("span:last-child")!.textContent = cekirdekBul(v.set.cekirdek).ad;
     el("div", "kk", c, `${KOKEN_AD[p.koken]} · ${ELEMENT_RENK[p.element].ad} · ${TIP_AD[p.tip] ?? p.tip} · Lv.2`);
-    const cv = el("canvas", "", c);
+    const ky = el("div", "kure-yer", c);
+    ky.appendChild(kokenKuresi(p.koken, 11));
+    el("div", "k-kaide", ky);
+    const cv = el("canvas", "onz", c);
     cv.setAttribute("aria-label", `${cekirdekBul(v.set.cekirdek).ad}: 5 saniyelik hareket önizlemesi`);
     cv.setAttribute("role", "img");
     oniz.push(new Onizleme(cv, p, rakip, 11 + k * 7));
@@ -137,24 +159,29 @@ export function baslat(b: EkranBaglami): void {
     const deger = cubuklar(p);
     ["Saldırı", "Savunma", "Hız", "Stamina"].forEach((ad, j) => {
       el("span", "", cb, ad);
-      const kap = el("span", "c", cb);
+      const kap = el("span", "c k-segment", cb);
       const oran = Math.max(0.12, deger[j]! / enCok[j]!);
       kap.setAttribute("role", "meter");
       kap.setAttribute("aria-label", ad);
       kap.setAttribute("aria-valuemin", "0");
       kap.setAttribute("aria-valuemax", "10");
       kap.setAttribute("aria-valuenow", String(Math.round(oran * 10)));
-      el("i", "", kap).style.width = `${Math.round(oran * 100)}%`;
+      kap.style.setProperty("--seg", KOKEN_SEG[p.koken] ?? "#d5b787");
+      const dolu = Math.max(1, Math.round(oran * 5));
+      for (let i = 0; i < 5; i++) el("i", i < dolu ? "dolu" : "", kap);
     });
     el("div", "ps", c, PASIF[p.koken] ?? "");
     el("div", "yet", c, `Yetenek: ${v.yetenek} · Lv.3'te Özel Yetenek: ${v.ozel}`);
     if (p.koken === "yapay") el("div", "not", c, "Ömrü sınırlı: 30 maç sonra yenilenmesi gerekir.");
     else el("div", "bos", c);
-    const d = el("button", k === 0 ? "bir" : "", c, "Bunu seç");
+    const d = el("button", k === 0 ? "k-dugme ana" : "k-dugme", c, "Bunu seç");
     d.dataset["eylem"] = `sec-${v.set.id}`;
     d.setAttribute("aria-label", `Bunu seç: ${cekirdekBul(v.set.cekirdek).ad}`);
     ilk ??= d;
-    d.addEventListener("focus", () => { for (const x of izgara.querySelectorAll("button")) x.classList.toggle("bir", x === d); });
+    d.addEventListener("focus", () => {
+      for (const x of izgara.querySelectorAll("button")) x.classList.toggle("ana", x === d);
+      for (const x of izgara.querySelectorAll(".ck")) x.classList.toggle("secili", x === c);
+    });
     d.addEventListener("click", async () => {
       for (const x of izgara.querySelectorAll("button")) (x as HTMLButtonElement).disabled = true;
       h.textContent = "";
@@ -175,6 +202,7 @@ export function baslat(b: EkranBaglami): void {
       }
     });
   });
+  el("div", "alt-yazi k-e16", kart, "Seçmediğin ikisi Market'te");
   // ok tuşları kartlar arasında (ux § 6.4)
   izgara.addEventListener("keydown", (e) => {
     const dg = [...izgara.querySelectorAll("button")];

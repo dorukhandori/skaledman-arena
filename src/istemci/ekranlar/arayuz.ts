@@ -262,7 +262,17 @@ export function metinOlcegiOku(): number {
   return (OLCEKLER as readonly number[]).includes(v) ? v : 1;
 }
 
+/** Ayarlar › Yazı tipi: düz (sistem) yazı tipi (okunurluk; menu-tasarim-arastirma § 6.2). */
+export const DUZ_YAZI = "devran.duzYazi.v1";
+export function duzYaziOku(): boolean {
+  try { return localStorage.getItem(DUZ_YAZI) === "1"; } catch { return false; }
+}
+export function duzYaziUygula(): void {
+  if (duzYaziOku()) document.documentElement.dataset["duzYazi"] = "1"; else delete document.documentElement.dataset["duzYazi"];
+}
+
 export function metinOlcegiUygula(o = metinOlcegiOku()): void {
+  duzYaziUygula();
   document.documentElement.style.fontSize = `${15 * o}px`;
   olcekUygula(o);
 }
