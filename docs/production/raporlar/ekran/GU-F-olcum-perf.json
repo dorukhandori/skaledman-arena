@@ -1,0 +1,106 @@
+{
+ "on": "perf",
+ "sn": 15,
+ "tarayici": "153.0.8010.12",
+ "maclar": {
+  "botbot-dolas-kenar": {
+   "turSn": 15,
+   "carpisma": 4,
+   "carpismaDk": 16,
+   "kademe": {
+    "yok": 1,
+    "agir": 3
+   },
+   "aralikSn": {
+    "min": 0.617,
+    "p10": 0.617,
+    "medyan": 0.833
+   },
+   "art_arda_lt_0_3sn": 0,
+   "vnMedyan": 336,
+   "gpMedyan": 1.1,
+   "birikme": {
+    "kvOnceMedyan": 0,
+    "kvOnceMaks": 0,
+    "oncekiCanliyken": 0
+   },
+   "simTemas": {
+    "adet": 4,
+    "sureMedyan": 0.033,
+    "sureP90": 0.05,
+    "sureMaks": 0.05,
+    "toplamSn": 0.12
+   },
+   "akis": {
+    "adet": 0,
+    "sureMedyan": 0,
+    "sureMaks": 0,
+    "yanipSonme": 0,
+    "isimaAdet": 0,
+    "isimaSureMedyan": 0,
+    "akisKivilcim": 0
+   },
+   "sesler": {
+    "toplam": 12,
+    "temas": 0,
+    "temasDk": 0
+   },
+   "kivilcim": {
+    "maks": 48,
+    "p99": 48,
+    "ort": 2.8,
+    "flasMaks": 1,
+    "parcacikMaks": 23
+   },
+   "tepki": {
+    "kare": 32,
+    "yaklasmaMaksPx": 6.1,
+    "yaklasmaP90Px": 0,
+    "binenKare": 0
+   },
+   "kareMs": {
+    "medyan": 1,
+    "p95": 6.9,
+    "p99": 24.6,
+    "maks": 5910.4
+   },
+   "gercekZaman": {
+    "kare": 150,
+    "medyanMs": 99.9,
+    "p95Ms": 121.8,
+    "fps": 10
+   },
+   "olaylar": [
+    {
+     "t": 5.9,
+     "vn": 57,
+     "gp": 0.14,
+     "kvOnce": 0,
+     "kvSonra": 5
+    },
+    {
+     "t": 6.73,
+     "vn": 363,
+     "gp": 1.1,
+     "kvOnce": 0,
+     "kvSonra": 48
+    },
+    {
+     "t": 13.85,
+     "vn": 291,
+     "gp": 0.59,
+     "kvOnce": 0,
+     "kvSonra": 25
+    },
+    {
+     "t": 14.47,
+     "vn": 336,
+     "gp": 1.1,
+     "kvOnce": 0,
+     "kvSonra": 42
+    }
+   ]
+  }
+ },
+ "hatalar": []
+}

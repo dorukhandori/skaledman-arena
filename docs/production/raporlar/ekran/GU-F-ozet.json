@@ -1,0 +1,213 @@
+{
+ "cekilen": [
+  "docs/production/raporlar/ekran/GU-F-01-serit-hafif.png",
+  "docs/production/raporlar/ekran/GU-F-02-serit-orta.png",
+  "docs/production/raporlar/ekran/GU-F-03-serit-agir.png",
+  "docs/production/raporlar/ekran/GU-F-04-serit-artarda-3.png",
+  "docs/production/raporlar/ekran/GU-F-kiyas-07.png",
+  "docs/production/raporlar/ekran/GU-F-kiyas-07-yakin.png"
+ ],
+ "cozunurluk": "1280×720 CSS, DPR 2 (2560×1440)",
+ "serit": {
+  "01-serit-hafif": {
+   "olay": {
+    "vn": 95,
+    "gp": 0.12944084594466906,
+    "kv": 6
+   },
+   "kareler": [
+    {
+     "kv": 6,
+     "flas": 1,
+     "mesafe": 60,
+     "akis": false
+    },
+    {
+     "kv": 6,
+     "flas": 1,
+     "mesafe": 63,
+     "akis": false
+    },
+    {
+     "kv": 6,
+     "flas": 1,
+     "mesafe": 66,
+     "akis": false
+    },
+    {
+     "kv": 6,
+     "flas": 1,
+     "mesafe": 69,
+     "akis": false
+    },
+    {
+     "kv": 6,
+     "flas": 0,
+     "mesafe": 73,
+     "akis": false
+    },
+    {
+     "kv": 3,
+     "flas": 0,
+     "mesafe": 76,
+     "akis": false
+    }
+   ]
+  },
+  "02-serit-orta": {
+   "olay": {
+    "vn": 242,
+    "gp": 0.5087482037058937,
+    "kv": 21
+   },
+   "kareler": [
+    {
+     "kv": 21,
+     "flas": 1,
+     "mesafe": 60,
+     "akis": false
+    },
+    {
+     "kv": 21,
+     "flas": 1,
+     "mesafe": 65,
+     "akis": false
+    },
+    {
+     "kv": 21,
+     "flas": 1,
+     "mesafe": 70,
+     "akis": false
+    },
+    {
+     "kv": 21,
+     "flas": 1,
+     "mesafe": 74,
+     "akis": false
+    },
+    {
+     "kv": 21,
+     "flas": 1,
+     "mesafe": 77,
+     "akis": false
+    },
+    {
+     "kv": 21,
+     "flas": 1,
+     "mesafe": 80,
+     "akis": false
+    }
+   ]
+  },
+  "03-serit-agir": {
+   "olay": {
+    "vn": 355,
+    "gp": 0.7488251166310408,
+    "kv": 32
+   },
+   "kareler": [
+    {
+     "kv": 32,
+     "flas": 1,
+     "mesafe": 60,
+     "akis": false
+    },
+    {
+     "kv": 32,
+     "flas": 1,
+     "mesafe": 68,
+     "akis": false
+    },
+    {
+     "kv": 32,
+     "flas": 1,
+     "mesafe": 76,
+     "akis": false
+    },
+    {
+     "kv": 32,
+     "flas": 1,
+     "mesafe": 83,
+     "akis": false
+    },
+    {
+     "kv": 32,
+     "flas": 1,
+     "mesafe": 91,
+     "akis": false
+    },
+    {
+     "kv": 32,
+     "flas": 1,
+     "mesafe": 98,
+     "akis": false
+    }
+   ]
+  },
+  "04-serit-artarda-3": {
+   "kareler": [
+    {
+     "carpisma": 1,
+     "kare": 1,
+     "kv": 27,
+     "flas": 1,
+     "mesafe": 63,
+     "akis": false
+    },
+    {
+     "carpisma": 1,
+     "kare": 6,
+     "kv": 27,
+     "flas": 1,
+     "mesafe": 78,
+     "akis": false
+    },
+    {
+     "carpisma": 2,
+     "vn": 311,
+     "gp": 0.6586676346271763,
+     "yuk": 1.1589839243329996
+    },
+    {
+     "carpisma": 2,
+     "kare": 1,
+     "kv": 37,
+     "flas": 1,
+     "mesafe": 63,
+     "akis": false
+    },
+    {
+     "carpisma": 2,
+     "kare": 6,
+     "kv": 33,
+     "flas": 1,
+     "mesafe": 79,
+     "akis": false
+    },
+    {
+     "carpisma": 3,
+     "vn": 296,
+     "gp": 0.6274122793297222,
+     "yuk": 1.378951787301799
+    },
+    {
+     "carpisma": 3,
+     "kare": 1,
+     "kv": 24,
+     "flas": 1,
+     "mesafe": 64,
+     "akis": false
+    },
+    {
+     "carpisma": 3,
+     "kare": 6,
+     "kv": 23,
+     "flas": 1,
+     "mesafe": 80,
+     "akis": false
+    }
+   ]
+  }
+ },
+ "hatalar": []
+}
