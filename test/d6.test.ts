@@ -100,7 +100,8 @@ describe("Uç değişimi (Düz → İğne): topacProfiliKur farkı", () => {
     const f = cubukFarki(profilCubuklari(duz), profilCubuklari(igne));
     expect(f.hiz).toBeLessThan(-30);
     expect(f.saglamlik).toBeGreaterThan(0); // İğne burstEsik +1
-    expect(deger(igne, "stamina")).toBeGreaterThan(deger(duz, "stamina")); // erime 5,0 < 5,5
+    // DENGE-2 SAPMA: Düz Uç erime 5,5 → 5,0 = İğne 5,0; Stamina çubuğu artık eşit
+    expect(deger(igne, "stamina")).toBe(deger(duz, "stamina"));
   });
 });
 

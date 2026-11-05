@@ -40,7 +40,7 @@ export const AYAR = {
    *  Gerekçe: kenara doğru sürmeye devam eden topaç her adım "çarpıp" saniyede ~90 stamina kaybediyordu. */
   duvarOlayHizi: 40,
   /** Varsayılan vRO; Uç verisi kendi `ringOutHizi`nı taşır. */
-  ringOutHizi: 200,
+  ringOutHizi: 265,
   dogum: [
     { x: -130, z: 0 },
     { x: 130, z: 0 },
@@ -137,6 +137,13 @@ export const AYAR = {
     geriCekBekleme: 20,
     /** § 8 uyum: komşu elementten devralan yeni topaç + bu kadar Enerji ile başlar; tavan 3 dilim. */
     enerjiKomsuDevir: 40,
+    /**
+     * DENGE-2 SAPMA (tuning § 8 "Miras"): Enerji takımda kalır. Sahadan çıkan topacın Enerjisinin bu oranı (aşağı
+     * yuvarlanır) sahaya girene geçer: elenende `enerjiElenenDevir`, geri çekte `enerjiGeriCekDevir`. 1 = tam devir
+     * (oyuncunun tek Enerji çubuğu). Önce 0 / 0 (üye başına Enerji): Ulti görülen maç %6 → %35-45 (DENGE-2 raporu).
+     */
+    enerjiElenenDevir: 1,
+    enerjiGeriCekDevir: 1,
     enerjiTavan: 300,
     /** VARSAYIM (flint #13 "iniş noktası rakipten uzak değilse kaydır"): geri çekte iniş rakipten en az bu kadar uzak. */
     inisMesafesi: 120,
@@ -240,5 +247,6 @@ export const ELEMENT_CARKI: readonly ElementAdi[] = ["kor", "kasirga", "simsek",
 export const KOKEN_PASIF = {
   maden: { kokErimeCarpani: 0.8, kokHizEsigi: 40, ivme: 0.9 },
   yapay: { erime: 1.1 },
-  karanlik: { erime: 1.35, emisOran: 0.2, emisEnFazla: 12, emisZitOran: 0.4, emisZitEnFazla: 20 },
+  /** DENGE-2 SAPMA: zıt yönde emiş %40 / en çok 20 → %30 / 15 (Kül Çekirdeği tek `sol` Çekirdek: hemen her eşleşme zıt yön). */
+  karanlik: { erime: 1.35, emisOran: 0.2, emisEnFazla: 12, emisZitOran: 0.3, emisZitEnFazla: 15 },
 } as const;

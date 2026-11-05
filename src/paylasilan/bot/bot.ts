@@ -301,6 +301,11 @@ export const BOT_YETENEK = {
   ultiHedef: { dolas: 0.35, kenar: 0.6, dayaniklilik: 0.6 } as Readonly<Record<string, number>>,
   /** DENGE-1: Ulti biriktiren bot stamina bu oranın (kritik eşik, tuning § 6) altına düşerse biriktirmeyi bırakır, eldekini harcar. */
   ultiVazgec: 0.25,
+  /**
+   * DENGE-2: Enerji bu eşikteyse (Ulti'ye yarım dilim kala; Miras ile takım arkadaşından gelen Enerji dahil) adanmamış
+   * üye de Ulti için biriktirir (insan da Ulti'ye bu kadar yakınken Yetenek'e harcamaz).
+   */
+  ultiYakin: 250,
   /** atılış menzili (br) */
   atilisMenzil: 230,
   /** telegraf son bu kadar adımında içerideysek Sekme dene */
@@ -403,8 +408,9 @@ function yetenekKarari(d: Dunya, i: number, g: Girdi, kip: BotKipi, tohum: numbe
   if (at(TAKIM_YUVA) || at(ULTI_YUVA)) return;
   const tk = d.takimlar?.[i];
   const uye = tk ? tk.aktif : 0;
-  // Ulti adanması: üye başına maç boyu (tur numarasından bağımsız) zar
-  if (rastgele(tohum, uye * 4 + i + 9500) < (B.ultiHedef[kip] ?? 0)) {
+  // Ulti adanması: üye başına maç boyu (tur numarasından bağımsız) zar; DENGE-2: Enerji `ultiYakin` eşiğindeyse
+  // zar tutmasa da biriktirir
+  if (rastgele(tohum, uye * 4 + i + 9500) < (B.ultiHedef[kip] ?? 0) || ben.enerji >= B.ultiYakin) {
     const ud = yuvaDurumu(d, i, ULTI_YUVA);
     const bekler = ud !== "kilitli" && ud !== "ultiKullanildi" && ud !== "yok";
     if (bekler && staminaOrani(ben, d.profiller[i]!) >= B.ultiVazgec) return;

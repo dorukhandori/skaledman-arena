@@ -191,6 +191,39 @@ describe("maç akışı", () => {
     expect(d.topaclar[1].enerji).toBe(AYAR.mac.enerjiKomsuDevir);
   });
 
+  it("DENGE-2 Miras: elenen topacın Enerjisi sıradakine geçer (+ komşu devri), elenenin kaydı sıfırlanır; tavan 300", () => {
+    const d = macTur();
+    // takım B: Kaya(0) elenir, Kasırga(1) girer (karşıt: komşu devri yok)
+    d.topaclar[1].enerji = 180;
+    hazirla(d, 1, "durma");
+    ileri(d, 1);
+    turaKadar(d);
+    expect(d.takimlar![1].aktif).toBe(1);
+    expect(d.takimlar![1].uyeler[0]!.enerji).toBeLessThan(1);
+    expect(d.topaclar[1].enerji).toBe(Math.floor(AYAR.mac.enerjiElenenDevir * 180));
+    // Kasırga(1) → Kor(2): komşu +40; Miras ile birlikte tavan 300
+    d.topaclar[1].enerji = 290;
+    hazirla(d, 1, "durma");
+    ileri(d, 1);
+    turaKadar(d);
+    expect(d.takimlar![1].aktif).toBe(2);
+    expect(d.topaclar[1].enerji).toBe(AYAR.mac.enerjiTavan);
+  });
+
+  it("DENGE-2 Miras: geri çekte Enerji sahaya girene geçer, yedeğe çekilen kendinde tutmaz", () => {
+    const d = macTur();
+    const t = d.topaclar[0];
+    t.stamina = P.K.maxStamina * 0.2;
+    t.enerji = 150;
+    d.topaclar[1].x = 200; d.topaclar[1].z = 0;
+    const o = ileri(d, 1, g({ degistir: 2 }));
+    expect(o.some((x) => x.tur === "geriCek")).toBe(true);
+    ileri(d, Math.round(AYAR.mac.geriCekSure * AYAR.adimHz) + 2);
+    expect(d.takimlar![0].aktif).toBe(2);
+    expect(d.topaclar[0].enerji).toBeGreaterThanOrEqual(Math.floor(AYAR.mac.enerjiGeriCekDevir * 150));
+    expect(d.takimlar![0].uyeler[0]!.enerji).toBeLessThan(1);
+  });
+
   it("3 ardışık berabere → iki takım tükenir → ani ölüm (flint #4); ilk bitiş maçı bitirir", () => {
     const d = macTur();
     for (let k = 0; k < 3; k++) {

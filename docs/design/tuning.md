@@ -33,7 +33,7 @@ Birimler: uzunluk = birim (arena mantıksal piksel, 960x540 ekranda 1 birim = 1 
 | `eDuvar` | 0,5 | Duvar sekmesi; 05 § 2.5 |
 | `kDuvar` | 0,08 stamina / (br/s) | 200 br/s çarpma = 16 stamina (~%4) |
 | `duvarTik` | +0,15 tık birimi (vd > 120 br/s ise) | Duvara çarpmak kilide hafif yük |
-| `ringOutHizi` (`vRO`) | 200 br/s (hepsinde; Uç tablosunda ayrı alan, ileride Top Uç düşer) | 05 adayı 220; **ilk testte en çok oynanacak sayı** (§ 20 H1) |
+| `ringOutHizi` (`vRO`) | **265 br/s** (hepsinde; Uç tablosunda ayrı alan, ileride Top Uç düşer). **SAPMA (DENGE-2):** önce 200 | 05 adayı 220; DENGE-2 ölçümüyle H1 bandına (%25-35) çekildi (§ 20 DENGE-2) |
 | Ring Out koşulu | merkez d >= R - r **ve** dışa hız >= `vRO` **ve** d > `egimBaslangic` | 05 § 2.5 |
 | `dogum` | (-130, 0) ve (+130, 0) | R'nin %54'ü; ilk temas ~1,2 s |
 
@@ -46,7 +46,7 @@ Sıra 05 § 2.2. Uç başına sayılar `veri/parcalar.json` `uc` alanında:
 | Düz | 900 | 260 | 0,9 | 0,60 | 1,00 | 12 | 0,70 | çiçek |
 | Dengeli | 650 | 210 | 1,0 | 0,60 | 1,00 | 13 | 0,50 | dengeli |
 | Kuşak | 800 | 240 | 1,0 | 0,60 | 1,00 | 13 | 0,50 | kuşak |
-| Tutucu (Karanlık) | 700 | 230 | 1,0 | 0,60 | 1,00 | 13 | 0,50 | dengeli |
+| Tutucu (Karanlık) | 650 (**SAPMA DENGE-2**, önce 700) | 215 (önce 230) | 1,0 | 0,60 | 1,00 | 13 | 0,50 | dengeli |
 | Top | 700 | 220 | 0,5 | 0,75 | 0,85 | 14 | 0,50 | merkezci |
 | İğne | 400 | 160 | 3,0 | 0,40 | 1,40 | 18 | 0,80 | çakılı |
 
@@ -101,7 +101,7 @@ Sıra ve notasyon 05 § 2.3-2.4: `n` normal, `vn` yaklaşma hızı, `m_i = kutle
 
 | Anahtar | Değer | Gerekçe |
 |---|---|---|
-| `staminaTaban` | 300 | Havuz = 300 + parça katkıları; pratik aralık 345-490 (§ 13, DENGE-1) |
+| `staminaTaban` | 300 | Havuz = 300 + parça katkıları; pratik aralık 355-460 (§ 13, DENGE-2) |
 | Erime/s | `erime_toplam · (sikiDonus ? uç çarpanı : 1) + kHiz · |v|²/vRef²` | 05 § 2.5 |
 | `kHiz` | 2,0 stamina/s (hız vRef'te) | Hareket pahalı ama ana neden değil |
 | `vRef` | 260 br/s | |
@@ -143,6 +143,7 @@ Bulgu: kütle böleni ve `tikTavan` olmadan Kale `burstEsik`=10 olsa da 70/80 tu
 | Risk: yakın geçiş | 3 puan (iki tarafa), bekleme 2 s | boşluk < 20 br ve bağıl hız > 150 br/s, temas yok |
 | Zıt element çarpışması | çarpışma kazanımı x1,25 | 00 § 3.3 |
 | Uyum (swap) | komşu elementten devralan: yeni topaç +40 puan ile başlar | 00 § 3.3 |
+| **Miras** (`enerjiElenenDevir`, `enerjiGeriCekDevir`) | **1,0 / 1,0**: sahadan çıkan topacın (elenen ya da geri çekilen) Enerjisi sahaya girene geçer (aşağı yuvarlanır, + komşu devri, tavan 300); çıkanın kaydı sıfırlanır. Oyuncunun tek Enerji çubuğu var | **SAPMA (DENGE-2):** önce üye başına Enerji (devir 0 / 0): üye sahada medyan 17 s kalıyor, 300'e ulaşan üye %0,2, Ulti görülen maç %3-6. Kazanım katsayıları (`pasifDolum` 2,5, `carpismaKatsayi` 10-12) tek başına Ulti'yi %5'ten oynatmadı; Miras %4 → %44 (§ 20 DENGE-2) |
 | Uyum cezası | Gövde elementi Çekirdeğinkine aynı/komşu değilse Enerji dolumu x0,80 | 00 § 2.3 |
 | Takım Enerjisi | 4. dilim 100 puan; her topaç kazancının %25'i; **sezon 2** | |
 | Tavan | taşan puan kaybolur | 01 § 4.1 |
@@ -189,7 +190,7 @@ Tüm yetenekler `veri/yetenekler.json`; kademe kuralları:
 | Göktaşı | Kriz Alevi | stamina < %30: Enerji dolumu x1,5, Yetenek/Özel telegrafı x0,85. **Kor Kalbi:** dolum x1,75, telegraf x0,80 | Sahaya girişin ilk 12 s Enerji dolumu x0,8 (00'daki "ilk 20 s" maç başı yerine **giriş başına 12 s**; Kor Kalbi'nde yok). **BOŞLUK #11** |
 | Maden | Kök | d < 0,35 R ve hız < 40 br/s ise `erime` x0,8 | ivme x0,90 |
 | Yapay | Uyum | element uyum cezası yok; her topaçta ilk yetenek -100 Enerji (alt sınır 50) | `erime` x1,10; yetenek tavanı kademe 2; her maçta ömür -%3,4 (30 maç); Çekirdek XP x1,5; yön maç öncesi seçilir (çift) |
-| Karanlık | Emiş | temasta rakipten çalınan stamina = verilen hasarın %20'si (en çok 12/temas); **zıt yönde %40** (en çok 20) | `erime` x1,35; Kara yetenek Kararma +25; sayaç 100'de Çekirdek sonraki maç söner; maçta Kara yetenek kullanılmazsa -10 sayaç |
+| Karanlık | Emiş | temasta rakipten çalınan stamina = verilen hasarın %20'si (en çok 12/temas); **zıt yönde %30** (en çok 15; **SAPMA DENGE-2**, önce %40 / 20: Kül Çekirdeği tek `sol` Çekirdek, hemen her eşleşme zıt yön) | `erime` x1,35; Kara yetenek Kararma +25; sayaç 100'de Çekirdek sonraki maç söner; maçta Kara yetenek kullanılmazsa -10 sayaç |
 
 Kararma: sayaç 0-100; Tutucu Uç bedeli x0,5; Aydınlanma = Karanlık modunda 10 maç sayaç 100'e değmeden bitirmek (başarım `aydinlanma`).
 
@@ -214,24 +215,24 @@ Bir topacın değeri parçaların `katki` toplamıdır; `staminaHavuzu` hariç h
 
 | Parametre | Toplam | Gerçek aralık (1 920 geçerli kombinasyon, ölçüm) |
 |---|---|---|
-| `kutle` | Σ katkı | 27-48 (ort. 35,6; DENGE-1 öncesi 26-48, 34,5) |
+| `kutle` | Σ katkı | 29-48 (ort. 36,1; DENGE-2 öncesi 27-48, 35,6; DENGE-1 öncesi 26-48, 34,5) |
 | `saldiri` | Σ katkı | 22-80 (ort. 50,4) |
-| `savunma` | Σ katkı | 16-76 (ort. 41,6) |
-| `staminaHavuzu` | 300 + Σ | 345-490 (ort. 408,0; DENGE-1 öncesi 330-500, 408,6) |
-| `erime` | Σ (Uç ana) | 2,5-7,2 (ort. 5,2) stamina/s |
+| `savunma` | Σ katkı | 24-76 (ort. 42,8; DENGE-2 öncesi 16-76, 41,6) |
+| `staminaHavuzu` | 300 + Σ | 355-460 (ort. 408,6; DENGE-2 öncesi 345-490, 408,0; DENGE-1 öncesi 330-500, 408,6) |
+| `erime` | Σ (Uç ana) | 4,1-7,4 (ort. 5,4; DENGE-2 öncesi 2,5-7,2, 5,2) stamina/s |
 | `desen` | Uç | enum |
 | `burstEsik` | Σ (Disk + Uç) | 6-10 (ort. 8,1) |
 | `yon` | Çekirdek | sag / sol / cift |
 
 ### Tip sınıflaması (yalnız etiket; mekanik tipe bakmaz)
-`sSaldirgan = saldiri/50`, `sKale = (savunma/50 + kutle/40)/2`, `sDayanikli = (havuz/430) · sqrt(5,5/erime)`; en yüksek skor tip, ilk ikisi arasındaki fark %12'den azsa **Denge**. 1 920 kombinasyonda (DENGE-1 sonrası): Saldırgan 716 (37 %), Denge 629 (33 %), Dayanıklı 373 (19 %), Kale 202 (11 %) (önce 727 / 595 / 396 / 202): Kale dar, çünkü ağır ve savunmalı parça az; sezon 2 parçasıyla genişlet.
+`sSaldirgan = saldiri/50`, `sKale = (savunma/50 + kutle/40)/2`, `sDayanikli = (havuz/430) · sqrt(5,5/erime)`; en yüksek skor tip, ilk ikisi arasındaki fark %12'den azsa **Denge**. 1 920 kombinasyonda (DENGE-2 sonrası): Saldırgan 761 (40 %), Denge 653 (34 %), Dayanıklı 268 (14 %), Kale 238 (12 %) (DENGE-1 sonrası 716 / 629 / 373 / 202; önce 727 / 595 / 396 / 202; Dayanıklı daraldı çünkü Top Uç `erime` 3,0 → 4,6): Kale dar, çünkü ağır ve savunmalı parça az; sezon 2 parçasıyla genişlet.
 
-### Denge üçgeni: tablo (ilk sim, n=150 tur/hücre, § 20)
+### Denge üçgeni: tablo (ilk sim, n=150 tur/hücre, § 20; sayılar DENGE-2 sonrası parça katkılarıyla)
 | Build (tipe göre) | kutle | saldırı | savunma | havuz | erime | burst |
 |---|---|---|---|---|---|---|
-| **S** Saldırgan: Kor Göktaşı + Ok + Hafif Disk + Düz Uç | 27 | 66 | 28 | 385 | 5,5 | 7 |
-| **K** Kale: Kaya Maden + Kalkan + Ağır Disk + İğne | 48 | 22 | 76 | 400 | 5,2 | 10 |
-| **D** Dayanıklı: Girdap Maden + Halka + Parlak Disk + Top | 34 | 36 | 43 | 480 | 3,0 | 7 |
+| **S** Saldırgan: Kor Göktaşı + Ok + Hafif Disk + Düz Uç | 29 | 68 | 28 | 420 | 5,0 | 7 |
+| **K** Kale: Kaya Maden + Kalkan + Ağır Disk + İğne | 48 | 22 | 76 | 390 | 5,2 | 10 |
+| **D** Dayanıklı: Girdap Maden + Halka + Parlak Disk + Top | 34 | 36 | 40 | 450 | 4,6 | 7 |
 | **B** Denge: Kasırga Döküm + Savrulan + Denge Disk + Dengeli | 34 | 44 | 47 | 405 | 6,0 | 8 |
 
 Tasarım dayanağı: **S > D** (D'nin kilidi 7 ve kütle 34: ağır vuruşta kırılır), **D > K** (K'nın `erime`si 5,2 > D'nin 3,0: stamina yarışı; K'nın burst/kütlesi onu parçalanmadan korur ama sürede kaybeder), **K > S** (K savunma 76, S'nin geri tepmesi S'yi yer). Sim sonucu § 20: üçgenin K>S ve D>K ayakları göründü, S>D ayağı yok (43/57); B fazla iyi çıktı.
@@ -354,6 +355,47 @@ Bot turnuvası (`npm run denge:turnuva`, TS sim + paylaşılan bot) D8'de kazan�
 Sonuç (tohum 1, 200 maç): Sabır+Ayaz %75 → %44, Sabır+Sivri %29 → %38; parça düzeyi Ayaz %63,7 → %56,6, Sivri %40,4 → %46,8, Düşürücü %42,0 → %43,4. Kalan sapma kaynağı Top Uç (+ Ağır Disk) birleşimi (%60 parça düzeyi); altın senaryolarda kullanıldığı için bu turda dokunulmadı (DENGE-1 § kalan sorunlar). `vRO` / `kEgim` değişmedi (H1 ölçümü raporda).
 
 **H1 (Ring Out payı) DENGE-1 ölçümü, değer değiştirilmedi:** tohum 1/2/3 (200 maç) Ring Out %35,1 / %40,9 / %43,6; tohum 1 1 000 maç %33,7; `qa:bot` 500 maç %37,7. Duyarlılık (aynı üç tohum): `vRO` 220 → %31,4 / 37,5 / 40,2; `vRO` 240 → %28,3 / 33,8 / 35,7 (bant 18/18/19, süre p90 değişmez); `kEgim` 500 → %37,4 / 43,0 / 44,3 (artar); `kEgim` 900 → %33,6 / 40,5 / 40,8. Hedefe en yakın tek kaldıraç `vRO` 200 → 240; ama `ringOutHizi` her Uç'ta veri alanı ve tüm altın senaryolarda kullanılır (sim hash'lerinin hepsi değişir, `ring-out` senaryosu yeniden kurulmalı), `kEgim` de `ayar.ts`'te tüm sim'e girer. Pay build havuzuna çok bağlı (aynı kurallarla %34-44); bu yüzden bu turda bırakıldı, karar sahibe/@ledger'a: önerilen `vRO` 240 (Uç tablosu, altın yeniden üretimiyle).
+
+### DENGE-2 (2026-11-05): Enerji Mirası, Ring Out hızı, parça katkıları (ölçüm: `docs/production/raporlar/DENGE-2.md`)
+Sahibin "devam et"iyle sim ve veri değişti; altın senaryolar `npm run altin:uret -- --yeniden` ile yeniden kaydedildi (§ 21'deki sim alanları ve şema aynı; Node = Chromium). Ölçüm yöntemi: `test/denge/turnuva.ts` (20 rastgele build, tohum 1/2/3), `qa:bot` (500 maç, Lv.3) ve parça düzeyi (80 build, 2 000 maç).
+
+| # | Değişiklik | Önce | Sonra | Neden | |
+|---|---|---|---|---|---|
+| 1 | Enerji Mirası (`mac.enerjiElenenDevir` / `enerjiGeriCekDevir`, `src/paylasilan/sim/mac.ts`) | 0 / 0 (üye başına Enerji) | 1,0 / 1,0 (çıkanın Enerjisi girene) | Ulti görülen maç %3-6: üye sahada medyan 17 s, 300 için ~43 s gerekiyordu (DENGE-1 § 3) | **SAPMA** |
+| 2 | Bot `ultiYakin` (davranış, tuning değil) | yok | 250: Enerji ≥ 250 iken adanmamış üye de biriktirir | Mirasla gelen Enerjiyi bot Yetenek'e harcıyordu | |
+| 3 | `ringOutHizi` (6 Uç + `ayar.ts` varsayılanı) | 200 | 265 | H1: Ring Out %39 (3 tohum, 500 maç) | **SAPMA** |
+| 4 | Karanlık emiş, zıt yön (`KOKEN_PASIF.karanlik`) | %40 / en çok 20 | %30 / en çok 15 | Kül + Savrulan + Alçak + Tutucu %71 (n=352); Kül tek `sol` Çekirdek. Kül'ün yönünü `sag` yapmak deneyde onu bandın içine aldı: kaynak zıt yön | **SAPMA** |
+| 5 | Top Uç `erime` | 3,0 | 4,6 | parça düzeyi en güçlü (%59,6); 3,6 ve 4,0 yetmedi (ölçüldü) | **SAPMA** |
+| 6 | Halka Gövde `staminaHavuzu` / `savunma` | 100 / 40 | 70 / 37 | %57,4 | **SAPMA** |
+| 7 | Ayaz Gövde `staminaHavuzu` | 70 | 62 | %56,6 | **SAPMA** |
+| 8 | Ağır Disk `staminaHavuzu` | 30 | 20 | Ağır + Top ikilisi %69,7 (#1 + `vRO` 250 ara ölçümü) | **SAPMA** |
+| 9 | Kül Çekirdeği `saldiri` / `staminaHavuzu` / `erime` | 6 / 10 / 0,3 | 3 / 0 / 0,5 | #4 ile birlikte (#4 tek başına yetmedi) | **SAPMA** |
+| 10 | Tutucu Uç `ivme` / `vSurus` | 700 / 230 | 650 / 215 | DENGE-1 önerisi: Dengeli Uç'a yakınlaştır | **SAPMA** |
+| 11 | Düşürücü Gövde `savunma` / `staminaHavuzu` | 16 / 25 | 24 / 50 | en zayıf parça (%43,4), Saldırgan arketip | **SAPMA** |
+| 12 | Ok Gövde `staminaHavuzu` | 45 | 55 | Saldırgan arketip (%46,6) | **SAPMA** |
+| 13 | Sivri Gövde `savunma` | 26 | 30 | Saldırgan arketip | **SAPMA** |
+| 14 | Hafif Disk `kutle` / `staminaHavuzu` | 8 / 10 | 10 / 25 | %44,5; Ring Out'ta en çok kaybeden Disk (tohum 3'te kayıplarının %71'i) | **SAPMA** |
+| 15 | Kor Göktaşı `saldiri` / `staminaHavuzu` | 4 / 30 | 6 / 40 | %45,7 | **SAPMA** |
+| 16 | Düz Uç `erime` | 5,5 | 5,0 | %45,7 | **SAPMA** |
+
+Sonuç (önce → sonra; ayrıntı raporda):
+
+| Ölçüm | Önce | Sonra | Hedef |
+|---|---|---|---|
+| Ulti görülen maç, turnuva tohum 1/2/3 (500 maç) | %4,0 / 3,3 / 4,8 | %40,0 / 41,1 / 49,9 | %35-50 |
+| Ulti görülen maç, `qa:bot` 500 | %1,4 | %32,0 | |
+| Ulti / maç / oyuncu (turnuva 3×500) | 0,02 | 0,25 | "nadir": oyuncu başına < 1 |
+| Yetenek / Özel / maç (iki oyuncu, 3×500) | 2,23 / 0,39 | 3,23 / 0,90 | |
+| Ring Out, tohum 1/2/3 (500 maç) | %33,4 / 39,9 / 44,2 | %26,5 / 33,0 / 34,3 | %25-35 |
+| Ring Out, tohum 1/2/3 (1 000 maç) | %33,7 / 39,9 / 44,5 | %25,7 / 33,8 / 35,6 (toplam %31,7) | %25-35 |
+| Bant, tohum 1/2/3 (1 000 maç) | 19 / 17 / 19 | 19 / 20 / 20 | ≥ 19/20 |
+| Parça düzeyi en yüksek / en düşük (80 build, 2 000 maç) | Top Uç 59,6 / Düşürücü 43,4 | Halka 55,4 / Düşürücü 45,5 | |
+| Arketip (parça düzeyi) Dayanıklı / Denge / Saldırgan / Kale | 59,0 / 48,9 / 46,2 / 45,5 | 56,4 / 49,6 / 47,8 / 48,3 | |
+| Maç süresi p90 (3×500 ort.) | 76,6 s | 77,2 s | ≤ 90 |
+| Berabere (3×500) | %4,6-5,6 | %5,9-7,0 | |
+| Takım Ultisi / maç (3×500) | 0,68 | 0,55 | |
+
+**H1 (Ring Out) DENGE-2 ölçümü:** `vRO` 250 / 260 / 265 / 270 (bu turun verisiyle, tohum 1/2/3 × 500 maç): %27,9-38,2 / 26,7-36,0 / 25,8-35,4 / 24,5-33,9 (toplam %34,1 / 32,4 / 31,4 / 30,1); 265 seçildi (iki uç tohum banda en yakın). Tohumlar arası ~10 puanlık fark havuzdan: Top Uç ve Hafif Disk'li topaçlar kayıplarının yarısından çoğunu Ring Out'la, İğne Uç %4-10'unu veriyor. `kEgim` değişmedi.
 
 ## 21. Veri şemaları (veri dosyalarında yorum yok)
 

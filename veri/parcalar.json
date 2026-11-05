@@ -12,7 +12,7 @@
     "kutle": 14,
     "saldiri": 62,
     "savunma": 28,
-    "staminaHavuzu": 45,
+    "staminaHavuzu": 55,
     "erime": 0.0,
     "desen": null,
     "burstEsik": 0,
@@ -83,8 +83,8 @@
    "katki": {
     "kutle": 18,
     "saldiri": 36,
-    "savunma": 40,
-    "staminaHavuzu": 100,
+    "savunma": 37,
+    "staminaHavuzu": 70,
     "erime": 0.2,
     "desen": null,
     "burstEsik": 0,
@@ -108,7 +108,7 @@
     "kutle": 19,
     "saldiri": 34,
     "savunma": 36,
-    "staminaHavuzu": 70,
+    "staminaHavuzu": 62,
     "erime": 0.2,
     "desen": null,
     "burstEsik": 0,
@@ -131,8 +131,8 @@
    "katki": {
     "kutle": 17,
     "saldiri": 74,
-    "savunma": 16,
-    "staminaHavuzu": 25,
+    "savunma": 24,
+    "staminaHavuzu": 50,
     "erime": 0.0,
     "desen": null,
     "burstEsik": 0,
@@ -159,7 +159,7 @@
    "katki": {
     "kutle": 18,
     "saldiri": 62,
-    "savunma": 26,
+    "savunma": 30,
     "staminaHavuzu": 40,
     "erime": 0.0,
     "desen": null,
@@ -211,10 +211,10 @@
    "yukseklik": 60,
    "tipEgilimi": "saldirgan",
    "katki": {
-    "kutle": 8,
+    "kutle": 10,
     "saldiri": 0,
     "savunma": 0,
-    "staminaHavuzu": 10,
+    "staminaHavuzu": 25,
     "erime": 0.0,
     "desen": null,
     "burstEsik": 7,
@@ -238,7 +238,7 @@
     "kutle": 18,
     "saldiri": 0,
     "savunma": 6,
-    "staminaHavuzu": 30,
+    "staminaHavuzu": 20,
     "erime": 0.0,
     "desen": null,
     "burstEsik": 9,
@@ -336,7 +336,7 @@
     "kCakilma": 1.0,
     "dashMaliyet": 12,
     "sikiDonusCarpani": 0.7,
-    "ringOutHizi": 200
+    "ringOutHizi": 265
    },
    "tipEgilimi": "saldirgan",
    "katki": {
@@ -344,7 +344,7 @@
     "saldiri": 0,
     "savunma": 0,
     "staminaHavuzu": 0,
-    "erime": 5.5,
+    "erime": 5.0,
     "desen": "cicek",
     "burstEsik": 0,
     "yon": null
@@ -369,7 +369,7 @@
     "kCakilma": 1.4,
     "dashMaliyet": 18,
     "sikiDonusCarpani": 0.8,
-    "ringOutHizi": 200
+    "ringOutHizi": 265
    },
    "tipEgilimi": "kale",
    "katki": {
@@ -402,7 +402,7 @@
     "kCakilma": 1.0,
     "dashMaliyet": 13,
     "sikiDonusCarpani": 0.5,
-    "ringOutHizi": 200
+    "ringOutHizi": 265
    },
    "tipEgilimi": "denge",
    "katki": {
@@ -435,7 +435,7 @@
     "kCakilma": 0.85,
     "dashMaliyet": 14,
     "sikiDonusCarpani": 0.5,
-    "ringOutHizi": 200
+    "ringOutHizi": 265
    },
    "tipEgilimi": "dayanikli",
    "katki": {
@@ -443,7 +443,7 @@
     "saldiri": 0,
     "savunma": 0,
     "staminaHavuzu": 0,
-    "erime": 3.0,
+    "erime": 4.6,
     "desen": "merkezci",
     "burstEsik": 1,
     "yon": null
@@ -468,7 +468,7 @@
     "kCakilma": 1.0,
     "dashMaliyet": 13,
     "sikiDonusCarpani": 0.5,
-    "ringOutHizi": 200
+    "ringOutHizi": 265
    },
    "tipEgilimi": "saldirgan",
    "katki": {
@@ -497,14 +497,14 @@
    "tur": "uc",
    "element": null,
    "uc": {
-    "ivme": 700,
-    "vSurus": 230,
+    "ivme": 650,
+    "vSurus": 215,
     "surtunme": 1.0,
     "esneklik": 0.6,
     "kCakilma": 1.0,
     "dashMaliyet": 13,
     "sikiDonusCarpani": 0.5,
-    "ringOutHizi": 200
+    "ringOutHizi": 265
    },
    "tipEgilimi": "denge",
    "katki": {
@@ -537,9 +537,9 @@
    "tipEgilimi": "saldirgan",
    "katki": {
     "kutle": 2,
-    "saldiri": 4,
+    "saldiri": 6,
     "savunma": 0,
-    "staminaHavuzu": 30,
+    "staminaHavuzu": 40,
     "erime": 0.0,
     "desen": null,
     "burstEsik": 0,
@@ -716,10 +716,10 @@
    "tipEgilimi": "saldirgan",
    "katki": {
     "kutle": 2,
-    "saldiri": 6,
+    "saldiri": 3,
     "savunma": 0,
-    "staminaHavuzu": 10,
-    "erime": 0.3,
+    "staminaHavuzu": 0,
+    "erime": 0.5,
     "desen": null,
     "burstEsik": 0,
     "yon": "sol"

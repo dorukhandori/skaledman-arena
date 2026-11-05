@@ -30,8 +30,8 @@ describe("veri dosyaları", () => {
 });
 
 const ARALIK: Record<keyof Omit<SekizParametre, "desen" | "yon">, [number, number]> = {
-  // tuning § 13 "gerçek aralık (1 920 geçerli kombinasyon)"
-  kutle: [26, 48], saldiri: [22, 80], savunma: [16, 76], staminaHavuzu: [330, 500], erime: [2.5, 7.2], burstEsik: [6, 10],
+  // tuning § 13 "gerçek aralık (1 920 geçerli kombinasyon)"; DENGE-2 SAPMA (parça katkıları) sonrası ölçüm
+  kutle: [29, 48], saldiri: [22, 80], savunma: [24, 76], staminaHavuzu: [355, 460], erime: [4.1, 7.4], burstEsik: [6, 10],
 };
 
 function gecerliMi(p: TopacProfili): void {
@@ -54,8 +54,9 @@ function gecerliMi(p: TopacProfili): void {
 describe("topacProfiliKur (8 parametre)", () => {
   it("başlangıç setleri tuning § 13 tablosundaki sayılar", () => {
     const [g, m] = BASLANGIC_SETLERI.map((s) => setProfili(s)) as [TopacProfili, TopacProfili];
-    expect(g.parametreler).toMatchObject({ kutle: 27, saldiri: 66, savunma: 28, staminaHavuzu: 385, erime: 5.5, burstEsik: 7, desen: "cicek", yon: "sag" });
-    expect(m.parametreler).toMatchObject({ kutle: 48, saldiri: 22, savunma: 76, staminaHavuzu: 400, erime: 5.2, burstEsik: 10, desen: "cakili" });
+    // DENGE-2 SAPMA: Kor Göktaşı (saldırı +2, havuz +10), Ok Gövde (havuz +10), Hafif Disk (kütle +2, havuz +15), Düz Uç (erime 5,0), Ağır Disk (havuz −10)
+    expect(g.parametreler).toMatchObject({ kutle: 29, saldiri: 68, savunma: 28, staminaHavuzu: 420, erime: 5.0, burstEsik: 7, desen: "cicek", yon: "sag" });
+    expect(m.parametreler).toMatchObject({ kutle: 48, saldiri: 22, savunma: 76, staminaHavuzu: 390, erime: 5.2, burstEsik: 10, desen: "cakili" });
     expect(g.tip).toBe("saldirgan");
     expect(m.tip).toBe("kale");
   });
@@ -70,8 +71,9 @@ describe("topacProfiliKur (8 parametre)", () => {
       n++;
     }
     expect(n).toBe(1920);
-    // DENGE-1 SAPMA (tuning § 13): Ayaz / Sivri / Düşürücü Gövde katkıları değişti → 727/595/396/202 yerine
-    expect(tip).toStrictEqual({ saldirgan: 716, denge: 629, dayanikli: 373, kale: 202 });
+    // DENGE-1 SAPMA (tuning § 13): 727/595/396/202 → 716/629/373/202; DENGE-2 SAPMA (Top Uç erime 3,0 → 4,6, Halka /
+    // Ayaz / Ağır havuzu −): Dayanıklı etiketi daraldı
+    expect(tip).toStrictEqual({ saldirgan: 761, denge: 653, dayanikli: 268, kale: 238 });
   });
 
   it("4 Gövde × 6 Uç × 3 Disk tablosu: profil + 300 adım bot maçında NaN / negatif / sınır dışı yok", () => {

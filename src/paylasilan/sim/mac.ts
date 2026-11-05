@@ -203,7 +203,15 @@ export function uyeSahayaKoy(d: Dunya, i: number, uye: number, x: number, z: num
   t.yapayIndirim = u.yapayIndirim;
   // sahadan çıkan topacın alanı ve engelleri söner (VARSAYIM)
   if (uye !== tk.aktif) sahipEtkileriniSil(d, i);
-  const devir = uye !== tk.aktif && komsuElementMi(onceki.element, u.profil.element) ? M.enerjiKomsuDevir : 0;
+  let devir = uye !== tk.aktif && komsuElementMi(onceki.element, u.profil.element) ? M.enerjiKomsuDevir : 0;
+  // DENGE-2 (tuning § 8 "Miras"): sahadan çıkan topacın Enerjisinin bir oranı (aşağı yuvarlanır) sahaya girene geçer;
+  // elenende `enerjiElenenDevir`, geri çekte `enerjiGeriCekDevir`. Geçen kısım çıkanın kaydından düşülür (iki kez sayılmaz).
+  const giden = tk.uyeler[tk.aktif]!;
+  if (uye !== tk.aktif && giden.enerji > 0) {
+    const pay = Math.floor((giden.elendi ? M.enerjiElenenDevir : M.enerjiGeriCekDevir) * giden.enerji);
+    devir += pay;
+    giden.enerji -= pay;
+  }
   t.enerji = Math.min(M.enerjiTavan, u.enerji + devir);
   t.koruma = MAC_ADIM.koruma;
   tk.aktif = uye;
