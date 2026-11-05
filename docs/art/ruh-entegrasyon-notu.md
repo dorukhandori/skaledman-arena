@@ -23,7 +23,7 @@ Dal: `devran-sanat` (origin/devran-kod `d360444` üstüne rebase). Tasarım `doc
 - `RUH_PORTRE_OZEL_YETENEK = false` (`RuhGorsel.ts`): sahip kararı, ilk sürümde canavar yalnız Ulti'de. `true` olunca Özel Yetenek'te çekirdeğin ruhu, Takım Ultisi'nde üç portre belirir.
 
 ## İzdüşüm
-Konumlar düz sim çizim koordinatında (`SAHNE.merkezX + x`, `merkezY + z`); her belirme `scale(1/B, 1/(B·k))` ile dik ve ekranda sabit boyda. Ata'nın ayak çizgisi **ekran** y 425-515 arasına sıkıştırılır (HUD süre plakası ve alt şerit dışında), sonra düze çevrilir (`ekrandanDuze`). Ad bantları `ekranKatmani`'nda (`dunyadanEkrana`).
+Konumlar düz sim çizim koordinatında (`SAHNE.merkezX + x`, `merkezY + z`); her belirme `scale(1/B, 1/(B·k))` ile dik ve ekranda sabit boyda. Ata çağıranın 40 ekran pikseli gerisinde (yukarısında) durur, ayak çizgisi ekran y 330-515 arasına sıkıştırılır, tepe y ≥ 40 kalacak şekilde ölçek küçülür; sonra düze çevrilir (`ekrandanDuze`). **Maske ve BlurFilter kullanılmaz:** hibrit dünya `cacheAsTexture` pixel önbelleğine çizildiğinde ikisi de bozuluyordu (sprite kayboluyor, yalnız aura kalıyordu). Ekran görüntüleri: `docs/production/raporlar/ekran/ruh-hibrit-ata-*.jpg` (ilk ayar; kompozisyon ince ayarı açık). Ad bantları `ekranKatmani`'nda (`dunyadanEkrana`).
 
 ## Beklenen çakışma noktaları
 `YetenekGorsel.ts` (yetenekBasladi dalı, kurucu katman sırası), `Atolye.ts` (kurucu sonu, takım kartı), `Ayarlar.ts` (alan listeleri).

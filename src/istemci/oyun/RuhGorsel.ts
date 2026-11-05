@@ -1,4 +1,4 @@
-import { Assets, BlurFilter, Container, Graphics, Rectangle, Sprite, Text, Texture } from "pixi.js";
+import { Assets, Container, Graphics, Rectangle, Sprite, Text, Texture } from "pixi.js";
 import type { ElementAdi } from "../../paylasilan/kurallar/ayar.ts";
 import { AYAR } from "../../paylasilan/kurallar/ayar.ts";
 import type { Dunya, Olay } from "../../paylasilan/sim/durum.ts";
@@ -28,8 +28,13 @@ export const RUH_PORTRE_OZEL_YETENEK = false;
 const ATA_SAYFA = { hucre: 176, sutun: 6, fps: 16, yukselisSon: 9, kukremeIlk: 10, kukremeSon: 15, donguIlk: 16, donguSon: 23 } as const;
 const ATA_OLCEK = 2.4;
 /** Ata'nın ayak çizgisi bu aralıkta tutulur: gövdesi HUD'un altına taşmaz, alt kenardan çıkmaz. */
-const ATA_AYAK_MIN = 425;
+const ATA_AYAK_MIN = 330;
 const ATA_AYAK_MAX = 515;
+/** Ata çağıranın bu kadar ekran pikseli gerisinde (yukarısında) durur: topaç canavarın önünde okunur (referans 08). */
+const ATA_GERI = 40;
+/** Ata'nın tepesi en az bu ekran y'sinde kalır; ölçek gerekirse küçülür. Hücrenin üst ~%20'si boş. */
+const ATA_TEPE_MIN = 40;
+const ATA_DOLU_ORAN = 0.74;
 const BANT_Y = 108;
 const ATA_CIKIS_SN = 0.35;
 const BAGLI_BOY = 190;
@@ -52,7 +57,6 @@ interface Belirme {
   kap: Container;
   govde: Container;
   aura: Sprite | null;
-  maske: Graphics;
   bant: Container;
   yukseklik: number;
   ataKareleri: Texture[] | null;
@@ -185,7 +189,7 @@ export class RuhGorsel {
     const c = ELEMENT_RENK[el];
     const kap = new Container();
     const takim = i === this.yerel ? TAKIM_RENK.oyuncu : TAKIM_RENK.rakip;
-    const ust = new Text({ text: metin, style: { fontFamily: "Trebuchet MS, system-ui, sans-serif", fontSize: buyuk ? 34 : 15, fontWeight: "900", letterSpacing: buyuk ? 4 : 1, fill: c.vurgu, stroke: { color: 0x050d10, width: buyuk ? 7 : 4 } } });
+    const ust = new Text({ text: metin, style: { fontFamily: "Trebuchet MS, system-ui, sans-serif", fontSize: buyuk ? 28 : 15, fontWeight: "900", letterSpacing: buyuk ? 4 : 1, fill: c.vurgu, stroke: { color: 0x050d10, width: buyuk ? 7 : 4 } } });
     ust.anchor.set(0.5, 0);
     kap.addChild(ust);
     let gen = ust.width;
@@ -216,7 +220,6 @@ export class RuhGorsel {
       aura.scale.set(olcek * 1.08);
       aura.tint = ELEMENT_RENK[el].acik;
       aura.blendMode = "add";
-      aura.filters = [new BlurFilter({ strength: 10, quality: 2 })];
       const s = new Sprite(doku);
       s.anchor.set(0.5, 1);
       s.scale.set(olcek);
@@ -228,9 +231,8 @@ export class RuhGorsel {
       govde.addChild(g);
       this.sayac.yedek++;
     }
-    const maske = new Graphics();
-    kap.addChild(this.zeminIsigi(el, 90), govde, maske);
-    govde.mask = maske;
+    // maske/filtre yok: hibritte dünya pixel önbelleğine (cacheAsTexture) çizilir, maske ve bulanıklık orada bozuluyor
+    kap.addChild(this.zeminIsigi(el, 90), govde);
     kap.position.set(x, y + r * 0.6);
     kap.scale.set(this.olcekX, this.olcekY);
     kap.alpha = 0;
@@ -238,7 +240,7 @@ export class RuhGorsel {
     const bant = this.bandKur(bantMetni, "", el, i, false);
     const be = this.duzdenEkrana(x, y + r);
     bant.position.set(be.x, be.y + 10);
-    this.belirmeler.push({ tur: "bagli", el, t: -gecikme, sure, gecikme, kap, govde, aura, maske, bant, yukseklik, ataKareleri: null, ataSprite: null, ataAura: null, kukredi: true, x, y, parcacik: 0 });
+    this.belirmeler.push({ tur: "bagli", el, t: -gecikme, sure, gecikme, kap, govde, aura, bant, yukseklik, ataKareleri: null, ataSprite: null, ataAura: null, kukredi: true, x, y, parcacik: 0 });
   }
 
   private ataKareleri(el: ElementAdi): Texture[] | null {
@@ -268,7 +270,6 @@ export class RuhGorsel {
       ataAura.scale.set(ATA_OLCEK * 1.06);
       ataAura.tint = ELEMENT_RENK[el].orta;
       ataAura.blendMode = "add";
-      ataAura.filters = [new BlurFilter({ strength: 16, quality: 2 })];
       ataSprite = new Sprite(kareler[0]);
       ataSprite.anchor.set(0.5, 0.92);
       ataSprite.scale.set(ATA_OLCEK);
@@ -281,21 +282,21 @@ export class RuhGorsel {
       yukseklik = 380;
       this.sayac.yedek++;
     }
-    const maske = new Graphics();
-    kap.addChild(this.zeminIsigi(el, 150), govde, maske);
-    govde.mask = maske;
+    kap.addChild(this.zeminIsigi(el, 150), govde);
     // Ata çağıranın arkasında (ekranda yukarısında) yükselir; sahneden taşmasın diye yatayda sıkıştırılır
     const e = this.duzdenEkrana(x, y + r);
     const ax = Math.max(230, Math.min(SAHNE.genislik - 230, e.x));
-    const ay = Math.max(ATA_AYAK_MIN, Math.min(ATA_AYAK_MAX, e.y));
+    const ay = Math.max(ATA_AYAK_MIN, Math.min(ATA_AYAK_MAX, e.y - ATA_GERI));
     const f = this.ekrandanDuze(ax, ay);
     kap.position.set(f.x, f.y);
-    kap.scale.set(this.olcekX, this.olcekY);
+    // tepe HUD'a taşmasın: ekran ölçeği sığana kadar küçülür (ATA_OLCEK tavan)
+    const sigar = Math.min(1, (ay - ATA_TEPE_MIN) / (ATA_SAYFA.hucre * ATA_OLCEK * ATA_DOLU_ORAN));
+    kap.scale.set(this.olcekX * sigar, this.olcekY * sigar);
     kap.alpha = 0;
     this.kap.addChild(kap);
     const bant = this.bandKur(`${ad.toLocaleUpperCase("tr-TR")} UYANDI`, unvan, el, i, true);
     bant.position.set(SAHNE.merkezX, BANT_Y);
-    this.belirmeler.push({ tur: "ata", el, t: 0, sure, gecikme: 0, kap, govde, aura: null, maske, bant, yukseklik, ataKareleri: kareler, ataSprite, ataAura, kukredi: false, x: f.x, y, parcacik: 0 });
+    this.belirmeler.push({ tur: "ata", el, t: 0, sure, gecikme: 0, kap, govde, aura: null, bant, yukseklik, ataKareleri: kareler, ataSprite, ataAura, kukredi: false, x: f.x, y, parcacik: 0 });
     // tam rezonans anı: kamera %4 yakınlaşır, vinyet (flaş ayarına göre)
     if (this.flas !== "kapali") this.sahne.zoomDarbesi(0.04, 0.9);
     this.vinyetSure = this.vinyetKalan = sure + ATA_CIKIS_SN;
@@ -319,20 +320,13 @@ export class RuhGorsel {
     return b.t <= b.sure ? 1 : Math.max(0, 1 - (b.t - b.sure) / cikis);
   }
 
-  private maskele(b: Belirme, oran: number, genislik: number): void {
-    // alttan yukarı açılan perde: canavar çekirdekten "çıkar"
-    const h = b.yukseklik * 1.25;
-    b.maske.clear().rect(-genislik / 2, -h * oran, genislik, h * oran + 30).fill(0xffffff);
-  }
-
   private bagliIlerle(b: Belirme): void {
     const giris = Math.min(1, b.t / BAGLI_YUKSELIS_SN);
     const e = 1 - (1 - giris) ** 3;
     const cikis = this.cikisOrani(b, BAGLI_CIKIS_SN);
-    this.maskele(b, e, 420);
     b.kap.alpha = BAGLI_ALFA * Math.min(1, giris * 2) * cikis;
-    b.govde.y = 16 * (1 - e) - 6 * Math.sin(b.t * 3);
-    b.govde.scale.set(0.92 + 0.08 * e);
+    b.govde.y = 60 * (1 - e) - 6 * Math.sin(b.t * 3);
+    b.govde.scale.set(0.8 + 0.2 * e);
     if (b.aura) b.aura.alpha = 0.22 + 0.1 * Math.sin(b.t * 9);
     b.bant.alpha = Math.min(1, b.t / 0.15) * cikis;
     this.parcacikCiz(b, b.x, b.kap.y, 70, b.yukseklik, giris * cikis, 12);
@@ -351,7 +345,6 @@ export class RuhGorsel {
     const giris = Math.min(1, b.t / ((S.yukselisSon + 1) / S.fps));
     const e = 1 - (1 - giris) ** 2;
     const cikis = this.cikisOrani(b, ATA_CIKIS_SN);
-    this.maskele(b, b.ataKareleri ? 1 : e, 640);
     b.kap.alpha = ATA_ALFA * Math.min(1, giris * 1.6) * cikis;
     if (!b.ataKareleri) b.govde.y = 40 * (1 - e);
     // kükreme: şok halkası + sarsıntı (yalnız Flaş: Normal)
