@@ -70,7 +70,8 @@ describe("topacProfiliKur (8 parametre)", () => {
       n++;
     }
     expect(n).toBe(1920);
-    expect(tip).toStrictEqual({ saldirgan: 727, denge: 595, dayanikli: 396, kale: 202 });
+    // DENGE-1 SAPMA (tuning § 13): Ayaz / Sivri / Düşürücü Gövde katkıları değişti → 727/595/396/202 yerine
+    expect(tip).toStrictEqual({ saldirgan: 716, denge: 629, dayanikli: 373, kale: 202 });
   });
 
   it("4 Gövde × 6 Uç × 3 Disk tablosu: profil + 300 adım bot maçında NaN / negatif / sınır dışı yok", () => {

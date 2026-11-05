@@ -101,7 +101,7 @@ Sıra ve notasyon 05 § 2.3-2.4: `n` normal, `vn` yaklaşma hızı, `m_i = kutle
 
 | Anahtar | Değer | Gerekçe |
 |---|---|---|
-| `staminaTaban` | 300 | Havuz = 300 + parça katkıları; pratik aralık 330-500 (§ 13) |
+| `staminaTaban` | 300 | Havuz = 300 + parça katkıları; pratik aralık 345-490 (§ 13, DENGE-1) |
 | Erime/s | `erime_toplam · (sikiDonus ? uç çarpanı : 1) + kHiz · |v|²/vRef²` | 05 § 2.5 |
 | `kHiz` | 2,0 stamina/s (hız vRef'te) | Hareket pahalı ama ana neden değil |
 | `vRef` | 260 br/s | |
@@ -214,17 +214,17 @@ Bir topacın değeri parçaların `katki` toplamıdır; `staminaHavuzu` hariç h
 
 | Parametre | Toplam | Gerçek aralık (1 920 geçerli kombinasyon, ölçüm) |
 |---|---|---|
-| `kutle` | Σ katkı | 26-48 (ort. 34,5) |
+| `kutle` | Σ katkı | 27-48 (ort. 35,6; DENGE-1 öncesi 26-48, 34,5) |
 | `saldiri` | Σ katkı | 22-80 (ort. 50,4) |
 | `savunma` | Σ katkı | 16-76 (ort. 41,6) |
-| `staminaHavuzu` | 300 + Σ | 330-500 (ort. 408,6) |
+| `staminaHavuzu` | 300 + Σ | 345-490 (ort. 408,0; DENGE-1 öncesi 330-500, 408,6) |
 | `erime` | Σ (Uç ana) | 2,5-7,2 (ort. 5,2) stamina/s |
 | `desen` | Uç | enum |
 | `burstEsik` | Σ (Disk + Uç) | 6-10 (ort. 8,1) |
 | `yon` | Çekirdek | sag / sol / cift |
 
 ### Tip sınıflaması (yalnız etiket; mekanik tipe bakmaz)
-`sSaldirgan = saldiri/50`, `sKale = (savunma/50 + kutle/40)/2`, `sDayanikli = (havuz/430) · sqrt(5,5/erime)`; en yüksek skor tip, ilk ikisi arasındaki fark %12'den azsa **Denge**. 1 920 kombinasyonda: Saldırgan 727 (38 %), Denge 595 (31 %), Dayanıklı 396 (21 %), Kale 202 (11 %): Kale dar, çünkü ağır ve savunmalı parça az; sezon 2 parçasıyla genişlet.
+`sSaldirgan = saldiri/50`, `sKale = (savunma/50 + kutle/40)/2`, `sDayanikli = (havuz/430) · sqrt(5,5/erime)`; en yüksek skor tip, ilk ikisi arasındaki fark %12'den azsa **Denge**. 1 920 kombinasyonda (DENGE-1 sonrası): Saldırgan 716 (37 %), Denge 629 (33 %), Dayanıklı 373 (19 %), Kale 202 (11 %) (önce 727 / 595 / 396 / 202): Kale dar, çünkü ağır ve savunmalı parça az; sezon 2 parçasıyla genişlet.
 
 ### Denge üçgeni: tablo (ilk sim, n=150 tur/hücre, § 20)
 | Build (tipe göre) | kutle | saldırı | savunma | havuz | erime | burst |
@@ -341,6 +341,17 @@ Elo sunucudan hesaplanır, istemciden gelmez.
 | H3 | `40/kutle` bölen Saldırgan'ı (kutle 27) aşırı kırılgan yapıyor (S-B %9) | Böleni kapat / `tikTavan` 1,2 -> 0,9 / S `burstEsik` 8 |
 | H4 | Durma ~%51 + eşzamanlı ~%21 çok; `kH`=0,006 ile erime/hasar oranı ve eşzamanlı bitiş tanımı yanlış | Eşzamanlı sayısı, `kH` 0,005-0,009 |
 | H5 | Kazanan +%20 stamina iyileşmesi snowball yapıyor; K-D 32 s turları 90 s maçı aşırır (ani ölüm sıkışması) | İyileşme %0/%20/%40; tam maç süre dağılımı p90 <= 90 s |
+
+### DENGE-1 (2026-11-05): parça katkısı sapmaları (ölçüm: `docs/production/raporlar/DENGE-1.md`)
+Bot turnuvası (`npm run denge:turnuva`, TS sim + paylaşılan bot) D8'de kazanım bandını tutturamadı: Sabır Taşı + Ayaz Gövde %75, Sabır Taşı + Sivri Gövde %29 (tohum 1). Parça düzeyinde ölçüm (80 build, 2 000 maç): Ayaz Gövde %63,7 (en yüksek), Sivri %40,4 ve Düşürücü %42,0 (en düşük). Ayaz, Halka'dan her alanda iyiydi (havuz 110 > 100, savunma 42 > 40, kütle 19 > 18); Sivri, Ok Gövde'den gimmick dışında her alanda kötüydü. Kural "pahalı = farklı, daha güçlü değil" (§ 16).
+
+| Parça | Alan | Önce | Sonra | |
+|---|---|---|---|---|
+| Ayaz Gövde | `staminaHavuzu` / `savunma` / `erime` | 110 / 42 / 0,1 | 70 / 36 / 0,2 | **SAPMA** |
+| Sivri Gövde | `kutle` / `savunma` / `staminaHavuzu` | 13 / 20 / 20 | 18 / 26 / 40 | **SAPMA** (tıkçarpanı 1,2 korunur; 40/kütle böleni H3 hafiflir) |
+| Düşürücü Gövde | `kutle` / `staminaHavuzu` | 13 / 10 | 17 / 25 | **SAPMA** |
+
+Sonuç (tohum 1, 200 maç): Sabır+Ayaz %75 → %44, Sabır+Sivri %29 → %38; parça düzeyi Ayaz %63,7 → %56,6, Sivri %40,4 → %46,8, Düşürücü %42,0 → %43,4. Kalan sapma kaynağı Top Uç (+ Ağır Disk) birleşimi (%60 parça düzeyi); altın senaryolarda kullanıldığı için bu turda dokunulmadı (DENGE-1 § kalan sorunlar). `vRO` / `kEgim` değişmedi (H1 ölçümü raporda).
 
 ## 21. Veri şemaları (veri dosyalarında yorum yok)
 
