@@ -267,6 +267,9 @@ try {
 
   // 10. oda kodu maçı (kayıtlı takımlarla)
   await git(a, "?ekran=lobi&oto=kenar");
+  // GU-08: Oyna varsayılanı Hızlı maç; oda için "Oda kodu" modu seçilir
+  await bekleKosul(a, `!!document.querySelector("[data-mod=oda]")`, 20000);
+  await tikla(a, "[data-mod=oda]");
   await bekleKosul(a, `!!document.querySelector("[data-eylem=oda-ac]")`, 20000);
   await tikla(a, "[data-eylem=oda-ac]");
   await bekleKosul(a, `!!document.querySelector("[data-kod]")`, 20000);

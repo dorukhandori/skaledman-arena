@@ -14,6 +14,7 @@ const KIMLIK_STIL = `
 .kml .kart > h2:first-of-type { display:flex; justify-content:center; }
 .kml .kart > p, .kml .kart > div > p { text-transform:none; line-height:1; }
 .kml .kart p b { color:var(--ink); }
+.kml .satir .k-dugme.ana { margin-left:0; order:0; }
 html[data-yazi-buyuk] .kml .kml-sol { display:none; }
 `;
 let kimlikStil = false;

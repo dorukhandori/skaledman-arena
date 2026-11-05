@@ -71,7 +71,7 @@ const STIL = `
 .ms .alt { text-align:center; margin:2px 0 0; color:var(--soluk); min-height:0; line-height:28px; text-transform:uppercase; }
 .ms .skr { display:inline-block; margin-right:12px; font:400 40px/1 var(--font-baslik); letter-spacing:2px; color:var(--ink); vertical-align:middle; }
 .ms .ndn { text-align:center; color:var(--ink); margin:0 0 6px; text-transform:uppercase; line-height:40px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.ms .tablo { padding:2px 14px; max-height:150px; overflow:hidden; }
+.ms .tablo { padding:2px 14px; max-height:118px; overflow-y:auto; scrollbar-width:thin; scrollbar-color:var(--bronz-1) var(--panel-0); }
 .ms table { width:100%; border-collapse:collapse; }
 .ms th { text-align:left; font:400 32px/28px var(--font-etiket); color:var(--gold); padding:0 4px 4px; text-transform:uppercase; border-bottom:2px solid #2a3146; }
 .ms td { padding:0 4px; height:30px; line-height:28px; color:var(--ink); text-transform:uppercase; } .ms td:last-child, .ms th:last-child { text-align:right; width:80px; }
@@ -80,11 +80,11 @@ const STIL = `
 .ms td small { color:var(--soluk); margin-left:10px; font-size:32px; }
 .ms .tablo .yk { margin-top:3px; color:var(--soluk); text-align:right; }
 .ms .satir { opacity:0; transition:opacity 83ms steps(1); } .ms .satir.gor { opacity:1; }
-.ms .oduller { display:grid; grid-template-columns:170px 180px 1fr; gap:12px; margin-top:8px; padding:6px 12px; height:206px; overflow:hidden; align-items:start; line-height:28px; }
+.ms .oduller { display:grid; grid-template-columns:170px 180px 1fr; gap:12px; margin-top:6px; padding:4px 12px; height:180px; overflow:hidden; align-items:start; line-height:28px; }
 .ms .oduller .yt { color:var(--soluk); font-size:32px; line-height:26px; }
 .ms .ac { position:relative; display:flex; flex-direction:column; align-items:center; text-align:center; gap:2px; }
 .ms .ac b.bas { font:400 32px/1 var(--font-etiket); color:var(--gold); text-transform:uppercase; font-weight:400; }
-.ms .ac .say { font:400 60px/1 var(--font-baslik); color:var(--gold); letter-spacing:4px; text-shadow:2px 2px 0 #4a3208; font-variant-numeric:tabular-nums; }
+.ms .ac .say { font:400 48px/1 var(--font-baslik); color:var(--gold); letter-spacing:4px; text-shadow:2px 2px 0 #4a3208; font-variant-numeric:tabular-nums; }
 .ms .ac svg { image-rendering:pixelated; }
 .ms .ac[data-altin] { outline:none; cursor:default; }
 .ms .ac[data-altin] ul { position:absolute; left:0; top:100%; z-index:5; display:none; min-width:220px; margin:4px 0 0; padding:8px 10px; list-style:none; text-align:left;
@@ -93,7 +93,7 @@ const STIL = `
 .ms .ac[data-altin] .dokum { color:var(--soluk); font-size:32px; text-transform:uppercase; }
 .ms .ac ul li { display:flex; justify-content:space-between; gap:12px; } .ms .ac ul li.c { color:#ffb070; }
 .ms .ck0 { padding:8px 8px; background:var(--panel-0); box-shadow:inset 0 0 0 2px var(--bronz), inset 0 0 0 4px var(--harc); }
-.ms .bsr { display:flex; flex-direction:column; gap:4px; max-height:190px; overflow:hidden; }
+.ms .bsr { display:flex; flex-direction:column; gap:4px; max-height:164px; overflow:hidden; }
 .ms .bsk { display:grid; grid-template-columns:30px 1fr; gap:0 8px; align-items:center; padding:4px 8px; line-height:26px; background:var(--panel-0); box-shadow:inset 0 0 0 2px var(--bronz-1); }
 .ms .bsk.tamam { box-shadow:inset 0 0 0 2px var(--turuncu); background:#2a1610; }
 .ms .bsk .ad { font:400 32px/1.05 var(--font-etiket); color:var(--ink); text-transform:uppercase; }
