@@ -76,3 +76,22 @@ kipini kullanır, bekleme kartı hatasız açıldı. D8 dosyaları geri alındı
 - Ruh avatarları (özgün, kanatsız; D8 siluetleri yer tutucu).
 - Tribün kalabalık tileset'i (iri, seyrek, 2–3 poz) ve uzun düşen gölge.
 - Uzun vadede zemin efektleri için k_y = 0,62'ye göre yeniden pişirilmiş elips varyantlar (frost-nova, fire-ring halkaları).
+
+## 9. İkinci tur (sahip kararları, 2026-11-05)
+
+| Karar / iş | Sonuç | Commit |
+|---|---|---|
+| Kamera yakınlığı ×1,6 dene | ×1,6'da oynanabilir elips (R = 240) üstte süre plakasının (y ≤ 66), altta Shift/Space'in (y ≥ 494) ~25 px altına giriyor; ×1,5'te ~10 px. **Karar: ×1,44** (kayma 6): elips y 64–493, en büyük uygun değer; `test/kamera.test.ts` sınırı sınar. Duvar ve tribün HUD altında kalabilir (referanstaki gibi) | `66fd5d2`'den önceki `feat(gu-b2)` |
+| Topaçlar daha iri | Çizim ölçeği ×1,2 (`KAMERA.topacCizimOlcek`); sim yarıçapı 30 sabit, temas noktası (yıldız patlaması) gövde yüksekliğinde | aynı |
+| Uzun düşen gölge | Sol-alta uzayan döndürülmüş elips, 2×2 dama pixel dither kenar + koyu çekirdek (referans 07) | aynı |
+| Tribün | Sıra çizgileri kaldırıldı: seyirciler çanak çevresinde halka biçimli bantta sürekli rastgele açı/derinlikte, ekranY'ye göre arkadan öne; yakın (alt) taraf boş | aynı |
+| Krem sarmal iz | Ağır/kritik/dash çarpışmasında geri tepilen topacın çevresinde dönüş yönünde 1,7π krem sarmal (baş önce koşar, kuyruk söner); yıldız patlaması korundu | aynı |
+| Okunurluk 720p (`@pebble` yerine, Playwright 1280×720 DPR 1) | `GU-B-14-okunurluk-720p-dikey.png` (dikey çarpışma: iki gövde üst üste biner, temas yıldızı ve takım çemberleri ayrı okunur), `GU-B-15-okunurluk-720p-kenar.png`. **Bulunan sorun:** uzak kenardaki topacın gövdesi skor/süre plakasının ve üst panellerin altına giriyordu → **düzeltme:** topaç gövde kutusuyla kesişen HUD öğesi (paneller, skor, süre, Shift/Space) %30 saydamlaşır (`MacHud.ortusmeAyarla`); topaç asla örtülmez. İnsan testi (yayın sıkıştırması, renk körlüğü) sahibe kalır | aynı |
+| Stamina çubuğu | Referans 07 kırmızı→sarı bölgeli kaldı; `tasarim-dili.md` C-16 "sahip kararıyla değişti (2026-11-05)" | `chore(gu-b2)` |
+| Müzik | Varsayılan açık %40, H16 ses düğmesi her zaman görünür (değişiklik yok) | — |
+| Araçlar | `yetenek-ekran.ts` ve `d5-akis.ts` fare konumunu `__mac.ekranNoktasi` ile alıyor (hibrit izdüşüm); `yetenek-ekran` hibrit sahnede baştan sona koştu (konsol hatası 0, kayıt ses katmanları çaldı; üretilen D3 görüntüleri geri alındı). `mac-ekran.ts` ve `lab-ekran.ts` fare-dünya eşlemesi kullanmıyor (değişiklik gerekmedi) | `chore(gu-b2)` |
+| `d8-akis` `window.__lobi` | Kanca yeni `Lobi.ts` kurucusunda duruyor; menü ajanı kendi worktree'sinde d8'i baştan sona geçirdi. En olası neden: koşu sırasında paylaşılan ağaçta dosya değişimi → Vite tam yeniden yükleme. Menü ajanına bildirildi | — |
+
+**Yeni ölçüm** (aynı yöntem): Hibrit p50 2,2–2,4 ms, p95 5,3–6,7 ms, en çok ~17 ms; Düz p95 3,1–4,2 ms. Konsol hatası 0. Kapılar yeşil (403 test, 14/14 altın hash AYNI).
+
+**Uyum puanı (ikinci tur):** 07 **4/5** (çanak ekranı daha çok dolduruyor, iri topaç, düşen gölge, sarmal iz, halka kalabalık; kalan: elle çizilmiş topaç sprite'ı, çanak hâlâ referanstan küçük); 08 **4/5** (çift kırmızı halka, aura, koni, kenar parlaması, ruh arenanın üstünde; kalan: avatar sanatı). Kıyaslar: `GU-B-kiyas-07.png`, `GU-B-kiyas-08.png` (yenilendi).

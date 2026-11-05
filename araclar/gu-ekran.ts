@@ -132,11 +132,11 @@ const yuzde = (a: number[], q: number) => { const x = [...a].sort((p, r) => p - 
   await durmayiBekle(s, 15000);
   await foto(s, "08-telegraf-rakip-ulti");
   await devam(s);
-  await bekle(2500);
+  await bekle(9000); // rakip Ulti'si bitsin (sürerken Ulti / Takım Ultisi reddedilir)
   // Takım Ultisi: Takım Enerjisi dolu, 4
   await m(s, "(mac) => { mac.durum.takimEnerji[0] = 100; return 1; }");
   await olaydaDur(s, ["yetenekBasladi"], 14, 0);
-  await s.keyboard.down("Digit4"); await bekle(80); await s.keyboard.up("Digit4");
+  for (let k = 0; k < 5 && !(await durdu(s)); k++) { await s.keyboard.down("Digit4"); await bekle(80); await s.keyboard.up("Digit4"); await bekle(1500); }
   if (await durmayiBekle(s, 8000)) await foto(s, "10-takim-ultisi"); else kayit["takimUltisi"] = await m(s, "(mac) => ({ te: mac.durum.takimEnerji, faz: mac.durum.mac.faz })");
   await devam(s);
   kayit["sayac"] = await m(s, "(mac) => ({ ...mac.gorselSayac })");

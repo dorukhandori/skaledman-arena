@@ -2,10 +2,10 @@
  "tarayici": "153.0.8010.12",
  "cozunurluk": "1280×720 CSS, DPR 1,5 (1920×1080)",
  "kareIsiHibrit": {
-  "n": 127,
-  "p50": 3.2,
-  "p95": 9.6,
-  "enCok": 30.9
+  "n": 144,
+  "p50": 2.4,
+  "p95": 6.7,
+  "enCok": 17.4
  },
  "ringOutBekleme": true,
  "ringOutOlay": {
@@ -17,29 +17,22 @@
    0
   ]
  },
- "takimUltisi": {
-  "te": [
-   100,
-   0.4331250000000004
-  ],
-  "faz": "tur"
- },
  "sayac": {
-  "telegrafKare": 36,
-  "rakipTelegrafKare": 19,
-  "dekalKare": 42,
-  "nisanKare": 1,
-  "siluet": 2,
-  "takimUlti": 0,
-  "kenarParlama": 2,
-  "ipucuKare": 19,
-  "engelKare": 156
+  "telegrafKare": 54,
+  "rakipTelegrafKare": 20,
+  "dekalKare": 48,
+  "nisanKare": 2,
+  "siluet": 5,
+  "takimUlti": 1,
+  "kenarParlama": 3,
+  "ipucuKare": 20,
+  "engelKare": 192
  },
  "kareIsiDuz": {
-  "n": 62,
-  "p50": 1.9,
-  "p95": 5.5,
-  "enCok": 9.2
+  "n": 76,
+  "p50": 1.6,
+  "p95": 3.1,
+  "enCok": 7.6
  },
  "hatalar": [],
  "cekilen": [
@@ -52,6 +45,7 @@
   "docs/production/raporlar/ekran/GU-B-07-ani-olum.png",
   "docs/production/raporlar/ekran/GU-B-09-ulti-ani.png",
   "docs/production/raporlar/ekran/GU-B-08-telegraf-rakip-ulti.png",
+  "docs/production/raporlar/ekran/GU-B-10-takim-ultisi.png",
   "docs/production/raporlar/ekran/GU-B-11-duz-gorunum.png",
   "docs/production/raporlar/ekran/GU-B-12-topac-lab.png"
  ]
