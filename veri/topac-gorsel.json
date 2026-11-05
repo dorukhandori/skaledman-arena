@@ -22,6 +22,7 @@
   "govde",
   "cekirdek"
  ],
+ "bicimB": [],
  "parcalar": {
   "ok-govde": {
    "tur": "govde",
@@ -115,6 +116,539 @@
    "ustZ": 30,
    "disYaricap": 8.6,
    "bayt": 968
+  },
+  "kalkan-govde": {
+   "tur": "govde",
+   "simetri": 6,
+   "periyotDerece": 60,
+   "yonler": [
+    "s"
+   ],
+   "sayfa": "govde/kalkan-govde-{boya}.png",
+   "boyalar": [
+    "kor",
+    "kasirga",
+    "simsek",
+    "girdap",
+    "kaya",
+    "don"
+   ],
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    }
+   },
+   "ustZ": 27.2,
+   "disYaricap": 32.1,
+   "bayt": 33683
+  },
+  "savrulan-govde": {
+   "tur": "govde",
+   "simetri": 4,
+   "periyotDerece": 90,
+   "yonler": [
+    "s",
+    "l"
+   ],
+   "sayfa": "govde/savrulan-govde-{boya}.png",
+   "boyalar": [
+    "kor",
+    "kasirga",
+    "simsek",
+    "girdap",
+    "kaya",
+    "don"
+   ],
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    },
+    "l": {
+     "keskin": 3,
+     "bulanik": 4,
+     "disk": 5
+    }
+   },
+   "ustZ": 26.6,
+   "disYaricap": 31.5,
+   "bayt": 69464
+  },
+  "halka-govde": {
+   "tur": "govde",
+   "simetri": 6,
+   "periyotDerece": 60,
+   "yonler": [
+    "s"
+   ],
+   "sayfa": "govde/halka-govde-{boya}.png",
+   "boyalar": [
+    "kor",
+    "kasirga",
+    "simsek",
+    "girdap",
+    "kaya",
+    "don"
+   ],
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    }
+   },
+   "ustZ": 27.4,
+   "disYaricap": 33.1,
+   "bayt": 18209
+  },
+  "ayaz-govde": {
+   "tur": "govde",
+   "simetri": 4,
+   "periyotDerece": 90,
+   "yonler": [
+    "s"
+   ],
+   "sayfa": "govde/ayaz-govde-{boya}.png",
+   "boyalar": [
+    "kor",
+    "kasirga",
+    "simsek",
+    "girdap",
+    "kaya",
+    "don"
+   ],
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    }
+   },
+   "ustZ": 27,
+   "disYaricap": 31.5,
+   "bayt": 21925
+  },
+  "dusurucu-govde": {
+   "tur": "govde",
+   "simetri": 2,
+   "periyotDerece": 180,
+   "yonler": [
+    "s",
+    "l"
+   ],
+   "sayfa": "govde/dusurucu-govde-{boya}.png",
+   "boyalar": [
+    "kor",
+    "kasirga",
+    "simsek",
+    "girdap",
+    "kaya",
+    "don"
+   ],
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    },
+    "l": {
+     "keskin": 3,
+     "bulanik": 4,
+     "disk": 5
+    }
+   },
+   "ustZ": 26.4,
+   "disYaricap": 33,
+   "bayt": 64941
+  },
+  "sivri-govde": {
+   "tur": "govde",
+   "simetri": 3,
+   "periyotDerece": 120,
+   "yonler": [
+    "s",
+    "l"
+   ],
+   "sayfa": "govde/sivri-govde-{boya}.png",
+   "boyalar": [
+    "kor",
+    "kasirga",
+    "simsek",
+    "girdap",
+    "kaya",
+    "don"
+   ],
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    },
+    "l": {
+     "keskin": 3,
+     "bulanik": 4,
+     "disk": 5
+    }
+   },
+   "ustZ": 26.2,
+   "disYaricap": 35,
+   "bayt": 68244
+  },
+  "izli-govde": {
+   "tur": "govde",
+   "simetri": 4,
+   "periyotDerece": 90,
+   "yonler": [
+    "s",
+    "l"
+   ],
+   "sayfa": "govde/izli-govde-{boya}.png",
+   "boyalar": [
+    "kor",
+    "kasirga",
+    "simsek",
+    "girdap",
+    "kaya",
+    "don"
+   ],
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    },
+    "l": {
+     "keskin": 3,
+     "bulanik": 4,
+     "disk": 5
+    }
+   },
+   "ustZ": 26.8,
+   "disYaricap": 32.2,
+   "bayt": 77527
+  },
+  "agir-disk": {
+   "tur": "disk",
+   "simetri": 9,
+   "periyotDerece": 40,
+   "yonler": [
+    "s"
+   ],
+   "sayfa": "disk/agir-disk.png",
+   "boyalar": null,
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    }
+   },
+   "ustZ": 15.25,
+   "disYaricap": 31.1,
+   "bayt": 3374
+  },
+  "denge-disk": {
+   "tur": "disk",
+   "simetri": 7,
+   "periyotDerece": 51.42857142857143,
+   "yonler": [
+    "s"
+   ],
+   "sayfa": "disk/denge-disk.png",
+   "boyalar": null,
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    }
+   },
+   "ustZ": 16.75,
+   "disYaricap": 30.1,
+   "bayt": 2932
+  },
+  "alcak-disk": {
+   "tur": "disk",
+   "simetri": 8,
+   "periyotDerece": 45,
+   "yonler": [
+    "s"
+   ],
+   "sayfa": "disk/alcak-disk.png",
+   "boyalar": null,
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    }
+   },
+   "ustZ": 14.5,
+   "disYaricap": 31.8,
+   "bayt": 2816
+  },
+  "parlak-disk": {
+   "tur": "disk",
+   "simetri": 6,
+   "periyotDerece": 60,
+   "yonler": [
+    "s"
+   ],
+   "sayfa": "disk/parlak-disk.png",
+   "boyalar": null,
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    }
+   },
+   "ustZ": 18.25,
+   "disYaricap": 30.6,
+   "bayt": 3685
+  },
+  "igne-uc": {
+   "tur": "uc",
+   "simetri": 6,
+   "periyotDerece": 60,
+   "yonler": [
+    "s"
+   ],
+   "sayfa": "uc/igne-uc.png",
+   "boyalar": null,
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    }
+   },
+   "ustZ": 12.4,
+   "disYaricap": 8.8,
+   "bayt": 907
+  },
+  "dengeli-uc": {
+   "tur": "uc",
+   "simetri": 6,
+   "periyotDerece": 60,
+   "yonler": [
+    "s"
+   ],
+   "sayfa": "uc/dengeli-uc.png",
+   "boyalar": null,
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    }
+   },
+   "ustZ": 12.4,
+   "disYaricap": 8.8,
+   "bayt": 1027
+  },
+  "top-uc": {
+   "tur": "uc",
+   "simetri": 6,
+   "periyotDerece": 60,
+   "yonler": [
+    "s"
+   ],
+   "sayfa": "uc/top-uc.png",
+   "boyalar": null,
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    }
+   },
+   "ustZ": 12.4,
+   "disYaricap": 8.8,
+   "bayt": 1019
+  },
+  "kusak-ucu": {
+   "tur": "uc",
+   "simetri": 12,
+   "periyotDerece": 30,
+   "yonler": [
+    "s"
+   ],
+   "sayfa": "uc/kusak-ucu.png",
+   "boyalar": null,
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    }
+   },
+   "ustZ": 12.4,
+   "disYaricap": 8.8,
+   "bayt": 1009
+  },
+  "karanlik-ucu": {
+   "tur": "uc",
+   "simetri": 4,
+   "periyotDerece": 90,
+   "yonler": [
+    "s"
+   ],
+   "sayfa": "uc/karanlik-ucu.png",
+   "boyalar": null,
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    }
+   },
+   "ustZ": 12.4,
+   "disYaricap": 8.8,
+   "bayt": 1159
+  },
+  "simsek-goktasi": {
+   "tur": "cekirdek",
+   "simetri": 4,
+   "periyotDerece": 90,
+   "yonler": [
+    "s"
+   ],
+   "sayfa": "cekirdek/simsek-goktasi.png",
+   "boyalar": null,
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    }
+   },
+   "ustZ": 30,
+   "disYaricap": 8.6,
+   "bayt": 1137
+  },
+  "kor-kalbi": {
+   "tur": "cekirdek",
+   "simetri": 6,
+   "periyotDerece": 60,
+   "yonler": [
+    "s"
+   ],
+   "sayfa": "cekirdek/kor-kalbi.png",
+   "boyalar": null,
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    }
+   },
+   "ustZ": 30,
+   "disYaricap": 8.6,
+   "bayt": 509
+  },
+  "kaya-maden": {
+   "tur": "cekirdek",
+   "simetri": 5,
+   "periyotDerece": 72,
+   "yonler": [
+    "s"
+   ],
+   "sayfa": "cekirdek/kaya-maden.png",
+   "boyalar": null,
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    }
+   },
+   "ustZ": 30,
+   "disYaricap": 9.5,
+   "bayt": 1283
+  },
+  "girdap-maden": {
+   "tur": "cekirdek",
+   "simetri": 5,
+   "periyotDerece": 72,
+   "yonler": [
+    "s"
+   ],
+   "sayfa": "cekirdek/girdap-maden.png",
+   "boyalar": null,
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    }
+   },
+   "ustZ": 30,
+   "disYaricap": 9.5,
+   "bayt": 1228
+  },
+  "sabir-tasi": {
+   "tur": "cekirdek",
+   "simetri": 6,
+   "periyotDerece": 60,
+   "yonler": [
+    "s"
+   ],
+   "sayfa": "cekirdek/sabir-tasi.png",
+   "boyalar": null,
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    }
+   },
+   "ustZ": 30,
+   "disYaricap": 9.299999999999999,
+   "bayt": 923
+  },
+  "kasirga-yapay": {
+   "tur": "cekirdek",
+   "simetri": 8,
+   "periyotDerece": 45,
+   "yonler": [
+    "s"
+   ],
+   "sayfa": "cekirdek/kasirga-yapay.png",
+   "boyalar": null,
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    }
+   },
+   "ustZ": 30,
+   "disYaricap": 10,
+   "bayt": 1082
+  },
+  "kul-cekirdegi": {
+   "tur": "cekirdek",
+   "simetri": 5,
+   "periyotDerece": 72,
+   "yonler": [
+    "s"
+   ],
+   "sayfa": "cekirdek/kul-cekirdegi.png",
+   "boyalar": null,
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    }
+   },
+   "ustZ": 30,
+   "disYaricap": 11.2,
+   "bayt": 1636
   }
  },
  "ikon": {
@@ -123,9 +657,9 @@
    "kare": 48,
    "boyut": [
     384,
-    48
+    192
    ],
-   "bayt": 1060,
+   "bayt": 6302,
    "yer": {
     "ok-govde": [
      0,
@@ -142,6 +676,98 @@
     "kor-goktasi": [
      144,
      0
+    ],
+    "kalkan-govde": [
+     192,
+     0
+    ],
+    "savrulan-govde": [
+     240,
+     0
+    ],
+    "halka-govde": [
+     288,
+     0
+    ],
+    "ayaz-govde": [
+     336,
+     0
+    ],
+    "dusurucu-govde": [
+     0,
+     48
+    ],
+    "sivri-govde": [
+     48,
+     48
+    ],
+    "izli-govde": [
+     96,
+     48
+    ],
+    "agir-disk": [
+     144,
+     48
+    ],
+    "denge-disk": [
+     192,
+     48
+    ],
+    "alcak-disk": [
+     240,
+     48
+    ],
+    "parlak-disk": [
+     288,
+     48
+    ],
+    "igne-uc": [
+     336,
+     48
+    ],
+    "dengeli-uc": [
+     0,
+     96
+    ],
+    "top-uc": [
+     48,
+     96
+    ],
+    "kusak-ucu": [
+     96,
+     96
+    ],
+    "karanlik-ucu": [
+     144,
+     96
+    ],
+    "simsek-goktasi": [
+     192,
+     96
+    ],
+    "kor-kalbi": [
+     240,
+     96
+    ],
+    "kaya-maden": [
+     288,
+     96
+    ],
+    "girdap-maden": [
+     336,
+     96
+    ],
+    "sabir-tasi": [
+     0,
+     144
+    ],
+    "kasirga-yapay": [
+     48,
+     144
+    ],
+    "kul-cekirdegi": [
+     96,
+     144
     ]
    }
   },
@@ -150,9 +776,9 @@
    "kare": 24,
    "boyut": [
     192,
-    24
+    96
    ],
-   "bayt": 482,
+   "bayt": 2489,
    "yer": {
     "ok-govde": [
      0,
@@ -169,6 +795,98 @@
     "kor-goktasi": [
      72,
      0
+    ],
+    "kalkan-govde": [
+     96,
+     0
+    ],
+    "savrulan-govde": [
+     120,
+     0
+    ],
+    "halka-govde": [
+     144,
+     0
+    ],
+    "ayaz-govde": [
+     168,
+     0
+    ],
+    "dusurucu-govde": [
+     0,
+     24
+    ],
+    "sivri-govde": [
+     24,
+     24
+    ],
+    "izli-govde": [
+     48,
+     24
+    ],
+    "agir-disk": [
+     72,
+     24
+    ],
+    "denge-disk": [
+     96,
+     24
+    ],
+    "alcak-disk": [
+     120,
+     24
+    ],
+    "parlak-disk": [
+     144,
+     24
+    ],
+    "igne-uc": [
+     168,
+     24
+    ],
+    "dengeli-uc": [
+     0,
+     48
+    ],
+    "top-uc": [
+     24,
+     48
+    ],
+    "kusak-ucu": [
+     48,
+     48
+    ],
+    "karanlik-ucu": [
+     72,
+     48
+    ],
+    "simsek-goktasi": [
+     96,
+     48
+    ],
+    "kor-kalbi": [
+     120,
+     48
+    ],
+    "kaya-maden": [
+     144,
+     48
+    ],
+    "girdap-maden": [
+     168,
+     48
+    ],
+    "sabir-tasi": [
+     0,
+     72
+    ],
+    "kasirga-yapay": [
+     24,
+     72
+    ],
+    "kul-cekirdegi": [
+     48,
+     72
     ]
    }
   }

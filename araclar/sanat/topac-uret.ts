@@ -48,7 +48,7 @@ export const SANAT = {
   bulanikPencere: 0.34,
   bulanikEnCok: 40,
   diskPencere: 0.85,
-  gövdeTabanZ: 16,
+  govdeTabanZ: 16,
 } as const;
 
 const IKON = [
@@ -470,7 +470,7 @@ async function onizlemeYaz(sonuc: Map<string, { meta: ParcaMeta; onizleme: Map<s
   const P = sonuc;
   const al = (id: string, boya: string, yon: string) => P.get(id)?.onizleme.get(`${boya}:${yon}`) ?? P.get(id)?.onizleme.get(`${boya}:s`);
   const diskMeta = P.get(set.disk)?.meta;
-  const kayma = Math.round(((diskMeta ? diskMeta.ustZ : SANAT.gövdeTabanZ) - SANAT.gövdeTabanZ) * Math.cos((SANAT.yukselti * Math.PI) / 180) / SANAT.birim);
+  const kayma = Math.round(((diskMeta ? diskMeta.ustZ : SANAT.govdeTabanZ) - SANAT.govdeTabanZ) * Math.cos((SANAT.yukselti * Math.PI) / 180) / SANAT.birim);
   const birlestir = (boya: string, kademe: number, f: number, yon = "s"): RGBA => {
     const out = new Uint8ClampedArray(W * H * 4);
     const katmanlar: [string, string, number][] = [[set.uc, "-", 0], [set.disk, "-", 0], [set.govde, boya, -kayma], [set.cekirdek, "-", -kayma]];
@@ -562,16 +562,39 @@ async function main(): Promise<void> {
   const meta = {
     surum: 1,
     aciklama: "ART-1 topaç sprite atlas metası (araclar/sanat/topac-uret.ts üretir; elle düzenleme). Sayfalar public/topac/ altında, satır başına 8 kare (bulanık disk 3), kare 64×64, çapa = uç temas noktası.",
-    kamera: { yukselti: SANAT.yukselti, birim: SANAT.birim, kare: [SANAT.kareW, SANAT.kareH], capa: [SANAT.capaX, SANAT.capaY], govdeTabanZ: SANAT.gövdeTabanZ },
+    kamera: { yukselti: SANAT.yukselti, birim: SANAT.birim, kare: [SANAT.kareW, SANAT.kareH], capa: [SANAT.capaX, SANAT.capaY], govdeTabanZ: SANAT.govdeTabanZ },
     periyotKare: SANAT.periyotKare,
     diskKare: SANAT.diskKare,
     zSirasi: ["uc", "disk", "govde", "cekirdek"],
+    bicimB: (eski as { bicimB?: string[] }).bicimB ?? [],
     parcalar: sirali,
     ikon,
   };
   writeFileSync(META, JSON.stringify(meta, null, 1) + "\n");
   const set = { govde: "ok-govde", disk: "hafif-disk", uc: "duz-uc", cekirdek: "kor-goktasi" };
   if (Object.values(set).every((id) => sonuc.has(id))) await onizlemeYaz(sonuc, set);
+  if (sonuc.size === tumIdler.length) await setLevhasi(sonuc, tumIdler, katalog);
+}
+
+/** Tüm parça seti: her parçanın keskin kare 0'ı (Gövde kendi katalog Element'inde) + sol ayna; ×3. */
+async function setLevhasi(sonuc: Map<string, { meta: ParcaMeta; onizleme: Map<string, RGBA[][]> }>, idler: string[], katalog: Map<string, KatalogParca>): Promise<void> {
+  const W = SANAT.kareW, H = SANAT.kareH, tile = W + 2;
+  const turlar: Tur[] = ["govde", "disk", "uc", "cekirdek"];
+  const satirlar = turlar.map((t) => idler.filter((id) => sonuc.get(id)!.meta.tur === t));
+  const sutun = Math.max(...satirlar.map((s) => s.length)) * 2;
+  const tw = sutun * tile, th = satirlar.length * tile;
+  const levha = new Uint8ClampedArray(tw * th * 4);
+  for (let i = 0; i < tw * th; i++) { levha[i * 4] = 0x4a; levha[i * 4 + 1] = 0x46; levha[i * 4 + 2] = 0x42; levha[i * 4 + 3] = 255; }
+  satirlar.forEach((s, ri) => s.forEach((id, ci) => {
+    const o = sonuc.get(id)!;
+    const boya = o.meta.tur === "govde" ? (katalog.get(id)?.element ?? "kor") : "-";
+    for (const [k, yon] of [[0, "s"], [1, "l"]] as const) {
+      const set = o.onizleme.get(`${boya}:${yon}`);
+      if (!set) continue;
+      yapistir(levha, tw, set[0]![1]!, W, H, (ci * 2 + k) * tile + 1, ri * tile + 1);
+    }
+  }));
+  await sharp(Buffer.from(levha.buffer), { raw: { width: tw, height: th, channels: 4 } }).resize(tw * 3, th * 3, { kernel: "nearest" }).png().toFile(join(KOK, "docs/art/topac-parca-seti.png"));
 }
 
 await main();

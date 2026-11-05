@@ -36,6 +36,7 @@ Kural: yalnız ücretsiz ve lisansı uygun kaynak (CC0 tercih; MIT / CC-BY atıf
 |---|---|---|
 | 16 sentez ses (`public/ses/*.wav`) | `araclar/ses-uret.ts` | CC0 (bizim) |
 | 22 menü dokusu ve ikon sprite'ı (`src/istemci/stil/doku/*.png`: duvar, taş çerçeve, lento, plaka, düğme dolguları, ahşap, blueprint, gece, tapınak, element/kilit/sikke/kalkan/◄) | `araclar/menu-dokulari.ts` (tohumlu, yordamsal) | CC0 (bizim) |
+| Topaç parça sprite'ları ve ikonları (`public/topac/`, 27 parça) | `araclar/sanat/topac-uret.ts` + Blender 4.0.2 (`araclar/sanat/blender/topac_render.py`), parametrik modeller `kaynak/topac/parcalar-3b.json` | CC0 (bizim) |
 | Atari arka plan döngüsü (`kaynak/efekt/muzik-sentez/atari-dongu.ogg`) | `kaynak/efekt/muzik-sentez/atari-dongu.py` | CC0 (bizim) |
 
 ## MIT bildirimi (oyun içi krediler sayfasına eklenecek metin)

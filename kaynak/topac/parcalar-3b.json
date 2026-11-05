@@ -239,6 +239,1400 @@
     ]
    ],
    "puruzAci": 30
+  },
+  "kalkan-govde": {
+   "tur": "govde",
+   "kiral": false,
+   "zAlt": 16,
+   "duvar": [
+    [
+     1,
+     null
+    ],
+    [
+     1,
+     18.4
+    ],
+    [
+     0.72,
+     16
+    ]
+   ],
+   "kenarPah": [
+    2.4,
+    1.4
+   ],
+   "simetri": 6,
+   "R0": 29.5,
+   "loblar": [
+    {
+     "n": 6,
+     "genlik": 2.6,
+     "bicim": "tarak",
+     "q": 2
+    }
+   ],
+   "profil": [
+    [
+     0,
+     30
+    ],
+    [
+     8,
+     30
+    ],
+    [
+     8.6,
+     28.6
+    ],
+    [
+     30,
+     27.2
+    ]
+   ],
+   "halkalar": [
+    {
+     "r0": 8,
+     "r1": 11,
+     "yukseklik": 1.4,
+     "sinif": "metal"
+    },
+    {
+     "r0": 15.5,
+     "r1": 17.2,
+     "yukseklik": -1.4,
+     "sinif": "boya2",
+     "pah": 0.4
+    }
+   ],
+   "sirtlar": [
+    {
+     "n": 6,
+     "r0": 18,
+     "r1": 28,
+     "genislik": 5,
+     "yukseklik": 1.1,
+     "profil": "yuvarlak",
+     "faz": 30
+    }
+   ],
+   "bolgeler": [
+    {
+     "kenardan": 2.2,
+     "sinif": "metal"
+    }
+   ]
+  },
+  "savrulan-govde": {
+   "tur": "govde",
+   "kiral": true,
+   "zAlt": 16,
+   "duvar": [
+    [
+     1,
+     null
+    ],
+    [
+     1,
+     18.4
+    ],
+    [
+     0.72,
+     16
+    ]
+   ],
+   "kenarPah": [
+    3,
+    1.6
+   ],
+   "simetri": 4,
+   "R0": 22,
+   "loblar": [
+    {
+     "n": 4,
+     "genlik": 9.5,
+     "bicim": "supurme",
+     "p": 0.6,
+     "a": 0.8,
+     "b": 2.6
+    }
+   ],
+   "profil": [
+    [
+     0,
+     30
+    ],
+    [
+     8,
+     30
+    ],
+    [
+     8.6,
+     28.4
+    ],
+    [
+     32,
+     26.6
+    ]
+   ],
+   "halkalar": [
+    {
+     "r0": 8,
+     "r1": 11,
+     "yukseklik": 1.4,
+     "sinif": "metal"
+    },
+    {
+     "r0": 17,
+     "r1": 19,
+     "yukseklik": -1.5,
+     "sinif": "boya2",
+     "pah": 0.4
+    }
+   ],
+   "sirtlar": [
+    {
+     "n": 4,
+     "r0": 11,
+     "r1": 30,
+     "genislik": 6,
+     "yukseklik": 1.5,
+     "kivrim": -2.2,
+     "faz": 25,
+     "profil": "yuvarlak",
+     "ucIncelme": 5
+    }
+   ]
+  },
+  "halka-govde": {
+   "tur": "govde",
+   "kiral": false,
+   "zAlt": 16,
+   "duvar": [
+    [
+     1,
+     null
+    ],
+    [
+     1,
+     18.4
+    ],
+    [
+     0.72,
+     16
+    ]
+   ],
+   "kenarPah": [
+    2,
+    1.2
+   ],
+   "simetri": 6,
+   "R0": 30.5,
+   "loblar": [
+    {
+     "n": 6,
+     "genlik": 2.6,
+     "bicim": "centik",
+     "w": 0.09
+    }
+   ],
+   "profil": [
+    [
+     0,
+     30
+    ],
+    [
+     8,
+     30
+    ],
+    [
+     8.6,
+     27.4
+    ],
+    [
+     31,
+     27.4
+    ]
+   ],
+   "halkalar": [
+    {
+     "r0": 8,
+     "r1": 11,
+     "yukseklik": 1.4,
+     "sinif": "metal"
+    },
+    {
+     "r0": 12,
+     "r1": 20.5,
+     "yukseklik": -1.2,
+     "sinif": "boya2",
+     "pah": 0.6
+    },
+    {
+     "r0": 22,
+     "r1": 29,
+     "yukseklik": 1.8,
+     "pah": 1.2
+    }
+   ]
+  },
+  "ayaz-govde": {
+   "tur": "govde",
+   "kiral": false,
+   "zAlt": 16,
+   "duvar": [
+    [
+     1,
+     null
+    ],
+    [
+     1,
+     18.4
+    ],
+    [
+     0.72,
+     16
+    ]
+   ],
+   "kenarPah": [
+    2.6,
+    1.2
+   ],
+   "simetri": 4,
+   "R0": 29.5,
+   "loblar": [
+    {
+     "n": 4,
+     "genlik": 2,
+     "bicim": "tarak"
+    }
+   ],
+   "profil": [
+    [
+     0,
+     30
+    ],
+    [
+     8,
+     30
+    ],
+    [
+     8.6,
+     27
+    ],
+    [
+     31,
+     27
+    ]
+   ],
+   "halkalar": [
+    {
+     "r0": 8,
+     "r1": 11,
+     "yukseklik": 1.4,
+     "sinif": "metal"
+    }
+   ],
+   "fasetler": [
+    {
+     "n": 8,
+     "tepe": 32.6,
+     "egim": 0.19,
+     "r1": 31,
+     "faz": 22.5
+    }
+   ]
+  },
+  "dusurucu-govde": {
+   "tur": "govde",
+   "kiral": true,
+   "zAlt": 16,
+   "duvar": [
+    [
+     1,
+     null
+    ],
+    [
+     1,
+     18.4
+    ],
+    [
+     0.72,
+     16
+    ]
+   ],
+   "kenarPah": [
+    3,
+    1.6
+   ],
+   "simetri": 2,
+   "R0": 19.5,
+   "loblar": [
+    {
+     "n": 2,
+     "genlik": 13.5,
+     "bicim": "supurme",
+     "p": 0.55,
+     "a": 0.7,
+     "b": 1.8
+    }
+   ],
+   "profil": [
+    [
+     0,
+     30
+    ],
+    [
+     8,
+     30
+    ],
+    [
+     8.6,
+     28.4
+    ],
+    [
+     33,
+     26.4
+    ]
+   ],
+   "halkalar": [
+    {
+     "r0": 8,
+     "r1": 11,
+     "yukseklik": 1.4,
+     "sinif": "metal"
+    },
+    {
+     "r0": 13.5,
+     "r1": 15,
+     "yukseklik": -1.4,
+     "sinif": "boya2",
+     "pah": 0.4
+    }
+   ],
+   "sirtlar": [
+    {
+     "n": 2,
+     "r0": 12,
+     "r1": 31,
+     "genislik": 5,
+     "yukseklik": 1.4,
+     "kivrim": -2,
+     "faz": 45,
+     "sinif": "altin",
+     "profil": "yuvarlak",
+     "ucIncelme": 6
+    }
+   ]
+  },
+  "sivri-govde": {
+   "tur": "govde",
+   "kiral": true,
+   "zAlt": 16,
+   "duvar": [
+    [
+     1,
+     null
+    ],
+    [
+     1,
+     18.4
+    ],
+    [
+     0.72,
+     16
+    ]
+   ],
+   "kenarPah": [
+    3,
+    1.6
+   ],
+   "simetri": 3,
+   "R0": 21,
+   "loblar": [
+    {
+     "n": 3,
+     "genlik": 12,
+     "bicim": "sivri",
+     "w": 0.16,
+     "q": 1.3
+    },
+    {
+     "n": 3,
+     "genlik": 2,
+     "bicim": "tarak",
+     "faz": 0.5
+    }
+   ],
+   "profil": [
+    [
+     0,
+     30
+    ],
+    [
+     8,
+     30
+    ],
+    [
+     8.6,
+     28.4
+    ],
+    [
+     33,
+     26.2
+    ]
+   ],
+   "halkalar": [
+    {
+     "r0": 8,
+     "r1": 11,
+     "yukseklik": 1.4,
+     "sinif": "metal"
+    },
+    {
+     "r0": 14,
+     "r1": 15.6,
+     "yukseklik": -1.3,
+     "sinif": "boya2",
+     "pah": 0.4
+    }
+   ],
+   "sirtlar": [
+    {
+     "n": 3,
+     "r0": 12,
+     "r1": 32,
+     "genislik": 4.5,
+     "yukseklik": 1.5,
+     "faz": 60,
+     "sinif": "altin",
+     "profil": "yuvarlak",
+     "ucIncelme": 6
+    }
+   ]
+  },
+  "izli-govde": {
+   "tur": "govde",
+   "kiral": true,
+   "zAlt": 16,
+   "duvar": [
+    [
+     1,
+     null
+    ],
+    [
+     1,
+     18.4
+    ],
+    [
+     0.72,
+     16
+    ]
+   ],
+   "kenarPah": [
+    3,
+    1.6
+   ],
+   "simetri": 4,
+   "R0": 23,
+   "loblar": [
+    {
+     "n": 4,
+     "genlik": 8,
+     "bicim": "supurme",
+     "p": 0.8,
+     "a": 1.2,
+     "b": 1.5
+    },
+    {
+     "n": 8,
+     "genlik": 1.2,
+     "bicim": "centik",
+     "w": 0.12
+    }
+   ],
+   "profil": [
+    [
+     0,
+     30
+    ],
+    [
+     8,
+     30
+    ],
+    [
+     8.6,
+     28.4
+    ],
+    [
+     32,
+     26.8
+    ]
+   ],
+   "halkalar": [
+    {
+     "r0": 8,
+     "r1": 11,
+     "yukseklik": 1.4,
+     "sinif": "metal"
+    }
+   ],
+   "sirtlar": [
+    {
+     "n": 8,
+     "r0": 12,
+     "r1": 29,
+     "genislik": 3,
+     "yukseklik": 1.1,
+     "kivrim": -3,
+     "faz": 10,
+     "sinif": "beyaz",
+     "profil": "yuvarlak",
+     "ucIncelme": 4
+    }
+   ]
+  },
+  "agir-disk": {
+   "tur": "disk",
+   "kiral": false,
+   "R0": 28.5,
+   "loblar": [
+    {
+     "n": 9,
+     "genlik": 2.6,
+     "bicim": "kare",
+     "w": 0.4,
+     "kenar": 0.08
+    }
+   ],
+   "profil": [
+    [
+     0,
+     15.25
+    ],
+    [
+     33,
+     15.25
+    ]
+   ],
+   "halkalar": [
+    {
+     "r0": 24.5,
+     "r1": 27.5,
+     "yukseklik": 0.9
+    }
+   ],
+   "sinif": "metal",
+   "kenarPah": [
+    1.6,
+    0.9
+   ],
+   "zAlt": 9,
+   "duvar": [
+    [
+     1,
+     null
+    ],
+    [
+     1,
+     12.85
+    ],
+    [
+     0.62,
+     9
+    ]
+   ],
+   "simetri": 9
+  },
+  "denge-disk": {
+   "tur": "disk",
+   "kiral": false,
+   "R0": 27.5,
+   "loblar": [
+    {
+     "n": 7,
+     "genlik": 2.6,
+     "bicim": "tarak",
+     "q": 1.5
+    }
+   ],
+   "profil": [
+    [
+     0,
+     16.75
+    ],
+    [
+     33,
+     16.75
+    ]
+   ],
+   "halkalar": [
+    {
+     "r0": 23.5,
+     "r1": 26.5,
+     "yukseklik": 0.9
+    }
+   ],
+   "sinif": "metal",
+   "kenarPah": [
+    1.6,
+    0.9
+   ],
+   "zAlt": 10.5,
+   "duvar": [
+    [
+     1,
+     null
+    ],
+    [
+     1,
+     14.35
+    ],
+    [
+     0.62,
+     10.5
+    ]
+   ],
+   "simetri": 7
+  },
+  "alcak-disk": {
+   "tur": "disk",
+   "kiral": false,
+   "R0": 30,
+   "loblar": [
+    {
+     "n": 8,
+     "genlik": 1.8,
+     "bicim": "kare",
+     "w": 0.3,
+     "kenar": 0.08
+    }
+   ],
+   "profil": [
+    [
+     0,
+     14.5
+    ],
+    [
+     33,
+     14.5
+    ]
+   ],
+   "halkalar": [
+    {
+     "r0": 26,
+     "r1": 29,
+     "yukseklik": 0.9
+    }
+   ],
+   "sinif": "metal",
+   "kenarPah": [
+    1.6,
+    0.9
+   ],
+   "zAlt": 10,
+   "duvar": [
+    [
+     1,
+     null
+    ],
+    [
+     1,
+     13
+    ],
+    [
+     0.6,
+     10
+    ]
+   ],
+   "simetri": 8
+  },
+  "parlak-disk": {
+   "tur": "disk",
+   "kiral": false,
+   "R0": 27,
+   "loblar": [
+    {
+     "n": 6,
+     "genlik": 3.6,
+     "bicim": "kare",
+     "w": 0.32,
+     "kenar": 0.08
+    }
+   ],
+   "profil": [
+    [
+     0,
+     18.25
+    ],
+    [
+     33,
+     18.25
+    ]
+   ],
+   "halkalar": [
+    {
+     "r0": 23,
+     "r1": 26,
+     "yukseklik": 0.9
+    }
+   ],
+   "sinif": "metal",
+   "kenarPah": [
+    1.6,
+    0.9
+   ],
+   "zAlt": 11,
+   "duvar": [
+    [
+     1,
+     null
+    ],
+    [
+     1,
+     15.85
+    ],
+    [
+     0.62,
+     11
+    ]
+   ],
+   "simetri": 6,
+   "bolgeler": [
+    {
+     "kenardan": 2.4,
+     "enAzR": 29,
+     "sinif": "altin"
+    }
+   ]
+  },
+  "igne-uc": {
+   "tur": "uc",
+   "simetri": 6,
+   "kiral": false,
+   "torna": [
+    [
+     0.5,
+     0,
+     "koyu"
+    ],
+    [
+     1.4,
+     1.8,
+     "koyu"
+    ],
+    [
+     2.8,
+     4.4,
+     "koyu"
+    ],
+    [
+     5.6,
+     7,
+     "metal"
+    ],
+    [
+     8.2,
+     9,
+     "metal"
+    ],
+    [
+     8.8,
+     11.2,
+     "metal"
+    ],
+    [
+     8.8,
+     12.4,
+     "metal"
+    ]
+   ],
+   "nervur": {
+    "n": 6,
+    "genlik": 0.07,
+    "bicim": "kare",
+    "w": 0.4
+   }
+  },
+  "dengeli-uc": {
+   "tur": "uc",
+   "simetri": 6,
+   "kiral": false,
+   "torna": [
+    [
+     2.4,
+     0,
+     "koyu"
+    ],
+    [
+     3.8,
+     0.8,
+     "koyu"
+    ],
+    [
+     4.8,
+     2.6,
+     "koyu"
+    ],
+    [
+     6.4,
+     6,
+     "metal"
+    ],
+    [
+     8.2,
+     9,
+     "metal"
+    ],
+    [
+     8.8,
+     11.2,
+     "metal"
+    ],
+    [
+     8.8,
+     12.4,
+     "metal"
+    ]
+   ],
+   "nervur": {
+    "n": 6,
+    "genlik": 0.07,
+    "bicim": "kare",
+    "w": 0.4
+   }
+  },
+  "top-uc": {
+   "tur": "uc",
+   "simetri": 6,
+   "kiral": false,
+   "torna": [
+    [
+     0.69,
+     0.05,
+     "metal"
+    ],
+    [
+     2.21,
+     0.56,
+     "metal"
+    ],
+    [
+     3.6,
+     1.74,
+     "metal"
+    ],
+    [
+     4.43,
+     3.37,
+     "metal"
+    ],
+    [
+     4.6,
+     4.73,
+     "metal"
+    ],
+    [
+     5,
+     6.2,
+     "koyu"
+    ],
+    [
+     7.2,
+     7.4,
+     "metal"
+    ],
+    [
+     8.2,
+     9,
+     "metal"
+    ],
+    [
+     8.8,
+     11.2,
+     "metal"
+    ],
+    [
+     8.8,
+     12.4,
+     "metal"
+    ]
+   ],
+   "nervur": {
+    "n": 6,
+    "genlik": 0.07,
+    "bicim": "kare",
+    "w": 0.4
+   }
+  },
+  "kusak-ucu": {
+   "tur": "uc",
+   "simetri": 12,
+   "kiral": false,
+   "torna": [
+    [
+     5.4,
+     0,
+     "lastik"
+    ],
+    [
+     6.6,
+     1.2,
+     "lastik"
+    ],
+    [
+     6.9,
+     3.4,
+     "lastik"
+    ],
+    [
+     6.4,
+     4.4,
+     "metal"
+    ],
+    [
+     7.4,
+     6.6,
+     "metal"
+    ],
+    [
+     8.2,
+     9,
+     "metal"
+    ],
+    [
+     8.8,
+     11.2,
+     "metal"
+    ],
+    [
+     8.8,
+     12.4,
+     "metal"
+    ]
+   ],
+   "nervur": {
+    "n": 12,
+    "genlik": 0.05,
+    "bicim": "kare",
+    "w": 0.5
+   }
+  },
+  "karanlik-ucu": {
+   "tur": "uc",
+   "simetri": 4,
+   "kiral": false,
+   "torna": [
+    [
+     1.8,
+     0,
+     "koyu"
+    ],
+    [
+     3.4,
+     1.4,
+     "koyu"
+    ],
+    [
+     5.6,
+     4,
+     "koyu"
+    ],
+    [
+     7.4,
+     7,
+     "koyu"
+    ],
+    [
+     8.4,
+     9.4,
+     "koyu"
+    ],
+    [
+     8.8,
+     12.4,
+     "koyu"
+    ]
+   ],
+   "nervur": {
+    "n": 4,
+    "genlik": 0.22,
+    "bicim": "sivri",
+    "w": 0.2
+   }
+  },
+  "simsek-goktasi": {
+   "tur": "cekirdek",
+   "simetri": 4,
+   "kiral": false,
+   "R0": 8.6,
+   "profil": [
+    [
+     0,
+     30
+    ],
+    [
+     9,
+     30
+    ]
+   ],
+   "halkalar": [
+    {
+     "r0": 6.2,
+     "r1": 8.6,
+     "yukseklik": 2.4,
+     "sinif": "cerceve",
+     "pah": 0.6
+    }
+   ],
+   "sinif": "kubbe",
+   "zAlt": 29,
+   "duvar": [
+    [
+     1,
+     null
+    ],
+    [
+     1,
+     29
+    ]
+   ],
+   "puruzAci": 30,
+   "fasetler": [
+    {
+     "n": 4,
+     "tepe": 37,
+     "egim": 1.1,
+     "r1": 6.2,
+     "sinif": "kubbe",
+     "faz": 45
+    }
+   ]
+  },
+  "kor-kalbi": {
+   "tur": "cekirdek",
+   "simetri": 6,
+   "kiral": false,
+   "R0": 8.6,
+   "profil": [
+    [
+     0,
+     30
+    ],
+    [
+     9,
+     30
+    ]
+   ],
+   "halkalar": [
+    {
+     "r0": 6.2,
+     "r1": 8.6,
+     "yukseklik": 2.4,
+     "sinif": "cerceve",
+     "pah": 0.6
+    },
+    {
+     "r0": 0,
+     "r1": 1.6,
+     "yukseklik": 0
+    }
+   ],
+   "sinif": "kubbe",
+   "zAlt": 29,
+   "duvar": [
+    [
+     1,
+     null
+    ],
+    [
+     1,
+     29
+    ]
+   ],
+   "puruzAci": 30,
+   "kubbeler": [
+    {
+     "r": 6.2,
+     "taban": 30,
+     "yukseklik": 5.4,
+     "sinif": "kubbe"
+    }
+   ]
+  },
+  "kaya-maden": {
+   "tur": "cekirdek",
+   "simetri": 5,
+   "kiral": false,
+   "R0": 8.6,
+   "profil": [
+    [
+     0,
+     30
+    ],
+    [
+     9,
+     30
+    ]
+   ],
+   "halkalar": [
+    {
+     "r0": 6.2,
+     "r1": 8.6,
+     "yukseklik": 2.4,
+     "sinif": "cerceve",
+     "pah": 0.6
+    }
+   ],
+   "sinif": "kubbe",
+   "zAlt": 29,
+   "duvar": [
+    [
+     1,
+     null
+    ],
+    [
+     1,
+     29
+    ]
+   ],
+   "puruzAci": 30,
+   "fasetler": [
+    {
+     "n": 5,
+     "tepe": 35,
+     "egim": 0.7,
+     "r1": 6.4,
+     "sinif": "kubbe",
+     "faz": 10
+    }
+   ],
+   "loblar": [
+    {
+     "n": 5,
+     "genlik": 0.9,
+     "bicim": "tarak"
+    }
+   ]
+  },
+  "girdap-maden": {
+   "tur": "cekirdek",
+   "simetri": 5,
+   "kiral": false,
+   "R0": 8.6,
+   "profil": [
+    [
+     0,
+     30
+    ],
+    [
+     9,
+     30
+    ]
+   ],
+   "halkalar": [
+    {
+     "r0": 6.2,
+     "r1": 8.6,
+     "yukseklik": 2.4,
+     "sinif": "cerceve",
+     "pah": 0.6
+    }
+   ],
+   "sinif": "kubbe",
+   "zAlt": 29,
+   "duvar": [
+    [
+     1,
+     null
+    ],
+    [
+     1,
+     29
+    ]
+   ],
+   "puruzAci": 30,
+   "fasetler": [
+    {
+     "n": 5,
+     "tepe": 35.4,
+     "egim": 0.75,
+     "r1": 6.4,
+     "sinif": "kubbe",
+     "faz": 36
+    }
+   ],
+   "loblar": [
+    {
+     "n": 5,
+     "genlik": 0.9,
+     "bicim": "tarak",
+     "faz": 0.5
+    }
+   ]
+  },
+  "sabir-tasi": {
+   "tur": "cekirdek",
+   "simetri": 6,
+   "kiral": false,
+   "R0": 8.6,
+   "profil": [
+    [
+     0,
+     30
+    ],
+    [
+     9,
+     30
+    ]
+   ],
+   "halkalar": [
+    {
+     "r0": 6.2,
+     "r1": 8.6,
+     "yukseklik": 2.4,
+     "sinif": "cerceve",
+     "pah": 0.6
+    }
+   ],
+   "sinif": "kubbe",
+   "zAlt": 29,
+   "duvar": [
+    [
+     1,
+     null
+    ],
+    [
+     1,
+     29
+    ]
+   ],
+   "puruzAci": 30,
+   "kubbeler": [
+    {
+     "r": 6.4,
+     "taban": 30,
+     "yukseklik": 3.6,
+     "sinif": "kubbe"
+    }
+   ],
+   "loblar": [
+    {
+     "n": 6,
+     "genlik": 0.7,
+     "bicim": "tarak"
+    }
+   ]
+  },
+  "kasirga-yapay": {
+   "tur": "cekirdek",
+   "simetri": 8,
+   "kiral": false,
+   "R0": 8.6,
+   "profil": [
+    [
+     0,
+     30
+    ],
+    [
+     9,
+     30
+    ]
+   ],
+   "halkalar": [
+    {
+     "r0": 6.2,
+     "r1": 8.6,
+     "yukseklik": 2.4,
+     "sinif": "cerceve",
+     "pah": 0.6
+    }
+   ],
+   "sinif": "kubbe",
+   "zAlt": 29,
+   "duvar": [
+    [
+     1,
+     null
+    ],
+    [
+     1,
+     29
+    ]
+   ],
+   "puruzAci": 30,
+   "loblar": [
+    {
+     "n": 8,
+     "genlik": 1.4,
+     "bicim": "kare",
+     "w": 0.45,
+     "kenar": 0.06
+    }
+   ],
+   "kubbeler": [
+    {
+     "r": 5.8,
+     "taban": 31,
+     "yukseklik": 2.2,
+     "sinif": "kubbe"
+    }
+   ]
+  },
+  "kul-cekirdegi": {
+   "tur": "cekirdek",
+   "simetri": 5,
+   "kiral": false,
+   "R0": 8.6,
+   "profil": [
+    [
+     0,
+     30
+    ],
+    [
+     9,
+     30
+    ]
+   ],
+   "halkalar": [
+    {
+     "r0": 6.2,
+     "r1": 8.6,
+     "yukseklik": 2.4,
+     "sinif": "cerceve",
+     "pah": 0.6
+    }
+   ],
+   "sinif": "kubbe",
+   "zAlt": 29,
+   "duvar": [
+    [
+     1,
+     null
+    ],
+    [
+     1,
+     29
+    ]
+   ],
+   "puruzAci": 30,
+   "loblar": [
+    {
+     "n": 5,
+     "genlik": 2.6,
+     "bicim": "sivri",
+     "w": 0.2
+    }
+   ],
+   "fasetler": [
+    {
+     "n": 5,
+     "tepe": 37.5,
+     "egim": 1.2,
+     "r1": 6.2,
+     "sinif": "kubbe"
+    }
+   ]
   }
  }
 }
