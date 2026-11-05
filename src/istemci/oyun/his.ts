@@ -58,16 +58,64 @@ export function siddetPuani(vn: number, hasarOran: number, tikOran: number, krit
   return g < 0 ? 0 : g > 1.2 ? 1.2 : g;
 }
 
-/** Sürekli temas (sürtünme) akışı: hepsi istemci görseli; sim'in temas durumu okunur, yazılmaz. */
+/**
+ * Sürekli temas (sürtünme) akışı: hepsi istemci görseli; sim'in temas durumu okunur, yazılmaz.
+ * GU-F (FIZIK-1 sonrası): temaslar kısa (medyan 2 kare, ≥ 90 br/s ayrılma). Akış artık bir TEMAS OTURUMUNA bağlı:
+ * giriş ≤ 2r + payPx, oturum sürerken ≤ 2r + cikisPx (histerezis); toleransSn'den kısa ayrılmalar oturumu bitirmez
+ * (çarp-ayrıl-çarp titremesinde akış yanıp sönmez, süre birikir). Oturumdaki toplam temas akisEsikSn'yi geçmeden akış,
+ * ışıma, yaslanma ve sürtünme sesi YOK: kısa temas yalnız sim olayının tek patlamasını verir.
+ */
 export const TEMAS = {
-  /** merkezler arası ≤ 2r + bu (sim ayırması sonrası temas = tam 2r) */
+  /** giriş: merkezler arası ≤ 2r + bu (sim ayırması sonrası temas = tam 2r) */
   payPx: 2,
-  /** temas bitince bu kadar s tolerans (tek karelik ayrılmalar akışı kesmesin) */
-  toleransSn: 0.08,
-  /** temas süresi rampası: guc çarpanı = taban + tavan·(1 − e^(−süre/τ)) */
-  rampa: { taban: 0.35, tavan: 0.95, tauSn: 0.7 },
+  /** histerezis: oturum sürerken ≤ 2r + bu temas sayılır */
+  cikisPx: 3,
+  /** oturum boşluk toleransı (s): bundan kısa ayrılma oturumu bitirmez */
+  toleransSn: 0.25,
+  /** akış eşiği: oturumdaki toplam temas süresi (s); ölçülen tek temas medyan 0,03-0,08 s, p90 0,08-0,13 s */
+  akisEsikSn: 0.15,
+  /** temas süresi rampası: guc çarpanı = taban + tavan·(1 − e^(−süre/τ)); süre = eşik sonrası temas */
+  rampa: { taban: 0.35, tavan: 0.95, tauSn: 0.6 },
   /** saniyede kıvılcım: taban + egim·guc */
-  oran: { taban: 8, egim: 130 },
-  /** sürtünme sesi aralığı (s): taban − egim·guc */
-  ses: { taban: 0.17, egim: 0.08, esik: 0.15 },
+  oran: { taban: 8, egim: 110 },
+  /** sürtünme sesi aralığı (s): taban − egim·guc; ilk tık oturum akışa geçince */
+  ses: { taban: 0.2, egim: 0.08, esik: 0.2 },
 } as const;
+
+/**
+ * GU-F çarpışma kıvılcımı ölçeği (FIZIK-1 çarp-ayrıl-çarp ritmi; Kivilcim.ts). Adet = taban + egim·s^us; ömür puanla:
+ * hafif temas tek patlama + hızlı sönme (0,09-0,16 s), ağır 0,14-0,45 s. Birikme: her patlama `yuk`a puanını ekler, `yuk`
+ * τ ile söner; yeni patlamanın adedi 1 / (1 + birikme·yuk) ile kısılır (alt sınır birikmeTaban), flaş boyu biraz.
+ */
+export const KIVILCIM_OLCEK = {
+  adetTaban: 2, adetEgim: 38, adetUs: 1.2,
+  omurAlt: [0.09, 0.05], omurUst: [0.16, 0.29],
+  yukTauSn: 0.45, birikme: 0.9, birikmeTaban: 0.35, flasBirikme: 0.25,
+} as const;
+
+/** Patlama adedi (birikme kısması öncesi), şiddet puanı `s` (0..1,2) ve erişilebilirlik çarpanıyla. */
+export function patlamaAdedi(s: number, carpan = 1): number {
+  const O = KIVILCIM_OLCEK;
+  return Math.max(1, Math.round((O.adetTaban + O.adetEgim * Math.pow(Math.min(1.2, Math.max(0, s)), O.adetUs)) * carpan));
+}
+
+/** Art arda patlama kısma çarpanı (1 = yük yok, alt sınır birikmeTaban). */
+export function birikmeCarpani(yuk: number): number {
+  const O = KIVILCIM_OLCEK;
+  return Math.max(O.birikmeTaban, 1 / (1 + O.birikme * yuk));
+}
+
+/** GU-F temas oturumu durumu (Efektler; test). */
+export interface TemasOturumu { oturum: boolean; temasSn: number; kopukSn: number }
+
+/** Bir kare: mesafe ve `ikiR` (2r) ile oturumu ilerletir; dönen = bu karede temas var mı. */
+export function temasAdimi(o: TemasOturumu, mesafe: number, ikiR: number, dt: number): boolean {
+  const temas = mesafe <= ikiR + (o.oturum ? TEMAS.cikisPx : TEMAS.payPx);
+  if (temas) { o.oturum = true; o.temasSn += dt; o.kopukSn = 0; return true; }
+  o.kopukSn += dt;
+  if (o.kopukSn >= TEMAS.toleransSn) { o.oturum = false; o.temasSn = 0; }
+  return false;
+}
+
+/** Akış (sürekli sürtünme kıvılcımı) açık mı: oturum sürüyor ve toplam temas eşiği geçti. */
+export const akisAcik = (o: TemasOturumu): boolean => o.oturum && o.temasSn >= TEMAS.akisEsikSn;

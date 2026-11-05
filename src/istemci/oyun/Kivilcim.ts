@@ -1,5 +1,6 @@
 import { Graphics } from "pixi.js";
 import type { SusRastgele } from "./SusRastgele.ts";
+import { KIVILCIM_OLCEK, birikmeCarpani, patlamaAdedi } from "./his.ts";
 
 // GU-E çarpışma kıvılcımı (referans 07/08): temas noktasında pixel-art kıvılcım demeti. Yordamsal (atlas gerekmez);
 // hibrit sahne dünyayı 480×270 önbelleğe `nearest` çizdiği için 2 px kalınlık = 1 sanat pikseli, koordinatlar 2 px
@@ -13,8 +14,9 @@ import type { SusRastgele } from "./SusRastgele.ts";
 
 /** Kıvılcım renk rampası (sıcaktan soğuğa); referans 07'nin sarı-beyaz çekirdeği ve turuncu uçları. */
 export const KIVILCIM_RENK = { beyaz: 0xffffff, krem: 0xfff6c8, sari: 0xffd84a, altin: 0xffb02e, turuncu: 0xff7a1e, kor: 0xb8401a } as const;
-/** Eşzamanlı kıvılcım tavanı (parçacık bütçesi 400'ün yanında; çizgiler ayrı Graphics). */
-export const KIVILCIM_TAVANI = 260;
+/** Eşzamanlı kıvılcım tavanı (parçacık bütçesi 400'ün yanında; çizgiler ayrı Graphics). GU-F: 260 → 150 (referans 07'de
+ *  tek çarpışmada ~15-20 çizgi; art arda çarpışmalar bulutlaşmasın). */
+export const KIVILCIM_TAVANI = 150;
 
 interface Kv { x: number; y: number; h: number; vx: number; vy: number; vh: number; t: number; omur: number; uz: number; kalin: number; nokta: boolean; sekti: boolean }
 interface Flas { x: number; y: number; t: number; sure: number; r: number; ex: number; ey: number; f: number; uclar: number[]; aci: number; parlak: number }
@@ -27,12 +29,15 @@ export class KivilcimDemeti {
   private flaslar: Flas[] = [];
   private isima = { x: 0, y: 0, guc: 0 };
   private saat = 0;
+  /** GU-F art arda patlama yükü (puan toplamı, τ ile söner) */
+  private yuk = 0;
 
   /** `k` zemin basıklığı (ekran y / zemin z), `hava` = yükseklik ve yerçekimi var mı (hibrit) */
   constructor(private rng: SusRastgele, private k: number, private hava: boolean) {}
 
   get adet(): number { return this.kv.length; }
   get flasAdet(): number { return this.flaslar.length; }
+  get birikmeYuku(): number { return this.yuk; }
 
   /**
    * Bir darbe demeti. (x, y) temas noktasının ZEMİN izdüşümü (ekran), `h0` yüksekliği (ekran px, yukarı), (nx, nz) SİM
@@ -40,7 +45,11 @@ export class KivilcimDemeti {
    */
   patlat(x: number, y: number, h0: number, nx: number, nz: number, g: number, carpan = 1, flas = true): void {
     const s = Math.max(0, g);
-    const n = Math.max(1, Math.round((3 + 44 * Math.pow(Math.min(1.2, s), 1.15)) * carpan));
+    const O = KIVILCIM_OLCEK;
+    // GU-F: art arda gelen patlama kısılır; canlı tavanı aşan kısım hiç doğmaz (eski kıvılcımları silip yerine geçmesin)
+    const kis = birikmeCarpani(this.yuk);
+    this.yuk += Math.min(1.2, s);
+    const n = Math.max(1, Math.min(Math.round(patlamaAdedi(s, carpan) * kis), KIVILCIM_TAVANI - this.kv.length));
     const tx = -nz, tz = nx; // teğet (zemin düzlemi)
     const vTepe = 110 + 360 * Math.min(1.2, s);
     for (let i = 0; i < n; i++) {
@@ -59,11 +68,11 @@ export class KivilcimDemeti {
       const o = (6 + 18 * Math.min(1, s)) * this.rng.aralik(0.2, 1);
       this.ekle({
         x: x + dx * o, y: y + dz * o * this.k, h: h0 + (this.hava ? this.rng.isaretli() * o * 0.6 : 0), vx: dx * v, vy: dz * v * this.k, vh: this.hava ? this.rng.aralik(-30, 70 + 240 * Math.min(1, s)) : 0,
-        t: 0, omur: this.rng.aralik(0.12, 0.22 + 0.26 * Math.min(1, s)), uz: 0.04 + 0.045 * Math.min(1, s),
+        t: 0, omur: this.rng.aralik(O.omurAlt[0] + O.omurAlt[1] * Math.min(1, s), O.omurUst[0] + O.omurUst[1] * Math.min(1, s)), uz: 0.04 + 0.045 * Math.min(1, s),
         kalin: s > 0.55 && this.rng.sayi() < 0.25 ? 4 : 2, nokta: this.rng.sayi() < 0.15, sekti: false,
       });
     }
-    if (flas) this.flas(x, y - h0, nx, nz, s);
+    if (flas) this.flas(x, y - h0, nx, nz, s * (1 - O.flasBirikme * (1 - kis)));
   }
 
   /** Çekirdek flaş: sivri yıldız lekesi (normal boyunca %45'e basık). */
@@ -106,6 +115,7 @@ export class KivilcimDemeti {
   }
 
   temizle(): void {
+    this.yuk = 0;
     this.kv = [];
     this.flaslar = [];
     this.isima.guc = 0;
@@ -115,6 +125,7 @@ export class KivilcimDemeti {
   /** `dt` efekt saati (hitstopta yavaşlatılmış). */
   guncelle(dt: number): void {
     this.saat += dt;
+    this.yuk *= Math.exp(-dt / KIVILCIM_OLCEK.yukTauSn);
     const g = this.g.clear();
     // 3) temas ışıması (altta): titreyen sıcak elips + beyaz göbek
     const is = this.isima;
