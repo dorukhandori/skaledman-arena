@@ -11,6 +11,7 @@ import type { AltinKalemi, AltinSifirNedeni } from "../paylasilan/kurallar/ekono
  * Her mesaj ve katılma seçeneği bu sürümü taşır; uyuşmazsa sunucu reddeder, istemci "yenile" bandı gösterir.
  * v3: maç durumu şeması. v4 (D5): katılmada oda bileti (ad yok), kayıtlı takım kodu, maç sonu ödül bilgisi.
  * v5 (D7): maç sonu ödülüne Altın (kalemler, çarpanlar, bakiye) + başarım ilerlemesi; hızlı maçta `botIste`.
+ * v6 (D8): Takım Enerjisi + Takım Ultisi (dünya şeması), seyirci odası `izle` (`IzleKatilmaSema`), oda şemasında `izleKod`.
  */
 export const PROTOKOL_SURUMU = 6;
 
@@ -109,6 +110,13 @@ export const MESAJ = {
   /** D7 istemci → sunucu: hızlı maç kuyruğunda 30 sn doldu, bot ile oyna (nile B-19; sunucu süreyi kendisi denetler) */
   botIste: "botIste",
 } as const;
+
+// ---- D8 seyirci (ux § 5, `#izle=ABCDEFGH`) ----
+export const IZLE_ODA_ADI = "izle";
+/** Oda (yayın) başı seyirci sınırı. */
+export const SEYIRCI_SINIRI = 50;
+/** Seyirci katılması: yalnız sürüm + yayın kodu (giriş yok, bilet yok; misafir serbest). */
+export const IzleKatilmaSema = z.object({ v: z.literal(PROTOKOL_SURUMU), kod: z.string().regex(/^[A-HJ-NP-Z]{8}$/) });
 
 export const MOD = ["oda", "hizli", "antrenman"] as const;
 export type OdaModu = (typeof MOD)[number];

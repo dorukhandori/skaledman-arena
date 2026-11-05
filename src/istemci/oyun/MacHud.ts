@@ -157,15 +157,15 @@ function el<K extends keyof HTMLElementTagNameMap>(etiket: K, sinif = "", ust?: 
 }
 
 /** Çatlak simgesi: 4 hâl, eşikler tik/burstEsik 0,5 / 0,75 / 0,9 (05 § 3.3, ux H1c). */
-function catlakSvg(oran: number): string {
+export function catlakSvg(oran: number): string {
   const s = oran >= 0.9 ? 3 : oran >= 0.75 ? 2 : oran >= 0.5 ? 1 : 0;
   const cizgi = ["", "M12 3 L10 10 L13 13", "M12 3 L10 10 L13 13 M4 15 L10 14 L11 21", "M12 3 L10 10 L13 13 M4 15 L10 14 L11 21 M20 6 L15 12 L21 17 L16 22"][s];
   const renk = s >= 3 ? "#e3350d" : s >= 1 ? "#f2a33a" : "#8d989e";
   return `<svg viewBox="0 0 24 24" width="24" height="24" style="opacity:${s === 0 ? 0.45 : 1}" aria-label="Çatlak ${s}/3"><circle cx="12" cy="12" r="10" fill="#3a4246" stroke="${renk}" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="#8d989e"/><path d="${cizgi}" stroke="#fff" stroke-width="1.7" fill="none"/></svg>`;
 }
 
-const BITIS_AD = { durma: "DURMA", ringOut: "RING OUT", parcalanma: "PARÇALANMA", berabere: "BERABERE" } as const;
-const sinifOran = (o: number) => (o < AYAR.kritikEsik ? "kirmizi" : o <= 0.6 ? "amber" : "");
+export const BITIS_AD = { durma: "DURMA", ringOut: "RING OUT", parcalanma: "PARÇALANMA", berabere: "BERABERE" } as const;
+export const sinifOran = (o: number) => (o < AYAR.kritikEsik ? "kirmizi" : o <= 0.6 ? "amber" : "");
 
 interface Panel { kok: HTMLElement; ik: HTMLElement; ad: HTMLElement; lv: HTMLElement; ekip: HTMLElement; dolgu: HTMLElement; sayi: HTMLElement; unlem: HTMLElement; enerji: HTMLElement[]; takimDilim: HTMLElement; enerjiYazi: HTMLElement; ct: HTMLElement }
 

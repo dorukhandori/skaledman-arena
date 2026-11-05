@@ -26,6 +26,7 @@ import { sunucuTakimlari } from "../oyuncu/takim.ts";
 import { GirdiSema, OdaSema, type OdaS, OyuncuSema, type OyuncuS } from "./sema.ts";
 import { dunyayiYaz } from "./semaYaz.ts";
 import { olcumKaydet } from "../olcum.ts";
+import { type IzleGorunumu, type Yayin, yayinBagla, yayinCoz } from "../izleKayit.ts";
 
 // Yetkili 1v1 maç odası (D4, docs/tech/netcode.md). Colyseus 0.18: `defineInput` ile 60 Hz girdi, `setFixedTimestep`
 // ile 60 Hz sim adımı, elle 20 Hz yama (adım hizalı: her 3 adımda bir `broadcastPatch`), olaylar her adım sonunda
@@ -103,6 +104,27 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
   private ozet = new MacOzetSayaci();
   private botMaci = false;
   private beklemeBas = 0;
+  /** D8 seyirci yayını (oda modu, ev sahibi kayıtlı oyuncu) ve oda adımı süreleri (yayın dahil, ms) */
+  private yayin: Yayin | null = null;
+  readonly odaAdimSureleri: number[] = [];
+  private izleKaynagi = (): IzleGorunumu => {
+    const s = this.state;
+    const oyuncular: IzleGorunumu["oyuncular"] = [];
+    for (let i = 0; i < s.oyuncular.length; i++) { const p = s.oyuncular.at(i)!; oyuncular.push({ ad: p.ad, takimId: p.takimId, bagli: p.bagli, bot: p.bot }); }
+    return { faz: s.faz, kod: s.kod, macNo: s.macNo, kopan: s.kopan, donma: s.donma, donmaKalan: s.donmaKalan, oyuncular, dunya: s.dunyaVar && this.yon ? this.yon.dunya : null };
+  };
+
+  /** Yama: oyunculara ve (varsa) seyirci odasına, aynı adımda. */
+  private yamaYay(): void {
+    this.broadcastPatch();
+    const y = this.yayin;
+    if (y?.hedef) y.hedef.yansit(this.izleKaynagi(), y.son);
+  }
+
+  private olaylariYolla(paket: OlayPaketi): void {
+    this.broadcast(MESAJ.olaylar, paket);
+    this.yayin?.hedef?.olaylar(paket);
+  }
 
   onCreate(options: unknown): void {
     const o = KatilmaSema.safeParse(options);
@@ -169,6 +191,11 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
     p.bagli = true;
     p.bot = false;
     console.log(`[mac ${this.roomId}] katıldı ${i}: ${auth.ad} (${this.mod})`);
+    // D8: oda modunda ev sahibinin seyirci yayını (önceki odasının bağlantısı bu odaya taşınır)
+    if (this.mod === "oda" && i === 0 && auth.oyuncuId !== null && !this.yayin) {
+      this.yayin = yayinBagla(s.kod, auth.oyuncuId, this.izleKaynagi);
+      s.izleKod = this.yayin.kod;
+    }
     if (this.mod === "antrenman") {
       while (s.oyuncular.length < 2) s.oyuncular.push(new OyuncuSema());
       const b = this.oyuncu(1);
@@ -246,8 +273,9 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
 
   onDispose(): void {
     if (this.state.kod) kodKapat(this.state.kod);
+    if (this.yayin) yayinCoz(this.yayin, this.izleKaynagi);
     this.saniye?.clear();
-    if (this.yon) olcumKaydet(this.roomId, this.yon);
+    if (this.yon) olcumKaydet(this.roomId, this.yon, this.odaAdimSureleri, 0);
     console.log(`[mac ${this.roomId}] kapandı (${this.kapanisNedeni ?? "boş"})`);
   }
 
@@ -263,7 +291,7 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
     s.beklemeKalan = 0;
     for (const p of s.oyuncular) { p.hazir = p.bot; p.rovans = false; }
     this.bosSayaciKur();
-    this.broadcastPatch();
+    this.yamaYay();
   }
 
   private takimlariTazele(): void {
@@ -312,10 +340,19 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
     this.bosZamanlayici?.clear();
     this.bosZamanlayici = null;
     console.log(`[mac ${this.roomId}] maç ${s.macNo} başladı: ${takimlar.join(" vs ")} tohum ${this.yon.kayit.tohum}`);
-    this.broadcastPatch();
+    this.yamaYay();
   }
 
   private adim(): void {
+    const t0 = performance.now();
+    this.adimIc();
+    if (this.state.faz === ODA_FAZI.mac) {
+      this.odaAdimSureleri.push(performance.now() - t0);
+      if (this.odaAdimSureleri.length > 20000) this.odaAdimSureleri.splice(0, 10000);
+    }
+  }
+
+  private adimIc(): void {
     this.adimNo++;
     if (process.env.DEVRAN_IZ && this.adimNo % 60 === 0) console.log(`[iz] adim ${this.adimNo} ${Date.now() % 100000}`);
     const s = this.state;
@@ -354,13 +391,13 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
           paket.h = dunyaHash(y.dunya);
           paket.hw = dunyaHash(gorunumdenDunya(s.dunya as unknown as DunyaGorunumu, y.profiller, f32));
         }
-        this.broadcast(MESAJ.olaylar, paket);
+        this.olaylariYolla(paket);
       }
       if (y.bitti) this.macBitti();
     }
     if (hashAdimi || this.adimNo % YAMA_ADIMI === 0) {
       if (y && s.dunyaVar) dunyayiYaz(s.dunya, y.dunya);
-      this.broadcastPatch();
+      this.yamaYay();
     }
   }
 
@@ -371,8 +408,9 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
     s.donma = 0;
     for (const p of s.oyuncular) p.rovans = p.bot;
     const ms = this.yon!.dunya.mac.macSonucu;
+    if (this.yayin && ms) this.yayin.son = { puan: [ms.puan[0], ms.puan[1]], adlar: [this.oyuncu(0).ad, this.oyuncu(1).ad], kazanan: ms.kazanan };
     console.log(`[mac ${this.roomId}] maç bitti: ${ms?.neden} ${ms?.puan.join("-")} (tick ${this.yon!.dunya.tick}, hash ${this.yon!.kayit.sonHash})`);
-    olcumKaydet(this.roomId, this.yon!);
+    olcumKaydet(this.roomId, this.yon!, this.odaAdimSureleri, this.yayin?.hedef ? (this.yayin.hedef as unknown as { clients: unknown[] }).clients.length : 0);
     this.macSonuIsle();
     this.bosSayaciKur();
   }
@@ -437,7 +475,7 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
     this.kapaniyor = true;
     this.kapanisNedeni = neden;
     this.state.faz = ODA_FAZI.kapandi;
-    this.broadcastPatch();
+    this.yamaYay();
     this.broadcast(MESAJ.bilgi, { v: PROTOKOL_SURUMU, tur: "kapandi", neden } satisfies BilgiMesaji);
     if (this.state.kod) kodKapat(this.state.kod);
     this.clock.setTimeout(() => void this.disconnect(), 300);
@@ -523,8 +561,8 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
       paket.h = dunyaHash(this.yon.dunya);
       paket.hw = dunyaHash(gorunumdenDunya(this.state.dunya as unknown as DunyaGorunumu, this.yon.profiller, f32));
     }
-    this.broadcast(MESAJ.olaylar, paket);
-    this.broadcastPatch();
+    this.olaylariYolla(paket);
+    this.yamaYay();
   }
 
   private bilgi(c: Client, m: BilgiMesaji): void {

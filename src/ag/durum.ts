@@ -225,7 +225,7 @@ export interface OyuncuGorunumu {
   ack: number; ackTick: number; dondurmaHakki: number;
 }
 export interface OdaGorunumu {
-  faz: number; kod: string; mod: string; macNo: number; secimKalan: number; beklemeKalan: number;
+  faz: number; kod: string; izleKod: string; mod: string; macNo: number; secimKalan: number; beklemeKalan: number;
   donma: number; donmaKalan: number; kopan: number; dunyaVar: boolean;
   oyuncular: Dizi<OyuncuGorunumu>;
   dunya: DunyaGorunumu;

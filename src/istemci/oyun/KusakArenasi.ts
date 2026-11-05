@@ -43,9 +43,10 @@ export class KusakArenasi {
   private aci = 0;
   private parilti = 0;
   private sonR = -1;
+  private arka = new Graphics();
 
   constructor(private cx: number, private cy: number, genislik: number, yukseklik: number) {
-    const arka = new Graphics();
+    const arka = this.arka;
     arka.rect(0, 0, genislik, yukseklik).fill(ARENA_RENK.arkaPlan);
     // tribün bandı (üst, pixel planı § 6.1 yer tutucu): kalabalık noktaları
     arka.rect(0, 0, genislik, 22).fill(ARENA_RENK.tribun);
@@ -88,6 +89,9 @@ export class KusakArenasi {
     this.dudak.addChild(this.dudakG);
     this.dudakCiz(R0, 0);
   }
+
+  /** D8 seyirci `&seffaf=1`: arka plan + tribün kapanır (OBS kendi sahnesini gösterir); çanak kalır. */
+  arkaPlanGoster(goster: boolean): void { this.arka.visible = goster; }
 
   private dudakCiz(R: number, aniOlum: number): void {
     const g = this.dudakG.clear();

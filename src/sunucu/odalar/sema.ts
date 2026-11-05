@@ -35,7 +35,7 @@ export type MacS = Sayisal;
 export type DunyaS = Sayisal & { mac: MacS; topaclar: ArraySchema<TopacS>; takimlar: ArraySchema<TakimS>; alanlar: ArraySchema<AlanS>; engeller: ArraySchema<EngelS> };
 export interface OyuncuS { oturum: string; ad: string; takimId: string; takimNo: string; bagli: boolean; hazir: boolean; rovans: boolean; bot: boolean; ack: number; ackTick: number; dondurmaHakki: number }
 export interface OdaS {
-  faz: number; kod: string; mod: string; macNo: number; secimKalan: number; beklemeKalan: number;
+  faz: number; kod: string; izleKod: string; mod: string; macNo: number; secimKalan: number; beklemeKalan: number;
   donma: number; donmaKalan: number; kopan: number; dunyaVar: boolean;
   oyuncular: ArraySchema<OyuncuS>; dunya: DunyaS;
 }
@@ -75,6 +75,8 @@ export const OyuncuSema = schema({
 export const OdaSema = schema({
   faz: t.uint8().default(0),
   kod: t.string().default(""),
+  /** D8: bu odanın seyirci (yayın) kodu (`#izle=`); yalnız oda modunda, ev sahibi kayıtlı oyuncuyken */
+  izleKod: t.string().default(""),
   mod: t.string().default("oda"),
   macNo: t.uint8().default(0),
   secimKalan: t.uint8().default(0),
@@ -102,3 +104,38 @@ export const GirdiSema = schema({
   degistir: t.int8().default(-1),
 } as any, "Girdi") as unknown as Sinif<{ seq: number; yonX: number; yonZ: number; nisanX: number; nisanZ: number; yuva: number; tuslar: number; degistir: number }>;
 
+
+// ---- D8 seyirci odası (ux § 5): oyuncu oturum kimliği, ack, bilet yok; yalnız görünüm ----
+export interface IzleOyuncuS { ad: string; takimId: string; bagli: boolean; bot: boolean }
+export interface IzleS {
+  faz: number; kod: string; macNo: number; dunyaVar: boolean; seyirci: number; kopan: number; donma: number; donmaKalan: number;
+  sonVar: boolean; sonPuan0: number; sonPuan1: number; sonAd0: string; sonAd1: string; sonKazanan: number;
+  oyuncular: ArraySchema<IzleOyuncuS>; dunya: DunyaS;
+}
+export const IzleOyuncuSema = schema({
+  ad: t.string().default(""),
+  takimId: t.string().default(""),
+  bagli: t.boolean().default(false),
+  bot: t.boolean().default(false),
+} as any, "IzleOyuncu") as unknown as Sinif<IzleOyuncuS>;
+export const IzleSema = schema({
+  /** ODA_FAZI; yayına bağlı oda yoksa bekliyor (0) ve `kod` boş */
+  faz: t.uint8().default(0),
+  /** bekleme fazında katılma kodu; maç başlayınca boş (ux § 5: sohbette sızmasın) */
+  kod: t.string().default(""),
+  macNo: t.uint8().default(0),
+  dunyaVar: t.boolean().default(false),
+  seyirci: t.uint8().default(0),
+  kopan: t.int8().default(-1),
+  donma: t.uint8().default(0),
+  donmaKalan: t.uint8().default(0),
+  /** son biten maçın skoru ("Sıradaki maç bekleniyor" ekranı) */
+  sonVar: t.boolean().default(false),
+  sonPuan0: t.uint8().default(0),
+  sonPuan1: t.uint8().default(0),
+  sonAd0: t.string().default(""),
+  sonAd1: t.string().default(""),
+  sonKazanan: t.int8().default(-1),
+  oyuncular: t.array(IzleOyuncuSema as any),
+  dunya: t.ref(DunyaSema as any),
+} as any, "Izle") as unknown as Sinif<IzleS>;

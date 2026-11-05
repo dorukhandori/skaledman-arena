@@ -10,7 +10,7 @@ import { bakimKatmani, darEkranDenetle, metinOlcegiUygula, surumDenetle, ustGezi
 
 export type EkranAdi =
   | "karsilama" | "kayit" | "giris" | "profil" | "ilk-cekirdek" | "antrenman" | "atolye" | "market" | "basarimlar" | "ayarlar"
-  | "lobi" | "mac" | "topac-lab" | "dene" | "gunluk";
+  | "lobi" | "mac" | "topac-lab" | "dene" | "gunluk" | "seyirci";
 
 export interface EkranBaglami {
   app: Application;
@@ -37,16 +37,20 @@ const EKRANLAR: Record<EkranAdi, () => Promise<Modul>> = {
   "topac-lab": () => import("./ekranlar/TopacLab.ts"),
   dene: () => import("./ekranlar/Dene.ts"),
   gunluk: () => import("./ekranlar/Gunluk.ts"),
+  seyirci: () => import("./ekranlar/Seyirci.ts"),
 };
 
 /** Giriş isteyen ekranlar (misafir yalnız Karşılama / Kayıt / Giriş / Antrenman / Ayarlar). */
 const GIRIS_GEREKIR = new Set<EkranAdi>(["profil", "ilk-cekirdek", "atolye", "market", "basarimlar", "lobi", "dene", "gunluk"]);
 /** Pixi gerekmeyen menü ekranları */
 const CANVASSIZ = new Set<EkranAdi>(["karsilama", "kayit", "giris", "profil", "atolye", "market", "basarimlar", "ayarlar", "gunluk"]);
+/** D8: hesap ve gezinti istemeyen ekranlar (seyirci/OBS: giriş yok, kontrol yok) */
+const HESAPSIZ = new Set<EkranAdi>(["mac", "topac-lab", "seyirci"]);
 
 function ekranAdi(): EkranAdi {
   const istenen = new URLSearchParams(location.search).get("ekran");
   if (istenen && istenen in EKRANLAR) return istenen as EkranAdi;
+  if (location.hash.startsWith("#izle=")) return "seyirci";
   return location.hash.startsWith("#oda=") ? "lobi" : "karsilama";
 }
 
@@ -56,7 +60,7 @@ async function ana() {
   const ustYazi = document.getElementById("ustYazi")!;
   let ad = ekranAdi();
   let ben: Ben | null = null;
-  if (ad !== "mac" && ad !== "topac-lab") {
+  if (!HESAPSIZ.has(ad)) {
     try {
       ben = await benGetir();
     } catch (e) {
@@ -70,12 +74,13 @@ async function ana() {
       ad = "karsilama";
     }
   }
-  ustGezinti(ad, ben);
-  darEkranDenetle();
+  if (ad !== "seyirci") { ustGezinti(ad, ben); darEkranDenetle(); }
   let app: Application | null = null;
   if (!CANVASSIZ.has(ad)) {
     app = new Application();
-    await app.init({ resizeTo: kok, background: 0x0b1418, antialias: false, roundPixels: true, preference: "webgl" });
+    // D8 seyirci `&seffaf=1`: tuval saydam (OBS tarayıcı kaynağı)
+    const seffaf = ad === "seyirci" && /[#&?]seffaf=1/.test(location.href);
+    await app.init({ resizeTo: kok, background: 0x0b1418, backgroundAlpha: seffaf ? 0 : 1, antialias: false, roundPixels: true, preference: "webgl" });
     kok.insertBefore(app.canvas, ustYazi);
   }
   const modul = await EKRANLAR[ad]();

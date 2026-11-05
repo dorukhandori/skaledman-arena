@@ -293,6 +293,14 @@ class LobiEkrani {
     const baglantiMetni = `${location.origin}${location.pathname}?ekran=lobi#oda=${s.kod}`;
     bk.title = baglantiMetni;
     bk.addEventListener("click", () => kopyala(baglantiMetni, bk, "Bağlantıyı kopyala"));
+    // D8 (ux § 5): yayıncı için OBS seyirci bağlantısı; yayın kodu maçtan maça aynı kalır
+    if (s.izleKod) {
+      const sk = el("button", "", el("div", "satir", k), "Seyirci bağlantısını kopyala");
+      const seyirciMetni = `${location.origin}${location.pathname}#izle=${s.izleKod}`;
+      sk.title = `${seyirciMetni} (OBS'te şeffaf: &seffaf=1)`;
+      sk.dataset["seyirci"] = seyirciMetni;
+      sk.addEventListener("click", () => kopyala(seyirciMetni, sk, "Seyirci bağlantısını kopyala"));
+    }
     el("div", "qr", k, "QR · yer tutucu");
     const bekle = el("div", "bekle", k, "");
     bekle.dataset["sayac"] = "1";

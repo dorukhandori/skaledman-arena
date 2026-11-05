@@ -36,6 +36,8 @@ export class Sahne {
   /** sağda DOM panel için ayrılan CSS piksel */
   sagBosluk = 0;
   olcek = 1;
+  /** D8 seyirci/OBS (ux § 5): sabit 960×540, tam sayı ölçek (≥ 1 iken) — yayın ölçeklemesinde bulanıklık yok. */
+  tamSayiOlcek = false;
   private trauma = 0;
   private yonluKare = 0;
   private yon = { x: 0, y: 0 };
@@ -99,6 +101,7 @@ export class Sahne {
     if (zorla || w !== this.son.w || h !== this.son.h || this.sagBosluk !== this.son.b) {
       this.son = { w, h, b: this.sagBosluk };
       this.olcek = Math.min(w / SAHNE.genislik, h / SAHNE.yukseklik);
+      if (this.tamSayiOlcek && this.olcek >= 1) this.olcek = Math.floor(this.olcek);
       this.kok.scale.set(this.olcek);
       this.kok.position.set(Math.round((w - SAHNE.genislik * this.olcek) / 2), Math.round((h - SAHNE.yukseklik * this.olcek) / 2));
     }
