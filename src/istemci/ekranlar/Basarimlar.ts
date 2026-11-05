@@ -4,6 +4,8 @@ import { KATEGORI_AD } from "../../paylasilan/kurallar/basarim.ts";
 import { ZORLUK_AD } from "../../paylasilan/kurallar/ekonomi.ts";
 import { el, lentoKur, stilEkle } from "./arayuz.ts";
 import { refStilEkle } from "./referansStil.ts";
+import { parca3bIkonEl } from "./pikselTopac.ts";
+import { ikonGozle } from "../atolye3d/ikonOnbellek.ts";
 
 const COIN_SVG = (_b = 0): string => `<span class="k-sikke" aria-hidden="true"></span>`;
 const KILIT_SVG = (_b = 0): string => `<span class="k-kilit" aria-hidden="true"></span>`;
@@ -80,6 +82,7 @@ class BasarimEkrani {
     this.stil.textContent = STIL;
     document.head.appendChild(this.stil);
     ust.appendChild(this.kok);
+    ikonGozle(this.kok);
     this.kok.setAttribute("role", "main");
     this.kok.setAttribute("aria-label", "Başarımlar");
     const q = new URLSearchParams(location.search).get("k");
@@ -169,6 +172,7 @@ class BasarimEkrani {
       od.innerHTML = `${COIN_SVG(14)} ${x.odulAltin} Altın`;
       for (const p of x.acilanParcalar) {
         const s = el("span", "", od, ` · ${x.tamam ? "Market'te açıldı" : "Açar"}: `);
+        s.appendChild(parca3bIkonEl(p.id, null, 16)); // TEMIZLIK #4: ödül parçası 3B ikon
         el("b", "", s, p.ad);
         if (x.tamam) {
           const a = el("a", "", od, "Markete git");

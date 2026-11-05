@@ -17,6 +17,7 @@ import type { TopacKurulumu } from "../atolye3d/tipler.ts";
 import { acilirMenu, anaEylem, bakimKatmani, ekranKok, el, gelistirAcik } from "./arayuz.ts";
 import { parcaPikselIkonu, pikselTopac } from "./pikselTopac.ts";
 import { pergelKur } from "../bilgic/Pergel.ts";
+import { ikonCizeriBagla } from "../atolye3d/ikonOnbellek.ts";
 import { sonMacDurumu } from "../bilgic/secim.ts";
 
 // Atölye (D6, US-2.1; ux § 3.2 ana ekran) · ATOLYE3D: referans 03'ün birebir düzeni (docs/design/beyblade/gorunum/03-atolye.jpg).
@@ -439,7 +440,7 @@ class AtolyeEkrani {
     this.baslikEl.dataset["seciliBaslik"] = "1";
     this.sahne = new AtolyeSahnesi(this.orta, {
       odak: (t) => this.odakDegisti(t),
-      hazir: () => this.cizerHazir(),
+      hazir: (c) => { ikonCizeriBagla(c); this.cizerHazir(); },
       sil: (t) => { if (this.taslak[this.secili]![t] !== null) this.cikar(t); },
     });
     this.ayrintiEl = el("div", "ayrinti at-pano", this.orta);

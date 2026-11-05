@@ -1,3 +1,5 @@
+import { IKON3B_PX, parcaBoyasi, parcaIkonIsaretle, parcaIkonOzniteligi, topacIkonIsaretle } from "../atolye3d/ikonOnbellek.ts";
+import { parcaBul } from "../../paylasilan/veri/katalog.ts";
 import type { ElementAdi } from "../../paylasilan/kurallar/ayar.ts";
 import { ELEMENT_RENK, KOKEN_RENK, renkCss } from "../oyun/renkler.ts";
 
@@ -170,9 +172,44 @@ export function parcaPikselIkonu(tur: string, element: string | null | undefined
 }
 
 /** innerHTML şablonları için: pixel parça ikonu `<img>` (data URL; ölçek mantıksal px katı). */
-export function parcaIkonHtml(tur: string, element: string | null | undefined, koken: string | null | undefined, katman: string | undefined, olcek = 1, gizli = false): string {
+export function parcaIkonHtml(tur: string, element: string | null | undefined, koken: string | null | undefined, katman: string | undefined, olcek = 1, gizli = false, ek = ""): string {
   const c = parcaPikselIkonu(tur, element, koken, katman, gizli);
-  return `<img class="k-parca" alt="" aria-hidden="true" src="${c.toDataURL()}" style="width:calc(${24 * olcek} * var(--p));height:calc(${18 * olcek} * var(--p));image-rendering:pixelated">`;
+  return `<img class="k-parca" alt="" aria-hidden="true" src="${c.toDataURL()}" style="width:calc(${24 * olcek} * var(--p));height:calc(${18 * olcek} * var(--p));image-rendering:pixelated"${ek}>`;
+}
+
+/**
+ * TEMIZLIK #4: parça ikonu, önce yordamsal; ortak 3B ikon önbelleği hazır olunca aynı yerde 3B tek kare (24 px çizim,
+ * `olcek` katı gösterim). Gizli parça siluet kalır. Kökte `ikonGozle` ya da `ikonlariYukselt` çağrılmalı.
+ */
+export function parca3bIkonHtml(parcaId: string, tur: string, element: string | null | undefined, koken: string | null | undefined, katman: string | undefined, olcek = 1, gizli = false): string {
+  const ek = gizli ? "" : parcaIkonOzniteligi(parcaId, parcaBoyasi(parcaId, element), IKON3B_PX, IKON3B_PX * olcek);
+  return parcaIkonHtml(tur, element, koken, katman, olcek, gizli, ek);
+}
+
+/** TEMIZLIK #4: satır içi küçük parça ikonu (Başarım ödülü, maç sonu kartı): yordamsal, 3B hazır olunca `px` kare. */
+export function parca3bIkonEl(parcaId: string, govdeElement?: string | null, px = 16): HTMLCanvasElement {
+  let p: ReturnType<typeof parcaBul> | null = null;
+  try { p = parcaBul(parcaId); } catch { p = null; }
+  const pk = p as (ReturnType<typeof parcaBul> & { element?: string | null; koken?: string | null; katman?: string }) | null;
+  const c = parcaPikselIkonu(p?.tur ?? "cekirdek", govdeElement ?? pk?.element ?? null, pk?.koken ?? null, pk?.katman);
+  c.classList.add("k-parca-sira");
+  c.style.verticalAlign = "middle";
+  c.style.margin = "0 calc(2 * var(--p))";
+  c.style.width = `calc(${px} * var(--p))`;
+  c.style.height = `calc(${Math.round(px * 0.75)} * var(--p))`;
+  if (p) parcaIkonIsaretle(c, parcaId, parcaBoyasi(parcaId, govdeElement), px, px);
+  return c;
+}
+
+/** TEMIZLIK #4: takım kartı topacı: yordamsal (pikselTopac), 3B birleşik topaç ikonu hazır olunca aynı genişlikte kare.
+ *  Ödünç topaç yordamsal kalır (ödünç işareti yalnız orada). */
+export function topac3bIkonu(p: { parcalar: { cekirdek: string; govde: string; disk: string; uc: string }; element: string; koken: string; donus: string }, r: number, odunc = false): HTMLCanvasElement {
+  const c = pikselTopac(p.element, { r, odunc, golge: false, koken: p.koken });
+  if (!odunc) {
+    const W = r * 2 + 4;
+    topacIkonIsaretle(c, { ...p.parcalar, element: p.element as never, koken: p.koken as never, sol: p.donus === "sol" }, W, W);
+  }
+  return c;
 }
 
 /** Giriş/Profil sol panel (referans 01): ışıyan Çekirdek illüstrasyonu (eş merkezli bronz halkalar + Kuşak halkası + çekirdek ışığı). */

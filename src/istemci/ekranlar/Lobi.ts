@@ -8,7 +8,9 @@ import { Baglanti, BaglantiHatasiE, HATA_METNI } from "../ag/Baglanti.ts";
 import { type MacEkrani, cevrimiciBaslat } from "./Mac.ts";
 import { dereceliAcik, kuyrukAsamasi, sureBicimle } from "../../paylasilan/kurallar/kuyruk.ts";
 import { lentoKur, stilEkle } from "./arayuz.ts";
-import { pikselTopac } from "./pikselTopac.ts";
+import { pikselTopac, topac3bIkonu } from "./pikselTopac.ts";
+import { ikonGozle } from "../atolye3d/ikonOnbellek.ts";
+import type { TopacProfili } from "../../paylasilan/veri/profil.ts";
 import { aramaCanagi, oynaYayi, sureHalkasi, vsZemini } from "./lobiCizim.ts";
 
 // Lobi (D4, ux § 3.3) · GU-08 + GU-14 menü dili v2 "Kuşak Taşı" (maketler docs/art/maketler/menu-v2/b-oyna, b-lobi,
@@ -157,9 +159,9 @@ function elRozet(ust: HTMLElement, element: string, sinif = ""): HTMLElement {
 
 const TAKIM_ANAHTAR = SON_TAKIM;
 /** takım üyeleri: element + ödünç + seviye (sunucu takım kodundan) */
-function uyeler(t: TakimGorunumu): { element: string; odunc: boolean; seviye: number }[] {
+function uyeler(t: TakimGorunumu): { element: string; odunc: boolean; seviye: number; profil: TopacProfili }[] {
   const p = takimProfilleriKimlikten(takimKoduYaz(t.uyeler));
-  return p.map((x, j) => ({ element: x.element, odunc: !!t.uyeler[j]?.odunc, seviye: t.uyeler[j]?.seviye ?? 1 }));
+  return p.map((x, j) => ({ element: x.element, odunc: !!t.uyeler[j]?.odunc, seviye: t.uyeler[j]?.seviye ?? 1, profil: x }));
 }
 
 export function baslat(b: EkranBaglami): void {
@@ -192,6 +194,7 @@ class LobiEkrani {
     this.stil.textContent = STIL;
     document.head.appendChild(this.stil);
     b.ustYazi.appendChild(this.kok);
+    ikonGozle(this.kok); // TEMIZLIK #4: takım kartı topaçları 3B
     this.kok.setAttribute("role", "main");
     this.kok.setAttribute("aria-label", "Oyna");
     const takimlar = this.ben.takimlar;
@@ -307,7 +310,7 @@ class LobiEkrani {
     const ekip = el("div", "lb-ekip", s);
     for (const u of uyeler(t)) {
       const k = el("div", "lb-uye", ekip);
-      k.appendChild(pikselTopac(u.element, { r: 22, odunc: u.odunc, golge: false }));
+      k.appendChild(topac3bIkonu(u.profil, 22, u.odunc)); // TEMIZLIK #4: 3B birleşik topaç (ortak önbellek)
       el("div", "k-kaide", k);
       const lv = el("div", `lv k-e16${u.odunc ? " odunc" : ""}`, k);
       elRozet(lv, u.element, u.odunc ? "odunc" : "");
@@ -663,7 +666,7 @@ class LobiEkrani {
       el("span", "no", d, String(i + 1));
       const m = el("span", "minis", d);
       const u = uyeler(t);
-      for (const x of u) m.appendChild(pikselTopac(x.element, { r: 7, odunc: x.odunc, golge: false }));
+      for (const x of u) m.appendChild(topac3bIkonu(x.profil, 7, x.odunc));
       el("b", "", d, t.ad);
       const odunc = u.filter((x) => x.odunc).length;
       el("small", odunc ? "" : "lv", d, odunc ? `${odunc} ödünç` : `Lv.${Math.max(...u.map((x) => x.seviye))}`);

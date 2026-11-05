@@ -169,6 +169,7 @@ export class Goruntuleyici implements Cizer {
   private olcum: number[] = [];
   private kirli = true;
   private kayip = false;
+  private dongusuz = false;
   private ikonOnbellek = new Map<string, HTMLCanvasElement>();
   private ray = new Raycaster();
   private kareSonrasi: (() => void) | null;
@@ -346,8 +347,11 @@ export class Goruntuleyici implements Cizer {
     return [(taban + a.yAlt * olcek) * c - a.yaricap * olcek * s, (taban + a.yUst * olcek) * c + a.yaricap * olcek * s];
   }
 
+  /** Ortak ikon önbelleği (ikonOnbellek.ts): ekrana bağlı olmayan çizer kare döngüsü çalıştırmaz. */
+  donguyuDurdur(): void { this.dongusuz = true; cancelAnimationFrame(this.raf); }
+
   private kare(ms: number): void {
-    if (this.kayip) return;
+    if (this.kayip || this.dongusuz) return;
     this.raf = requestAnimationFrame((t) => this.kare(t));
     const b0 = performance.now();
     const t = this.zaman();
@@ -616,6 +620,13 @@ function kopya(c: HTMLCanvasElement): HTMLCanvasElement {
   y.width = c.width; y.height = c.height;
   y.getContext("2d")?.drawImage(c, 0, 0);
   return y;
+}
+
+/** Ortak ikon çizeri (TEMIZLIK #4): ayrık tuval, kare döngüsü yok; yalnız `ikon` / `topacIkonu`. WebGL yoksa atar. */
+export function ikonCizeriKur(): Goruntuleyici {
+  const g = new Goruntuleyici(document.createElement("canvas"));
+  g.donguyuDurdur();
+  return g;
 }
 
 /** ARALIK dışa açık (rapor/test): patlatılmış katman aralığı (dünya birimi). */

@@ -27,6 +27,8 @@ import { ENERJI_TAVAN } from "../../paylasilan/sim/enerji.ts";
 import { YETENEK_SIM } from "../../paylasilan/veri/yetenekSablon.ts";
 import type { AgMaci } from "../ag/AgMaci.ts";
 import { AgKatmani } from "../ag/AgKatmani.ts";
+import { parca3bIkonEl } from "./pikselTopac.ts";
+import { ikonlariYukselt } from "../atolye3d/ikonOnbellek.ts";
 
 // Bota karşı tam maç (D2, çevrimdışı): geri sayım → tur → tur arası (H14 seçimi) → … → bitti → sonuç ekranı.
 // Sim paylaşılan kod (mac.ts, adim.ts), bot paylaşılan kod (bot.ts); bu dosya yalnız sunum ve girdi.
@@ -1003,7 +1005,10 @@ export class MacEkrani {
         const p = x.acilanParcalar[0];
         const acl = el("div", "acl", kart);
         if (p) {
-          el("span", "", acl, `Market'te açıldı: ${p.ad}`);
+          const sp = el("span", "", acl, "Market'te açıldı: ");
+          sp.appendChild(parca3bIkonEl(p.id, null, 16)); // TEMIZLIK #4: 3B parça ikonu (ortak önbellek, tembel)
+          sp.append(p.ad);
+          ikonlariYukselt(acl);
           const g = el("button", "pah", acl, "Markete git");
           g.dataset["marketeGit"] = p.id;
           g.addEventListener("click", () => { location.search = `?ekran=market&parca=${p.id}`; });

@@ -8,13 +8,14 @@ import { elementSvg } from "../oyun/elementSimge.ts";
 import { ELEMENT_RENK, KOKEN_RENK } from "../oyun/renkler.ts";
 import { el, lentoKur, stilEkle } from "./arayuz.ts";
 import { refStilEkle } from "./referansStil.ts";
-import { parcaIkonHtml } from "./pikselTopac.ts";
+import { parca3bIkonHtml } from "./pikselTopac.ts";
+import { ikonGozle } from "../atolye3d/ikonOnbellek.ts";
 
 // GU-11 menü dili v2: pixel ikon (SVG yerine), sikke ve kilit sprite (stil/doku)
 const COIN_SVG = (_b = 0): string => `<span class="k-sikke" aria-hidden="true"></span>`;
 const KILIT_SVG = (_b = 0): string => `<span class="k-kilit" aria-hidden="true"></span>`;
-const parcaIkonu = (tur: string, element: string | null | undefined, koken: string | null | undefined, katman: string | undefined, boyut = 44, gizli = false): string =>
-  parcaIkonHtml(tur, element, koken, katman, boyut >= 60 ? 2 : 1, gizli);
+const parcaIkonu = (id: string, tur: string, element: string | null | undefined, koken: string | null | undefined, katman: string | undefined, boyut = 44, gizli = false): string =>
+  parca3bIkonHtml(id, tur, element, koken, katman, boyut >= 60 ? 2 : 1, gizli);
 
 // Market (D7, 03 US-3.1..3.3, ux § 7 / § 6.4, referans görsel 04): üst bant (◄ · MARKET · ALTIN), "GÜNÜN PARÇASI −30%"
 // bandı, 2×2 ahşap tabelalı raf (Çekirdekler · Gövdeler · Diskler · Uçlar; tezgâh alt başlığı), hücre = ikon + rozet
@@ -127,6 +128,7 @@ class MarketEkrani {
       if (this.modalEl) this.modalKapat(); else git("atolye");
     });
     this.ciz();
+    ikonGozle(this.kok); // TEMIZLIK #4: parça ikonları 3B tek kare (ortak önbellek, tembel)
     const q = new URLSearchParams(location.search);
     const p = q.get("parca");
     const y = q.get("yenile");
@@ -182,7 +184,7 @@ class MarketEkrani {
       const g = el("button", "gunun", ic);
       g.dataset["gunun"] = gp.id;
       const u = this.urun(gp.id);
-      g.innerHTML = `<span class="b">Günün parçası <span class="ind">−30%</span></span>${parcaIkonu(gp.tur, gp.element, u?.koken ?? null, u?.katman, 40)}<span><b></b> · ${gp.satisFiyati} Altın <s>${gp.fiyat}</s></span>`;
+      g.innerHTML = `<span class="b">Günün parçası <span class="ind">−30%</span></span>${parcaIkonu(gp.id, gp.tur, gp.element, u?.koken ?? null, u?.katman, 40)}<span><b></b> · ${gp.satisFiyati} Altın <s>${gp.fiyat}</s></span>`;
       g.querySelector("b")!.textContent = gp.ad;
       g.setAttribute("aria-label", `Günün parçası: ${gp.ad}, yüzde 30 indirimli, ${gp.satisFiyati} Altın (normalde ${gp.fiyat}).`);
       g.addEventListener("click", () => { if (u) this.ac(u); });
@@ -205,7 +207,7 @@ class MarketEkrani {
         if (u.gununParcasi) h.dataset["gunun"] = "1";
         h.setAttribute("aria-label", `${u.okunan}${u.gununParcasi ? " Günün parçası, yüzde 30 indirim." : ""}${u.basarimlaAcildi && u.durum === "acik" ? " Market'te açıldı." : ""}`);
         const ik = el("span", "ik", h);
-        ik.innerHTML = u.durum === "kilitli" ? KILIT_SVG(26) : parcaIkonu(u.tur, u.element, u.koken, u.katman, 44, u.durum === "gizli");
+        ik.innerHTML = u.durum === "kilitli" ? KILIT_SVG(26) : parcaIkonu(u.id, u.tur, u.element, u.koken, u.katman, 44, u.durum === "gizli");
         el("span", "ad", h, u.durum === "gizli" ? "???" : u.ad);
         const rz = el("span", "", h);
         if (u.durum === "acik") { rz.className = "rozet altin"; rz.textContent = `${u.satisFiyati} Altın`; }
@@ -248,7 +250,7 @@ class MarketEkrani {
       for (const s of this.v.yenileme) {
         const sat = el("div", "sat", dk);
         sat.dataset["yenileme"] = String(s.cekirdekId);
-        sat.innerHTML = `${parcaIkonu("cekirdek", "kasirga", "yapay", "baslangic", 34)}<b></b><span class="omur"><span class="cubukc"><i style="width:${Math.round((s.omur / s.tavan) * 100)}%"></i></span></span><span>Ömür ${s.omur}/${s.tavan} maç</span>`;
+        sat.innerHTML = `${parcaIkonu("kasirga-yapay", "cekirdek", "kasirga", "yapay", "baslangic", 34)}<b></b><span class="omur"><span class="cubukc"><i style="width:${Math.round((s.omur / s.tavan) * 100)}%"></i></span></span><span>Ömür ${s.omur}/${s.tavan} maç</span>`;
         sat.querySelector("b")!.textContent = s.ad;
         const d = el("button", "dg pah", sat, s.yenilenebilir ? `Yenile · ${s.fiyat} Altın` : "Ömür tam");
         d.disabled = !s.yenilenebilir;
@@ -333,7 +335,7 @@ class MarketEkrani {
     }
     const k = this.modal(u.durum === "acik" ? "Satın al" : u.durum === "sahip" ? "Sende" : "Kilitli");
     const ust = el("div", "ust", k);
-    el("div", "ik pah", ust).innerHTML = u.durum === "kilitli" ? KILIT_SVG(40) : parcaIkonu(u.tur, u.element, u.koken, u.katman, 70);
+    el("div", "ik pah", ust).innerHTML = u.durum === "kilitli" ? KILIT_SVG(40) : parcaIkonu(u.id, u.tur, u.element, u.koken, u.katman, 70);
     const yz = el("div", "", ust);
     el("div", "ad", yz, u.ad);
     const alt = el("div", "alt", yz);
@@ -408,7 +410,7 @@ class MarketEkrani {
     const m = this.modal("Satın alındı");
     m.dataset["satinAlindi"] = u.id;
     const ust = el("div", "ust", m);
-    el("div", "ik pah", ust).innerHTML = parcaIkonu(u.tur, u.element, u.koken, u.katman, 70);
+    el("div", "ik pah", ust).innerHTML = parcaIkonu(u.id, u.tur, u.element, u.koken, u.katman, 70);
     const yz = el("div", "", ust);
     el("div", "ad", yz, u.ad);
     el("div", "tamam", yz, `−${r.veri.fiyat} Altın · bakiye ${r.veri.bakiye}`);
@@ -418,7 +420,7 @@ class MarketEkrani {
   yenileAc(s: YenilemeSatiri): void {
     const k = this.modal("Yapay yenile");
     const ust = el("div", "ust", k);
-    el("div", "ik pah", ust).innerHTML = parcaIkonu("cekirdek", "kasirga", "yapay", "baslangic", 70);
+    el("div", "ik pah", ust).innerHTML = parcaIkonu("kasirga-yapay", "cekirdek", "kasirga", "yapay", "baslangic", 70);
     const yz = el("div", "", ust);
     el("div", "ad", yz, s.ad);
     el("div", "alt", yz, `Ömür ${s.omur}/${s.tavan} maç → ${s.tavan}/${s.tavan}`);
