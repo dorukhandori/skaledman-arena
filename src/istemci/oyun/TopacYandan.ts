@@ -36,7 +36,7 @@ const H = {
 } as const;
 const KT = 0.5;
 /** GU-E çarpışma tepkisi: eğim (rad), sönüm (s), salınım (Hz), zıplama hızı (px/s), yörünge titremesi (px), yerçekimi */
-const DARBE = { egimTaban: 0.04, egimEgim: 0.18, tauTaban: 0.22, tauEgim: 0.38, hzHafif: 5, hzAgir: 3, zipEsik: 0.2, zipTaban: 50, zipEgim: 150, yer: 1500, yorunge: 5, yorungeHz: 7, yaslanEgim: 0.09 } as const;
+const DARBE = { egimTaban: 0.04, egimEgim: 0.18, tauTaban: 0.22, tauEgim: 0.38, hzHafif: 5, hzAgir: 3, zipEsik: 0.2, zipTaban: 50, zipEgim: 150, yer: 1500, yorunge: 5, yorungeHz: 7, yaslanEgim: 0.09, geriTepSn: 0.05 } as const;
 
 interface Parca { g: Graphics; x: number; y: number; vx: number; vy: number; w: number; yuk: number; vyuk: number; sekti: boolean }
 
@@ -245,7 +245,7 @@ export class TopacYandan implements TopacCizimi {
     const g = Math.max(0, Math.min(1.2, siddet));
     // aynı anda iki darbe: büyüğü kalır
     if (this.darbeD.t < this.darbeSure() && this.darbeD.g > g) return;
-    this.darbeD = { g, yon: Math.abs(e.x) < 0.15 ? (e.x >= 0 ? 0.3 : -0.3) : Math.sign(e.x) * Math.min(1, Math.abs(e.x) * 1.3), bekle: Math.max(0, bekleme), t: 0, h: 0, vh: g > DARBE.zipEsik ? DARBE.zipTaban + DARBE.zipEgim * Math.min(1, g) : 0, sekti: false, faz: this.rng.aralik(0, TAM) };
+    this.darbeD = { g, yon: Math.abs(e.x) < 0.15 ? (e.x >= 0 ? 0.3 : -0.3) : Math.sign(e.x) * Math.min(1, Math.abs(e.x) * 1.3), bekle: Math.max(0, bekleme), t: 0, h: 0, vh: g > DARBE.zipEsik ? DARBE.zipTaban + DARBE.zipEgim * Math.min(1, g) : 0, sekti: false, faz: e.x >= 0 ? Math.PI : 0 };
   }
 
   yaslan(nx: number, ny: number, guc: number): void {
@@ -272,8 +272,12 @@ export class TopacYandan implements TopacCizimi {
         const tau = DARBE.tauTaban + DARBE.tauEgim * g1;
         const hz = DARBE.hzHafif + (DARBE.hzAgir - DARBE.hzHafif) * g1;
         const zarf = Math.exp(-D.t / tau);
-        egim = e0 * zarf * Math.cos(TAM * hz * D.t);
-        // sönümlü yörünge titremesi (dönüş yönünde), şiddetle
+        // GU-F: hitstop biter bitmez geri tepme. FIZIK-1'de topaçlar ≥ 90 br/s ile ayrılıyor; yalpa önce ÖTEKİNE doğru
+        // salınırsa (cos fazı) ilk yarım periyotta gövdeler üst üste biniyordu. Faz `geriTepSn`de π/2 kayar: eğim
+        // sürekli (t = 0'da e0), sonra ötekinden uzağa savrulur ve sönümlü salınır.
+        const kay = (Math.PI / 2) * Math.min(1, D.t / DARBE.geriTepSn);
+        egim = e0 * zarf * Math.cos(TAM * hz * D.t + kay);
+        // sönümlü yörünge titremesi (dönüş yönünde), şiddetle; ötekinden uzak yönde başlar (darbe() fazı)
         D.faz += (this.profil.donus === "sol" ? -1 : 1) * TAM * DARBE.yorungeHz * dt;
         const A = DARBE.yorunge * g1 * Math.exp(-D.t / (tau * 0.8));
         dx = Math.cos(D.faz) * A;
