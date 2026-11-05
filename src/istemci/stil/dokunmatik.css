@@ -1,0 +1,106 @@
+/* MOBIL-1 · telefon / dokunmatik kabuk. Yalnız html[data-dokunmatik] (mobil/kabuk.ts kurar) altında etkin: masaüstü aynen.
+   - Görünüm: 100dvh (adres çubuğu), çentik için yan güvenli alan #sahne dışında, ev çubuğu payı menü altında.
+   - Tarayıcı jestleri: kaydırma zinciri / aşağı çekip yenileme (overscroll-behavior), çift dokunma yakınlaştırması
+     (touch-action: manipulation), uzun basma menüsü ve metin seçimi (-webkit-touch-callout, user-select), dokunma parıltısı.
+   - Dokunma hedefi ≥ 44 CSS px (Apple HIG / WCAG 2.5.5). Pixel düzen bozulmasın diye görsel kutu büyütülmez, yalnız
+     en küçük boy (min-height / min-width) verilir; küçük simge düğmelerinde görünmez isabet payı (::after). */
+
+html[data-dokunmatik] { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; overscroll-behavior: none; }
+html[data-dokunmatik], html[data-dokunmatik] body { height: 100%; overflow: hidden; }
+@supports (height: 100dvh) { html[data-dokunmatik] body { height: 100dvh; } }
+html[data-dokunmatik] body {
+  overscroll-behavior: none; touch-action: manipulation;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
+}
+html[data-dokunmatik] input, html[data-dokunmatik] textarea { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
+/* çentik (yatayda solda/sağda): sahne güvenli alanın içinde; zemin rengi çentik şeridini doldurur */
+html[data-dokunmatik] #sahne { margin-left: env(safe-area-inset-left, 0px); margin-right: env(safe-area-inset-right, 0px); width: auto; }
+/* iç kaydırma parmakla, zincirleme yok */
+html[data-dokunmatik] .k-zemin, html[data-dokunmatik] .kart, html[data-dokunmatik] [class*="liste"], html[data-dokunmatik] .tablo, html[data-dokunmatik] .bsr {
+  overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+}
+/* ev çubuğu: menü gövdesinin altı */
+html[data-dokunmatik] .k-govde { padding-bottom: max(var(--kenar), env(safe-area-inset-bottom, 0px)); }
+
+/* ---- dokunma hedefleri ---- */
+html[data-dokunmatik] .k-zemin .k-dugme, html[data-dokunmatik] .tam-katman .k-dugme, html[data-dokunmatik] .k-zemin .k-sekme,
+html[data-dokunmatik] .k-zemin [role=tab], html[data-dokunmatik] .k-zemin button.sec, html[data-dokunmatik] .k-zemin button.gunun,
+html[data-dokunmatik] .k-zemin select, html[data-dokunmatik] .k-zemin input:not([type=checkbox]):not([type=radio]):not([type=range]) {
+  min-height: 44px;
+}
+html[data-dokunmatik] .k-zemin .k-dugme, html[data-dokunmatik] .k-zemin button.sec { min-width: 44px; }
+/* metin bağlantısı: satır içi ama 44 px yüksek dokunma şeridi */
+html[data-dokunmatik] .k-zemin .kart a:not(.k-dugme) { display: inline-flex; align-items: center; min-height: 44px; }
+/* lento (26 px şerit) içindekiler: görsel boy aynı, görünmez isabet payı ≥ 48 px (lento düzeni bozulmaz) */
+html[data-dokunmatik] .k-lento .k-dugme { min-height: 0; min-width: 0; }
+html[data-dokunmatik] .k-geri, html[data-dokunmatik] .k-lento .k-dugme, html[data-dokunmatik] .k-cuzdan, html[data-dokunmatik] .g3-etiket { position: relative; }
+html[data-dokunmatik] .g3-etiket::after, html[data-dokunmatik] .dk-pay::after {
+  content: ""; position: absolute; left: 50%; top: 50%; width: max(100%, 48px); height: max(100%, 48px); transform: translate(-50%, -50%);
+  background: none; display: block;
+}
+/* lento ekranın üst kenarında: pay yalnız aşağı uzar (üst kenar zaten sonsuz hedef) */
+html[data-dokunmatik] .k-geri::after, html[data-dokunmatik] .k-lento .k-dugme::after, html[data-dokunmatik] .k-cuzdan::after {
+  content: ""; position: absolute; left: 50%; top: calc(-1 * var(--p) - 3px); width: max(100%, 48px); height: 48px; transform: translateX(-50%);
+  background: none; display: block;
+}
+html[data-dokunmatik] .k-zemin [role=tab] { min-width: 44px; }
+html[data-dokunmatik] .at .alt-serit .k-dugme:not(.ana) { min-height: 44px; }
+html[data-dokunmatik] .pergel .p-rozet { min-width: 44px; min-height: 44px; }
+/* klavye ipuçları (ENTER, ESC, H) dokunmatikte anlamsız */
+html[data-dokunmatik] .k-tus { display: none !important; }
+
+/* ---- telefon (o = 1) ekran düzeltmeleri: mantıksal alan 667–932 × 375–430 ---- */
+/* Atölye: alt şerit 44+ px düğmeler taşır → kart altı payı; Takım sütunu genişler; ▲▼ yalnız seçili topaçta, 44 px */
+html[data-telefon] .at .kart.at-kart { padding-bottom: 66px; }
+html[data-telefon] .at .uc3 { grid-template-columns: 236px minmax(0, 1fr) 124px 124px; }
+html[data-telefon] .at .sekmeler button { letter-spacing: 0; }
+html[data-telefon] .at .tkart { grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "b b" "ik mini" "ok ok"; }
+html[data-telefon] .at .tkart:not([aria-selected=true]) .ok { display: none; }
+html[data-telefon] .at .tkart .ok { justify-content: center; gap: 6px; }
+html[data-telefon] .at .tkart .ok button { width: 44px; height: 44px; min-width: 44px; font-size: 18px; }
+/* Oyna / Lobi: mod sütunu yazı ×1,5'e göre */
+html[data-telefon] .lobi .lb-govde { grid-template-columns: 170px 1fr; }
+/* Karşılama / Kayıt / Giriş: süs illüstrasyonu gizli, form tam yükseklik (mobil klavye açıkken alan az) */
+html[data-telefon] .kml .kml-sol { display: none; }
+html[data-telefon] .kml .kart { flex-basis: 440px; }
+/* Profil: arma adları ×1,5 yazıda 6 sütuna sığmaz → 3 sütun (renkler 6 sütun kalır) */
+html[data-telefon] .pf .izgara:has(.sec .k-el, .sec svg) { grid-template-columns: repeat(3, 1fr); }
+/* İlk Çekirdek: üç kart görünüme sığar (ad kırılır) */
+html[data-telefon] .ic .kart.ic-kart { max-width: 100%; overflow-y: auto; }
+html[data-telefon] .ic .kartlar { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+html[data-telefon] .ic .ck h3 { white-space: normal; width: auto; min-width: 0; text-align: center; }
+/* lento isabet payı (aşağı uzar) gövdenin altında kalmasın */
+html[data-dokunmatik] .k-lento { z-index: 3; }
+html[data-dokunmatik] .g3-etiket { z-index: 2; min-height: 44px; display: flex; flex-direction: column; justify-content: center; }
+html[data-dokunmatik] .g3-etiket::after { width: max(100%, 64px); }
+/* metin girişi: iOS 16 px altındaki yazıda sayfayı yakınlaştırır */
+html[data-dokunmatik] input, html[data-dokunmatik] select, html[data-dokunmatik] textarea { font-size: max(16px, 1em); }
+
+/* ---- dikey mod örtüsü ---- */
+.dikey-ortu { display: none; }
+@media (orientation: portrait) {
+  html[data-dokunmatik] .dikey-ortu {
+    position: fixed; inset: 0; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+    padding: 24px; background: #18161d; color: #fbf2c3; text-align: center; touch-action: none;
+    font: 400 24px/1.1 var(--font-etiket, monospace);
+  }
+  html[data-dokunmatik] .dikey-ortu b { font: 400 30px/1 var(--font-baslik, sans-serif); letter-spacing: 2px; }
+  html[data-dokunmatik] .dikey-ortu span { color: var(--soluk, #a49c8c); }
+}
+@media (orientation: portrait) and (prefers-reduced-motion: no-preference) {
+  html[data-dokunmatik] .dikey-ortu svg { animation: dikeyCevir 1.6s steps(4) infinite; }
+}
+@keyframes dikeyCevir { 0%, 40% { transform: rotate(0); } 70%, 100% { transform: rotate(-90deg); } }
+
+/* ---- uzun basma ipucu balonu ---- */
+.dk-ipucu { position: fixed; z-index: 900; max-width: min(320px, calc(100vw - 16px)); padding: 6px 10px; display: none; pointer-events: none;
+  background: var(--panel, #1b2131); color: var(--ink, #fbf2c3); box-shadow: inset 0 0 0 2px var(--bronz, #c08e52), 0 2px 0 #05050a;
+  font: 400 24px/1 var(--font-etiket, monospace); }
+.dk-ipucu.acik { display: block; }
+
+/* ---- tam ekran teklifi (üst orta, oturumda bir kez; alt köşedeki ana düğmeyi örtmez) ---- */
+.tam-teklif { position: fixed; left: 50%; top: 2px; transform: translateX(-50%); z-index: 800;
+  display: flex; align-items: center; gap: 8px; padding: 4px 6px 4px 12px; white-space: nowrap;
+  background: rgba(27, 33, 49, .96); color: var(--ink, #fbf2c3); box-shadow: inset 0 0 0 2px var(--bronz, #c08e52), 0 2px 0 #05050a;
+  font: 400 24px/1 var(--font-etiket, monospace); }
+.tam-teklif .k-dugme { min-height: 44px; min-width: 44px; }

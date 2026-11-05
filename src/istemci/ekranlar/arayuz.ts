@@ -1,6 +1,7 @@
 import { PROTOKOL_SURUMU } from "../../ag/protokol.ts";
 import { KATALOG_OZETI } from "../../ag/katalog.ts";
 import { type Ben, apiPost, git } from "../hesap.ts";
+import { dokunmatikMi, olcekHesapla as mobilOlcek } from "../mobil/cihaz.ts";
 
 // Menü ekranları ortak DOM kalıbı (D5, ux § 3.2, § 6.3-6.4) · GU-01 menü dili v2 "Kuşak Taşı" (sahip onayı 2026-11-05;
 // docs/art/menu-tasarim-arastirma.md § 5, § 6.5). Tek stil kaynağı: src/istemci/stil/{jetonlar,bilesenler,ekranlar}.css
@@ -29,17 +30,24 @@ export function stilEkle(): void {
  * kaymasına ve kesilen metne yol açıyordu; 640×360 her iki çözünürlükte aynı yerleşimi verir. Yazı ölçeği metin ölçeğiyle
  * tam sayıya yukarı yuvarlanır.
  */
-export function olcekHesapla(w: number, h: number, metin = 1): { o: number; yo: number } {
-  const o = Math.max(2, Math.floor(Math.min(w / 640, h / 360)));
-  const yo = metin <= 1 ? o : Math.max(o + 1, Math.ceil(o * metin - 0.01));
+export function olcekHesapla(w: number, h: number, metin = 1, dokunmatik = false, dpr = 1): { o: number; yo: number } {
+  const { o, yo } = mobilOlcek(w, h, metin, dokunmatik, dpr);
   return { o, yo };
 }
+/** Telefon/dokunmatik ölçek kuralı (yeniden dışa aktarım; birim testi buradan da erişir). */
+export { mobilOlcek };
 
 export function olcekUygula(metin = metinOlcegiOku()): void {
-  const { o, yo } = olcekHesapla(window.innerWidth, window.innerHeight, metin);
+  // MOBIL-1: dokunmatikte o = 1 (telefon yatay), yazı ölçeği cihaz pikseline yuvarlı ×1,5 (mobil/cihaz.ts)
+  const dokun = dokunmatikMi();
+  const { o, yo } = mobilOlcek(window.innerWidth, window.innerHeight, metin, dokun, window.devicePixelRatio || 1);
   const r = document.documentElement;
   r.style.setProperty("--o", String(o));
   r.style.setProperty("--yo", String(yo));
+  // telefon (o = 1): mantıksal alan görünüm kadar geniş (≥ 640×360) olduğu için çok sütunlu yerleşim kalır; tek sütuna
+  // kırılma yalnız kullanıcı metin ölçeğini büyüttüyse (masaüstüyle aynı kural)
+  const telefon = dokun && o === 1;
+  if (telefon) r.dataset["telefon"] = "1"; else delete r.dataset["telefon"];
   if (metin > 1) r.dataset["yaziBuyuk"] = String(metin); else delete r.dataset["yaziBuyuk"];
 }
 
@@ -272,9 +280,10 @@ export function bakimKatmani(yeniden: () => void): void {
 export function darEkranDenetle(): void {
   let gec = false;
   try { gec = sessionStorage.getItem("devran.darGec") === "1"; } catch { /* kapalı */ }
+  // MOBIL-1: dokunmatik cihaz artık desteklenir (dokunmatik denetim + telefon ölçeği); uyarı yalnız dar masaüstü penceresinde
+  if (dokunmatikMi()) return;
   const dar = window.innerWidth < 1280 || window.innerHeight < 720;
-  const dokunmatik = window.matchMedia?.("(pointer: coarse)").matches ?? false;
-  if (gec || !(dar || dokunmatik)) return;
+  if (gec || !dar) return;
   stilEkle();
   const k = el("div", "tam-katman", document.body);
   k.dataset["dar"] = "1";
@@ -283,8 +292,7 @@ export function darEkranDenetle(): void {
   const kart = el("div", "kart k-panel", k);
   el("h2", "k-plaka", kart, "Klavye ve fare");
   el("p", "k-b20 k-buyuk", kart, "Bu oyun klavye ve fare ister");
-  el("p", "", kart, dokunmatik ? "Dokunmatik ekranda oynanmaz. Masaüstü tarayıcıda aç." : `Pencere en az 1280×720 olmalı (şu an ${window.innerWidth}×${window.innerHeight}). Pencereyi büyüt ya da masaüstünde aç.`);
-  el("p", "yt", kart, "Telefonda maçları seyirci olarak izlemek ileride gelecek.");
+  el("p", "", kart, `Pencere en az 1280×720 olmalı (şu an ${window.innerWidth}×${window.innerHeight}). Pencereyi büyüt ya da telefonda yatay aç.`);
   const d = el("button", "k-dugme ana kisa yazi20", kart, "Yine de devam et");
   d.addEventListener("click", () => { try { sessionStorage.setItem("devran.darGec", "1"); } catch { /* kapalı */ } k.remove(); });
   queueMicrotask(() => d.focus());

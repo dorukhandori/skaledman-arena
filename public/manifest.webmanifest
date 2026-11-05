@@ -1,0 +1,18 @@
+{
+  "name": "Devran",
+  "short_name": "Devran",
+  "description": "Gerçek zamanlı 1v1 dönen topaç dövüşü.",
+  "lang": "tr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "orientation": "landscape",
+  "background_color": "#18161d",
+  "theme_color": "#18161d",
+  "icons": [
+    { "src": "/ikon/ikon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/ikon/ikon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/ikon/ikon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

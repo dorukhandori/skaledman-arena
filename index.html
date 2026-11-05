@@ -2,8 +2,17 @@
 <html lang="tr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- MOBIL-1: çentikli telefonda tam yüzey (güvenli alan stil/dokunmatik.css'te), tarayıcı yakınlaştırması kapalı (oyun) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
     <meta name="theme-color" content="#18161d" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Devran" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/ikon/ikon-180.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/ikon/ikon-192.png" />
     <title>Devran</title>
     <!-- Menü dili v2 · Kuşak Taşı (GU-01): jetonlar + bileşenler; yerel pixel yazı tipleri public/yazi/ (dış istek yok) -->
     <link rel="preload" href="/yazi/Jersey10-Regular.ttf" as="font" type="font/ttf" crossorigin />
@@ -11,6 +20,7 @@
     <link rel="stylesheet" href="/src/istemci/stil/jetonlar.css" />
     <link rel="stylesheet" href="/src/istemci/stil/bilesenler.css" />
     <link rel="stylesheet" href="/src/istemci/stil/ekranlar.css" />
+    <link rel="stylesheet" href="/src/istemci/stil/dokunmatik.css" />
     <style>
       /* Devran kabuğu. Menü ekranlarında üst web gezinti çubuğu yok (KM-4): body.kabuk; geliştirici ekranlarında kalır. */
       :root {

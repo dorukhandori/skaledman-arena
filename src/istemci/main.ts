@@ -1,6 +1,7 @@
 import { Application } from "pixi.js";
 import { type Ben, BakimHatasi, benGetir } from "./hesap.ts";
 import { bakimKatmani, darEkranDenetle, metinOlcegiUygula, surumDenetle, ustGezinti } from "./ekranlar/arayuz.ts";
+import { mobilKabukKur } from "./mobil/kabuk.ts";
 
 // İstemci girişi. Ekran URL'den: ?ekran=<ad>. Varsayılan Karşılama (girişliyse profil → ilk çekirdek → Atölye;
 // ux § 3.1). `#oda=` bağlantısı lobiye açılır (girişsizse Karşılama). Her ekran modülü `baslat(baglam)` verir.
@@ -62,6 +63,8 @@ function ekranAdi(): EkranAdi {
 }
 
 async function ana() {
+  // MOBIL-1: dokunmatik kabuk (html[data-dokunmatik], dikey örtü, jest engelleri, tam ekran teklifi) ölçekten önce
+  mobilKabukKur(["mac", "seyirci", "ruhlar", "topac-lab", "antrenman", "dene"].includes(ekranAdi()));
   metinOlcegiUygula();
   const kok = document.getElementById("sahne")!;
   const ustYazi = document.getElementById("ustYazi")!;
