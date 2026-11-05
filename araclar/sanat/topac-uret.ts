@@ -56,6 +56,9 @@ export const SANAT = {
   bulanikPencere: 0.34,
   bulanikEnCok: 40,
   diskPencere: 0.85,
+  /** GU-D: bulanık karelerde ortalama tonun kontrast çarpanı (yüksek hız kademesinde Gövde üst yüzü soluk okunuyordu) */
+  bulanikKontrast: 1.15,
+  diskKontrast: "kip" as const,
   govdeTabanZ: 16,
   /** GU-C: sprite render'ında yatay ölçek (Çekirdek amblemi okunsun diye ×1,7, referans 07 orta rozeti ≈ çapın %45i; Atölye 3B modeli değişmez) */
   xyOlcek: { cekirdek: 1.7 } as Record<string, number>,
@@ -387,10 +390,19 @@ function renklendir(kod: Uint8Array, boya: Boya): RGBA {
   return out;
 }
 
-/** Ortalama (kapsama ağırlıklı) → palete geri kuantize; saydamlık Bayer ile (hayalet kanat). */
-function bulaniklastir(kareler: RGBA[], palet: number[], w: number, h: number, opakEsik = 0.6, hayaletEsik = 0.22): RGBA {
+/**
+ * Ortalama (kapsama ağırlıklı) → palete geri kuantize; saydamlık Bayer ile (hayalet kanat).
+ * `kontrast` (GU-D): ortalama, eş merkezli sırtları ve koyu oluk çizgilerini sönükleştirir (yüksek hızda Gövde üst yüzü soluk
+ * okunuyordu). 0 < kontrast: ortalama parlaklık paletin orta parlaklığından bu çarpanla uzaklaşır. "kip": renk ortalaması
+ * yerine pencerede en sık görülen palet rengi (eşitlikte koyusu): dönüşe göre değişmeyen sırtlar, oluklar ve keskin tonlar
+ * aynen kalır, yalnız dönen lob ve çentikler yuvarlanır (bulanık disk).
+ */
+function bulaniklastir(kareler: RGBA[], palet: number[], w: number, h: number, opakEsik = 0.6, hayaletEsik = 0.22, kontrast: number | "kip" = 1): RGBA {
   const out = new Uint8ClampedArray(w * h * 4);
   const pr = palet.map((c) => [(c >> 16) & 255, (c >> 8) & 255, c & 255] as const);
+  const parlak = (r: number, g: number, b: number) => r * 0.3 + g * 0.59 + b * 0.11;
+  const pl = pr.map((p) => parlak(p[0], p[1], p[2])).sort((a, b) => a - b);
+  const orta = pl[Math.floor(pl.length / 2)] ?? 128;
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
       const j = y * w + x;
@@ -406,7 +418,25 @@ function bulaniklastir(kareler: RGBA[], palet: number[], w: number, h: number, o
       const opak = kap >= opakEsik || (kap >= hayaletEsik && bt < (kap - hayaletEsik) / (opakEsik - hayaletEsik));
       if (!opak) continue;
       r /= a; g /= a; b /= a;
-      const sap = (bt - 0.5) * 22;
+      if (kontrast === "kip") {
+        const say = new Map<number, number>();
+        for (const k of kareler) {
+          if (k[j * 4 + 3]! < 128) continue;
+          const c = (k[j * 4]! << 16) | (k[j * 4 + 1]! << 8) | k[j * 4 + 2]!;
+          say.set(c, (say.get(c) ?? 0) + 1);
+        }
+        let enC = -1, enN = -1, enL = 1e9;
+        for (const [c, n] of say) {
+          const L = parlak((c >> 16) & 255, (c >> 8) & 255, c & 255);
+          if (n > enN || (n === enN && L < enL)) { enC = c; enN = n; enL = L; }
+        }
+        if (enC >= 0) { r = (enC >> 16) & 255; g = (enC >> 8) & 255; b = enC & 255; }
+      } else if (kontrast !== 1) {
+        const L = parlak(r, g, b);
+        const d = (orta + (L - orta) * kontrast) - L;
+        r += d; g += d; b += d;
+      }
+      const sap = kontrast === "kip" ? 0 : (bt - 0.5) * 22;
       let en = 0, enD = 1e12;
       for (let i = 0; i < pr.length; i++) {
         const p = pr[i]!;
@@ -539,7 +569,7 @@ async function parcaPisir(id: string, spec: Parca3B, kat: KatalogParca | undefin
         // iz: kanat arkasında (dönüş yönünün tersine) ince açılar
         const pen: RGBA[] = [];
         for (let q = 0; q < pencere; q++) pen.push(renkli[(i0 - q + M * 4) % M]!);
-        const bul = disCizgi(bulaniklastir(pen, palet, W, H), W, H, cizgiRenk(b));
+        const bul = disCizgi(bulaniklastir(pen, palet, W, H, 0.6, 0.22, S.bulanikKontrast), W, H, cizgiRenk(b));
         keskinler.push(kes); bulaniklar.push(bul);
         yapistir(sayfa, sw, kes, W, H, f * W, satir[yon].keskin * H);
         yapistir(sayfa, sw, bul, W, H, f * W, satir[yon].bulanik * H);
@@ -549,7 +579,7 @@ async function parcaPisir(id: string, spec: Parca3B, kat: KatalogParca | undefin
         const pen: RGBA[] = [];
         const bas = Math.round((f * M) / S.diskKare);
         for (let q = 0; q < dp; q++) pen.push(renkli[(bas + q) % M]!);
-        const dk = disCizgi(bulaniklastir(pen, palet, W, H, 0.5, 0.3), W, H, cizgiRenk(b));
+        const dk = disCizgi(bulaniklastir(pen, palet, W, H, 0.5, 0.3, S.diskKontrast), W, H, cizgiRenk(b));
         diskler.push(dk);
         yapistir(sayfa, sw, dk, W, H, f * W, satir[yon].disk * H);
       }
