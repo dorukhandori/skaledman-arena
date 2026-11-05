@@ -9,9 +9,13 @@ export type KameraKipi = "hibrit" | "duz";
  */
 export const KAMERA = {
   zOrani: 0.62,
-  yakinlik: 1.4,
+  /** İkinci tur (sahip: referanstaki gibi): ×1,6 denendi; oynanabilir elips (R=240) HUD şeritlerine (süre plakası y ≤ 66,
+   *  Shift/Space y ≥ 494) girmesin diye en büyük uygun değer ×1,44 (test/kamera.test.ts sınar). */
+  yakinlik: 1.44,
   /** çanak merkezinin dünya kayması (px): üstte uzak duvar + tribün için yer */
   kaymaY: 6,
+  /** Topaç çizim ölçeği (sim yarıçapı 30 sabit; yalnız çizim iri: referans 07) */
+  topacCizimOlcek: 1.2,
   /** Sekme yüksekliği (dünya px, ekranda yukarı) */
   sekmeYukseklik: 16,
   /** pixel görünüm: dünya bu çözünürlükte (0,5 → 480×270) önbelleğe çizilir, `nearest` büyütülür */

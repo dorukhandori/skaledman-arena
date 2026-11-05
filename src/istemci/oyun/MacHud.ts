@@ -169,6 +169,8 @@ const STIL = `
 .mh .ds, .mh .ip { background:rgba(27,33,49,.95); border-color:var(--bronz); border-radius:0; }
 .mh .ds .kart { background:var(--pn2); border-color:var(--bej); border-radius:0; }
 .mh .ds .kart.secildi { border-color:var(--bronzI); background:#3a2a1a; }
+.mh .pn, .mh .skor, .mh .sure, .mh .yv { transition:opacity .12s; }
+.mh .ortusme { opacity:.3; }
 /* H16 ses düğmesi: her zaman görünür, tık = tümünü kapat/aç (M ile aynı); üzerine gelince Müzik/Efekt kaydırıcıları */
 .mh .sd { position:absolute; left:572px; top:10px; width:28px; height:28px; pointer-events:auto; }
 .mh .sd button { width:28px; height:28px; padding:0; border:2px solid var(--bej); background:var(--pn); color:#fbf2c3; cursor:pointer; box-shadow:inset 0 0 0 1px var(--koyu); display:flex; align-items:center; justify-content:center; }
@@ -359,6 +361,21 @@ export class MacHud {
     const enerjiYazi = el("em", "", en);
     const ct = el("span", "ct", kok);
     return { enKok: en, kok, ik, ad, lv, ekip, dolgu, sayi, unlem, enerji, takimDilim, enerjiYazi, ct };
+  }
+
+  /**
+   * İkinci tur okunurluk (720p): Hibrit çanakta uzak kenardaki topacın gövdesi üst panellerin / skor plakasının, yakın kenarda
+   * takım çemberi Shift/Space'in altına girebilir. Topaç kutularıyla kesişen HUD öğesi saydamlaşır (%30): topaç asla örtülmez.
+   */
+  ortusmeAyarla(kutular: { x0: number; y0: number; x1: number; y1: number }[]): void {
+    const ogeler: [HTMLElement, number, number, number, number][] = [
+      [this.paneller[this.yerel === 0 ? 0 : 1]!.kok, 8, 8, 296, 72], [this.paneller[this.yerel === 0 ? 1 : 0]!.kok, 664, 8, 952, 72],
+      [this.skor, 400, 4, 560, 42], [this.sure, 432, 44, 528, 66], [this.dash, 428, 494, 472, 538], [this.sekme, 488, 494, 532, 538],
+    ];
+    for (const [e, x0, y0, x1, y1] of ogeler) {
+      const kes = kutular.some((k) => k.x0 < x1 && k.x1 > x0 && k.y0 < y1 && k.y1 > y0);
+      e.classList.toggle("ortusme", kes);
+    }
   }
 
   /** H16: düğmenin hâli (açık / kapalı). */

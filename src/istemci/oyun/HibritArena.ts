@@ -149,40 +149,46 @@ export class HibritArena implements ArenaCizimi {
       const v = 0.4 + (j / H) * 1.2 + gurultu(i, j, 9, 7) * 0.6;
       koy(i, j, [0x0b0a0f, 0x100f18, 0x15141f][ditherIndeks(v, i, j, 3)]!);
     }
-    // tribün: çanağın arkasında yükselen basamaklar (eş merkezli elips bantları, arkadan öne); yalnız uzak yarı + yanlar
+    // tribün (ikinci tur): çanağın çevresinde HALKA biçimli kalabalık. Seyirciler sıra çizgisine dizilmez: açı ve sıra
+    // (derinlik) sürekli rastgele, sonra ekranY'ye göre arkadan öne çizilir → yanlarda çizgisel bant yerine dağınık kalabalık.
+    // Basamak tonu derinlikle koyulaşır (referans 07: koyu zemin üstünde iri baş-omuz siluetleri).
     const rng = new SusRastgele(0x7b1b);
     const cx = g.cx + PAY;
     const cy = g.cy + PAY;
-    const sira = 8;
-    const bantA0 = Math.PI * 1.02; // sol-alt
-    const bantA1 = Math.PI * 1.98; // sağ-alt (y ekseni aşağı: π..2π = uzak yarı)
-    const yay = 0.42; // yanlardan aşağı taşma (rad)
-    for (let s = sira - 1; s >= 0; s--) {
-      const olc = 1 + g.t + 0.05 + s * 0.075;
-      const yuk = g.hUzak + 4 + s * 11;
-      const rx = g.rx * olc;
-      const ry = g.ry * olc;
-      const uzak = s / sira;
-      // basamak: koyu zemin bandı + açık kenar
-      for (let a = bantA0 - yay; a < bantA1 + yay; a += 0.5 / rx) {
-        const i = Math.round(cx + Math.cos(a) * rx);
-        const j = Math.round(cy + Math.sin(a) * ry - yuk);
-        for (let q = 1; q <= 10; q++) koy(i, j + q, q === 1 ? 0x24222f : q < 4 ? 0x171621 : 0x100f17);
-      }
-      // seyirciler: omuz 5×4 + baş 3×3 (uzak sıralar biraz küçük ve koyu); ara sıra kalkık kol, renkli giysi
-      const adim = 6 - Math.floor(uzak * 1.5);
-      for (let a = bantA0 - yay + rng.aralik(0, 0.02); a < bantA1 + yay; a += (adim + rng.aralik(-0.8, 1.6)) / rx) {
-        if (rng.sayi() < 0.06) continue;
-        const i0 = Math.round(cx + Math.cos(a) * rx);
-        const j0 = Math.round(cy + Math.sin(a) * ry - yuk) + 2;
-        const ton = Math.max(0, Math.min(KALABALIK.length - 1, Math.round(rng.aralik(1.2, 5.6) - uzak * 2)));
-        const giysi = rng.sayi() < 0.06 ? [0x4a2a2c, 0x2a3048, 0x3e3a28][Math.floor(rng.sayi() * 3)]! : KALABALIK[Math.max(0, ton - 1)]!;
-        const bas = KALABALIK[ton]!;
-        for (let dj = 0; dj < 4; dj++) for (let di = -2; di <= 2; di++) if (!(dj === 0 && Math.abs(di) === 2)) koy(i0 + di, j0 + dj, giysi);
-        for (let dj = -3; dj < 0; dj++) for (let di = -1; di <= 1; di++) koy(i0 + di, j0 + dj, bas);
-        koy(i0 - 1, j0 - 3, KALABALIK[Math.max(0, ton - 2)]!); // saç gölgesi
-        if (rng.sayi() < 0.09) { const yon = rng.sayi() < 0.5 ? -1 : 1; koy(i0 + yon * 3, j0, giysi); koy(i0 + yon * 3, j0 - 1, giysi); koy(i0 + yon * 3, j0 - 2, giysi); koy(i0 + yon * 3, j0 - 3, bas); }
-      }
+    const DERIN = 7.5;
+    const sirada = (s: number) => ({ olc: 1 + g.t + 0.05 + s * 0.085, yuk: g.hUzak + 4 + s * 12 });
+    // basamak zemini: derinliğe göre yumuşak ton (dither), sıra çizgisi yok
+    for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) {
+      const zx = (i - cx) / g.rx, zy = (j - cy) / g.ry;
+      // yaklaşık derinlik: elips yarıçapı ve yükseklik birlikte
+      const r = Math.hypot(zx, zy + (g.hUzak + 20) / g.ry * 0.6);
+      if (r < 1 + g.t) continue;
+      const v = 1.6 - Math.min(1.4, (r - 1 - g.t) * 1.6) + gurultu(i, j, 5, 3) * 0.5;
+      koy(i, j, [0x0d0c12, 0x13121b, 0x1a1824][ditherIndeks(v, i, j, 3)]!);
+    }
+    const kisi: { i: number; j: number; ton: number; giysi: number; kol: number }[] = [];
+    const n = 1500;
+    for (let q = 0; q < n; q++) {
+      const a = rng.aralik(0, Math.PI * 2);
+      const sin = Math.sin(a);
+      if (sin > 0.42) continue; // yakın taraf (alt) boş: zemin ekranın altına kadar görünür
+      const s = rng.aralik(0, DERIN);
+      const { olc, yuk } = sirada(s);
+      const i = Math.round(cx + Math.cos(a) * g.rx * olc);
+      const j = Math.round(cy + sin * g.ry * olc - yuk) + 2;
+      if (i < -4 || j < -6 || i > W + 4) continue;
+      const uzak = s / DERIN;
+      const ton = Math.max(0, Math.min(KALABALIK.length - 1, Math.round(rng.aralik(1.2, 5.6) - uzak * 2)));
+      const giysi = rng.sayi() < 0.06 ? [0x4a2a2c, 0x2a3048, 0x3e3a28][Math.floor(rng.sayi() * 3)]! : KALABALIK[Math.max(0, ton - 1)]!;
+      kisi.push({ i, j, ton, giysi, kol: rng.sayi() < 0.08 ? (rng.sayi() < 0.5 ? -1 : 1) : 0 });
+    }
+    kisi.sort((p, q) => p.j - q.j);
+    for (const k of kisi) {
+      const bas = KALABALIK[k.ton]!;
+      for (let dj = 0; dj < 4; dj++) for (let di = -2; di <= 2; di++) if (!(dj === 0 && Math.abs(di) === 2)) koy(k.i + di, k.j + dj, k.giysi);
+      for (let dj = -3; dj < 0; dj++) for (let di = -1; di <= 1; di++) koy(k.i + di, k.j + dj, bas);
+      koy(k.i - 1, k.j - 3, KALABALIK[Math.max(0, k.ton - 2)]!);
+      if (k.kol) { koy(k.i + k.kol * 3, k.j, k.giysi); koy(k.i + k.kol * 3, k.j - 1, k.giysi); koy(k.i + k.kol * 3, k.j - 2, k.giysi); koy(k.i + k.kol * 3, k.j - 3, bas); }
     }
     // çanak çevresi: tribünün önünde koyu koruma duvarı (07 #1A1C28)
     for (let a = 0; a < Math.PI * 2; a += 0.4 / g.rx) {

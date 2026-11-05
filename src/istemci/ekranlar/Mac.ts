@@ -795,6 +795,13 @@ export class MacEkrani {
     const nisan = basili >= 0 && basili < 3 && this.girdi.nisanModu === "fare" ? { yuva: basili, ...this.girdi.nisanNoktasi(S, d.topaclar[this.yerel]!) } : null;
     this.yetenekGorsel.guncelle(d, dt, nisan);
     this.hud.guncelle(d, dt, basili);
+    if (S.hibrit) {
+      // topaç gövde kutusu (ekran): zemin noktasından yukarı ~70 px, yanlara ~48 px (çizim ölçeği dahil)
+      this.hud.ortusmeAyarla(d.topaclar.filter((t) => aktifMi(t)).map((t) => {
+        const e = S.dunyadanEkrana(S.ekranX(t.x), S.ekranY(t.z));
+        return { x0: e.x - 48, y0: e.y - 72, x1: e.x + 48, y1: e.y + 26 };
+      }));
+    }
     this.sesKancalari(dt);
   }
 

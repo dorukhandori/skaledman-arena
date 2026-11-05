@@ -1,4 +1,4 @@
-import { Container, Graphics } from "pixi.js";
+import { Container, Graphics, Texture } from "pixi.js";
 import { AYAR } from "../../paylasilan/kurallar/ayar.ts";
 import { diskBul } from "../../paylasilan/veri/katalog.ts";
 import type { TopacProfili } from "../../paylasilan/veri/profil.ts";
@@ -51,6 +51,33 @@ function yanBant(rx: number, ry: number, yUst: number, yAlt: number): number[] {
   return p;
 }
 
+/** Döndürülmüş elips (gölge): merkez (cx, cy), yarıçaplar, açı. */
+function golgePoligon(cx: number, cy: number, rx: number, ry: number, aci: number): number[] {
+  const p: number[] = [];
+  const c = Math.cos(aci), s = Math.sin(aci);
+  for (let i = 0; i < 20; i++) {
+    const a = (i / 20) * TAM;
+    const x = Math.cos(a) * rx, y = Math.sin(a) * ry;
+    p.push(cx + x * c - y * s, cy + x * s + y * c);
+  }
+  return p;
+}
+
+let dither: Texture | null = null;
+/** 2×2 dama dither dokusu (dünya pikseli 3: sanat ızgarasında ~2 px; düşen gölge kenarı). */
+function ditherDokusu(): Texture {
+  if (dither) return dither;
+  const c = document.createElement("canvas");
+  c.width = 6; c.height = 6;
+  const x = c.getContext("2d")!;
+  x.fillStyle = "#fff";
+  x.fillRect(0, 0, 3, 3); x.fillRect(3, 3, 3, 3);
+  dither = Texture.from(c);
+  dither.source.scaleMode = "nearest";
+  dither.source.addressMode = "repeat";
+  return dither;
+}
+
 /** Yan bandın açı aralığı (0 = sağ uç, π = sol uç; ön yarı). Işık sol üstten: sol dilim açık, sağ dilim koyu. */
 function yanBantAralik(rx: number, ry: number, yUst: number, yAlt: number, a0: number, a1: number): number[] {
   const p: number[] = [];
@@ -99,6 +126,8 @@ export class TopacYandan implements TopacCizimi {
     this.govdeKap.addChild(this.sqKap);
     this.yalpaKap.addChild(this.govdeKap);
     this.kok.addChild(this.yalpaKap, this.isaret);
+    this.kok.scale.set(KAMERA.topacCizimOlcek);
+    this.zeminKap.scale.set(KAMERA.topacCizimOlcek);
     this.zeminCiz();
   }
 
@@ -120,8 +149,10 @@ export class TopacYandan implements TopacCizimi {
     // gölge: elips, Disk yüksekliğine göre sağ-alta kayar (ışık sol üstten; pixel planı § 2.2 katman 0)
     const kayma = 3 + ((disk.yukseklik - 50) / 15) * 2;
     const g = this.golge.clear();
-    g.ellipse(kayma, kayma * 0.6, 33, 33 * k * 0.92).fill({ color: 0x000000, alpha: 0.22 });
-    g.ellipse(kayma * 0.7, kayma * 0.4, 24, 24 * k * 0.9).fill({ color: 0x000000, alpha: 0.24 });
+    // referans 07: sol-alta uzayan koyu düşen gölge (ışık sağ üstten), pixel dither kenar + koyu çekirdek
+    g.poly(golgePoligon(-kayma - 16, kayma * 0.5 + 7, 38, 17, -0.32)).fill({ texture: ditherDokusu(), textureSpace: "global", color: 0x000000, alpha: 0.55 });
+    g.poly(golgePoligon(-kayma - 10, kayma * 0.4 + 4, 32, 14, -0.32)).fill({ color: 0x000000, alpha: 0.28 });
+    g.ellipse(0, 0, 24, 24 * k * 0.85).fill({ color: 0x000000, alpha: 0.3 });
     // takım çemberi zeminde elips (ux § 6.1): oyuncu düz, rakip kesikli
     const tc = this.takimCemberi.clear();
     const R = GORSEL.takimCemberi;
@@ -167,7 +198,7 @@ export class TopacYandan implements TopacCizimi {
     this.parcalar = [];
     if (this.kok.parent !== this.sahne.nesneKatmani) this.sahne.nesneKatmani.addChild(this.kok);
     this.kok.alpha = 1;
-    this.kok.scale.set(1);
+    this.kok.scale.set(KAMERA.topacCizimOlcek);
     this.kok.visible = true;
     this.zeminKap.visible = true;
     this.zeminKap.alpha = 1;

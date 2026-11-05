@@ -24,11 +24,11 @@ describe("hibrit kamera izdüşümü", () => {
       }
     }
   });
-  it("çanak (R = 240) referans 07 gibi ekranı doldurur ama HUD şeritlerine (y < 50, y > 492) taşmaz", () => {
+  it("çanak (R = 240) referans 07 gibi ekranı doldurur ama oynanabilir elips HUD'a (süre plakası y 66, Shift/Space y 494) girmez", () => {
     const ust = simdenEkrana(hibrit, 0, -240).y;
     const alt = simdenEkrana(hibrit, 0, 240).y;
-    expect(ust).toBeGreaterThan(50);
-    expect(alt).toBeLessThan(492);
+    expect(ust).toBeGreaterThan(62);
+    expect(alt).toBeLessThan(494);
     expect(simdenEkrana(hibrit, 240, 0).x - simdenEkrana(hibrit, -240, 0).x).toBeGreaterThan(600);
   });
 });

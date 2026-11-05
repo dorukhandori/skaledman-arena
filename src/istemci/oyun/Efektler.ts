@@ -15,6 +15,7 @@ import type { TopacCizimi } from "./cizimTurleri.ts";
 interface Sok { g: Graphics; t: number; sure: number; x: number; y: number; r0: number; r1: number; renk: number; renk2: number | null; kalinlik: number }
 interface Yildiz { x: number; y: number; t: number; sure: number; r: number; n: number; aci: number; renk: number }
 interface HizCizgisi { x: number; y: number; dx: number; dy: number; t: number; sure: number; renk: number; uz: number }
+interface Kivrim { x: number; y: number; a0: number; yon: number; t: number; sure: number }
 interface KonumDurumu { hold: { x: number; y: number } | null; kalanMs: number; nx: number; ny: number; x: number; y: number; ilk: boolean }
 
 export interface HisAyarlari {
@@ -45,6 +46,8 @@ export class Efektler {
   private yildizlar: Yildiz[] = [];
   private cizgiler: HizCizgisi[] = [];
   private hizG = new Graphics();
+  /** referans 07: çarpışma sonrası topacın çevresinde parlak krem sarmal iz (zeminde) */
+  private kivrimlar: Kivrim[] = [];
   private atlasElementleri = "";
   /** pişmiş atlas kullanım sayacı (doğrulama) */
   readonly atlasSayac: Record<string, number> = {};
@@ -74,6 +77,7 @@ export class Efektler {
     this.parcaciklar.temizle();
     this.yildizlar = [];
     this.cizgiler = [];
+    this.kivrimlar = [];
     this.hizG.clear();
     for (const s of this.soklar) s.g.destroy();
     this.soklar = [];
@@ -170,7 +174,7 @@ export class Efektler {
   }
 
   /** Topaç gövde yüksekliğinde (hava) efekt noktası: hibritte temas noktası zeminden yukarı. */
-  private hava(y: number): number { return this.sahne.hibrit ? y - 24 : y; }
+  private hava(y: number): number { return this.sahne.hibrit ? y - 30 : y; }
 
   /** Maçtaki elementlerin atlaslarını yükle (ortak + iki topaç; efekt-kaynaklari § 8.7). */
   private atlasHazirla(d: Dunya): void {
@@ -267,6 +271,13 @@ export class Efektler {
           const adet = sd === "kritik" ? 4 : 3;
           this.hizCizgileri(S.ekranX(ta.x), this.hava(S.ekranY(ta.z)), S.ekranX(ta.x) - x, S.ekranY(ta.z) - y, o.zitElement ? r0.orta : r0.acik, adet, 26);
           this.hizCizgileri(S.ekranX(tb.x), this.hava(S.ekranY(tb.z)), S.ekranX(tb.x) - x, S.ekranY(tb.z) - y, o.zitElement ? r1.orta : r1.acik, adet, 26);
+        }
+        if (S.hibrit && (sd !== "hafif" || dash)) {
+          // krem sarmal: geri tepilen (daha hızlı) topacın çevresinde, dönüş yönünde
+          const j = Math.hypot(tb.vx, tb.vz) >= Math.hypot(ta.vx, ta.vz) ? 1 : 0;
+          const tj = d.topaclar[j]!;
+          if (this.kivrimlar.length > 3) this.kivrimlar.shift();
+          this.kivrimlar.push({ x: S.ekranX(tj.x), y: S.ekranY(tj.z), a0: Math.atan2(y - S.ekranY(tj.z), x - S.ekranX(tj.x)), yon: d.profiller[j]!.donus === "sol" ? -1 : 1, t: 0, sure: sd === "kritik" ? 0.6 : 0.45 });
         }
         if (sd === "kritik") this.sheet("efekt", "kritik", x, hy, e.x < 0);
         else if (sd === "agir") this.sheet("efekt", "kivilcim", x, hy, e.x < 0);
@@ -506,6 +517,24 @@ export class Efektler {
       h.moveTo(c.x + c.dx * bas, c.y + c.dy * bas).lineTo(c.x + c.dx * (bas + c.uz * (1 - t)), c.y + c.dy * (bas + c.uz * (1 - t))).stroke({ width: 3, color: c.renk, alpha: 1 - t });
     }
     this.cizgiler = this.cizgiler.filter((c) => c.t < c.sure);
+    for (const kv of this.kivrimlar) {
+      kv.t += ydt;
+      const t = Math.min(1, kv.t / kv.sure);
+      const bas = Math.min(1, t / 0.35); // baş önce koşar, sonra kuyruk söner
+      const sol = 1 - t;
+      const n = 22;
+      for (let q = 0; q < n; q++) {
+        const u0 = q / n, u1 = (q + 1) / n;
+        if (u1 > bas) break;
+        const nokta = (u: number) => { const a = kv.a0 + kv.yon * u * Math.PI * 1.7; const r = 30 + 30 * u; return [kv.x + Math.cos(a) * r * 1.2, kv.y + Math.sin(a) * r * 1.2 * this.sahne.k] as const; };
+        const [x0, y0] = nokta(u0);
+        const [x1, y1] = nokta(u1);
+        const al = sol * (0.35 + 0.65 * (u1 / Math.max(0.01, bas)));
+        h.moveTo(x0, y0).lineTo(x1, y1).stroke({ width: 5, color: 0xf6d9a8, alpha: al * 0.8 });
+        h.moveTo(x0, y0).lineTo(x1, y1).stroke({ width: 2, color: 0xfff6e2, alpha: al });
+      }
+    }
+    this.kivrimlar = this.kivrimlar.filter((k) => k.t < k.sure);
     for (const s of this.soklar) {
       s.t += ydt;
       const t = Math.min(1, s.t / s.sure);
