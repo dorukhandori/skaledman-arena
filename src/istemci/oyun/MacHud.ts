@@ -56,6 +56,8 @@ const STIL = `
 .mh .sure.ani { color:#fff; background:#a3260a; letter-spacing:.5px; font-size:12px; }
 .mh .bant { position:absolute; left:240px; top:84px; width:480px; height:36px; text-align:center; font:800 16px/32px system-ui; letter-spacing:1px; background:rgba(5,13,16,.86); border:2px solid #f4cf47; border-radius:8px; opacity:0; transition:opacity .15s; }
 .mh .bant.acik { opacity:1; }
+/* SANAT: Ulti anında bant Shift/Space şeridinin hemen üstünde (Ata'nın başı üstte serbest; referans 08) */
+.mh.mh .bant.asagi { top:438px; }
 .mh .gs { position:absolute; left:330px; top:220px; width:300px; height:80px; text-align:center; font:900 48px/80px system-ui; letter-spacing:2px; color:#fff; text-shadow:0 3px 0 #050d10,0 0 12px rgba(0,0,0,.6); opacity:0; }
 .mh .gs.acik { opacity:1; }
 .mh .gs small { font-size:24px; letter-spacing:4px; }
@@ -396,8 +398,9 @@ export class MacHud {
   }
 
   /** H5 olay bandı: aynı anda tek band, yeni olay eskinin üstüne biner (1,2-2 sn). */
-  bantGoster(metin: string, sure = 1.6, html = false): void {
+  bantGoster(metin: string, sure = 1.6, html = false, asagi = false): void {
     if (html) this.bant.innerHTML = metin; else this.bant.textContent = metin;
+    this.bant.classList.toggle("asagi", asagi);
     this.bant.classList.add("acik");
     this.bantKalan = sure;
   }
@@ -419,9 +422,10 @@ export class MacHud {
         if (o.i !== ben && d.mac.faz === "turArasi") this.bantGoster("Rakip topaç değiştiriyor", 1.4);
         break;
       case "yetenekBasladi":
-        if (o.kademe === 4) this.bantGoster(o.i === ben ? "TAKIM ULTİSİ" : "Rakip: Takım Ultisi hazırlıyor", 1.8);
-        else if (o.kademe === 3 && o.i !== ben) this.bantGoster(`Rakip: Ulti hazırlıyor${elementSvg(d.profiller[o.i]!.element, 16)}`, 1.8, true);
-        else if (o.kademe === 3) this.bantGoster(`ULTİ · ${YETENEK_SIM[o.no]!.ad}${elementSvg(d.profiller[o.i]!.element, 16)}`, 1.6, true);
+        // Ulti / Takım Ultisi: Ata'lar arenanın arkasında yükselir (RuhGorsel); bant üstte başlarını örtmesin diye aşağıda
+        if (o.kademe === 4) this.bantGoster(o.i === ben ? "TAKIM ULTİSİ" : "Rakip: Takım Ultisi hazırlıyor", 1.8, false, true);
+        else if (o.kademe === 3 && o.i !== ben) this.bantGoster(`Rakip: Ulti hazırlıyor${elementSvg(d.profiller[o.i]!.element, 16)}`, 1.8, true, true);
+        else if (o.kademe === 3) this.bantGoster(`ULTİ · ${YETENEK_SIM[o.no]!.ad}${elementSvg(d.profiller[o.i]!.element, 16)}`, 1.6, true, true);
         break;
       case "yetenekReddi":
         if (o.i === ben) this.bantGoster(this.retMetni(o.neden, o.yuva, d), 1.4);

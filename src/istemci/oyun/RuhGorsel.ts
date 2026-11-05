@@ -25,6 +25,12 @@ import { SAHNE, type Sahne } from "./Sahne.ts";
  */
 export const RUH_PORTRE_OZEL_YETENEK = false;
 
+/** Bayrak + yalnız `?debug&ruhportre=1` geçersiz kılması (SANAT entegrasyon doğrulaması; oyuncu sürümünde etkisiz). */
+export function ruhPortreAcik(): boolean {
+  if (RUH_PORTRE_OZEL_YETENEK) return true;
+  try { const q = new URLSearchParams(location.search); return q.has("debug") && q.get("ruhportre") === "1"; } catch { return false; }
+}
+
 const ATA_SAYFA = { hucre: 176, sutun: 6, fps: 16, yukselisSon: 9, kukremeIlk: 10, kukremeSon: 15, donguIlk: 16, donguSon: 23 } as const;
 const ATA_OLCEK = 2.4;
 /** Ata'nın ayak çizgisi bu aralıkta tutulur: gövdesi HUD'un altına taşmaz, alt kenardan çıkmaz. */
@@ -35,13 +41,18 @@ const ATA_GERI = 40;
 /** Ata'nın tepesi en az bu ekran y'sinde kalır; ölçek gerekirse küçülür. Hücrenin üst ~%20'si boş. */
 const ATA_TEPE_MIN = 40;
 const ATA_DOLU_ORAN = 0.74;
-const BANT_Y = 108;
 const ATA_CIKIS_SN = 0.35;
 const BAGLI_BOY = 190;
 const BAGLI_YUKSELIS_SN = 0.28;
 const BAGLI_CIKIS_SN = 0.3;
 const BAGLI_ALFA = 0.85;
-const ATA_ALFA = 0.9;
+/** Ata yarı saydam "hayalet" (referans 08): gövde %55, üstüne element renginde toplamalı ışık. */
+const ATA_ALFA = 0.55;
+const ATA_ISIK_ALFA = 0.42;
+/** Takım Ultisi: üç Ata yay hâlinde (ortadaki önde ve büyük), aralarında belirme gecikmesi (s). */
+const TAKIM_ATA_OLCEK = [0.62, 0.78, 0.62] as const;
+const TAKIM_ATA_DX = 210;
+const TAKIM_ATA_ARALIK = 0.2;
 const r = AYAR.topacYaricap;
 
 type Flas = "normal" | "azaltilmis" | "kapali";
@@ -88,6 +99,7 @@ export class RuhGorsel {
   private istenen = new Set<string>();
   private ataKareCache = new Map<ElementAdi, Texture[]>();
   private imza = "";
+  private readonly portre = ruhPortreAcik();
   private vinyetKalan = 0;
   private vinyetSure = 0;
   flas: Flas = "normal";
@@ -125,7 +137,7 @@ export class RuhGorsel {
     const imza = [...ruhlar].sort().join(",") + "|" + [...elementler].sort().join(",");
     if (imza === this.imza) return;
     this.imza = imza;
-    if (RUH_PORTRE_OZEL_YETENEK) for (const id of ruhlar) this.yukle(portreYolu(id));
+    if (this.portre) for (const id of ruhlar) this.yukle(portreYolu(id));
     for (const el of elementler) this.yukle(ataYolu(el));
   }
 
@@ -154,19 +166,29 @@ export class RuhGorsel {
     const tutma = o.telegraf / AYAR.adimHz;
     const yetenekAd = YETENEKLER[o.no]?.ad ?? "";
     if (o.kademe === 2) {
-      if (!RUH_PORTRE_OZEL_YETENEK) return;
+      if (!this.portre) return;
       const id = ruhKimligi(p);
       const ruh = RUHLAR.find((x) => x.id === id);
       this.bagliBaslat(o.i, p.element, id, `${ruh?.ad ?? "Ruh"} · ${yetenekAd}`, sx(t.x), sy(t.z), tutma + 0.5, 0);
       this.sayac.bagli++;
     } else if (o.kademe === 3) {
-      const ata = RUHLAR.find((x) => x.ata && x.element === p.element);
-      this.ataBaslat(o.i, p.element, ata?.ad ?? "Ata", ata?.unvan ?? "", sx(t.x), sy(t.z), tutma + 0.9);
+      // Ad bandı yok: HUD zaten "ULTİ · <ad>" bandını gösterir (sadelik: anda tek mesaj; referans 08'de yazı yok)
+      this.ataBaslat(p.element, sx(t.x), sy(t.z), tutma + 0.9, { olcek: 1, dx: 0, gecikme: 0, ana: true });
       this.sayac.ata++;
+    } else if (o.kademe === 4 && d.takimlar && !this.portre) {
+      // Takım Ultisi (sahip kapsamı: Ulti katmanında Ata): takımın üç Ata'sı yay hâlinde; ortadaki çağıranın arkasında
+      const uyeler = d.takimlar[o.i]!.uyeler;
+      const sira = [1, 0, 2];
+      for (const k of sira) {
+        const u = uyeler[k];
+        if (!u) continue;
+        this.ataBaslat(u.profil.element, sx(t.x), sy(t.z), tutma + 0.9, { olcek: TAKIM_ATA_OLCEK[k]!, dx: (k - 1) * TAKIM_ATA_DX, gecikme: Math.abs(k - 1) * TAKIM_ATA_ARALIK, ana: k === 1 });
+      }
+      this.sayac.takim++;
     } else if (o.kademe === 4 && d.takimlar) {
       const uyeler = d.takimlar[o.i]!.uyeler;
       uyeler.forEach((u, k) => {
-        const id = RUH_PORTRE_OZEL_YETENEK ? ruhKimligi(u.profil) : null;
+        const id = ruhKimligi(u.profil);
         const ruh = RUHLAR.find((x) => x.id === id);
         const aci = (k - 1) * 0.9;
         this.bagliBaslat(o.i, u.profil.element, id, k === 1 ? (ruh ? `Takım Ultisi · ${ruh.ad}` : "Takım Ultisi") : "", sx(t.x) + Math.sin(aci) * 120, sy(t.z) - Math.abs(aci) * 20, tutma + 0.6, k * 0.2);
@@ -189,12 +211,12 @@ export class RuhGorsel {
     const c = ELEMENT_RENK[el];
     const kap = new Container();
     const takim = i === this.yerel ? TAKIM_RENK.oyuncu : TAKIM_RENK.rakip;
-    const ust = new Text({ text: metin, style: { fontFamily: "Trebuchet MS, system-ui, sans-serif", fontSize: buyuk ? 28 : 15, fontWeight: "900", letterSpacing: buyuk ? 4 : 1, fill: c.vurgu, stroke: { color: 0x050d10, width: buyuk ? 7 : 4 } } });
+    const ust = new Text({ text: metin, style: { fontFamily: "Jersey 10, m5x7, system-ui, sans-serif", fontSize: buyuk ? 30 : 18, fontWeight: "400", letterSpacing: buyuk ? 3 : 1, fill: c.vurgu, stroke: { color: 0x05050a, width: buyuk ? 5 : 3 } } });
     ust.anchor.set(0.5, 0);
     kap.addChild(ust);
     let gen = ust.width;
     if (alt) {
-      const a = new Text({ text: alt, style: { fontFamily: "system-ui, sans-serif", fontSize: buyuk ? 17 : 12, fontWeight: "800", fill: c.acik, stroke: { color: 0x050d10, width: 4 } } });
+      const a = new Text({ text: alt, style: { fontFamily: "m5x7, system-ui, sans-serif", fontSize: 16, fontWeight: "400", fill: c.acik, stroke: { color: 0x05050a, width: 3 } } });
       a.anchor.set(0.5, 0);
       a.y = ust.height - 2;
       kap.addChild(a);
@@ -257,7 +279,7 @@ export class RuhGorsel {
     return kareler;
   }
 
-  private ataBaslat(i: number, el: ElementAdi, ad: string, unvan: string, x: number, y: number, sure: number): void {
+  private ataBaslat(el: ElementAdi, x: number, y: number, sure: number, o: { olcek: number; dx: number; gecikme: number; ana: boolean }): void {
     const kap = new Container();
     const govde = new Container();
     const kareler = this.ataKareleri(el);
@@ -265,15 +287,16 @@ export class RuhGorsel {
     let ataAura: Sprite | null = null;
     let yukseklik = ATA_SAYFA.hucre * ATA_OLCEK;
     if (kareler) {
-      ataAura = new Sprite(kareler[0]);
-      ataAura.anchor.set(0.5, 0.92);
-      ataAura.scale.set(ATA_OLCEK * 1.06);
-      ataAura.tint = ELEMENT_RENK[el].orta;
-      ataAura.blendMode = "add";
       ataSprite = new Sprite(kareler[0]);
       ataSprite.anchor.set(0.5, 0.92);
       ataSprite.scale.set(ATA_OLCEK);
-      govde.addChild(ataAura, ataSprite);
+      // hayalet ışık: aynı kare, element renginde, toplamalı (gövdeyi element tonuna boyar; maske/filtre yok)
+      ataAura = new Sprite(kareler[0]);
+      ataAura.anchor.set(0.5, 0.92);
+      ataAura.scale.set(ATA_OLCEK * 1.04);
+      ataAura.tint = ELEMENT_RENK[el].acik;
+      ataAura.blendMode = "add";
+      govde.addChild(ataSprite, ataAura);
     } else {
       const g = this.yedek(el);
       g.scale.set(1.8);
@@ -285,18 +308,19 @@ export class RuhGorsel {
     kap.addChild(this.zeminIsigi(el, 150), govde);
     // Ata çağıranın arkasında (ekranda yukarısında) yükselir; sahneden taşmasın diye yatayda sıkıştırılır
     const e = this.duzdenEkrana(x, y + r);
-    const ax = Math.max(230, Math.min(SAHNE.genislik - 230, e.x));
-    const ay = Math.max(ATA_AYAK_MIN, Math.min(ATA_AYAK_MAX, e.y - ATA_GERI));
+    const ax = Math.max(170, Math.min(SAHNE.genislik - 170, e.x + o.dx));
+    const ay = Math.max(ATA_AYAK_MIN, Math.min(ATA_AYAK_MAX, e.y - ATA_GERI + (o.dx ? 18 : 0)));
     const f = this.ekrandanDuze(ax, ay);
     kap.position.set(f.x, f.y);
     // tepe HUD'a taşmasın: ekran ölçeği sığana kadar küçülür (ATA_OLCEK tavan)
-    const sigar = Math.min(1, (ay - ATA_TEPE_MIN) / (ATA_SAYFA.hucre * ATA_OLCEK * ATA_DOLU_ORAN));
+    const sigar = Math.min(o.olcek, (ay - ATA_TEPE_MIN) / (ATA_SAYFA.hucre * ATA_OLCEK * ATA_DOLU_ORAN));
     kap.scale.set(this.olcekX * sigar, this.olcekY * sigar);
     kap.alpha = 0;
     this.kap.addChild(kap);
-    const bant = this.bandKur(`${ad.toLocaleUpperCase("tr-TR")} UYANDI`, unvan, el, i, true);
-    bant.position.set(SAHNE.merkezX, BANT_Y);
-    this.belirmeler.push({ tur: "ata", el, t: 0, sure, gecikme: 0, kap, govde, aura: null, bant, yukseklik, ataKareleri: kareler, ataSprite, ataAura, kukredi: false, x: f.x, y, parcacik: 0 });
+    const bant = new Container();
+    this.bantKap.addChild(bant);
+    this.belirmeler.push({ tur: "ata", el, t: -o.gecikme, sure: sure - o.gecikme, gecikme: o.gecikme, kap, govde, aura: null, bant, yukseklik: yukseklik * sigar, ataKareleri: kareler, ataSprite, ataAura, kukredi: !o.ana, x: f.x, y, parcacik: 0 });
+    if (!o.ana) return;
     // tam rezonans anı: kamera %4 yakınlaşır, vinyet (flaş ayarına göre)
     if (this.flas !== "kapali") this.sahne.zoomDarbesi(0.04, 0.9);
     this.vinyetSure = this.vinyetKalan = sure + ATA_CIKIS_SN;
@@ -315,6 +339,9 @@ export class RuhGorsel {
     this.belirmeler = this.belirmeler.filter((b) => !bitti.includes(b));
     this.vinyetCiz(dt);
   }
+
+  /** Takım Ultisi yan Ata'ları kükreme halkası/sarsıntı üretmez (yalnız ortadaki; anda tek vurgu). */
+  private anaMi(b: Belirme): boolean { return b.gecikme === 0; }
 
   private cikisOrani(b: Belirme, cikis: number): number {
     return b.t <= b.sure ? 1 : Math.max(0, 1 - (b.t - b.sure) / cikis);
@@ -340,7 +367,7 @@ export class RuhGorsel {
       const tx = b.ataKareleri[Math.min(kare, S.donguSon)]!;
       b.ataSprite.texture = tx;
       b.ataAura.texture = tx;
-      b.ataAura.alpha = 0.22 + 0.1 * Math.sin(b.t * 7);
+      b.ataAura.alpha = ATA_ISIK_ALFA + 0.08 * Math.sin(b.t * 7);
     }
     const giris = Math.min(1, b.t / ((S.yukselisSon + 1) / S.fps));
     const e = 1 - (1 - giris) ** 2;
@@ -348,21 +375,19 @@ export class RuhGorsel {
     b.kap.alpha = ATA_ALFA * Math.min(1, giris * 1.6) * cikis;
     if (!b.ataKareleri) b.govde.y = 40 * (1 - e);
     // kükreme: şok halkası + sarsıntı (yalnız Flaş: Normal)
-    if (!b.kukredi && kareNo >= S.kukremeIlk) {
+    if (!b.kukredi && kareNo >= S.kukremeIlk && this.anaMi(b)) {
       b.kukredi = true;
       this.sayac.kukreme++;
       if (this.flas === "normal") this.sahne.sars(0.45);
     }
     const k = (b.t - S.kukremeIlk / S.fps) / 0.45;
-    if (k >= 0 && k <= 1 && this.flas !== "kapali") {
+    if (k >= 0 && k <= 1 && this.flas !== "kapali" && this.anaMi(b)) {
       const c = ELEMENT_RENK[b.el];
       const R = (40 + 260 * k) * this.olcekX;
       this.ust.circle(b.x, b.kap.y, R).stroke({ width: 10 * (1 - k) + 2, color: c.acik, alpha: 0.7 * (1 - k) });
       this.ust.circle(b.x, b.kap.y, R * 0.8).stroke({ width: 3, color: c.vurgu, alpha: 0.5 * (1 - k) });
     }
-    b.bant.alpha = Math.min(1, b.t / 0.2) * cikis;
-    b.bant.scale.set(1.15 - 0.15 * Math.min(1, b.t / 0.2));
-    this.parcacikCiz(b, b.x, b.kap.y, 170, b.yukseklik * 0.9, giris * cikis, 22);
+    this.parcacikCiz(b, b.x, b.kap.y, 170 * (b.yukseklik / (ATA_SAYFA.hucre * ATA_OLCEK)), b.yukseklik * 0.9, giris * cikis, 22);
   }
 
   private parcacikCiz(b: Belirme, x: number, y: number, yayilim: number, boy: number, alfa: number, n: number): void {
