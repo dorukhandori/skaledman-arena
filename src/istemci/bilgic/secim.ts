@@ -36,8 +36,18 @@ export interface AtolyeDurumu {
   sonMacRingOutKayip?: boolean;
   /** Topaç Lab düğmesi görünür mü (yalnız ?gelistir=1, sadelik S-10); değilse "lab" ipucu söylenmez */
   labVar?: boolean;
-  /** Bu tarayıcıda biten maç sayısı (azalan sıklık); verilmezse 0 */
+  /** Biten maç sayısı (azalan sıklık): sunucudan (`/api/ben` sonMac.macSayisi), yoksa bu tarayıcının sayacı; verilmezse 0 */
   bitenMac?: number;
+}
+
+/**
+ * TEMIZLIK #5: `/api/ben` `sonMac` alanından Pergel durumu. Alan hiç yoksa (eski sunucu, misafir) boş: ring-out tetiği
+ * çalışmaz, maç sayısı tarayıcı sayacına düşer. `null` = sunucuda hiç maç yok.
+ */
+export function sonMacDurumu(sonMac: { ringOutKayip: boolean; macSayisi: number } | null | undefined): Pick<AtolyeDurumu, "sonMacRingOutKayip" | "bitenMac"> {
+  if (sonMac === undefined) return {};
+  if (sonMac === null) return { sonMacRingOutKayip: false, bitenMac: 0 };
+  return { sonMacRingOutKayip: sonMac.ringOutKayip, bitenMac: sonMac.macSayisi };
 }
 
 function cark(e: string): number { return ELEMENT_CARKI.indexOf(e as (typeof ELEMENT_CARKI)[number]); }

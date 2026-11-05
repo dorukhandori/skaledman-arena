@@ -20,7 +20,10 @@ export type Ben =
     aktifTakim?: string;
     /** D7: Altın bakiyesi */
     altin?: number;
+    /** TEMIZLIK #5: son maç özeti (sunucu `SonMacSema`); hiç maç yoksa null */
+    sonMac?: SonMacGorunumu | null;
   };
+export interface SonMacGorunumu { neden: string; kazandi: boolean; bitis: string | null; ringOutKayip: boolean; zaman: number; macSayisi: number }
 export type Girisli = Extract<Ben, { girisli: true }>;
 
 export class BakimHatasi extends Error {}

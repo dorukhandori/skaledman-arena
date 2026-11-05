@@ -9,6 +9,7 @@ import { type Istek, type Uygulama, type Yanit, govdeOku, ip, kokenTamam, oturum
 import { atolyeRotalariKur } from "./atolye.ts";
 import { marketRotalariKur } from "./market.ts";
 import { basarimOlayiIsle } from "../oyuncu/basarimYaz.ts";
+import { sonMacOzeti } from "../oyuncu/sonMac.ts";
 
 export type { Istek, Uygulama, Yanit };
 export { oturumdakiOyuncu };
@@ -66,6 +67,8 @@ export function benGorunumu(d: Depo, oyuncuId: number) {
     marketAcik: basarimlar.includes(ILK_DEVIR),
     /** D7: Altın bakiyesi (defter toplamı) */
     altin: d.bakiye(oyuncuId),
+    /** TEMIZLIK #5: son maç özeti (Pergel ring-out ipucu, sunucudaki biten maç sayısı); hiç maç yoksa null */
+    sonMac: sonMacOzeti(d, oyuncuId),
   };
 }
 

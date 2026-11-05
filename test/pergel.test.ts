@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { IPUCLARI } from "../src/istemci/bilgic/ipuclari.ts";
-import { OTOMATIK_ARA_MS, SEYREK_ARA_MS, gezintiSec, kapatmaSonucu, kosulSagli, otomatikIzin, otomatikSec, sorSec, ucKomsuMu, zitCiftVarMi, type AtolyeDurumu } from "../src/istemci/bilgic/secim.ts";
+import { OTOMATIK_ARA_MS, SEYREK_ARA_MS, gezintiSec, kapatmaSonucu, kosulSagli, otomatikIzin, otomatikSec, sonMacDurumu, sorSec, ucKomsuMu, zitCiftVarMi, type AtolyeDurumu } from "../src/istemci/bilgic/secim.ts";
 
 const taban: AtolyeDurumu = { ziyaret: 5, takimEksik: 0, oduncVar: false, seviyeler: [1, 1, 1], takimElementleri: ["kor", "simsek", "kaya"], marketYeni: false };
 const bos = new Set<string>();
@@ -83,5 +83,20 @@ describe("Pergel ipucu seçimi", () => {
     s = kapatmaSonucu(s.okunmadan, 400);
     expect(s.sus).toBe(true);
     expect(kapatmaSonucu(2, 5000)).toEqual({ okunmadan: 0, sus: false });
+  });
+});
+
+describe("TEMIZLIK #5: sonMac → Pergel durumu", () => {
+  const taban: AtolyeDurumu = { ziyaret: 5, takimEksik: 0, oduncVar: false, seviyeler: [3], takimElementleri: [], marketYeni: false };
+  it("alan yoksa boş (tarayıcı sayacı yedek), null = maç yok, ringOutKayip ipucunu açar", () => {
+    expect(sonMacDurumu(undefined)).toStrictEqual({});
+    expect(sonMacDurumu(null)).toStrictEqual({ sonMacRingOutKayip: false, bitenMac: 0 });
+    const d = { ...taban, ...sonMacDurumu({ ringOutKayip: true, macSayisi: 4 }) };
+    expect(kosulSagli("ring-out", d)).toBe(true);
+    expect(d.bitenMac).toBe(4);
+    expect(otomatikSec(IPUCLARI.filter((x) => x.kosul === "ring-out"), d, new Set())?.id).toBe("ring-out");
+    // 10 maçtan sonra yalnız önemli ipuçları (ring-out önceliği 50): sunucu sayacı belirler
+    expect(otomatikSec(IPUCLARI.filter((x) => x.kosul === "ring-out"), { ...taban, ...sonMacDurumu({ ringOutKayip: true, macSayisi: 11 }) }, new Set())).toBeNull();
+    expect(kosulSagli("ring-out", { ...taban, ...sonMacDurumu({ ringOutKayip: false, macSayisi: 1 }) })).toBe(false);
   });
 });

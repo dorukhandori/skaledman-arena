@@ -305,7 +305,12 @@ export class Depo {
 
   /** D8: oyuncunun son maçları (en yeni önce). */
   sonMaclar(id: number, n = 20): MacSatiri[] {
-    return this.db.prepare("SELECT * FROM mac WHERE a = ? OR b = ? ORDER BY baslangic DESC LIMIT ?").all(id, id, n) as MacSatiri[];
+    return this.db.prepare("SELECT * FROM mac WHERE a = ? OR b = ? ORDER BY baslangic DESC, rowid DESC LIMIT ?").all(id, id, n) as MacSatiri[];
+  }
+
+  /** TEMIZLIK #5: oyuncunun biten (iptal olmayan) maç sayısı (Pergel azalan sıklık). */
+  bitenMacSayisi(id: number): number {
+    return (this.db.prepare("SELECT COUNT(*) n FROM mac WHERE (a = ? OR b = ?) AND bitis_nedeni <> 'iptal'").get(id, id) as { n: number }).n;
   }
 
   mac(id: string): MacSatiri | null {

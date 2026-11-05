@@ -17,6 +17,7 @@ import type { TopacKurulumu } from "../atolye3d/tipler.ts";
 import { acilirMenu, anaEylem, bakimKatmani, ekranKok, el, gelistirAcik } from "./arayuz.ts";
 import { parcaPikselIkonu, pikselTopac } from "./pikselTopac.ts";
 import { pergelKur } from "../bilgic/Pergel.ts";
+import { sonMacDurumu } from "../bilgic/secim.ts";
 
 // Atölye (D6, US-2.1; ux § 3.2 ana ekran) · ATOLYE3D: referans 03'ün birebir düzeni (docs/design/beyblade/gorunum/03-atolye.jpg).
 // Sol: parça ızgarası (4 ikonlu sekme ÇEKİRDEK / GÖVDE / DİSK / UÇ, 4 sütunlu ikon ızgarası, takılı parça turuncu çerçeve;
@@ -418,7 +419,8 @@ class AtolyeEkrani {
         takimElementleri: yv.map(tanim).filter((t): t is string => !!t).map((t) => cekirdekBul(t).element),
         marketYeni: new URLSearchParams(location.search).get("mesaj") === "ilkdevir",
         labVar: gelistirAcik(),
-        // sonMacRingOutKayip: /api/ben son maç sonucunu vermiyor (Paca SA #17); ring-out ipucu bu yüzden çalışmaz.
+        // TEMIZLIK #5: /api/ben `sonMac` (sunucu `mac` tablosu); maç sayısı sunucudan, yoksa tarayıcı sayacı (Pergel yedeği)
+        ...sonMacDurumu(this.b.ben?.girisli ? this.b.ben.sonMac : undefined),
       },
     });
   }

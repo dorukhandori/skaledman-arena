@@ -17,7 +17,7 @@ Spec: `bilgic-pergel.md`. Durum: Atölye'de çalışıyor, commit yok.
 - Ekran görüntüsü: `docs/production/raporlar/ekran/Pergel-atolye.png`.
 
 ## Varsayımlar / atlananlar
-- `ring-out`: `/api/ben` son maç verisi vermiyor; alan uydurulmadı, tetik hiç çalışmaz (`sonMacRingOutKayip` undefined). Sunucu alan ekleyince `Atolye.ts`'teki yoruma bağlanır.
+- `ring-out`: **bağlandı (2026-11-05, TEMIZLIK #5)**: `/api/ben` `sonMac.ringOutKayip` (sunucu `mac` tablosu, backend.md § 9a) → `sonMacDurumu` (`secim.ts`); azalan sıklığın maç sayısı da `sonMac.macSayisi` (tarayıcı sayacı yalnız yedek).
 - 45 s aralık ve susma durumu sessionStorage'da (sayfa yenilenince korunur), görülenler ve ziyaret sayısı localStorage `devran.pergel.v1.<oyuncuId>`. Ayar `devran.ayarlar.v1` içinde (tarayıcı başına, hesap başına değil).
 - Gezinti ipuçları (ruh-ozel, lab, ödünç yuva) 45 s aralığına tabi değil, oyuncunun kendi bekleyişi tetikler; ziyaret başına en çok 3.
 - "Okunmadan kapatma": 2 s içinde kapatma; 12 s açık kalıp küçülen balon okunmuş sayılır.

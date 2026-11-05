@@ -344,3 +344,32 @@ describe("D7 HTTP uçları", () => {
     await oda.leave(true);
   }, 20000);
 });
+
+describe("TEMIZLIK #5: /api/ben son maç özeti (Pergel ring-out, sunucu maç sayısı)", () => {
+  it("hiç maç yoksa null; ring out ile kaybedilen son maç ringOutKayip; kazanan için false; maç sayısı iptali saymaz", async () => {
+    const { benGorunumu } = await import("../src/sunucu/api/rotalar.ts");
+    const { SonMacSema } = await import("../src/sunucu/oyuncu/sonMac.ts");
+    const d = yeni();
+    const { a, b } = kur(d);
+    expect(benGorunumu(d, a)!.sonMac).toBeNull();
+    // b kazanır, son tur b (taraf 1) lehine ring out
+    macSonuKaydet(d, mac(d, a, b, { baslangic: 10, turlar: [{ tur: "durma", kazanan: 0, sn: 10 }, { tur: "ringOut", kazanan: 1, sn: 40 }] }, 1), OGLE);
+    const sa = benGorunumu(d, a)!.sonMac!;
+    expect(SonMacSema.parse(sa)).toStrictEqual(sa);
+    expect(sa).toMatchObject({ kazandi: false, bitis: "ringOut", ringOutKayip: true, neden: "puan", macSayisi: 1 });
+    expect(benGorunumu(d, b)!.sonMac).toMatchObject({ kazandi: true, ringOutKayip: false, macSayisi: 1 });
+    // sonraki maç durma ile kaybedilir → ipucu tetiği düşer; iptal maçı sayılmaz
+    macSonuKaydet(d, mac(d, a, b, { baslangic: 20, turlar: [{ tur: "durma", kazanan: 1, sn: 30 }] }, 1), OGLE);
+    expect(benGorunumu(d, a)!.sonMac).toMatchObject({ bitis: "durma", ringOutKayip: false, macSayisi: 2 });
+    macSonuKaydet(d, mac(d, a, b, { baslangic: 30, sonuc: { kazanan: -1, neden: "iptal", puan: [0, 0], tick: 10 }, turlar: [] }), OGLE);
+    expect(benGorunumu(d, a)!.sonMac).toMatchObject({ neden: "iptal", bitis: null, ringOutKayip: false, macSayisi: 2 });
+  });
+  it("bozuk telemetri (bitis_turleri) yanıtı düşürmez", async () => {
+    const { sonMacOzeti } = await import("../src/sunucu/oyuncu/sonMac.ts");
+    const d = yeni();
+    const { a, b } = kur(d);
+    macSonuKaydet(d, mac(d, a, b, {}, 1), OGLE);
+    d.db.prepare("UPDATE mac SET bitis_turleri = '{bozuk'").run();
+    expect(sonMacOzeti(d, a)).toMatchObject({ bitis: null, ringOutKayip: false, macSayisi: 1 });
+  });
+});

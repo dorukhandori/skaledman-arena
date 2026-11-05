@@ -58,7 +58,7 @@ Bağlı: axiom § 2 #19 (şema), #22 (kimlik), #24 (silme ucu D8); `netcode.md` 
 | Uç | Yetki | Girdi | Çıktı |
 |---|---|---|---|
 | `GET /api/saglik` | — | — | `{ok, protokol, katalog, kimlik, odalar}` |
-| `GET /api/ben` | çerez | — | `{girisli:false, protokol, katalog}` ya da `{girisli:true, oyuncu, cekirdekler, takimlar, basarimlar, marketAcik}` |
+| `GET /api/ben` | çerez | — | `{girisli:false, protokol, katalog}` ya da `{girisli:true, oyuncu, cekirdekler, takimlar, basarimlar, marketAcik, altin, sonMac}` (`sonMac` § 9a) |
 | `GET /api/ad-uygun?ad=` | — | ad | `{uygun}` / `{uygun:false, hata: uzunluk·karakter·uygunsuz·alinmis}` |
 | `POST /api/kayit` | Origin | `{ad, sifre, sifreTekrar}` | 201 + çerez / 400 `uzunluk·karakter·uygunsuz·sifreKisa·sifreUzun·eslesmiyor` / 409 `alinmis` / 429 |
 | `POST /api/giris` | Origin | `{ad, sifre}` | 200 + çerez / 401 `yanlis` / 429 `cok` |
@@ -196,6 +196,20 @@ takımı üç başlangıç seti Lv.2, `oyuncular[1] = null`, `mac.bot = 1`). Se�
 | `GET /api/izle/:kod` | oda ya da yayın kodu → `{durum: "var", kod: <yayın kodu>}` · `{durum: "yok"}` |
 | Colyseus `izle` | seyirci odası (netcode.md § 12) |
 | Colyseus `gTakimEnerji {miktar}` | **yalnız NODE_ENV ≠ production**: gönderenin Takım Enerjisini ayarlar (uçtan uca test) |
+
+### 9a. `/api/ben` son maç özeti (TEMIZLIK #5, 2026-11-05)
+
+`sonMac` (`src/sunucu/oyuncu/sonMac.ts`, zod `SonMacSema`): oyuncunun `mac` tablosundaki en yeni satırından
+(`ORDER BY baslangic DESC, rowid DESC`); hiç maç yoksa `null`.
+
+| Alan | Tür | Kaynak |
+|---|---|---|
+| `neden` | string | `mac.bitis_nedeni` (`MacBitisNedeni`) |
+| `kazandi` | boolean | `mac.kazanan = oyuncu` |
+| `bitis` | `ringOut·durma·parcalanma·berabere` \| null | `mac.bitis_turleri` son turu (telemetri; zod ile okunur, bozuksa null) |
+| `ringOutKayip` | boolean | maç kaybedildi (iptal değil) ve son tur rakip lehine ring out: Pergel `ring-out` ipucu |
+| `zaman` | ms | `mac.bitis` (yoksa `baslangic`) |
+| `macSayisi` | int | iptal olmayan maç sayısı (`Depo.bitenMacSayisi`): Pergel azalan sıklığı; alan yoksa tarayıcı sayacı yedek |
 
 Gizlilik metni `docs/gizlilik.md` (istemci `/gizlilik` sayfası aynı dosyadan). Krediler: `src/paylasilan/krediler.ts`
 (`docs/art/krediler.md` tabloları + `veri/manifest-*.json` kaynak eşleşmesi + yazılım/yazı tipi lisansları); sayfa `/krediler`,
