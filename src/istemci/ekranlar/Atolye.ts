@@ -63,6 +63,9 @@ const STIL = `
 .at .pc { position:relative; padding:calc(2 * var(--p)) var(--p) calc(3 * var(--p)); display:flex; flex-direction:column; align-items:center; gap:var(--p); cursor:pointer; min-height:calc(54 * var(--p));
   background:var(--hucre); color:var(--ink); border:0; border-radius:0; box-shadow:inset 0 0 0 var(--p) #3a4258, inset 0 calc(2 * var(--p)) 0 0 var(--hucre-isik), var(--odak-g, 0 0 0 0 transparent); font:400 var(--y-16)/.5625 var(--font-etiket); text-transform:uppercase; }
 .at .pc:hover { box-shadow:inset 0 0 0 var(--p) #bfaba0, var(--odak-g, 0 0 0 0 transparent); }
+.at .pc.yer { opacity:.35; cursor:default; background:transparent; box-shadow:inset 0 0 0 var(--p) #2c3346; }
+.at .pc.yer.ipucu-hucre { opacity:.8; cursor:pointer; justify-content:center; color:var(--gold); }
+.at .pc.yer.ipucu-hucre:hover, .at .pc.yer.ipucu-hucre:focus-visible { opacity:1; box-shadow:inset 0 0 0 var(--p) #bfaba0; }
 .at .pc .ik { width:calc(32 * var(--p)); height:calc(32 * var(--p)); display:grid; place-items:center; flex:none; }
 .at .pc .ik canvas { image-rendering:pixelated; }
 .at .pc .ik canvas.g3-ikon { width:calc(32 * var(--p)); height:calc(32 * var(--p)); }
@@ -105,6 +108,8 @@ const STIL = `
 .at .g3-etiket:hover small, .at .g3-etiket[aria-pressed=true] small { color:var(--gold); }
 .at .g3-cizgi { position:absolute; height:var(--p); background:var(--turuncu); margin-top:calc(1 * var(--p)); }
 .at .g3-cizgi.sag { margin-top:0; opacity:.8; }
+.at .g3-cizgi.sag.ayak { margin-top:calc(1 * var(--p)); opacity:1; }
+.at .g3-cizgi.dik { width:var(--p); margin-top:calc(1 * var(--p)); }
 .at .parca-karti .pk-market { align-self:flex-start; margin-top:calc(3 * var(--p)); }
 .at .g3-arac { position:absolute; right:var(--p); bottom:var(--p); display:flex; gap:calc(3 * var(--p)); }
 .at .k-sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
@@ -683,8 +688,34 @@ class AtolyeEkrani {
       });
       dugmeler.push(d);
     });
+    this.izgaraDoldur(liste, ogeler.length);
     if (this.v.gelistirme && gelistirAcik()) this.gelistirmePaneli(s);
     if (odak) (s.querySelector(`[data-odak="${odak}"]`) as HTMLElement | null)?.focus({ preventScroll: true });
+  }
+
+  /**
+   * TEMIZLIK #7b: az parçalı sekmede ızgaranın alt kısmı boş kalmasın (referans 03: 5 satır). İlk boş hücre (Market
+   * açıksa) "Market'ten al" ipucu, kalanlar soluk yer tutucu (etkileşimsiz, ekran okuyucudan gizli). Sadelik: yeni
+   * bilgi eklemez, tek kısa ipucu; ana eylem değil.
+   */
+  private izgaraDoldur(liste: HTMLElement, adet: number): void {
+    const SUTUN = 4, SATIR = 5;
+    const hedef = Math.max(SUTUN * SATIR, Math.ceil(adet / SUTUN) * SUTUN);
+    let bos = hedef - adet;
+    if (bos <= 0) return;
+    if (this.tamamSet.has("ilk-devir") && adet > 0) {
+      const m = el("button", "pc yer ipucu-hucre", liste);
+      m.type = "button";
+      m.dataset["eylem"] = "marketten-al";
+      m.dataset["odak"] = "marketten-al";
+      m.dataset["k"] = "yok";
+      el("span", "ik", m).appendChild(el("span", "k-sikke"));
+      el("span", "ad", m, "Market'ten al");
+      m.setAttribute("aria-label", `Daha fazla ${YUVA_AD[this.sekme]}: Market'e git`);
+      m.addEventListener("click", () => git("market"));
+      bos--;
+    }
+    for (let i = 0; i < bos; i++) el("div", "pc yer", liste).setAttribute("aria-hidden", "true");
   }
 
   private envanterOgeleri(): { parca: Parca; sahipIdler: number[]; takili: number }[] {

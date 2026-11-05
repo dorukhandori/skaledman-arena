@@ -74,14 +74,31 @@ export class Yedek2B implements Cizer {
       const ust = z.torna ? z.torna[z.torna.length - 1]![1] : Math.max(...(z.profil ?? [[0, 10]]).map((v) => v[1])) + 3;
       olcu[t] = { yAlt: z.zAlt ?? 0, yUst: ust, R: (z.R0 ?? 9) + (z.loblar?.[0]?.genlik ?? 0) * 0.5 };
     }
-    const kay = patlatilmisTabanlar(olcu, yuk, 5, PARCALAR_3B[this.kur?.disk ?? ""]?.profil?.[0]?.[1] ?? GOVDE_TABAN_Z, p);
-    // yığın yüksekliği (sanat pikseli, ölçek 1): Uç tabanından Çekirdek tepesine (+ elips payı)
-    const yuksek = ((kay.cekirdek + 40) * Math.cos(yuk)) / birim + 20;
+    const diskUst = PARCALAR_3B[this.kur?.disk ?? ""]?.profil?.[0]?.[1] ?? GOVDE_TABAN_Z;
+    const enR = Math.max(8, ...Object.values(olcu).map((o) => o!.R));
     const bos = 52;
-    const olcek = Math.max(1, Math.floor(Math.min((this.h - 10) / yuksek, (this.w - bos - 6) / 64)));
+    // TEMIZLIK #7c: WebGL görüntüleyiciyle aynı boy. Yığın yüksekliği gerçek kapsamdan (Uç altı → Çekirdek tepesi + üst/alt
+    // elips derinliği; eski kaba pay +40 / +20 yedeği WebGL'in yarısı kadar çiziyordu). Goruntuleyici dünya birimi başına
+    // ppu = min((h − 28) / yükseklik, (w − boşluk − 10) / 2R); sprite pikseli = `birim` dünya birimi → ölçek ≈ ppu × birim,
+    // tam sayıya yuvarlanır (nearest). Sığmazsa önce patlatma boşluğu daralır (5 → −3), yine sığmazsa ölçek bir küçülür.
+    const kapsam = (bosluk: number) => {
+      const kay = patlatilmisTabanlar(olcu, yuk, bosluk, diskUst, p);
+      const ustW = kay.cekirdek + (olcu.cekirdek?.yUst ?? 20), altW = kay.uc + (olcu.uc?.yAlt ?? 0);
+      return { kay, altW, yuksek: ((ustW - altW) * Math.cos(yuk) + 2 * enR * Math.sin(yuk)) / birim + 4 };
+    };
+    let k = kapsam(5);
+    const ppu = Math.min((this.h - 28) / Math.max(1, k.yuksek * birim), (this.w - bos - 10) / (2 * enR));
+    let olcek = Math.max(1, Math.round(ppu * birim));
+    const sigar = (o: number) => o * k.yuksek <= this.h - 6 && (o * 2 * enR) / birim <= this.w - bos;
+    while (olcek > 1 && !sigar(olcek)) {
+      for (let b = 4; b >= -3 && !sigar(olcek); b--) k = kapsam(b);
+      if (!sigar(olcek)) { olcek--; k = kapsam(5); }
+    }
+    const { kay, altW, yuksek } = k;
     const cx = bos + (this.w - bos) / 2;
     const tabanPx = {} as Record<KatmanTuru, number>;
-    const altY = this.h / 2 + (yuksek * olcek) / 2 - 6 * olcek;
+    // içerik dikeyde ortalanır, WebGL gibi alt araç payı (22 − 6) / 2 kadar yukarı
+    const altY = this.h / 2 + (yuksek * olcek) / 2 - Math.max(0, Math.min(8, (this.h - yuksek * olcek) / 2)) + ((altW * Math.cos(yuk) - enR * Math.sin(yuk)) / birim) * olcek;
     for (const t of KATMAN_SIRASI) tabanPx[t] = altY - ((kay[t] * Math.cos(yuk)) / birim) * olcek;
     return { olcek, cx, tabanPx, p };
   }

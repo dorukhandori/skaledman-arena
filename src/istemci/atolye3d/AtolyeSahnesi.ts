@@ -48,7 +48,7 @@ function hayaletSvg(): string {
 export class AtolyeSahnesi {
   readonly kok: HTMLElement;
   private tuval: HTMLCanvasElement;
-  private katmanEl = {} as Record<KatmanTuru, { dugme: HTMLButtonElement; ad: HTMLElement; cizgi: HTMLElement; sag: HTMLElement }>;
+  private katmanEl = {} as Record<KatmanTuru, { dugme: HTMLButtonElement; ad: HTMLElement; cizgi: HTMLElement; sag: HTMLElement; dik: HTMLElement }>;
   private birlestir: HTMLButtonElement;
   private geri: HTMLButtonElement;
   private srListe: HTMLElement;
@@ -78,6 +78,8 @@ export class AtolyeSahnesi {
     for (const t of KATMAN_SIRASI) {
       const cizgi = el("i", "g3-cizgi", ust2);
       const sag = el("i", "g3-cizgi sag", ust2);
+      const dik = el("i", "g3-cizgi dik", ust2);
+      dik.hidden = true;
       const d = el("button", "g3-etiket", ust2);
       d.type = "button";
       d.dataset["yuva"] = t;
@@ -93,7 +95,7 @@ export class AtolyeSahnesi {
       d.addEventListener("keydown", (e) => {
         if (e.key === "Delete" && this.olay.sil) { e.preventDefault(); this.olay.sil(t); return; }
       });
-      this.katmanEl[t] = { dugme: d, ad, cizgi, sag };
+      this.katmanEl[t] = { dugme: d, ad, cizgi, sag, dik };
     }
     const arac = el("div", "g3-arac", k);
     this.geri = el("button", "k-dugme kucuk", arac, "◄ Geri");
@@ -229,25 +231,46 @@ export class AtolyeSahnesi {
     const birlesik = this.gd.mod === "birlesik" || (this.gd.mod === "odak" && this.gd.donus === "birlesik");
     // birleşikte katmanlar üst üste: etiketler en az 15 px aralıkla aşağı itilir (okunur kalsın)
     let onceki = -Infinity;
-    KATMAN_SIRASI.forEach((t) => {
+    KATMAN_SIRASI.forEach((t, sira) => {
       const v = k[t];
       const e = this.katmanEl[t];
       if (!v) return;
       const etiketY = Math.round(birlesik ? Math.max(v.y, onceki + 15) : v.y);
       onceki = etiketY;
+      const katY = Math.round(v.y);
       e.dugme.style.top = `calc(${etiketY} * var(--p))`;
       const gor = v.gorunur && (this.gd.mod !== "odak" || this.gd.odak === t);
       e.dugme.hidden = !gor && this.gd.mod === "odak";
       e.cizgi.hidden = !gor;
-      e.sag.hidden = !gor || birlesik || this.gd.mod === "odak";
       const x0 = 2, x1 = Math.max(x0 + 40, Math.round(v.sol) - 2);
+      // TEMIZLIK #7a: birleşikte etiket aşağı itildiyse çizgi dirsekle katmanın tam hizasına iner: etiket hizasında
+      // yatay → dikey (katman sırasıyla kademeli, kesişmez) → katman hizasında yatay. Patlatılmışta düz çizgi.
+      const dirsek = birlesik && etiketY !== katY && gor;
+      const xm = dirsek ? Math.min(x1 - 2, 54 + sira * 5) : x1;
       e.cizgi.style.left = `calc(${x0} * var(--p))`;
-      e.cizgi.style.width = `calc(${x1 - x0} * var(--p))`;
+      e.cizgi.style.width = `calc(${xm - x0} * var(--p))`;
       e.cizgi.style.top = `calc(${etiketY} * var(--p))`;
+      e.dik.hidden = !dirsek;
+      if (dirsek) {
+        const y0 = Math.min(etiketY, katY), y1 = Math.max(etiketY, katY);
+        e.dik.style.left = `calc(${xm} * var(--p))`;
+        e.dik.style.top = `calc(${y0} * var(--p))`;
+        e.dik.style.height = `calc(${y1 - y0 + 1} * var(--p))`;
+      }
+      e.sag.hidden = !gor || (!dirsek && (birlesik || this.gd.mod === "odak"));
+      if (dirsek) {
+        // sağ çizgi öğesi birleşikte dirseğin son ayağı olur (katman hizası, xm → katmanın sol kenarı)
+        e.sag.classList.add("ayak");
+        e.sag.style.left = `calc(${xm} * var(--p))`;
+        e.sag.style.width = `calc(${Math.max(1, x1 - xm)} * var(--p))`;
+        e.sag.style.top = `calc(${katY} * var(--p))`;
+        return;
+      }
+      e.sag.classList.remove("ayak");
       const s0 = Math.round(v.sag) + 2;
       e.sag.style.left = `calc(${s0} * var(--p))`;
       e.sag.style.width = `calc(${Math.max(0, this.sw - s0)} * var(--p))`;
-      e.sag.style.top = `calc(${Math.round(v.y)} * var(--p))`;
+      e.sag.style.top = `calc(${katY} * var(--p))`;
     });
   }
 

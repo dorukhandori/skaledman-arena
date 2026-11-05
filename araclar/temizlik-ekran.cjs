@@ -77,6 +77,47 @@ const ikonlarHazir = (s, ms = 20000) => s.waitForFunction(() => {
     kayit.lobiIkon = await ikonlarHazir(s, 10000);
     await foto(s, "lobi-takim-ikon");
   }
+  const atolye = async (sorgu = "") => {
+    await s.goto(`${TABAN}?ekran=atolye${sorgu}`);
+    await s.waitForFunction(() => !!window.__atolye && !!window.__atolye.sahne.cizerTuru, null, { timeout: 30000 });
+    await bekle(1500);
+    const t = s.locator(".pergel .p-dugme", { hasText: "Tamam" });
+    if (await t.count()) { await t.first().click().catch(() => {}); await bekle(300); }
+  };
+  if (ister("atolye")) {
+    await atolye();
+    kayit.cizer = await s.evaluate(() => window.__atolye.sahne.cizerTuru);
+    await foto(s, "atolye-patlatilmis");
+    await s.click("[data-eylem=birlestir]");
+    await bekle(1500);
+    await foto(s, "atolye-birlesik");
+    await s.click("[data-sekme=uc]");
+    await bekle(800);
+    await foto(s, "atolye-izgara-az");
+  }
+  if (ister("marketteac")) {
+    await atolye();
+    await s.click("[data-takim-yuva='1']");
+    await bekle(1200);
+    await s.click(".g3-etiket[data-yuva=govde]");
+    await bekle(1500);
+    kayit.marketteAcDugme = await s.locator("[data-eylem=markette-ac]").count();
+    await foto(s, "atolye-markette-ac");
+    await s.click("[data-eylem=markette-ac]");
+    await s.waitForFunction(() => !!window.__market, null, { timeout: 20000 });
+    await bekle(1200);
+    kayit.marketVurgu = await s.evaluate(() => { const h = document.querySelector(".hucre[data-vurgu]"); return h ? { urun: h.dataset.urun, odak: document.activeElement === h, url: location.search } : null; });
+    await foto(s, "market-vurgu");
+  }
+  if (ister("yedek")) {
+    await atolye();
+    const g = await s.evaluate(() => { const r = document.querySelector(".g3-tuval").getBoundingClientRect(); return [r.width, r.height]; });
+    await foto(s, "atolye-webgl-boyut");
+    await atolye("&webgl=0");
+    const y = await s.evaluate(() => { const r = document.querySelector(".g3-tuval").getBoundingClientRect(); return [r.width, r.height, window.__atolye.sahne.cizerTuru]; });
+    kayit.boyutWebgl = g; kayit.boyutYedek = y;
+    await foto(s, "atolye-yedek");
+  }
   fs.writeFileSync(`${KLASOR}/TEMIZLIK-ozet.json`, JSON.stringify({ ...kayit, hatalar }, null, 1));
   log("hatalar:", hatalar.length, hatalar.slice(0, 10));
   await tar.close();
