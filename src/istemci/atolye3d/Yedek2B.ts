@@ -1,5 +1,5 @@
 import { GOVDE_TABAN_Z, kareIndeksi, tanimA } from "../oyun/topacKare.ts";
-import { type GorunumDurumu, KATMAN_SIRASI, type KatmanTuru, ilkDurum, katmanKaymasi } from "./durum.ts";
+import { type GorunumDurumu, KATMAN_SIRASI, type KatmanOlcusu, type KatmanTuru, ilkDurum, patlatilmisTabanlar } from "./durum.ts";
 import { PARCALAR_3B } from "./geometri.ts";
 import type { Boya } from "./palet.ts";
 import type { Cizer, KatmanKonumlari, TopacKurulumu } from "./tipler.ts";
@@ -67,10 +67,17 @@ export class Yedek2B implements Cizer {
     const p = mod === "patlatilmis" ? 1 : 0;
     const s0 = Object.values(this.sprite)[0];
     const birim = s0?.birim ?? 1.157, yuk = ((s0?.yukselti ?? 26) * Math.PI) / 180;
-    const kay = katmanKaymasi(p, PARCALAR_3B[this.kur?.disk ?? ""]?.profil?.[0]?.[1] ?? GOVDE_TABAN_Z);
+    const olcu: Partial<Record<KatmanTuru, KatmanOlcusu>> = {};
+    for (const t of KATMAN_SIRASI) {
+      const z = PARCALAR_3B[this.kur?.[t] ?? ""];
+      if (!z) continue;
+      const ust = z.torna ? z.torna[z.torna.length - 1]![1] : Math.max(...(z.profil ?? [[0, 10]]).map((v) => v[1])) + 3;
+      olcu[t] = { yAlt: z.zAlt ?? 0, yUst: ust, R: (z.R0 ?? 9) + (z.loblar?.[0]?.genlik ?? 0) * 0.5 };
+    }
+    const kay = patlatilmisTabanlar(olcu, yuk, 5, PARCALAR_3B[this.kur?.disk ?? ""]?.profil?.[0]?.[1] ?? GOVDE_TABAN_Z, p);
     // yığın yüksekliği (sanat pikseli, ölçek 1): Uç tabanından Çekirdek tepesine (+ elips payı)
-    const yuksek = ((kay.cekirdek + 38) * Math.cos(yuk)) / birim + 16;
-    const bos = p ? 52 : 0;
+    const yuksek = ((kay.cekirdek + 40) * Math.cos(yuk)) / birim + 20;
+    const bos = 52;
     const olcek = Math.max(1, Math.floor(Math.min((this.h - 10) / yuksek, (this.w - bos - 6) / 64)));
     const cx = bos + (this.w - bos) / 2;
     const tabanPx = {} as Record<KatmanTuru, number>;

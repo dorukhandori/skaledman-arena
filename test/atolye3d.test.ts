@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { PARCALAR } from "../src/paylasilan/veri/katalog.ts";
-import { ARALIK, EN_AZ_EGIM, EN_COK_EGIM, KATMAN_ETIKET, KATMAN_SIRASI, VARSAYILAN_EGIM, gorunumOlay, ilkDurum, katmanKaymasi, tusIsler } from "../src/istemci/atolye3d/durum.ts";
+import { ARALIK, BOS_OLCU, EN_AZ_EGIM, patlatilmisTabanlar, EN_COK_EGIM, KATMAN_ETIKET, KATMAN_SIRASI, VARSAYILAN_EGIM, gorunumOlay, ilkDurum, katmanKaymasi, tusIsler } from "../src/istemci/atolye3d/durum.ts";
 import { PARCALAR_3B, SINIF_KOD, cikintiSayisi, parcaGeometrisi, parcaGeometrisiId } from "../src/istemci/atolye3d/geometri.ts";
 import { paletDizisi } from "../src/istemci/atolye3d/palet.ts";
 import { GLB_LISTESI, glbYolu, modelSec } from "../src/istemci/atolye3d/tipler.ts";
@@ -87,6 +87,32 @@ describe("Atölye 3B katman düzeni", () => {
       expect(p.disk).toBeGreaterThan(p.uc);
       expect(p.disk - p.uc).toBe(ARALIK);
     }
+  });
+});
+
+describe("Atölye 3B patlatılmış düzen (ekranda ayrık)", () => {
+  it("her eğimde ardışık katmanlar ekranda üst üste binmez; p=0 birleşik tabanı verir", () => {
+    const olcu = Object.fromEntries((["cekirdek", "govde", "disk", "uc"] as const).map((t) => {
+      const id = { cekirdek: "kaya-maden", govde: "ok-govde", disk: "agir-disk", uc: "duz-uc" }[t];
+      const g = parcaGeometrisiId(id)!;
+      return [t, { yAlt: g.yAlt, yUst: g.yUst, R: g.yaricap }];
+    }));
+    for (const egimDer of [EN_AZ_EGIM, 28, EN_COK_EGIM]) {
+      const e = (egimDer * Math.PI) / 180, c = Math.cos(e), s = Math.sin(e);
+      const y = patlatilmisTabanlar(olcu, e, 7, 15.25, 1);
+      const sira = ["uc", "disk", "govde", "cekirdek"] as const;
+      for (let i = 1; i < 4; i++) {
+        const alt = sira[i - 1]!, ust = sira[i]!;
+        const altUst = (y[alt] + olcu[alt]!.yUst) * c + olcu[alt]!.R * s;
+        const ustAlt = (y[ust] + olcu[ust]!.yAlt) * c - olcu[ust]!.R * s;
+        expect(ustAlt).toBeGreaterThanOrEqual(altUst + 6.99);
+      }
+    }
+    expect(patlatilmisTabanlar(olcu, 0.5, 7, 15.25, 0)).toEqual(katmanKaymasi(0, 15.25));
+    // boş yuva yer tutucuyla yine yer alır
+    const bos = patlatilmisTabanlar({ govde: olcu["govde"]! }, 0.5, 7, 16, 1);
+    expect(bos.cekirdek).toBeGreaterThan(bos.govde);
+    expect(BOS_OLCU.R).toBeGreaterThan(0);
   });
 });
 

@@ -320,8 +320,8 @@ export class Goruntuleyici implements Cizer {
     return m === "patlatilmis" ? 1 : 0;
   }
 
-  /** etiket sütunu (sol) için ayrılan tuval pikseli: patlatılmışta 56, birleşikte 0 */
-  private solBosluk(p: number): number { return Math.round(52 * p); }
+  /** etiket sütunu (sol) için ayrılan tuval pikseli (her modda: etiketler topacın üstüne binmez) */
+  private solBosluk(_p: number): number { return 52; }
 
   /** katman taban y'leri (dünya), patlama p ile; sallanma dahil */
   private tabanlar(p: number, t: number, e: number): Record<KatmanTuru, number> {

@@ -92,7 +92,6 @@ export class AtolyeSahnesi {
       d.addEventListener("blur", () => this.cizer?.vurgu(null));
       d.addEventListener("keydown", (e) => {
         if (e.key === "Delete" && this.olay.sil) { e.preventDefault(); this.olay.sil(t); return; }
-        if (e.key === "Escape" && this.gd.mod === "odak") { e.preventDefault(); e.stopPropagation(); this.olayIsle({ tur: "geri" }); }
       });
       this.katmanEl[t] = { dugme: d, ad, cizgi, sag };
     }
@@ -107,6 +106,17 @@ export class AtolyeSahnesi {
     this.birlestir.dataset["eylem"] = "birlestir";
     this.birlestir.title = "Birleştir / ayır (B)";
     this.birlestir.addEventListener("click", () => this.olayIsle({ tur: "birlestirAyir" }));
+    // klavye: odak görünümün herhangi bir yerindeyken ok tuşları döndürür, Esc geri, B birleştir/ayır;
+    // düğme üstünde Enter/Space düğmenin kendi işidir (etiket → seç)
+    k.addEventListener("keydown", (e) => {
+      if (!tusIsler(e.key)) return;
+      const dugmede = e.target instanceof HTMLButtonElement;
+      if (dugmede && (e.key === "Enter" || e.key === " ")) return;
+      if (e.key === "Escape" && this.gd.mod !== "odak") return;
+      e.preventDefault();
+      e.stopPropagation();
+      this.olayIsle({ tur: "tus", tus: e.key, katman: this.gd.mod === "odak" ? this.gd.odak : null });
+    });
     this.srListe = el("ul", "k-sr g3-liste", k);
     this.srListe.setAttribute("aria-label", "Topaç parçaları (metin)");
     this.gozlemci = typeof ResizeObserver === "function" ? new ResizeObserver(() => this.boyutla()) : null;
@@ -150,12 +160,6 @@ export class AtolyeSahnesi {
     c.addEventListener("pointerup", bitir);
     c.addEventListener("pointercancel", bitir);
     c.addEventListener("pointerleave", () => this.cizer?.vurgu(null));
-    c.addEventListener("keydown", (e) => {
-      if (!tusIsler(e.key)) return;
-      e.preventDefault();
-      e.stopPropagation();
-      this.olayIsle({ tur: "tus", tus: e.key, katman: this.gd.mod === "odak" ? this.gd.odak : null });
-    });
     c.style.touchAction = "none";
   }
 
@@ -200,7 +204,8 @@ export class AtolyeSahnesi {
     this.boyutla();
     if (this.kur) c.ayarla(this.onizKur ?? this.kur, false);
     c.durum(this.gd);
-    this.olay.hazir(c);
+    // kurucu dönmeden çağrılmasın (yedek eşzamanlı kurulur)
+    queueMicrotask(() => this.olay.hazir(c));
   }
 
   private boyutla(): void {
@@ -235,7 +240,7 @@ export class AtolyeSahnesi {
       e.dugme.hidden = !gor && this.gd.mod === "odak";
       e.cizgi.hidden = !gor;
       e.sag.hidden = !gor || birlesik || this.gd.mod === "odak";
-      const x0 = 50, x1 = Math.max(x0 + 2, Math.round(v.sol) - 2);
+      const x0 = 2, x1 = Math.max(x0 + 40, Math.round(v.sol) - 2);
       e.cizgi.style.left = `calc(${x0} * var(--p))`;
       e.cizgi.style.width = `calc(${x1 - x0} * var(--p))`;
       e.cizgi.style.top = `calc(${etiketY} * var(--p))`;
