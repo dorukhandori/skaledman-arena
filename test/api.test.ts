@@ -41,7 +41,7 @@ describe("kayıt / giriş / çıkış", () => {
     const sc = r.headers.get("set-cookie")!;
     expect(sc).toMatch(/^devran_oturum=.+; Path=\/; HttpOnly; SameSite=Lax/);
     const ben = await istek("/api/ben", undefined, sc.split(";")[0]);
-    expect(ben.veri).toMatchObject({ girisli: true, protokol: 5, oyuncu: { ad: "Deniz Su", profilTamam: false } });
+    expect(ben.veri).toMatchObject({ girisli: true, protokol: 6, oyuncu: { ad: "Deniz Su", profilTamam: false } });
   });
   it("hatalar: ad alınmış (büyük/küçük), şifreler eşleşmiyor, kısa şifre, uygunsuz ad", async () => {
     expect((await istek("/api/kayit", { ad: "DENİZ SU", sifre: "uzun-sifre-1", sifreTekrar: "uzun-sifre-1" })).veri).toStrictEqual({ hata: "alinmis" });
@@ -113,7 +113,7 @@ describe("profil, ilk Çekirdek, eğitim, bilet ve oda", () => {
   it("sahte bilet ve eski protokol reddedilir", async () => {
     const { KATALOG_OZETI } = await import("../src/ag/katalog.ts");
     const sdk = new Client(TABAN);
-    await expect(sdk.create("mac", { v: 5, mod: "oda", katalog: KATALOG_OZETI, bilet: "eyJvIjoxfQ.sahte" })).rejects.toThrow(/kimlik/);
+    await expect(sdk.create("mac", { v: 6, mod: "oda", katalog: KATALOG_OZETI, bilet: "eyJvIjoxfQ.sahte" })).rejects.toThrow(/kimlik/);
     await expect(sdk.create("mac", { v: 4, mod: "oda", katalog: KATALOG_OZETI, ad: "x", takimId: "takim-1" })).rejects.toThrow(/surum/);
   });
 });

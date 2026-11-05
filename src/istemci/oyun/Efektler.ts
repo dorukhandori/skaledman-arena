@@ -288,8 +288,8 @@ export class Efektler {
       // ---- D3: yetenek reçeteleri (05 § 3.2 Ulti telegrafı / Ulti vuruşu / Enerji doldu) ----
       case "yetenekBasladi": {
         this.sayac.telegraf++;
-        this.sesKanca("telegraf", o.kademe === 3 ? 1 : 0.7);
-        if (o.kademe === 3) {
+        this.sesKanca("telegraf", o.kademe >= 3 ? 1 : 0.7);
+        if (o.kademe >= 3) {
           // Ulti telegrafı: topaç hafifçe çöker, yavaş zoom %2 (sürekli 0,5 px sarsıntı YetenekGorsel'de)
           g[o.i]?.squash(o.dx, o.dz, 0.95, 1.05, 0.9);
           this.zoom(0.02, 0.9);
@@ -297,7 +297,7 @@ export class Efektler {
         break;
       }
       case "yetenekEtki": {
-        if (o.kademe !== 3) break;
+        if (o.kademe < 3) break;
         // Ulti vuruşu: hitstop 100-133, sarsıntı 8 / 250 ms, element renkli ekran flaşı (≤ %25), zoom %5, geniş parçacık
         this.sayac.ulti++;
         this.sesKanca("ulti");

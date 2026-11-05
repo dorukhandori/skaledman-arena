@@ -170,12 +170,18 @@ export const AYAR = {
     uyumDiger: 0.8,
     /** Ulti süresince ve sonrasında bu kadar s hiçbir topaçta Enerji dolmaz (flint #14). */
     ultiSonrasiKilit: 1,
+    /** D8 Takım Enerjisi (tuning § 8): paylaşılan 4. dilim (puan) ve her topaç kazancının bu oranı takıma akar. */
+    takimDilim: 100,
+    takimOran: 0.25,
   },
 
   // ---- § 9 yetenek kademeleri (D3) ----
   yetenek: {
-    /** Seviye kapıları (brief/nile K-7: Özel ve Ulti Lv.3; tuning'in "Ulti Lv.4 / sezon 2" notu yerine). */
-    seviyeYuva: [2, 3, 3, 99],
+    /**
+     * Seviye kapıları (brief/nile K-7: Özel ve Ulti Lv.3; tuning'in "Ulti Lv.4 / sezon 2" notu yerine). D8: 4. yuva
+     * Takım Ultisi (flint #16: aktif Çekirdek Ulti-açık seviye → Lv.3; Parça Tekniği ilk sürümde yok).
+     */
+    seviyeYuva: [2, 3, 3, 3],
     /** axiom #35: kaçılabilir her yetenekte telegraf alt sınırı. */
     telegrafAltSinir: 0.3,
     /** VARSAYIM: alan yeteneği nişan noktasına kurulur; kullanandan en çok bu kadar uzakta (br). */

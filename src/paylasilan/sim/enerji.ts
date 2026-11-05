@@ -8,12 +8,15 @@ import { aktifMi, staminaOrani } from "./topac.ts";
 // Ulti kilidi (flint #14: ulti süresince ve +1 s hiçbir topaçta dolmaz), tavan 3 dilim (taşan kaybolur), dilim olayı.
 // Kaynaklar: pasif (Sıkı Dönüş'te durur), risk (kuşak / kenar, büyüğü), yakın geçiş (iki tarafa, bekleme 2 s),
 // çarpışma (vuran ve vurulan ayrı, zıt element × 1,25), hasar alma (50 · H / maxStamina). Komşu devralma +40 mac.ts'te.
+// D8: aynı kapıdan Takım Enerjisi (4. dilim) %25 dolar; ulti kilidi ona da uygulanır.
 
 const E = AYAR.enerji;
 const Y = AYAR.yetenek;
 const dt = AYAR.dt;
 const r = AYAR.topacYaricap;
 export const ENERJI_TAVAN = E.dilim * E.metreDilim;
+/** D8: Takım Enerjisi tavanı (paylaşılan 4. dilim). */
+export const TAKIM_ENERJI_TAVAN = E.takimDilim;
 const GIRIS_YAVAS_ADIM = Math.round(Y.girisYavasSn * AYAR.adimHz);
 const YAKIN_BEKLEME_ADIM = Math.round(E.yakinGecisBekleme * AYAR.adimHz);
 
@@ -31,8 +34,18 @@ export function enerjiKazan(d: Dunya, i: number, ham: number): void {
   const t = d.topaclar[i]!;
   if (!aktifMi(t)) return;
   const once = t.enerji;
-  let yeni = once + ham * dolumCarpani(t, d.profiller[i]!);
+  const kazanc = ham * dolumCarpani(t, d.profiller[i]!);
+  let yeni = once + kazanc;
   if (yeni > ENERJI_TAVAN) yeni = ENERJI_TAVAN;
+  // D8 Takım Enerjisi: topacın (çarpanlı, tavan öncesi) kazancının %25'i takıma; Takım Ultisi kullanıldıysa dolmaz
+  if (d.takimlar && !d.takimUltiKullanildi[i]) {
+    const te = d.takimEnerji[i]!;
+    if (te < TAKIM_ENERJI_TAVAN) {
+      let ty = te + kazanc * E.takimOran;
+      if (ty >= TAKIM_ENERJI_TAVAN) { ty = TAKIM_ENERJI_TAVAN; d.olaylar.push({ tur: "takimEnerjiDoldu", tick: d.tick, i }); }
+      d.takimEnerji[i] = ty;
+    }
+  }
   t.enerji = yeni;
   const a = Math.floor(once / E.dilim);
   const b = Math.floor(yeni / E.dilim);

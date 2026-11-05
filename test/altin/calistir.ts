@@ -26,6 +26,8 @@ export interface AltinSenaryo {
   takimlar?: [AltinParca[], AltinParca[]];
   /** D2: maç durumu üzerine yazılan alanlar (ör. geri sayımı atla, saati 90 s'ye yaklaştır). */
   mac?: Partial<MacDurumu>;
+  /** D8: başlangıç Takım Enerjisi (maç kipi). */
+  takimEnerji?: [number, number];
 }
 
 export interface AltinSonuc { hash: string; sonHash: string; tick: number; sonuc: Dunya["mac"]["sonuc"]; macSonucu: Dunya["mac"]["macSonucu"]; carpisma: number; olaylar: Record<string, number> }
@@ -37,6 +39,7 @@ export function senaryoDunyasi(s: AltinSenaryo): Dunya {
   if (s.takimlar) {
     d = macDunyasiKur([s.takimlar[0].map(prof) as unknown as TakimProfilleri, s.takimlar[1].map(prof) as unknown as TakimProfilleri], s.tohum);
     if (s.mac) Object.assign(d.mac, s.mac);
+    if (s.takimEnerji) d.takimEnerji = [s.takimEnerji[0], s.takimEnerji[1]];
   } else {
     d = dunyaKur([prof(s.profiller[0]), prof(s.profiller[1])], s.tohum);
   }

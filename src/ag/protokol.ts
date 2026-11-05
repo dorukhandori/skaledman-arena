@@ -12,7 +12,7 @@ import type { AltinKalemi, AltinSifirNedeni } from "../paylasilan/kurallar/ekono
  * v3: maç durumu şeması. v4 (D5): katılmada oda bileti (ad yok), kayıtlı takım kodu, maç sonu ödül bilgisi.
  * v5 (D7): maç sonu ödülüne Altın (kalemler, çarpanlar, bakiye) + başarım ilerlemesi; hızlı maçta `botIste`.
  */
-export const PROTOKOL_SURUMU = 5;
+export const PROTOKOL_SURUMU = 6;
 
 export const ODA_ADI = "mac";
 /** Sabit adım (K-6) ve yama yayını (ADR-002). Yama elle, her `YAMA_ADIMI` sim adımında bir (adım hizalı). */

@@ -141,7 +141,7 @@ export class MacOzetSayaci {
       zitElementCarpisma: this.zit[i]!,
       carpismaSnleri: [...this.carpSn[i]!],
       aniOlum: this.aniOlum,
-      takimUltisi: false, // D8
+      takimUltisi: d.takimUltiKullanildi[i] === 1, // D8: bu takım Takım Ultisini başlattı (stil +25, başarım)
     });
     return [tek(0), tek(1)];
   }

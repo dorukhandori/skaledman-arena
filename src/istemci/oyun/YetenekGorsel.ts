@@ -18,12 +18,14 @@ const r = AYAR.topacYaricap;
 const TEHLIKE = SAHNE_RENK.tehlike;
 const KENAR_PARLAMA_SN = 0.3;
 const SILUET_BELIRME = 0.3;
+/** D8: Takım Ultisi'nde üç ruhun belirme aralığı (s). */
+const TAKIM_RUH_ARALIK = 0.3;
 const TAM_TUR = Math.PI * 2;
 
 export interface NisanDurumu { yuva: number; x: number; z: number }
 
 interface Simsek { x1: number; y1: number; x2: number; y2: number; kalan: number; tohum: number }
-interface Siluet { el: ElementAdi; t: number; sure: number; x: number; kap: Container }
+interface Siluet { el: ElementAdi; t: number; sure: number; x: number; kap: Container; olcek?: number }
 
 const sx = (x: number) => SAHNE.merkezX + x;
 const sy = (z: number) => SAHNE.merkezY + z;
@@ -62,7 +64,7 @@ export class YetenekGorsel {
   /** Ayarlar: flaş (kenar parlaması yalnız normal), "Sekme: Space" ipucu, nişan modu. */
   flas: "normal" | "azaltilmis" | "kapali" = "normal";
   ipucuAcik = true;
-  readonly sayac = { telegrafKare: 0, rakipTelegrafKare: 0, dekalKare: 0, nisanKare: 0, siluet: 0, kenarParlama: 0, ipucuKare: 0, engelKare: 0 };
+  readonly sayac = { telegrafKare: 0, rakipTelegrafKare: 0, dekalKare: 0, nisanKare: 0, siluet: 0, takimUlti: 0, kenarParlama: 0, ipucuKare: 0, engelKare: 0 };
 
   constructor(private sahne: Sahne, private yerel: number) {
     this.zemin.addChild(this.dekal, this.tel, this.simgeKap, this.ruhKap);
@@ -90,7 +92,22 @@ export class YetenekGorsel {
         this.simsekler.push({ x1: sx(o.x1), y1: sy(o.z1), x2: sx(o.x2), y2: sy(o.z2), kalan: 0.18, tohum: o.tick });
         break;
       case "yetenekBasladi":
-        if (o.kademe === 3) {
+        if (o.kademe === 4 && d.takimlar) {
+          // D8 Takım Ultisi anı: takımın üç ruhu sırayla belirir (0,3 s arayla; soldan sağa), kenar parlaması
+          const tk = d.takimlar[o.i]!;
+          const sure = o.telegraf / AYAR.adimHz + 1.2;
+          tk.uyeler.forEach((u, k) => {
+            const el = u.profil.element;
+            const kap = new Container();
+            kap.addChild(this.ruhCiz(el));
+            kap.alpha = 0;
+            this.ruhKap.addChild(kap);
+            this.siluetler.push({ el, t: -k * TAKIM_RUH_ARALIK, sure, x: SAHNE.merkezX + (k - 1) * 150, kap, olcek: 0.7 });
+            this.sayac.siluet++;
+          });
+          this.sayac.takimUlti++;
+          if (this.flas === "normal") { this.kenarKalan = KENAR_PARLAMA_SN; this.sayac.kenarParlama++; }
+        } else if (o.kademe === 3) {
           // Ulti anı: ruh silüeti (telegraf + 0,5 s), ekran kenarı parlaması (yalnız Flaş: Normal)
           const el = d.profiller[o.i]!.element;
           const kap = new Container();
@@ -410,7 +427,7 @@ export class YetenekGorsel {
       if (rakip) this.kesikliDaire(u, kx, ky, r + 6, TAKIM_RENK.rakip, 3, 0.5 + 0.5 * nabiz);
       else u.circle(kx, ky, r + 6).stroke({ width: 3, color: TAKIM_RENK.oyuncu, alpha: 0.5 + 0.5 * nabiz });
       // Ulti telegrafı: kaynak element renginde parlar (aviso boyunca artar)
-      if (y.kademe === 3 || YETENEK_SIM[t.yetenekNo]!.kademe === 3) u.circle(kx, ky, r + 12).stroke({ width: 6, color: c.acik, alpha: 0.25 + 0.55 * oran });
+      if (y.kademe >= 3 || YETENEK_SIM[t.yetenekNo]!.kademe >= 3) u.circle(kx, ky, r + 12).stroke({ width: 6, color: c.acik, alpha: 0.25 + 0.55 * oran });
       if (rakip && y.kacilabilir && !ipucuYeri) ipucuYeri = { x: merkezX, y: Math.min(462, (s.tur === "serit" ? merkezY : yy + Math.min(s.R, 200)) + 10) };
     }
     return ipucuYeri;
@@ -472,10 +489,10 @@ export class YetenekGorsel {
   private siluetIlerlet(dt: number): void {
     for (const s of this.siluetler) {
       s.t += dt;
-      const giris = Math.min(1, s.t / SILUET_BELIRME);
+      const giris = Math.max(0, Math.min(1, s.t / SILUET_BELIRME));
       const cikis = Math.min(1, Math.max(0, (s.sure - s.t) / 0.3));
       s.kap.alpha = 0.75 * giris * cikis; // avatar oyun alanını kapatamaz: alfa ≤ %75
-      s.kap.scale.set(0.9 + 0.1 * giris);
+      s.kap.scale.set((s.olcek ?? 1) * (0.9 + 0.1 * giris));
       s.kap.position.set(s.x, 160 - 10 * giris);
       // yükselen parıltılar
       const g = this.ust;

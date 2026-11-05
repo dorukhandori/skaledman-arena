@@ -43,13 +43,13 @@ export const MAC_TURLERI = {
   macSonucuVar: "u8", macKazanan: "i8", macNeden: "u8", macPuan0: "u8", macPuan1: "u8", macTick: "u32",
 } as const;
 
-/** Dünya kökü (diziler hariç). `takimEnerjisi`: Takım Ultisi D8, şimdilik 0 (axiom #5 şemasında yer tutucu). */
+/** Dünya kökü (diziler hariç). D8 (protokol 6): `takimEnerjisi` (4. dilim) ve `takimUlti` (maç başına bir kez). */
 export const DUNYA_TURLERI = {
   tick: "u32", tohum: "u32", temasKilidi: "u16", arenaYaricap: "f32",
   ultiKullanildi0: "u8", ultiKullanildi1: "u8", ultiKilit: "u16", yakinGecisBekleme: "u16",
   kararma0: "u16", kararma1: "u16", seviye0: "u8", seviye1: "u8", sonYetenek0: "i16", sonYetenek1: "i16",
   ys00: "u16", ys01: "u16", ys02: "u16", ys10: "u16", ys11: "u16", ys12: "u16",
-  takimEnerjisi0: "f32", takimEnerjisi1: "f32",
+  takimEnerjisi0: "f32", takimEnerjisi1: "f32", takimUlti0: "u8", takimUlti1: "u8",
 } as const;
 
 export const FAZ_KODLARI: readonly MacFazi[] = ["geriSayim", "tur", "turArasi", "turBitti", "bitti"];
@@ -157,6 +157,8 @@ export function gorunumdenDunya(g: DunyaGorunumu, takimlar: readonly [TakimProfi
     seviye: [k.seviye0, k.seviye1],
     sonYetenek: [k.sonYetenek0, k.sonYetenek1],
     yetenekSayisi: [[k.ys00, k.ys01, k.ys02], [k.ys10, k.ys11, k.ys12]],
+    takimEnerji: [k.takimEnerjisi0, k.takimEnerjisi1],
+    takimUltiKullanildi: [k.takimUlti0, k.takimUlti1],
   };
 }
 
@@ -190,7 +192,8 @@ export function dunyaKokAlanlari(d: Dunya): Sayisal<typeof DUNYA_TURLERI> {
     yakinGecisBekleme: d.yakinGecisBekleme, kararma0: d.kararma[0], kararma1: d.kararma[1], seviye0: d.seviye[0],
     seviye1: d.seviye[1], sonYetenek0: d.sonYetenek[0], sonYetenek1: d.sonYetenek[1],
     ys00: ys[0][0], ys01: ys[0][1], ys02: ys[0][2], ys10: ys[1][0], ys11: ys[1][1], ys12: ys[1][2],
-    takimEnerjisi0: 0, takimEnerjisi1: 0,
+    takimEnerjisi0: d.takimEnerji[0], takimEnerjisi1: d.takimEnerji[1],
+    takimUlti0: d.takimUltiKullanildi[0], takimUlti1: d.takimUltiKullanildi[1],
   };
 }
 

@@ -187,7 +187,7 @@ const DURUMLAR: [string, BasarimGirdisi, BasarimGirdisi, boolean?][] = [
   ["sabir", m({ ozelYetenekSayisi: 0 }), m({ ozelYetenekSayisi: 2 })],
   ["geri-gelis", m({ enCokGeriPuan: 2 }), m({ enCokGeriPuan: 1 })],
   ["son-nefes", m({ bitisStaminaOrani: 0.04 }), m({ bitisStaminaOrani: 0.3 })],
-  ["takim-ultisi", m({ takimUltisi: true }), m(), true],
+  ["takim-ultisi", m({ takimUltisi: true }), m(), false], // D8: sayılıyor
   ["alan-ustasi", m({ bitisler: [B("durma", { alanNo: 4 })] }), m({ bitisler: [B("durma")] })],
   ["yetenek-ustasi", m({ bitisler: [B("ringOut", { yetenekNo: 0, yetenekGecenSn: 2 })] }), m({ bitisler: [B("ringOut", { yetenekNo: 0, yetenekGecenSn: 5 })] })],
   ["dash-ustasi", m({ bitisler: [B("parcalanma", { dash: true })] }), m({ bitisler: [B("parcalanma")] })],

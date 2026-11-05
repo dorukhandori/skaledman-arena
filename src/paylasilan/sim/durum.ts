@@ -191,7 +191,9 @@ export interface Engel {
   kalan: number;
 }
 
-export type YetenekReddi = "faz" | "mesgul" | "yok" | "kilitli" | "bekleme" | "enerji" | "stamina" | "ultiKullanildi" | "rakipUlti";
+export type YetenekReddi = "faz" | "mesgul" | "yok" | "kilitli" | "bekleme" | "enerji" | "stamina" | "ultiKullanildi" | "rakipUlti"
+  /** D8 Takım Ultisi: elenmemiş kart < 2 (flint #16 "Takım düştü"). */
+  | "takimDustu";
 
 export type Olay =
   | {
@@ -241,6 +243,8 @@ export type Olay =
   | { tur: "engelCarpma"; tick: number; i: number; x: number; z: number; kirildi: boolean }
   /** Enerji yeni bir dilime ulaştı (1..3) */
   | { tur: "enerjiDoldu"; tick: number; i: number; dilim: number }
+  /** D8: Takım Enerjisi 4. dilimi doldu (takım başına) */
+  | { tur: "takimEnerjiDoldu"; tick: number; i: number }
   | { tur: "macBitti"; tick: number; sonuc: MacSonucu };
 
 export interface Dunya {
@@ -275,4 +279,9 @@ export interface Dunya {
   sonYetenek: [number, number];
   /** İstatistik (hash dışı değil, ama davranışa etkisi yok): oyuncu × kademe kullanım sayısı. */
   yetenekSayisi: [[number, number, number], [number, number, number]];
+  // ---- D8 ----
+  /** Takım Enerjisi 0..100 (paylaşılan 4. dilim, takım başına; yalnız `mac` kipinde dolar). */
+  takimEnerji: [number, number];
+  /** Takım Ultisi maç başına bir kez (takım başına). */
+  takimUltiKullanildi: [number, number];
 }

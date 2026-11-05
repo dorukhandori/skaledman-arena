@@ -1,6 +1,6 @@
 import { AYAR } from "../kurallar/ayar.ts";
 import type { TopacProfili } from "../veri/profil.ts";
-import { YETENEK_SIM, type YetenekSim } from "../veri/yetenekSablon.ts";
+import { YETENEK_SIM, type YetenekSim, yetenekNo } from "../veri/yetenekSablon.ts";
 import { hasarHesapla, kbCarpani, tikHesapla } from "./carpisma.ts";
 import type { Alan, Dunya, Olay, Topac, YetenekReddi } from "./durum.ts";
 import { enerjiKazan, hasarEnerjisi } from "./enerji.ts";
@@ -23,6 +23,27 @@ const ULTI_SONRASI = ADIM(AYAR.enerji.ultiSonrasiKilit);
 const KUCUK = 1e-9;
 /** Ulti yuvası (0 tabanlı). */
 export const ULTI_YUVA = 2;
+/** D8: Takım Ultisi yuvası (tuş 4; Parça Tekniği ilk sürümde yok). Yetenek veriden (`takim-ultisi`), profilde değil. */
+export const TAKIM_YUVA = 3;
+export const TAKIM_ULTI_NO = yetenekNo("takim-ultisi");
+/** flint #16: basış anında en az bu kadar elenmemiş kart. */
+export const TAKIM_ULTI_KART = 2;
+
+/** Bir yuvanın yetenek numarası (Takım Ultisi yalnız maç kipinde), −1 = yok. */
+export function yuvaYetenegi(d: Dunya, i: number, yuva: number): number {
+  if (yuva === TAKIM_YUVA) return d.takimlar ? TAKIM_ULTI_NO : -1;
+  return d.profiller[i]!.yetenekler[yuva] ?? -1;
+}
+
+/** Takımın elenmemiş kart sayısı (maç kipi dışı 0). */
+export function elenmemisKart(d: Dunya, i: number): number {
+  const tk = d.takimlar?.[i];
+  if (!tk) return 0;
+  return (tk.uyeler[0].elendi ? 0 : 1) + (tk.uyeler[1].elendi ? 0 : 1) + (tk.uyeler[2].elendi ? 0 : 1);
+}
+
+/** Yuva Ulti sınıfında mı (Ulti ya da Takım Ultisi: aynı anda bir tane, dash kilidi, Enerji kilidi). */
+export const ultiSinifi = (yuva: number): boolean => yuva === ULTI_YUVA || yuva === TAKIM_YUVA;
 
 /** Hareket çarpanları (1 / 0 = etkisiz); fizik bunları yalnız etkin değilse uygular (D2 float'ları korunur). */
 export interface HareketEtkisi {
@@ -45,6 +66,7 @@ export function yetenekBilgisi(no: number): YetenekSim | null {
 
 /** Yuvanın Enerji bedeli (Yapay Uyum: ilk yetenek −100, alt sınır 50). */
 export function yuvaBedeli(t: Topac, p: TopacProfili, yuva: number): number {
+  if (yuva === TAKIM_YUVA) return 0; // Takım Ultisi topacın Enerjisini değil, Takım Enerjisini harcar
   const y = yetenekBilgisi(p.yetenekler[yuva] ?? -1);
   if (!y) return 0;
   let b = y.enerjiBedel;
@@ -57,19 +79,24 @@ export function yuvaDurumu(d: Dunya, i: number, yuva: number): YetenekReddi | nu
   const t = d.topaclar[i]!;
   const p = d.profiller[i]!;
   if (d.mac.faz !== "tur") return "faz";
-  if (yuva < 0 || yuva > ULTI_YUVA) return "yok";
-  const no = p.yetenekler[yuva]!;
+  if (yuva < 0 || yuva > TAKIM_YUVA) return "yok";
+  const no = yuvaYetenegi(d, i, yuva);
   const y = yetenekBilgisi(no);
   if (!y) return "yok";
   if ((d.seviye[i] ?? 0) < Y.seviyeYuva[yuva]!) return "kilitli";
   if (yuva === ULTI_YUVA && d.ultiKullanildi[i]) return "ultiKullanildi";
+  if (yuva === TAKIM_YUVA) {
+    if (d.takimUltiKullanildi[i]) return "ultiKullanildi";
+    if (elenmemisKart(d, i) < TAKIM_ULTI_KART) return "takimDustu";
+  }
   if (!aktifMi(t) || t.koruma > 0 || t.geriCekKalan > 0 || t.yetenekFaz !== 0 || t.kilitKalan > 0 || t.sersemKalan > 0) return "mesgul";
-  if (yuva === ULTI_YUVA) {
+  if (ultiSinifi(yuva)) {
     const rk = d.topaclar[1 - i]!;
-    if (rk.yetenekFaz !== 0 && rk.yetenekYuva === ULTI_YUVA) return "rakipUlti";
+    if (rk.yetenekFaz !== 0 && ultiSinifi(rk.yetenekYuva)) return "rakipUlti";
   }
   if ((yuva === 0 ? t.bekleme1 : yuva === 1 ? t.bekleme2 : 0) > 0) return "bekleme";
-  if (t.enerji < yuvaBedeli(t, p, yuva)) return "enerji";
+  if (yuva === TAKIM_YUVA) { if (d.takimEnerji[i]! < AYAR.enerji.takimDilim) return "enerji"; }
+  else if (t.enerji < yuvaBedeli(t, p, yuva)) return "enerji";
   if (y.staminaYuzde > 0 && !bedelOdenir(t, (y.staminaYuzde / 100) * p.maxStamina)) return "stamina";
   return null;
 }
@@ -187,12 +214,13 @@ function yetenekBaslat(d: Dunya, i: number, g: Girdi): void {
   const p = d.profiller[i]!;
   const rakip = d.topaclar[1 - i]!;
   const yuva = g.secilenYuva;
-  const no = p.yetenekler[yuva]!;
+  const no = yuvaYetenegi(d, i, yuva);
   const y = YETENEK_SIM[no]!;
-  // bedel
+  // bedel (Takım Ultisi: Takım Enerjisinin tamamı)
   const bedel = yuvaBedeli(t, p, yuva);
   if (t.yapayIndirim && bedel > 0) t.yapayIndirim = 0;
   t.enerji -= bedel;
+  if (yuva === TAKIM_YUVA) { d.takimEnerji[i] = 0; d.takimUltiKullanildi[i] = 1; }
   if (y.staminaYuzde > 0) t.stamina -= (y.staminaYuzde / 100) * p.maxStamina;
   // Taklit: rakibin son kademe 1-2 yeteneğinin zayıf kopyası (yoksa kendi atılışı)
   let etkin = no;
@@ -224,13 +252,13 @@ function yetenekBaslat(d: Dunya, i: number, g: Girdi): void {
   if (yuva === 0) t.bekleme1 = y.beklemeAdim;
   else if (yuva === 1) t.bekleme2 = y.beklemeAdim;
   else {
-    d.ultiKullanildi[i] = 1;
+    if (yuva === ULTI_YUVA) d.ultiKullanildi[i] = 1;
     const kilit = tel + e.sureAdim + ULTI_SONRASI;
     if (kilit > d.ultiKilit) d.ultiKilit = kilit;
   }
   if (y.kara && p.koken === "karanlik") d.kararma[i]! += Y.kararmaArtis;
   if (y.kademe <= 2 && y.sablon !== "taklit") d.sonYetenek[i] = no;
-  d.yetenekSayisi[i]![yuva]!++;
+  if (yuva < TAKIM_YUVA) d.yetenekSayisi[i]![yuva]!++;
   d.olaylar.push({ tur: "yetenekBasladi", tick: d.tick, i, no, etkinNo: etkin, yuva, kademe: y.kademe, x: hx, z: hz, dx, dz, telegraf: tel });
 }
 
@@ -487,7 +515,7 @@ export function hareketEtkisi(d: Dunya, i: number): HareketEtkisi {
     const atilisli = y.sablon === "atilis" || y.sablon === "kavis" || y.sablon === "taklit";
     if (t.yetenekFaz === 2 && !atilisli && y.hizCarpani !== 1) { k.ivme *= y.hizCarpani; k.tavan *= y.hizCarpani; }
     if (t.yetenekFaz === 2 && atilisli && y.surtunmeCarpani !== 1) k.surtunme *= y.surtunmeCarpani;
-    if (t.yetenekYuva === ULTI_YUVA) { k.dashYok = true; if (t.yetenekFaz === 1) k.ivme *= Y.ultiSurusCarpani; }
+    if (ultiSinifi(t.yetenekYuva)) { k.dashYok = true; if (t.yetenekFaz === 1) k.ivme *= Y.ultiSurusCarpani; }
   }
   // zemin alanları (sahibine `kendineDeEtki` kadar)
   for (const a of d.alanlar) {

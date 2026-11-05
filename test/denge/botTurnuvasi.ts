@@ -35,7 +35,7 @@ console.log(`Durma ${p(b.durma)} · Ring Out ${p(b.ringOut)} · Parçalanma ${p(
 console.log(`tur süresi (s): medyan ${r.turSuresi.medyan.toFixed(1)} · p90 ${r.turSuresi.p90.toFixed(1)} · p99 ${r.turSuresi.p99.toFixed(1)}`);
 console.log(`maç süresi (s, saat): medyan ${r.macSuresi.medyan.toFixed(1)} · p90 ${r.macSuresi.p90.toFixed(1)} · p99 ${r.macSuresi.p99.toFixed(1)} · en çok ${r.macSuresi.enFazla.toFixed(1)}`);
 console.log(`maç bitiş nedeni: ${JSON.stringify(r.macNedeni)} · geri çek/maç ${r.geriCekOrt.toFixed(2)}`);
-console.log(`yetenek kullanımı / maç (iki oyuncu): Yetenek ${r.yetenekMac[0].toFixed(2)} · Özel ${r.yetenekMac[1].toFixed(2)} · Ulti ${r.yetenekMac[2].toFixed(2)} · Ulti görülen maç %${(100 * r.ultiMacOrani).toFixed(0)}`);
+console.log(`yetenek kullanımı / maç (iki oyuncu): Yetenek ${r.yetenekMac[0].toFixed(2)} · Özel ${r.yetenekMac[1].toFixed(2)} · Ulti ${r.yetenekMac[2].toFixed(2)} · Takım Ultisi ${r.yetenekMac[3].toFixed(2)} · Ulti görülen maç %${(100 * r.ultiMacOrani).toFixed(0)} · Takım Ultisi görülen maç %${(100 * r.takimUltiMacOrani).toFixed(0)}`);
 
 console.log("\n## 20 rastgele build (200 maç) kazanma");
 for (const x of [...r.rastgeleBuildKazanma].sort((a, c) => c.kazanma - a.kazanma)) console.log(`${yuzde(x.kazanma)}  n=${String(x.n).padStart(3)}  ${x.tip.padEnd(10)} ${x.build}`);

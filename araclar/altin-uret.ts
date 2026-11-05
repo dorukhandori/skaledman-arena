@@ -171,6 +171,21 @@ const senaryolar: AltinSenaryo[] = [
   kaydet({ surum: 1, senaryo: "tam-bot-yetenek", aciklama: "Tam maç: kademe botları yetenekleriyle (D3: Enerji dolumu, bot yetenek kararları, telegraftan kaçış), 7800 adım.", tohum: 34,
     profiller: [GOKTASI, DENGE], takimlar: [TAKIM_1, [DENGE, SIMSEK, DON]], adim: 7800, baslangic: null },
     (_t, d) => [botGirdisi(d, 0, "kenar", 91), botGirdisi(d, 1, "dolas", 92)]),
+  kaydet({ surum: 1, senaryo: "takim-ultisi", aciklama: "D8 Takım Ultisi: A'nın Takım Enerjisi dolu, basış (yuva 4) kabul, telegraf 1 s + 3,5 s alan; B'nin Ulti'si ve Takım Ultisi bu sırada reddedilir (rakipUlti), ikinci basış ret (ultiKullanildi), B'nin yarım Takım Enerjisi bot oyunuyla dolar ve kullanılır.", tohum: 35,
+    profiller: [GOKTASI, DAYANIKLI], takimlar: [TAKIM_1, [DAYANIKLI, MADEN, GOKTASI]], mac: TURDAN, adim: 2400, takimEnerji: [100, 70], baslangic: [{ x: -90 }, { enerji: 300, x: 90 }] },
+    (t, d) => {
+      const a = bosGirdi();
+      const b = bosGirdi();
+      const [ta, tb] = d.topaclar;
+      a.nisanX = tb.x; a.nisanZ = tb.z; b.nisanX = ta.x; b.nisanZ = ta.z;
+      if (t === 30) { a.atesle = true; a.secilenYuva = 3; }
+      if (t === 60) { b.atesle = true; b.secilenYuva = 2; } // rakipUlti
+      if (t === 90) { b.atesle = true; b.secilenYuva = 3; } // rakipUlti
+      if (t === 400) { a.atesle = true; a.secilenYuva = 3; } // ultiKullanildi
+      if (t > 420) { const g = botGirdisi(d, 0, "kenar", 83); Object.assign(a, g); }
+      if (t > 420) { const g = botGirdisi(d, 1, "dolas", 84); Object.assign(b, g); }
+      return [a, b];
+    }),
   kaydet({ surum: 1, senaryo: "berabere", aciklama: "İki aynı topaç aynı adımda Durma: berabere, puan yok.", tohum: 8, profiller: [MADEN, MADEN], adim: 120,
     baslangic: [{ stamina: 1 }, { stamina: 1 }] },
     () => [bosGirdi(), bosGirdi()]),

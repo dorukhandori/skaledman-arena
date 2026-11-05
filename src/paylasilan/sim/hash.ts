@@ -49,6 +49,8 @@ export function durumSayilari(d: Dunya): number[] {
   s.push(d.engeller.length);
   for (const e of d.engeller) s.push(e.x, e.z, e.r, e.can, e.sahip, e.kalan);
   s.push(d.ultiKullanildi[0], d.ultiKullanildi[1], d.ultiKilit, d.yakinGecisBekleme, d.kararma[0], d.kararma[1], d.seviye[0], d.seviye[1], d.sonYetenek[0], d.sonYetenek[1]);
+  // D8: Takım Enerjisi ve Takım Ultisi yalnız maç kipinde (tek tur senaryolarının hash'i değişmez)
+  if (d.takimlar) s.push(d.takimEnerji[0], d.takimEnerji[1], d.takimUltiKullanildi[0], d.takimUltiKullanildi[1]);
   return s;
 }
 

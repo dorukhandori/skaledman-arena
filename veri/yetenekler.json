@@ -634,7 +634,7 @@
    },
    "kaynak": "00-4.7",
    "eksikTamamlama": false,
-   "ilkSurum": false
+   "ilkSurum": true
   },
   {
    "id": "savruk-atilis",

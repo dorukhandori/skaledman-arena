@@ -65,7 +65,7 @@ export function duello(a: TopacProfili, b: TopacProfili, tohum: number, sinirSn 
   return { tur: "sure", kazanan: -1, sureSn: sinirSn };
 }
 
-export interface MacKaydi { sonuc: MacSonucu; sureSn: number; turlar: TurKaydi[]; geriCek: number; degisim: number; adim: number; yetenek: [number, number, number] }
+export interface MacKaydi { sonuc: MacSonucu; sureSn: number; turlar: TurKaydi[]; geriCek: number; degisim: number; adim: number; yetenek: [number, number, number, number] }
 
 /** Tam maç (bot karşı bot); `kipler` verilmezse her topaç kendi tipine göre kademe kullanır. */
 export function tamMac(t0: TakimProfilleri, t1: TakimProfilleri, tohum: number, kipler?: [BotKipi, BotKipi]): MacKaydi {
@@ -74,7 +74,7 @@ export function tamMac(t0: TakimProfilleri, t1: TakimProfilleri, tohum: number, 
   let turBasi = 0;
   let geriCek = 0;
   let degisim = 0;
-  const yetenek: [number, number, number] = [0, 0, 0];
+  const yetenek: [number, number, number, number] = [0, 0, 0, 0];
   const azami = 200 * AYAR.adimHz; // güvenlik: sonsuz maç yok (mutlak sınır 120 s + geri sayım)
   for (let n = 0; n < azami; n++) {
     const k0 = kipler?.[0] ?? kipSec(d.profiller[0]);
@@ -135,8 +135,10 @@ export interface TurnuvaRaporu {
   maclar: number;
   geriCekOrt: number;
   /** maç başına yetenek kullanımı (iki oyuncu toplamı): Yetenek, Özel, Ulti; Ulti görülen maç oranı */
-  yetenekMac: [number, number, number];
+  yetenekMac: [number, number, number, number];
   ultiMacOrani: number;
+  /** D8: Takım Ultisi görülen maç oranı */
+  takimUltiMacOrani: number;
 }
 
 const bosBitis = () => ({ durma: 0, ringOut: 0, parcalanma: 0, berabere: 0, sure: 0, toplam: 0 });
@@ -172,12 +174,14 @@ export function turnuva(o: TurnuvaSecenekleri): TurnuvaRaporu {
   const macSureleri: number[] = [];
   const macNedeni: Record<string, number> = {};
   let geriCek = 0;
-  const yet = [0, 0, 0];
+  const yet = [0, 0, 0, 0];
   let ultiMac = 0;
+  let takimMac = 0;
   const macKaydet = (m: MacKaydi) => {
     macSureleri.push(m.sureSn);
-    for (let k = 0; k < 3; k++) yet[k]! += m.yetenek[k]!;
+    for (let k = 0; k < 4; k++) yet[k]! += m.yetenek[k]!;
     if (m.yetenek[2] > 0) ultiMac++;
+    if (m.yetenek[3] > 0) takimMac++;
     macNedeni[m.sonuc.neden] = (macNedeni[m.sonuc.neden] ?? 0) + 1;
     geriCek += m.geriCek;
     for (const t of m.turlar) { bitis[t.tur]++; bitis.toplam++; turSureleri.push(t.sureSn); }
@@ -234,8 +238,9 @@ export function turnuva(o: TurnuvaSecenekleri): TurnuvaRaporu {
     bandIci,
     maclar: macSureleri.length,
     geriCekOrt: geriCek / Math.max(1, macSureleri.length),
-    yetenekMac: [yet[0]! / Math.max(1, macSureleri.length), yet[1]! / Math.max(1, macSureleri.length), yet[2]! / Math.max(1, macSureleri.length)],
+    yetenekMac: [0, 1, 2, 3].map((k) => yet[k]! / Math.max(1, macSureleri.length)) as [number, number, number, number],
     ultiMacOrani: ultiMac / Math.max(1, macSureleri.length),
+    takimUltiMacOrani: takimMac / Math.max(1, macSureleri.length),
   };
 }
 
@@ -245,7 +250,7 @@ export function ozet(r: TurnuvaRaporu): string {
   const y = (x: number) => `${((100 * x) / Math.max(1, b.toplam)).toFixed(1)}%`;
   return `maç ${r.maclar} · süre med ${r.macSuresi.medyan.toFixed(1)} p90 ${r.macSuresi.p90.toFixed(1)} p99 ${r.macSuresi.p99.toFixed(1)} · tur med ${r.turSuresi.medyan.toFixed(1)} · `
     + `Durma ${y(b.durma)} RO ${y(b.ringOut)} Parç ${y(b.parcalanma)} Ber ${y(b.berabere)} · band ${r.bandIci}/20 · neden ${JSON.stringify(r.macNedeni)}`
-    + ` · yetenek/maç ${r.yetenekMac.map((x) => x.toFixed(2)).join("/")} · Ulti maç %${(100 * r.ultiMacOrani).toFixed(0)}`;
+    + ` · yetenek/maç ${r.yetenekMac.map((x) => x.toFixed(2)).join("/")} · Ulti maç %${(100 * r.ultiMacOrani).toFixed(0)} · Takım Ultisi maç %${(100 * r.takimUltiMacOrani).toFixed(0)}`;
 }
 
 export { rastgele };

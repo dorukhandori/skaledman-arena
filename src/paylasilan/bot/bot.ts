@@ -8,7 +8,7 @@ import { aktifMi, staminaOrani } from "../sim/topac.ts";
 import { geriCekAcik } from "../sim/mac.ts";
 import type { Tip } from "../veri/semalar.ts";
 import { YETENEK_SIM } from "../veri/yetenekSablon.ts";
-import { ULTI_YUVA, yuvaDurumu } from "../sim/yetenek.ts";
+import { TAKIM_YUVA, ULTI_YUVA, yuvaDurumu, yuvaYetenegi } from "../sim/yetenek.ts";
 
 // Paylaşılan bot (axiom § 2 #12): yalnız `Girdi` üretir, durumu yalnız okur; tohumlu ve saf:
 // aynı (dünya, tohum) → aynı girdi. Sunucu botu, Antrenman, Topaç Lab ve bot turnuvası aynı kodu koşar.
@@ -291,12 +291,13 @@ export const BOT_YETENEK = {
   /** hedef kademe olasılıkları (birikimli): < hedefYetenek → Yetenek, < hedefOzel → Özel, yoksa Ulti */
   hedefYetenek: 0.4,
   hedefOzel: 0.75,
-  kararBlok: 90,
   /** atılış menzili (br) */
   atilisMenzil: 230,
   /** telegraf son bu kadar adımında içerideysek Sekme dene */
   sekmeAdim: 14,
   sekmeOlasilik: 0.5,
+  /** D8: Ulti hedefleyen bot Enerji bu puanı geçince ucuz yetenek harcamaz (biriktirir). */
+  ultiBiriktir: 200,
 } as const;
 
 /** Rakibin telegrafının tehlike bölgesinde miyim (ux § 2.2 şekilleri). */
@@ -345,45 +346,56 @@ function telegraftanKac(d: Dunya, i: number, g: Girdi, tohum: number): void {
   if (rk.yetenekKalan <= BOT_YETENEK.sekmeAdim && ben.sekmeBekleme === 0 && rastgele(tohum, d.tick * 8 + i * 4 + 5000) < BOT_YETENEK.sekmeOlasilik) g.zipla = true;
 }
 
-function yetenekKarari(d: Dunya, i: number, g: Girdi, kip: BotKipi, tohum: number): void {
+/** Bu yetenek şu an rakibe karşı uygun mu (menzil / tehdit; tohumsuz, yalnız görünen durum). */
+function yetenekUygun(d: Dunya, i: number, no: number, kip: BotKipi): boolean {
   const ben = d.topaclar[i]!;
   const rk = d.topaclar[1 - i]!;
-  const p = d.profiller[i]!;
-  if (ben.yetenekFaz !== 0 || !aktifMi(rk) || rk.koruma > 0) return;
-  const B = BOT_YETENEK;
-  const blok = Math.floor(d.tick / B.kararBlok);
-  if (rastgele(tohum, d.tick * 8 + i * 4 + 7000) >= B.olasilik) return;
+  const y = YETENEK_SIM[no]!;
+  const e = y.sablon === "taklit" && d.sonYetenek[1 - i]! >= 0 ? YETENEK_SIM[d.sonYetenek[1 - i]!]! : y;
   const rx = rk.x - ben.x;
   const rz = rk.z - ben.z;
   const rm = kok2(rx, rz) || 1;
   const yaklasma = -((rk.vx - ben.vx) * rx + (rk.vz - ben.vz) * rz) / rm;
   const r = AYAR.topacYaricap;
-  // hedef kademe (tur ve sahadaki üye başına sabit, tohumlu): Yetenek / Özel / Ulti için Enerji biriktir
-  const tk = d.takimlar?.[i];
-  const zar = rastgele(tohum, d.mac.turNo * 16 + (tk ? tk.aktif : 0) * 4 + i + 9000);
-  let hedef = zar < B.hedefYetenek ? 0 : zar < B.hedefOzel ? 1 : ULTI_YUVA;
-  while (hedef > 0 && (yuvaDurumu(d, i, hedef) === "kilitli" || yuvaDurumu(d, i, hedef) === "yok" || yuvaDurumu(d, i, hedef) === "ultiKullanildi")) hedef--;
-  void blok;
-  for (let yuva = hedef; yuva >= 0; yuva--) {
-    if (yuvaDurumu(d, i, yuva) !== null) { if (yuva === hedef && yuvaDurumu(d, i, yuva) === "enerji") return; continue; }
-    const y = YETENEK_SIM[p.yetenekler[yuva]!]!;
-    const e = y.sablon === "taklit" && d.sonYetenek[1 - i]! >= 0 ? YETENEK_SIM[d.sonYetenek[1 - i]!]! : y;
-    let uygun = false;
-    switch (e.sablon) {
-      case "atilis": case "kavis": case "taklit": uygun = rm > 60 && rm < B.atilisMenzil; break;
-      case "dalga": uygun = rm < e.dalgaMenzil + r; break;
-      case "zincir": uygun = rm < e.yaricap + 3 * r; break;
-      case "sok": case "cekim": case "emis": uygun = rm < e.yaricap + r + 15; break;
-      case "alan": case "takim": uygun = e.yaricap >= AYAR.yetenek.tumCanakYaricap || rm < AYAR.yetenek.alanMenzil + 30; break;
-      case "engel": uygun = rm < AYAR.yetenek.alanMenzil; break;
-      case "zirh": uygun = rm < 150 && (yaklasma > 120 || rk.dashKalan > 0 || kip === "dayaniklilik" && rm < 90); break;
-      case "kontra": uygun = rm < 130 && (yaklasma > 140 || rk.dashKalan > 0); break;
-    }
-    if (!uygun) continue;
+  switch (e.sablon) {
+    case "atilis": case "kavis": case "taklit": return rm > 60 && rm < BOT_YETENEK.atilisMenzil;
+    case "dalga": return rm < e.dalgaMenzil + r;
+    case "zincir": return rm < e.yaricap + 3 * r;
+    case "sok": case "cekim": case "emis": return rm < e.yaricap + r + 15;
+    case "alan": case "takim": return e.yaricap >= AYAR.yetenek.tumCanakYaricap || rm < AYAR.yetenek.alanMenzil + 30;
+    case "engel": return rm < AYAR.yetenek.alanMenzil;
+    case "zirh": return rm < 150 && (yaklasma > 120 || rk.dashKalan > 0 || (kip === "dayaniklilik" && rm < 90));
+    case "kontra": return rm < 130 && (yaklasma > 140 || rk.dashKalan > 0);
+  }
+  return false;
+}
+
+/**
+ * D8 karar sırası: Takım Ultisi (hazırsa ve rakip menzildeyse) → Ulti → tur başına tohumlu hedef kademe (Yetenek / Özel;
+ * Ulti hedefliyse Enerji 2 dilimi geçince biriktirir) → daha ucuz yuva. Hepsi aynı `yuvaDurumu` kurallarıyla.
+ */
+function yetenekKarari(d: Dunya, i: number, g: Girdi, kip: BotKipi, tohum: number): void {
+  const ben = d.topaclar[i]!;
+  const rk = d.topaclar[1 - i]!;
+  if (ben.yetenekFaz !== 0 || !aktifMi(rk) || rk.koruma > 0) return;
+  const B = BOT_YETENEK;
+  if (rastgele(tohum, d.tick * 8 + i * 4 + 7000) >= B.olasilik) return;
+  const at = (yuva: number): boolean => {
+    if (yuvaDurumu(d, i, yuva) !== null) return false;
+    const no = yuvaYetenegi(d, i, yuva);
+    if (no < 0 || !yetenekUygun(d, i, no, kip)) return false;
     g.atesle = true;
     g.secilenYuva = yuva;
     g.nisanX = rk.x;
     g.nisanZ = rk.z;
-    return;
-  }
+    return true;
+  };
+  if (at(TAKIM_YUVA) || at(ULTI_YUVA)) return;
+  const tk = d.takimlar?.[i];
+  const zar = rastgele(tohum, d.mac.turNo * 16 + (tk ? tk.aktif : 0) * 4 + i + 9000);
+  const hedef = zar < B.hedefYetenek ? 0 : zar < B.hedefOzel ? 1 : ULTI_YUVA;
+  if (hedef === ULTI_YUVA && yuvaDurumu(d, i, ULTI_YUVA) === "enerji" && ben.enerji >= B.ultiBiriktir) return;
+  // Özel hedefliyse Enerjisi yetene dek biriktirir (D3 davranışı)
+  if (hedef === 1 && yuvaDurumu(d, i, 1) === "enerji") return;
+  for (let yuva = hedef === ULTI_YUVA ? 1 : hedef; yuva >= 0; yuva--) if (at(yuva)) return;
 }

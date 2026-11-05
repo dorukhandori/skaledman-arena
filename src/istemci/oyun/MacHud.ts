@@ -2,7 +2,7 @@ import { AYAR } from "../../paylasilan/kurallar/ayar.ts";
 import type { Dunya, Olay, TakimUyesi } from "../../paylasilan/sim/durum.ts";
 import { MAC_ADIM, geriCekAcik } from "../../paylasilan/sim/mac.ts";
 import { staminaOrani } from "../../paylasilan/sim/topac.ts";
-import { ULTI_YUVA, yuvaBedeli, yuvaDurumu } from "../../paylasilan/sim/yetenek.ts";
+import { TAKIM_ULTI_KART, TAKIM_YUVA, ULTI_YUVA, elenmemisKart, yuvaBedeli, yuvaDurumu, yuvaYetenegi } from "../../paylasilan/sim/yetenek.ts";
 import { AYAR as AYAR_ } from "../../paylasilan/kurallar/ayar.ts";
 import { YETENEK_SIM } from "../../paylasilan/veri/yetenekSablon.ts";
 import { elementSvg } from "./elementSimge.ts";
@@ -15,6 +15,7 @@ import { ayarlariOku } from "./Ayarlar.ts";
 // Renk hiçbir bilgiyi tek başına taşımaz: ayraç + tarama + simge, element = silüet, elenen = çarpı.
 // D3: H6 yuva hâlleri (hazır / bekleme / Enerji yetersiz / kilitli / basılı / etkin / kullanıldı), H1b ULTİ + parıltı,
 // H5 "Rakip: Ulti hazırlıyor"; H9 nişan ve H13 telegraf dünyada (YetenekGorsel). H10 D4; H15 yalnız Antrenman.
+// D8: H1b'de Takım Enerjisi 4. dilim (altın çerçeve), yuva 4 = Takım Ultisi, H5 "Takım Ultisi hazır" / "Takım düştü".
 
 const STIL = `
 .mh { position:absolute; left:0; top:0; width:960px; height:540px; transform-origin:0 0; pointer-events:none; font-family:"Nunito Sans",system-ui,sans-serif; color:#f3f1e8; user-select:none; }
@@ -112,6 +113,11 @@ const STIL = `
 .mh .en span.parilti { box-shadow:0 0 0 1px #fff, 0 0 10px #cfeeff; }
 .mh .en span.parilti i { background:#e6f8ff; }
 .mh .en em.ulti { color:#ffb347; text-shadow:0 0 4px #ff8a3d; }
+.mh .en span.tk { width:28px; border-color:#d9a441; margin-left:4px; }
+.mh .en span.tk i { background:#ffcf5a; }
+.mh .en span.tk.dolu { border-color:#ffe39a; box-shadow:0 0 5px #ffb347; }
+.mh .en span.tk.dustu { border-style:dashed; border-color:#6d7a7f; }
+.mh .en span.tk.dustu i { background:#6d7a7f; }
 .mh .bant .els { display:inline-block; vertical-align:-3px; margin-left:6px; }
 .mh .pn > .sayi { position:absolute; top:21px; right:14px; font-size:10px; line-height:13px; font-weight:900; text-shadow:0 0 2px #000,0 1px 0 #000; z-index:1; }
 .mh .pn.sag > .sayi { right:auto; left:14px; }
@@ -161,7 +167,7 @@ function catlakSvg(oran: number): string {
 const BITIS_AD = { durma: "DURMA", ringOut: "RING OUT", parcalanma: "PARÇALANMA", berabere: "BERABERE" } as const;
 const sinifOran = (o: number) => (o < AYAR.kritikEsik ? "kirmizi" : o <= 0.6 ? "amber" : "");
 
-interface Panel { kok: HTMLElement; ik: HTMLElement; ad: HTMLElement; lv: HTMLElement; ekip: HTMLElement; dolgu: HTMLElement; sayi: HTMLElement; unlem: HTMLElement; enerji: HTMLElement[]; enerjiYazi: HTMLElement; ct: HTMLElement }
+interface Panel { kok: HTMLElement; ik: HTMLElement; ad: HTMLElement; lv: HTMLElement; ekip: HTMLElement; dolgu: HTMLElement; sayi: HTMLElement; unlem: HTMLElement; enerji: HTMLElement[]; takimDilim: HTMLElement; enerjiYazi: HTMLElement; ct: HTMLElement }
 
 export class MacHud {
   readonly kok = el("div", "mh");
@@ -264,9 +270,12 @@ export class MacHud {
     const en = el("div", "en", kok);
     const enerji: HTMLElement[] = [];
     for (let k = 0; k < 3; k++) { const d = el("span", "", en); el("i", "", d); enerji.push(d); }
+    // D8: paylaşılan 4. dilim (Takım Enerjisi)
+    const takimDilim = el("span", "tk", en); el("i", "", takimDilim);
+    takimDilim.title = "Takım Enerjisi";
     const enerjiYazi = el("em", "", en);
     const ct = el("span", "ct", kok);
-    return { kok, ik, ad, lv, ekip, dolgu, sayi, unlem, enerji, enerjiYazi, ct };
+    return { kok, ik, ad, lv, ekip, dolgu, sayi, unlem, enerji, takimDilim, enerjiYazi, ct };
   }
 
   hizala(x: number, y: number, olcek: number): void {
@@ -303,11 +312,15 @@ export class MacHud {
         if (o.i !== ben && d.mac.faz === "turArasi") this.bantGoster("Rakip topaç değiştiriyor", 1.4);
         break;
       case "yetenekBasladi":
-        if (o.kademe === 3 && o.i !== ben) this.bantGoster(`Rakip: Ulti hazırlıyor${elementSvg(d.profiller[o.i]!.element, 16)}`, 1.8, true);
+        if (o.kademe === 4) this.bantGoster(o.i === ben ? "TAKIM ULTİSİ" : "Rakip: Takım Ultisi hazırlıyor", 1.8);
+        else if (o.kademe === 3 && o.i !== ben) this.bantGoster(`Rakip: Ulti hazırlıyor${elementSvg(d.profiller[o.i]!.element, 16)}`, 1.8, true);
         else if (o.kademe === 3) this.bantGoster(`ULTİ · ${YETENEK_SIM[o.no]!.ad}${elementSvg(d.profiller[o.i]!.element, 16)}`, 1.6, true);
         break;
       case "yetenekReddi":
         if (o.i === ben) this.bantGoster(this.retMetni(o.neden, o.yuva, d), 1.4);
+        break;
+      case "takimEnerjiDoldu":
+        if (o.i === ben && d.seviye[ben]! >= AYAR_.yetenek.seviyeYuva[TAKIM_YUVA]!) this.bantGoster(elenmemisKart(d, ben) >= TAKIM_ULTI_KART ? "Takım Ultisi hazır · 4" : "Takım düştü", 1.8);
         break;
       case "enerjiDoldu": {
         const k = o.i === ben ? 0 : 1;
@@ -320,6 +333,7 @@ export class MacHud {
   }
 
   private parilti: { e: HTMLElement; kalan: number }[] = [];
+  private oncekiKart = 3;
   private oncekiHazir: boolean[] = [false, false, false, false];
   private parlaKalan: number[] = [0, 0, 0, 0];
 
@@ -328,10 +342,11 @@ export class MacHud {
     const t = d.topaclar[this.yerel]!;
     const p = d.profiller[this.yerel]!;
     switch (neden) {
-      case "enerji": return `Enerji yetmiyor: ${Math.ceil(yuvaBedeli(t, p, yuva) / 100)} dilim gerekir.`;
+      case "takimDustu": return "Takım düştü: Takım Ultisi için 2 topaç gerekir.";
+      case "enerji": if (yuva === TAKIM_YUVA) return "Takım Enerjisi henüz dolmadı."; return `Enerji yetmiyor: ${Math.ceil(yuvaBedeli(t, p, yuva) / 100)} dilim gerekir.`;
       case "bekleme": return `Bekleme: ${(((yuva === 0 ? t.bekleme1 : t.bekleme2) / AYAR.adimHz)).toFixed(1)} sn.`;
       case "kilitli": return "Bu yuva Lv.3 Çekirdekte açılır.";
-      case "ultiKullanildi": return "Ulti bu maçta kullanıldı.";
+      case "ultiKullanildi": return yuva === TAKIM_YUVA ? "Takım Ultisi bu maçta kullanıldı." : "Ulti bu maçta kullanıldı.";
       case "rakipUlti": return "Rakibin Ulti'si sürerken Ulti kullanılamaz.";
       case "stamina": return "Stamina yetmiyor: Ulti'nin bedeli var.";
       case "mesgul": return "Önce süren yetenek bitsin.";
@@ -373,10 +388,20 @@ export class MacHud {
       const ultiVar = d.profiller[i]!.yetenekler[ULTI_YUVA]! >= 0 && ultiAcik !== "kilitli" && ultiAcik !== "ultiKullanildi" && ultiAcik !== "yok";
       this.yaz(pn.enerjiYazi, e >= 300 ? (ultiVar ? "ULTİ" : "DOLU") : "");
       pn.enerjiYazi.classList.toggle("ulti", e >= 300 && ultiVar);
+      // D8: Takım Enerjisi (4. dilim): dolu = parlak; takım düştü / kullanıldı = kesikli gri
+      const te = d.takimEnerji[i]!;
+      (pn.takimDilim.firstElementChild as HTMLElement).style.width = `${Math.max(0, Math.min(1, te / AYAR_.enerji.takimDilim)) * 100}%`;
+      pn.takimDilim.classList.toggle("dolu", te >= AYAR_.enerji.takimDilim && !d.takimUltiKullanildi[i]);
+      pn.takimDilim.classList.toggle("dustu", d.takimUltiKullanildi[i] === 1 || elenmemisKart(d, i) < TAKIM_ULTI_KART);
+      pn.takimDilim.title = d.takimUltiKullanildi[i] ? "Takım Ultisi kullanıldı" : elenmemisKart(d, i) < TAKIM_ULTI_KART ? "Takım düştü" : `Takım Enerjisi ${Math.floor(te)}/100`;
       const tikOran = t.tik / p.parametreler.burstEsik;
       this.yaz(pn.ct, catlakSvg(tikOran), true);
       pn.ct.classList.toggle("titre", tikOran >= 0.9);
     }
+    // D8 H5 "Takım düştü": Takım Ultisi kullanılmadan elenmemiş kart 2'nin altına inince bir kez
+    const kart = elenmemisKart(d, this.yerel);
+    if (this.oncekiKart >= TAKIM_ULTI_KART && kart < TAKIM_ULTI_KART && !d.takimUltiKullanildi[this.yerel] && d.seviye[this.yerel]! >= AYAR_.yetenek.seviyeYuva[TAKIM_YUVA]!) this.bantGoster("Takım düştü", 1.6);
+    this.oncekiKart = kart;
     // H3 skor
     this.yaz(this.skor, `${m.puan[this.yerel]} – ${m.puan[1 - this.yerel]}`);
     // H4 süre
@@ -410,13 +435,13 @@ export class MacHud {
     const yv = this.yuvalar;
     for (let k = 0; k < 4; k++) {
       const y = yv[k]!;
-      const no = k < 3 ? bp.yetenekler[k]! : -1;
+      const no = yuvaYetenegi(d, this.yerel, k);
       const bilgi = no >= 0 ? YETENEK_SIM[no]! : null;
-      const durum = k < 3 ? yuvaDurumu(d, this.yerel, k) : "yok";
+      const durum = yuvaDurumu(d, this.yerel, k);
       const etkin = ben.yetenekFaz !== 0 && ben.yetenekYuva === k;
       const bekleme = k === 0 ? ben.bekleme1 : k === 1 ? ben.bekleme2 : 0;
       const hazir = durum === null;
-      const kilit = durum === "kilitli";
+      const kilit = durum === "kilitli" || durum === "takimDustu";
       const kullanildi = durum === "ultiKullanildi";
       const bos = !bilgi;
       const yetmez = !kilit && !kullanildi && !bos && (durum === "enerji" || durum === "stamina");
@@ -436,16 +461,17 @@ export class MacHud {
       const sweep = y.firstElementChild as HTMLElement;
       const toplam = bilgi?.beklemeAdim ?? 1;
       sweep.style.height = `${bekleme > 0 && !etkin ? (bekleme / toplam) * 100 : 0}%`;
-      y.title = bilgi ? `${["Yetenek", "Özel Yetenek", "Ulti"][k]}: ${bilgi.ad} · ${bilgi.enerjiBedel / 100} dilim` : k === 3 ? "Parça Tekniği (ilk sürümde yok)" : "Boş";
+      y.title = bilgi ? (k === TAKIM_YUVA ? "Takım Ultisi · Takım Enerjisi (4. dilim)" : `${["Yetenek", "Özel Yetenek", "Ulti"][k]}: ${bilgi.ad} · ${bilgi.enerjiBedel / 100} dilim`) : "Boş";
       this.yaz(this.yuvaAdlari[k]!, bilgi ? bilgi.ad : "");
       this.yuvaAdlari[k]!.classList.toggle("on", hazir || basiliYuva === k);
       const ic = y.lastElementChild as HTMLElement;
       const simge = bilgi ? elementSvg(bp.element, 18).replace('class="els"', 'class="els ys"') : "";
       if (bos) this.yaz(ic, "—");
+      else if (durum === "takimDustu") this.yaz(ic, `<span>✕</span>`, true);
       else if (kilit) this.yaz(ic, `<svg viewBox="0 0 12 12" width="12" height="12" aria-label="kilitli"><rect x="2" y="5" width="8" height="6" rx="1" fill="#8d989e"/><path d="M4 5V3.6a2 2 0 0 1 4 0V5" fill="none" stroke="#8d989e" stroke-width="1.5"/></svg><span>Lv.${AYAR_.yetenek.seviyeYuva[k]}</span>`, true);
       else if (kullanildi) this.yaz(ic, `${simge}<span>✓</span>`, true);
       else if (bekleme > 0 && !etkin) { const sn = bekleme / AYAR.adimHz; this.yaz(ic, `<span class="n">${sn >= 10 ? sn.toFixed(0) : sn.toFixed(1)}</span>`, true); }
-      else if (yetmez) this.yaz(ic, `${simge}<span class="nok">${"<b></b>".repeat(Math.ceil(yuvaBedeli(ben, bp, k) / 100))}</span>`, true);
+      else if (yetmez) this.yaz(ic, `${simge}<span class="nok">${"<b></b>".repeat(k === TAKIM_YUVA ? 1 : Math.ceil(yuvaBedeli(ben, bp, k) / 100))}</span>`, true);
       else this.yaz(ic, simge, true);
     }
     for (const p of this.parilti) { p.kalan -= dt; if (p.kalan <= 0) p.e.classList.remove("parilti"); }

@@ -41,6 +41,8 @@ export function dunyaKur(profiller: readonly [TopacProfili, TopacProfili], tohum
     seviye: [sec.seviye?.[0] ?? VARSAYILAN_SEVIYE, sec.seviye?.[1] ?? VARSAYILAN_SEVIYE],
     sonYetenek: [-1, -1],
     yetenekSayisi: [[0, 0, 0], [0, 0, 0]],
+    takimEnerji: [0, 0],
+    takimUltiKullanildi: [0, 0],
   };
 }
 
