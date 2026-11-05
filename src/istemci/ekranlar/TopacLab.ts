@@ -392,7 +392,7 @@ class TopacLab {
     S.boyutla(false, dt);
     const c = S.cerceve();
     this.hud.hizala(c.x, c.y, c.olcek);
-    this.efektler.guncelle(dt);
+    this.efektler.guncelle(dt, d);
     d.topaclar.forEach((t, i) => {
       const o = this.onceki[i] ?? t;
       const akar = aktifMi(t) || t.durum === TOPAC_DURUM.durma;

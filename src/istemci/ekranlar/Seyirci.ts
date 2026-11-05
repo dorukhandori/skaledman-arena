@@ -199,7 +199,7 @@ class SeyirciEkrani {
     for (const o of this.ag.olaylariAl()) isinla = this.olayUygula(o, d) || isinla;
     if (isinla) { for (const z of this.izler) z.sifirla(); this.onceki = d.topaclar.map((t) => ({ x: t.x, z: t.z })); }
     this.hud!.hizala(c.x, c.y, c.olcek);
-    this.efektler.guncelle(dt);
+    this.efektler.guncelle(dt, d);
     d.topaclar.forEach((t, i) => {
       const p = d.profiller[i]!;
       const ekran = this.efektler.konum(i, S.ekranX(t.x), S.ekranY(t.z), dt);

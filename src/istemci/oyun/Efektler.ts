@@ -9,6 +9,9 @@ import { SAHNE, type Sahne } from "./Sahne.ts";
 import { SusRastgele } from "./SusRastgele.ts";
 import type { TopacCizimi } from "./cizimTurleri.ts";
 
+/** Tembel atlas eşikleri (Enerji 0-300; Ulti 3 dilim = 300, Özel 200). */
+export const ATLAS_ESIK = { ortakEnerji: 60, elementEnerji: 150, elementStamina: 0.5 } as const;
+
 // Sim olayı → his (05 § 3): sim `adim` sonunda `olaylar`'a koyar, burada okunur. Hiçbiri sim'e geri yazmaz.
 // Görsel hitstop: çarpışan topaçların RENDER konumu bekler, sim akmaya devam eder; bitince kritik sönümlü yetişme.
 
@@ -48,16 +51,16 @@ export class Efektler {
   private hizG = new Graphics();
   /** referans 07: çarpışma sonrası topacın çevresinde parlak krem sarmal iz (zeminde) */
   private kivrimlar: Kivrim[] = [];
-  private atlasElementleri = "";
   /** pişmiş atlas kullanım sayacı (doğrulama) */
   readonly atlasSayac: Record<string, number> = {};
+  private atlasDenetimSn = 0;
   readonly sayac = { yok: 0, hafif: 0, agir: 0, kritik: 0, duvar: 0, ringOut: 0, parcalanma: 0, durma: 0, dash: 0, sekme: 0, zitElement: 0, ekranFlas: 0, ekranFlasReddi: 0, telegraf: 0, ulti: 0, enerjiDoldu: 0, yetenekVurus: 0, zincir: 0, kontra: 0, engel: 0 };
   ayar: HisAyarlari = { sarsinti: 1, flas: "normal", hitstop: 1, parcacik: 1, yavasZoom: true };
   sesKanca: SesKancasi = () => {};
 
   constructor(private sahne: Sahne, private gorseller: () => readonly TopacCizimi[]) {
     sahne.efektKatmani.addChild(this.hizG, this.parcaciklar.kap);
-    if (sahne.hibrit) void efektAtlasYukle("efekt");
+    if (sahne.hibrit) void efektAtlasYukle("efekt-cekirdek");
     this.ekranFlas.rect(0, 0, SAHNE.genislik, SAHNE.yukseklik).fill(0xffffff);
     this.ekranFlas.alpha = 0;
     sahne.ekranKatmani.addChild(this.ekranFlas);
@@ -176,13 +179,21 @@ export class Efektler {
   /** Topaç gövde yüksekliğinde (hava) efekt noktası: hibritte temas noktası zeminden yukarı. */
   private hava(y: number): number { return this.sahne.hibrit ? y - 30 : y; }
 
-  /** Maçtaki elementlerin atlaslarını yükle (ortak + iki topaç; efekt-kaynaklari § 8.7). */
-  private atlasHazirla(d: Dunya): void {
+  /**
+   * Atlasları ihtiyaç anında yükle (TEMIZLIK #2; efekt-kaynaklari § 8.7). Açılışta yalnız `efekt-cekirdek` (ilk çarpışma
+   * kıvılcım/kritik, kurucuda). `efekt` (toz bulutu, Enerji doldu) ilk çarpışmada ya da Enerji gelince; element atlası
+   * (Ulti, parçalanma) o topacın Enerjisi yarıya yaklaşınca, staminası yarıya inince ya da yetenek başlayınca; Şimşek'in
+   * çarpışma kıvılcımı her çarpışmada çalındığından hemen. Yüklenmeden çalınan an yordamsal yedekle çizilir.
+   */
+  private atlasHazirla(d: Dunya, o: Olay | null): void {
     if (!this.sahne.hibrit) return;
-    const anahtar = d.profiller.map((p) => p.element).join(",");
-    if (anahtar === this.atlasElementleri) return;
-    this.atlasElementleri = anahtar;
-    for (const p of d.profiller) void efektAtlasYukle(`efekt-${p.element}` as AtlasAdi);
+    if (o?.tur === "carpisma" || d.topaclar.some((t) => t.enerji >= ATLAS_ESIK.ortakEnerji)) void efektAtlasYukle("efekt");
+    for (let i = 0; i < d.profiller.length; i++) {
+      const p = d.profiller[i]!;
+      const t = d.topaclar[i]!;
+      if (p.element === "simsek" || t.enerji >= ATLAS_ESIK.elementEnerji || t.stamina <= p.maxStamina * ATLAS_ESIK.elementStamina
+        || (o?.tur === "yetenekBasladi" && o.i === i)) void efektAtlasYukle(`efekt-${p.element}` as AtlasAdi);
+    }
   }
 
   /** Pişmiş sheet'i (hava düzlemi) oynat; atlas yoksa false (yordamsal yedek kalır). Atlas pikseli = sanat pikseli. */
@@ -225,7 +236,7 @@ export class Efektler {
   olay(o: Olay, d: Dunya): void {
     const S = this.sahne;
     const g = this.gorseller();
-    this.atlasHazirla(d);
+    this.atlasHazirla(d, o);
     switch (o.tur) {
       case "carpisma": {
         const dash = o.taraflar[0].dash || o.taraflar[1].dash;
@@ -279,8 +290,8 @@ export class Efektler {
           if (this.kivrimlar.length > 3) this.kivrimlar.shift();
           this.kivrimlar.push({ x: S.ekranX(tj.x), y: S.ekranY(tj.z), a0: Math.atan2(y - S.ekranY(tj.z), x - S.ekranX(tj.x)), yon: d.profiller[j]!.donus === "sol" ? -1 : 1, t: 0, sure: sd === "kritik" ? 0.6 : 0.45 });
         }
-        if (sd === "kritik") this.sheet("efekt", "kritik", x, hy, e.x < 0);
-        else if (sd === "agir") this.sheet("efekt", "kivilcim", x, hy, e.x < 0);
+        if (sd === "kritik") this.sheet("efekt-cekirdek", "kritik", x, hy, e.x < 0);
+        else if (sd === "agir") this.sheet("efekt-cekirdek", "kivilcim", x, hy, e.x < 0);
         if (sd !== "hafif" && (o.taraflar[0].element === "simsek" || o.taraflar[1].element === "simsek")) this.sheet("efekt-simsek", "simsek-carpma", x, hy, e.x < 0, 0.6);
         if (sd !== "hafif") {
           const sure2 = sd === "kritik" ? HIS.sok.kritikMs : HIS.sok.agirMs;
@@ -368,7 +379,7 @@ export class Efektler {
         { const pe = d.profiller[o.i]!.element;
           if (pe === "don") this.sheet("efekt-don", "don-kirilma", x, y);
           else if (pe === "kor") this.sheet("efekt-kor", "kor-bulut", x, this.hava(y));
-          else this.sheet("efekt", "kritik", x, this.hava(y)); }
+          else this.sheet("efekt-cekirdek", "kritik", x, this.hava(y)); }
         if (this.ayar.yavasZoom !== false) this.yavasKalanMs = HIS.yavasCekim.ms;
         g[o.i]?.bitis("parcalanma", o.vx, o.vz);
         break;
@@ -487,9 +498,10 @@ export class Efektler {
     }
   }
 
-  /** Her kare; `dt` gerçek saniye. */
-  guncelle(dt: number): void {
+  /** Her kare; `dt` gerçek saniye. `d` verilirse tembel atlas eşikleri ~4 Hz denetlenir (olaysız Enerji/stamina değişimi). */
+  guncelle(dt: number, d?: Dunya): void {
     this.saat += dt;
+    if (d && (this.atlasDenetimSn -= dt) <= 0) { this.atlasDenetimSn = 0.25; this.atlasHazirla(d, null); }
     const ydt = dt * this.yavas;
     if (this.yavasKalanMs > 0) this.yavasKalanMs = Math.max(0, this.yavasKalanMs - dt * 1000);
     // hitstop sırasında parçacıklar yaşlanmaz (05 § 3.3: "yaşları dondurulur")

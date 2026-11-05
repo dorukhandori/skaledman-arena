@@ -2,47 +2,52 @@
  "surum": 1,
  "aciklama": "Devran görsel varlıkları: kaynak, araç, tarih, lisans, atıf (topac-pixel-plani § 7.4, efekt-kaynaklari § 5.4).",
  "atlas": {
-  "not": "12 fps'te tek atlas 2048²'nin 2,28 katı (birleşik kutu ölçümü) → ortak atlas + element başına atlas (efekt-kaynaklari § 5.2 öngörüsü). Maçta ortak + iki topacın elementi yüklenir.",
+  "not": "TEMIZLIK #2 (2026-11-05): public/efekt/ araclar/sanat/efekt-paketle.ts ile kayıpsız kaynaktan (kaynak/efekt/pixelfx/atlas/, eski tek-atlas paketleri) yeniden paketlenir: yalnız oyunun çaldığı animasyonlar, 256 renk palet PNG. Açılışta yalnız efekt-cekirdek (kıvılcım, kritik); efekt ilk çarpışmada, element atlası Enerji/stamina eşiğinde ya da yetenek başlayınca (Efektler.atlasHazirla). Kaynakta kalan, oyunda çalınmayan: sekme-iz, toz-halka, zemin-sok, ulti-kor, ulti-don, girdap-dekal, telegraf-sarj.",
   "dosyalar": {
-   "efekt": {
+   "efekt-cekirdek": {
     "boyut": [
-     2048,
-     1024
+     512,
+     512
     ],
-    "kare": 114,
-    "bayt": 656625,
+    "kare": 16,
+    "bayt": 28255,
     "efektler": [
      "kivilcim",
-     "kritik",
-     "sekme-iz",
-     "toz-halka",
-     "zemin-sok",
+     "kritik"
+    ]
+   },
+   "efekt": {
+    "boyut": [
+     512,
+     512
+    ],
+    "kare": 31,
+    "bayt": 31828,
+    "efektler": [
      "toz-bulut",
      "enerji-doldu"
     ]
    },
    "efekt-kor": {
     "boyut": [
-     1024,
-     1024
+     256,
+     256
     ],
-    "kare": 56,
-    "bayt": 524389,
+    "kare": 11,
+    "bayt": 3191,
     "efektler": [
-     "ulti-kor",
      "kor-bulut"
     ]
    },
    "efekt-don": {
     "boyut": [
-     2048,
-     1024
+     1024,
+     512
     ],
-    "kare": 84,
-    "bayt": 432829,
+    "kare": 43,
+    "bayt": 46283,
     "efektler": [
      "don-kirilma",
-     "ulti-don",
      "don-parca"
     ]
    },
@@ -52,7 +57,7 @@
      1024
     ],
     "kare": 39,
-    "bayt": 188952,
+    "bayt": 66550,
     "efektler": [
      "ulti-kaya"
     ]
@@ -63,7 +68,7 @@
      512
     ],
     "kare": 24,
-    "bayt": 362125,
+    "bayt": 95418,
     "efektler": [
      "ulti-kasirga"
     ]
@@ -71,29 +76,27 @@
    "efekt-girdap": {
     "boyut": [
      1024,
-     1024
+     512
     ],
-    "kare": 55,
-    "bayt": 518978,
+    "kare": 19,
+    "bayt": 57132,
     "efektler": [
-     "ulti-girdap",
-     "girdap-dekal"
+     "ulti-girdap"
     ]
    },
    "efekt-simsek": {
     "boyut": [
-     1024,
-     512
+     512,
+     256
     ],
-    "kare": 42,
-    "bayt": 262715,
+    "kare": 11,
+    "bayt": 16506,
     "efektler": [
-     "simsek-carpma",
-     "telegraf-sarj"
+     "simsek-carpma"
     ]
    }
   },
-  "toplamBayt": 2946613,
+  "toplamBayt": 345163,
   "sinir": [
    2048,
    2048

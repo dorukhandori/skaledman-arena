@@ -444,6 +444,14 @@ Kayıtlar: `veri/manifest-ses.json` → `kayitAdaylari` (oyun yüklemiyor), `ver
 
 Maçta en çok 3 atlas yüklenir: ortak + iki elementinki. Toplam PNG 2,93 MB; tek maçta ~1,7 MB.
 
+> **Yayım paketi (2026-11-05, TEMIZLIK #2):** Yukarıdaki tablo kayıpsız **kaynak** atlaslardır (`kaynak/efekt/pixelfx/atlas/`).
+> `public/efekt/` artık `araclar/sanat/efekt-paketle.ts` ile buradan üretilir: yalnız oyunun çaldığı animasyonlar, 256 renk
+> palet PNG (titreşimsiz, görünür pikselde ortalama kanal hatası 0-2,1/255). Açılışta yalnız `efekt-cekirdek` (kıvılcım,
+> kritik; 28 KB); `efekt` (toz-bulut, enerji-doldu) ilk çarpışmada; element atlası Enerji ≥ 150, stamina ≤ %50 ya da
+> yetenek başlayınca (`Efektler.atlasHazirla`; Şimşek çarpışma kıvılcımı yüzünden hemen). Yayımlanan toplam 3 041 KB → 392 KB;
+> maç ilk yükleme varlıkları 1 885 KB → 533 KB (`araclar/yukleme-olc.cjs`). Kaynakta kalan, oyunda çalınmayan: sekme-iz,
+> toz-halka, zemin-sok, ulti-kor, ulti-don, girdap-dekal, telegraf-sarj (kullanılırsa `GRUP`'a eklenir, test denetler).
+
 **Önizlemede görülenler** (`kaynak/efekt/pixelfx/onizleme.png`, gözle bakıldı):
 - **Doğru çıkanlar:**
   - Element paletleri tuttu: Don camgöbeği, Kor turuncu, Kasırga yeşil, Girdap mavi, Kaya bej, Şimşek sarı.

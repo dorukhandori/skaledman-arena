@@ -4,8 +4,10 @@ import { AnimatedSprite, Assets, type Spritesheet, type Texture } from "pixi.js"
 // Pixi Spritesheet; `nearest` (pixel ızgarası), istek başına tek yükleme, önbellek. Yoksa/yüklenemezse null döner ve
 // Efektler yordamsal yedeği çizer. Kare süresi meta.devran.<anim>.kareMs (12 fps). Hibrit sahnede atlas pikseli = sanat
 // pikseli (dünya ölçeği 2 / yakınlık); tam sayı olmayan dikey ölçek YOK: zemin efektleri kodla elips çizilir.
+// TEMIZLIK #2: atlaslar araclar/sanat/efekt-paketle.ts ile (256 renk palet, yalnız çalınan animasyonlar); hangisinin ne
+// zaman yükleneceği Efektler.atlasHazirla'da (açılışta yalnız efekt-cekirdek).
 
-export type AtlasAdi = "efekt" | "efekt-kor" | "efekt-don" | "efekt-kaya" | "efekt-kasirga" | "efekt-girdap" | "efekt-simsek";
+export type AtlasAdi = "efekt-cekirdek" | "efekt" | "efekt-kor" | "efekt-don" | "efekt-kaya" | "efekt-kasirga" | "efekt-girdap" | "efekt-simsek";
 
 interface DevranMeta { [anim: string]: { kareMs: number; anchor: [number, number] } }
 export interface YuklenenEfektAtlas { sayfa: Spritesheet; meta: DevranMeta }
