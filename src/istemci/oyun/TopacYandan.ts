@@ -51,6 +51,15 @@ function yanBant(rx: number, ry: number, yUst: number, yAlt: number): number[] {
   return p;
 }
 
+/** Yan bandın açı aralığı (0 = sağ uç, π = sol uç; ön yarı). Işık sol üstten: sol dilim açık, sağ dilim koyu. */
+function yanBantAralik(rx: number, ry: number, yUst: number, yAlt: number, a0: number, a1: number): number[] {
+  const p: number[] = [];
+  const n = 8;
+  for (let i = 0; i <= n; i++) { const a = a0 + ((a1 - a0) * i) / n; p.push(Math.cos(a) * rx, yUst + Math.sin(a) * ry); }
+  for (let i = n; i >= 0; i--) { const a = a0 + ((a1 - a0) * i) / n; p.push(Math.cos(a) * rx, yAlt + Math.sin(a) * ry); }
+  return p;
+}
+
 export class TopacYandan implements TopacCizimi {
   readonly kok = new Container();
   /** zemin: gölge + takım çemberi (gölge katmanında) */
@@ -277,6 +286,7 @@ export class TopacYandan implements TopacCizimi {
     // Disk: ince silindir + kilit çıkıntıları (burst katkısı kadar) yanda dönen çentik
     const disk = diskBul(p.parcalar.disk);
     g.poly(yanBant(RD, RD * k, -H.diskUst, -H.diskAlt)).fill(metalKoyu).stroke({ width: 1.5, color: 0x22282b });
+    g.poly(yanBantAralik(RD - 0.5, (RD - 0.5) * k, -H.diskUst, -H.diskAlt, Math.PI * 0.62, Math.PI * 0.95)).fill(metal);
     g.ellipse(0, -H.diskUst, RD, RD * k).fill(metal).stroke({ width: 1.5, color: 0x22282b });
     const cik = Math.max(3, disk.katki.burstEsik);
     for (let i = 0; i < cik; i++) {
@@ -288,8 +298,15 @@ export class TopacYandan implements TopacCizimi {
     }
     // Gövde yan bandı (silindir ön yüzü), dönen sırt çizgileri (dönüş hissi)
     const ustY = -H.govdeUst;
-    g.poly(yanBant(RG, RG * k, ustY, -H.govdeAlt)).fill(el.koyu).stroke(cizgi);
-    g.poly(yanBant(RG - 2, (RG - 2) * k, ustY + 1, ustY + 4)).fill({ color: el.orta, alpha: 0.9 });
+    g.poly(yanBant(RG, RG * k, ustY, -H.govdeAlt)).fill(renkKaristir(el.koyu, el.orta, 0.35)).stroke(cizgi);
+    // pixel bant gölgelemesi: sol dilimler açık (ışık), sağ dilim koyu; üstte ince parlak dudak
+    g.poly(yanBantAralik(RG - 0.5, (RG - 0.5) * k, ustY, -H.govdeAlt, Math.PI * 0.6, Math.PI * 0.98)).fill(el.orta);
+    g.poly(yanBantAralik(RG - 0.5, (RG - 0.5) * k, ustY + 1, -H.govdeAlt - 2, Math.PI * 0.8, Math.PI * 0.9)).fill(el.acik);
+    g.poly(yanBantAralik(RG - 0.5, (RG - 0.5) * k, ustY, -H.govdeAlt, Math.PI * 0.02, Math.PI * 0.22)).fill(el.koyu);
+    g.poly(yanBant(RG - 2, (RG - 2) * k, ustY + 1, ustY + 3)).fill({ color: el.acik, alpha: 0.55 });
+    // disk ile gövde arası koyu gölge çizgisi (katman ayrımı okunur)
+    elipsYol(g, 0, -H.govdeAlt, RG - 1, (RG - 1) * k, 0.08, Math.PI - 0.08, 16);
+    g.stroke({ width: 2, color: renkKaristir(el.koyu, 0x000000, 0.45) });
     const sirt = kd === "yuksek" ? 0 : 10;
     for (let i = 0; i < sirt; i++) {
       const a = (sol ? -1 : 1) * this.aci + (i / sirt) * TAM;
@@ -305,6 +322,8 @@ export class TopacYandan implements TopacCizimi {
       g.ellipse(0, ustY, RG, RG * k).fill(el.orta).stroke(cizgi);
       g.ellipse(0, ustY, RG - 5, (RG - 5) * k).fill(el.acik);
       g.ellipse(0, ustY, RG - 9, (RG - 9) * k).fill(renkKaristir(el.orta, el.acik, 0.4));
+      elipsYol(g, 0, ustY, RG - 13, (RG - 13) * k, 0, TAM, 24);
+      g.stroke({ width: 1.5, color: el.koyu, alpha: 0.55 });
       g.ellipse(0, ustY, GORSEL.govdeIc - 2, (GORSEL.govdeIc - 2) * k).fill(el.koyu);
       g.ellipse(0, ustY, GORSEL.govdeIc - 5, (GORSEL.govdeIc - 5) * k).fill(renkKaristir(el.orta, 0x000000, 0.25));
       elipsYol(g, 0, ustY, RG - 3, (RG - 3) * k, this.parlamaAci, this.parlamaAci + 1.0, 8);
@@ -363,8 +382,8 @@ export class TopacYandan implements TopacCizimi {
     // flaş: beyaz siluet
     if (this.flasKare > 0) {
       const f = this.flasG.clear();
-      f.poly(yanBant(RG + 1, (RG + 1) * k, ustY, -H.ucUst)).fill({ color: 0xffffff, alpha: 0.75 });
-      f.ellipse(0, ustY, RG + 1, (RG + 1) * k).fill({ color: 0xffffff, alpha: 0.75 });
+      f.poly(yanBant(RG + 1, (RG + 1) * k, ustY, -H.ucUst)).fill({ color: 0xffffff, alpha: 0.55 });
+      f.ellipse(0, ustY, RG + 1, (RG + 1) * k).fill({ color: 0xffffff, alpha: 0.55 });
       f.position.set(0, H.govdeAlt);
     }
   }
