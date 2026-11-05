@@ -288,16 +288,24 @@ function kademeGirdisi(d: Dunya, i: number, kip: "dolas" | "kenar" | "dayaniklil
 export const BOT_YETENEK = {
   /** uygun anda adım başına kullanma olasılığı */
   olasilik: 0.08,
-  /** hedef kademe olasılıkları (birikimli): < hedefYetenek → Yetenek, < hedefOzel → Özel, yoksa Ulti */
+  /**
+   * Ulti'ye adanmamış üyede tur başına hedef kademe (birikimli): < hedefYetenek → Yetenek, < hedefOzel → Özel
+   * (Enerji yetene dek biriktirir), yoksa hedefsiz (Özel → Yetenek, hangisi hazırsa).
+   */
   hedefYetenek: 0.4,
   hedefOzel: 0.75,
+  /**
+   * DENGE-1: takım üyesi başına (maç boyu tek zar) Ulti'ye adanma olasılığı, kademeye göre. Zorluk sırası nile B-39
+   * kademelerinden (varsaydım): dolaş-çarp en kolay (az), kenara it ve dayanıklılık daha usta. Kukla hiç.
+   */
+  ultiHedef: { dolas: 0.35, kenar: 0.6, dayaniklilik: 0.6 } as Readonly<Record<string, number>>,
+  /** DENGE-1: Ulti biriktiren bot stamina bu oranın (kritik eşik, tuning § 6) altına düşerse biriktirmeyi bırakır, eldekini harcar. */
+  ultiVazgec: 0.25,
   /** atılış menzili (br) */
   atilisMenzil: 230,
   /** telegraf son bu kadar adımında içerideysek Sekme dene */
   sekmeAdim: 14,
   sekmeOlasilik: 0.5,
-  /** D8: Ulti hedefleyen bot Enerji bu puanı geçince ucuz yetenek harcamaz (biriktirir). */
-  ultiBiriktir: 200,
 } as const;
 
 /** Rakibin telegrafının tehlike bölgesinde miyim (ux § 2.2 şekilleri). */
@@ -371,8 +379,10 @@ function yetenekUygun(d: Dunya, i: number, no: number, kip: BotKipi): boolean {
 }
 
 /**
- * D8 karar sırası: Takım Ultisi (hazırsa ve rakip menzildeyse) → Ulti → tur başına tohumlu hedef kademe (Yetenek / Özel;
- * Ulti hedefliyse Enerji 2 dilimi geçince biriktirir) → daha ucuz yuva. Hepsi aynı `yuvaDurumu` kurallarıyla.
+ * D8 karar sırası: Takım Ultisi (hazırsa ve rakip menzildeyse) → Ulti → hedef kademe → daha ucuz yuva. Hepsi aynı
+ * `yuvaDurumu` kurallarıyla. DENGE-1: Ulti hedefi sahadaki üye başına maç boyu tek zar (`ultiHedef[kip]`, kademeye göre);
+ * Ulti'ye adanan üye Ulti hazır olana dek hiçbir şey harcamaz (300'e biriktirir), stamina `ultiVazgec` altına inerse
+ * vazgeçip eldekini harcar. Adanmayan üye tur başına tohumlu Yetenek / Özel hedefiyle oynar (D3 davranışı).
  */
 function yetenekKarari(d: Dunya, i: number, g: Girdi, kip: BotKipi, tohum: number): void {
   const ben = d.topaclar[i]!;
@@ -392,10 +402,16 @@ function yetenekKarari(d: Dunya, i: number, g: Girdi, kip: BotKipi, tohum: numbe
   };
   if (at(TAKIM_YUVA) || at(ULTI_YUVA)) return;
   const tk = d.takimlar?.[i];
-  const zar = rastgele(tohum, d.mac.turNo * 16 + (tk ? tk.aktif : 0) * 4 + i + 9000);
-  const hedef = zar < B.hedefYetenek ? 0 : zar < B.hedefOzel ? 1 : ULTI_YUVA;
-  if (hedef === ULTI_YUVA && yuvaDurumu(d, i, ULTI_YUVA) === "enerji" && ben.enerji >= B.ultiBiriktir) return;
+  const uye = tk ? tk.aktif : 0;
+  // Ulti adanması: üye başına maç boyu (tur numarasından bağımsız) zar
+  if (rastgele(tohum, uye * 4 + i + 9500) < (B.ultiHedef[kip] ?? 0)) {
+    const ud = yuvaDurumu(d, i, ULTI_YUVA);
+    const bekler = ud !== "kilitli" && ud !== "ultiKullanildi" && ud !== "yok";
+    if (bekler && staminaOrani(ben, d.profiller[i]!) >= B.ultiVazgec) return;
+  }
+  const zar = rastgele(tohum, d.mac.turNo * 16 + uye * 4 + i + 9000);
+  const hedef = zar < B.hedefYetenek ? 0 : zar < B.hedefOzel ? 1 : 2;
   // Özel hedefliyse Enerjisi yetene dek biriktirir (D3 davranışı)
   if (hedef === 1 && yuvaDurumu(d, i, 1) === "enerji") return;
-  for (let yuva = hedef === ULTI_YUVA ? 1 : hedef; yuva >= 0; yuva--) if (at(yuva)) return;
+  for (let yuva = hedef > 1 ? 1 : hedef; yuva >= 0; yuva--) if (at(yuva)) return;
 }
