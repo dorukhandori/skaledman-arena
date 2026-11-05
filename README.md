@@ -40,6 +40,22 @@ npm run dev          # http://localhost:5173 (istemci + Colyseus sunucusu tek s�
 | `npm run ag:matris` · `npm run ag:ekran` | ağ profili (N2/N3) iki istemci hash denetimi |
 | `npm run krediler:uret` | krediler ↔ varlık manifestleri denetimi |
 
+## Görsel varlıklar nasıl üretiliyor
+
+Sanatın tamamı küçük bir ekip için yapay zekâ destekli bir hatla üretiliyor: **fikir → 3B model → piksel sanat → oyun**.
+
+1. **Gemini** tek karelik konsept ve portreyi çizer.
+2. **Tripo** o görselden 3B model çıkarır.
+3. **Blender** modeli oyunun kamerasından, her yönden ve hız kademesinde çizer.
+4. Betikler sonucu ortak bir palet ve ince konturla **piksel sanata** çevirir; çıktı oyuna sayfa olarak girer.
+
+Hat yalnız geliştiricinin makinesinde çalışır, anahtarlar depoya girmez. Ayrıntı: [araclar/sanat/README.md](araclar/sanat/README.md), kaynaklar ve kullanım notları: [docs/art/krediler.md](docs/art/krediler.md).
+
+| | |
+|---|---|
+| <img src="public/ruh/portre/ata-kaya.png" alt="Dağ Mamutu, Kaya elementinin kutsal canavarı" width="240"> | <img src="docs/art/topac-mac-govdeler.png" alt="Topaç gövdeleri, farklı açılardan ve hızlarda" width="360"> |
+| **Dağ Mamutu**, Kaya elementinin kutsal canavarı (Ulti'de belirir) | **Topaç gövdeleri**, aynı model farklı açılardan ve dönüş hızlarında |
+
 ## Mimari (kısa)
 
 - **Paylaşılan sim** (`src/paylasilan/`): 60 Hz sabit adım, deterministik (tarayıcı = Node, FNV-1a 64 hash). Bot da burada.
