@@ -122,3 +122,55 @@ export function kokenKuresi(koken: string, r = 14): HTMLCanvasElement {
   g.fillStyle = "#ffffff"; g.fillRect(Math.round(m - r * 0.4), Math.round(m - r * 0.45), 2, 2);
   return c;
 }
+
+const METAL: Record<string, string[]> = {
+  baslangic: ["#3c404a", "#6a7080", "#9ea6b4", "#d8dce6"], standart: ["#3d4a5e", "#5d6c84", "#b7c4d6", "#e8eef6"], nadir: ["#1f3f6a", "#2f5f9a", "#8fc3ff", "#e0f0ff"],
+  hizip: ["#4a2a60", "#6a3a8a", "#e0a2ff", "#f6e0ff"], karanlik: ["#1a0f26", "#2a1340", "#8a5cb8", "#d0b0f0"],
+};
+
+/** Parça ikonu (pixel; Atölye ızgarası, Market hücresi): Çekirdek küre · Gövde boyalı yassı elips · Disk metal halka · Uç koni. 24×18. */
+export function parcaPikselIkonu(tur: string, element: string | null | undefined, koken: string | null | undefined, katman: string | undefined, gizli = false): HTMLCanvasElement {
+  const W = 24, H = 18;
+  const c = document.createElement("canvas");
+  c.width = W; c.height = H;
+  c.className = "k-parca";
+  c.style.width = `calc(${W} * var(--p))`;
+  c.style.height = `calc(${H} * var(--p))`;
+  c.style.imageRendering = "pixelated";
+  c.setAttribute("aria-hidden", "true");
+  const g = c.getContext("2d")!;
+  const e = element && element in ELEMENT_RENK ? ELEMENT_RENK[element as ElementAdi] : null;
+  const el = e ? [e.koyu, e.orta, e.acik, e.vurgu].map(renkCss) : ["#3a3f4c", "#6a7080", "#9aa0ae", "#d8dce6"];
+  const me = METAL[katman ?? "baslangic"] ?? METAL["baslangic"]!;
+  const nokta = (x: number, y: number, r: string) => { g.fillStyle = gizli ? "#0a0910" : r; g.fillRect(x, y, 1, 1); };
+  const elips = (cx: number, cy: number, rx: number, ry: number, ramp: string[], delik = 0) => {
+    for (let y = Math.floor(cy - ry); y <= Math.ceil(cy + ry); y++) for (let x = Math.floor(cx - rx); x <= Math.ceil(cx + rx); x++) {
+      const d = ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2;
+      if (d > 1) continue;
+      if (delik && ((x - cx) / (rx * delik)) ** 2 + ((y - cy) / (ry * delik)) ** 2 < 1) { if (((x - cx) / (rx * delik)) ** 2 + ((y - cy) / (ry * delik)) ** 2 > 0.6) nokta(x, y, "#0a0910"); continue; }
+      const v = 0.55 - ((y - cy) / ry) * 0.4 - ((x - cx) / rx) * 0.15;
+      const t = Math.max(0, Math.min(2.999, v * 3)), i = Math.floor(t);
+      nokta(x, y, d > 0.78 ? ramp[0]! : ramp[Math.min(3, i + (t - i > esik(x, y) ? 1 : 0))]!);
+    }
+  };
+  if (tur === "cekirdek") {
+    const kk = koken && koken in KOKEN_RENK ? KOKEN_RENK[koken as keyof typeof KOKEN_RENK] : KOKEN_RENK.goktasi;
+    elips(12, 9.5, 10, 4, el, 0.62); // element halkası
+    elips(12, 8.5, 5, 5, ["#0a0910", renkCss(kk.ikinci), renkCss(kk.isik), "#ffffff"]);
+  } else if (tur === "govde") {
+    elips(12, 9, 11, 5, el);
+    elips(12, 8.5, 5, 2, [el[0]!, el[0]!, el[1]!, el[1]!]);
+  } else if (tur === "disk") {
+    elips(12, 10, 11, 4.5, me, 0.45);
+  } else {
+    for (let y = 6; y <= 16; y++) { const w = Math.round((16 - y) * 0.55); for (let x = 12 - w; x <= 12 + w; x++) nokta(x, y, x < 12 ? me[2]! : x > 12 + w - 1 ? me[0]! : me[1]!); }
+    elips(12, 5, 7, 2.5, me);
+  }
+  return c;
+}
+
+/** innerHTML şablonları için: pixel parça ikonu `<img>` (data URL; ölçek mantıksal px katı). */
+export function parcaIkonHtml(tur: string, element: string | null | undefined, koken: string | null | undefined, katman: string | undefined, olcek = 1, gizli = false): string {
+  const c = parcaPikselIkonu(tur, element, koken, katman, gizli);
+  return `<img class="k-parca" alt="" aria-hidden="true" src="${c.toDataURL()}" style="width:calc(${24 * olcek} * var(--p));height:calc(${18 * olcek} * var(--p));image-rendering:pixelated">`;
+}

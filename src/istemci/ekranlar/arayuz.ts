@@ -54,9 +54,9 @@ export function kSiniflandir(kok: HTMLElement): void {
         if (lento && e.parentElement !== lento && !lento.querySelector(".k-geri")) lento.prepend(e);
         return;
       }
-      e.classList.add("k-dugme");
-      if (e.classList.contains("bir")) e.classList.add("ana");
-      else if (!e.closest(".k-lento")) e.classList.add("kucuk");
+      // sınıfsız düğme → ikincil (küçük); "bir" → ana; özel sınıflı düğmeyi ekran kendi stiller
+      if (e.classList.contains("bir")) e.classList.add("k-dugme", "ana");
+      else if (!e.className.trim()) e.classList.add("k-dugme", "kucuk");
     } else if ((e instanceof HTMLInputElement && ["text", "password", "search", ""].includes(e.type)) || e instanceof HTMLSelectElement || e instanceof HTMLTextAreaElement) {
       e.classList.add("k-alan");
     }

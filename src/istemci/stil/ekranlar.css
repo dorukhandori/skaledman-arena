@@ -9,7 +9,7 @@
 .ekr .kart.genis { width: min(calc(560 * var(--p)), 100%); }
 
 /* ---- metin (etiket BÜYÜK HARF; açıklama cümle düzeni) ---- */
-.ekr, .rf { font: 400 var(--y-16)/1.1 var(--font-etiket); color: var(--ink); }
+.ekr, .rf { font: 400 var(--y-16)/.875 var(--font-etiket); color: var(--ink); }
 .ekr h2, .rf h2 { margin: 0 0 calc(4 * var(--p)); font: 400 var(--y-30)/1 var(--font-baslik); letter-spacing: calc(2 * var(--yp)); text-transform: uppercase; color: var(--ink); }
 .ekr h2.k-plaka, .rf h2.k-plaka { font-size: var(--y-20); letter-spacing: var(--yp); margin: 0 0 calc(6 * var(--p)); }
 .ekr h3, .rf h3 { margin: 0 0 calc(3 * var(--p)); font: 400 var(--y-20)/1 var(--font-baslik); letter-spacing: var(--yp); text-transform: uppercase; color: var(--ink); }
@@ -29,14 +29,14 @@
 
 /* ---- tam ekran katman (bakım, dar ekran) ve sürüm bandı ---- */
 .tam-katman { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: var(--kenar); pointer-events: auto;
-  background: rgba(8, 7, 12, .92); color: var(--ink); font: 400 var(--y-16)/1.2 var(--font-etiket); }
+  background: rgba(8, 7, 12, .92); color: var(--ink); font: 400 var(--y-16)/.875 var(--font-etiket); }
 .tam-katman .kart { width: min(calc(300 * var(--p)), 100%); text-align: center; display: flex; flex-direction: column; align-items: center; gap: calc(4 * var(--p)); }
 .tam-katman p { margin: calc(2 * var(--p)) 0; }
 .tam-katman .yt { color: var(--soluk); }
 .tam-katman .k-dugme { margin-top: calc(6 * var(--p)); }
 .tam-katman :focus-visible { outline: calc(2 * var(--p)) solid #fff; outline-offset: var(--p); }
 .ust-bant { position: fixed; left: 50%; top: calc(30 * var(--p)); transform: translateX(-50%); z-index: 50; display: flex; gap: calc(6 * var(--p)); align-items: center; pointer-events: auto;
-  color: var(--ink); font: 400 var(--y-16)/1 var(--font-etiket); }
+  color: var(--ink); font: 400 var(--y-16)/.75 var(--font-etiket); }
 
 /* ---- referans ekranları kökü (.rf: Market, Başarımlar) ---- */
 .rf.k-zemin { display: flex; flex-direction: column; }

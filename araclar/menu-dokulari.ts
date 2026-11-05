@@ -352,6 +352,19 @@ dosyalar["kalkan"] = sprite([
   ".....ooo.....",
 ], { o: 0x2a1a0e, m: 0x8f6538, a: 0xc08e52, v: 0xe8c27a, k: 0x6b4a2a });
 
+// 11) pazar (Market, referans 04): flama ipi 64×12 döşeme (3 renk üçgen bayrak) + gece göğü dither 32×32
+{
+  const W = 64, H = 12, t = new Tuval(W, H);
+  const R = [0x9a3d38, 0xc08e52, 0x2a5bd7, 0x5bd1a5];
+  for (let x = 0; x < W; x++) t.nokta(x, 1 + (Math.abs((x % 32) - 16) > 12 ? 0 : 1), 0x3a3640);
+  for (let k = 0; k < 4; k++) {
+    const x0 = k * 16 + 3, renk = R[k]!;
+    for (let y = 0; y < 8; y++) { const w = Math.max(0, 5 - Math.floor(y * 0.7)); for (let x = x0 + (5 - w); x <= x0 + 5 + w - (5 - w) && x <= x0 + 10; x++) if (x >= x0 + 5 - w && x <= x0 + 5 + w) t.nokta(x, 2 + y, y === 0 ? 0x0c0b10 : renk); }
+  }
+  dosyalar["flama"] = t;
+}
+dolgu("gok", [0x141c33, 0x18213b, 0x1c2642], 111, 0.5, 0.5);
+
 mkdirSync(CIKTI, { recursive: true });
 let toplam = 0;
 for (const [ad, t] of Object.entries(dosyalar)) { const b = t.png(); toplam += b.length; writeFileSync(`${CIKTI}/${ad}.png`, b); }

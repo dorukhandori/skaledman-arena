@@ -6,8 +6,15 @@ import type { EkranBaglami } from "../main.ts";
 import { HESAP_HATA, type MarketGorunumu, type MarketUrunu, type YenilemeSatiri, apiGet, apiPost, git } from "../hesap.ts";
 import { elementSvg } from "../oyun/elementSimge.ts";
 import { ELEMENT_RENK, KOKEN_RENK } from "../oyun/renkler.ts";
-import { el } from "./arayuz.ts";
-import { COIN_SVG, KILIT_SVG, parcaIkonu, refStilEkle } from "./referansStil.ts";
+import { el, lentoKur, stilEkle } from "./arayuz.ts";
+import { refStilEkle } from "./referansStil.ts";
+import { parcaIkonHtml } from "./pikselTopac.ts";
+
+// GU-11 menü dili v2: pixel ikon (SVG yerine), sikke ve kilit sprite (stil/doku)
+const COIN_SVG = (_b = 0): string => `<span class="k-sikke" aria-hidden="true"></span>`;
+const KILIT_SVG = (_b = 0): string => `<span class="k-kilit" aria-hidden="true"></span>`;
+const parcaIkonu = (tur: string, element: string | null | undefined, koken: string | null | undefined, katman: string | undefined, boyut = 44, gizli = false): string =>
+  parcaIkonHtml(tur, element, koken, katman, boyut >= 60 ? 2 : 1, gizli);
 
 // Market (D7, 03 US-3.1..3.3, ux § 7 / § 6.4, referans görsel 04): üst bant (◄ · MARKET · ALTIN), "GÜNÜN PARÇASI −30%"
 // bandı, 2×2 ahşap tabelalı raf (Çekirdekler · Gövdeler · Diskler · Uçlar; tezgâh alt başlığı), hücre = ikon + rozet
@@ -16,57 +23,72 @@ import { COIN_SVG, KILIT_SVG, parcaIkonu, refStilEkle } from "./referansStil.ts"
 // URL: ?ekran=market&parca=<id> (ürünü aç) · &yenile=<cekirdekId> (yenileme onayı).
 
 const STIL = `
-.mk { padding:.6rem 1.4rem 1.2rem; }
-.mk .ic { width:min(78rem,100%); margin:0 auto; }
-.mk .gunun { display:flex; align-items:center; justify-content:center; gap:1rem; width:min(36rem,100%); margin:0 auto .5rem; padding:.3rem 1rem; cursor:pointer;
-  background:#151a2a; box-shadow:inset 0 0 0 2px var(--r-gold), inset 0 0 0 3px var(--r-ic), inset 0 0 0 5px #2b2410; border:none; color:#fff; }
-.mk .gunun .b { font:900 1.15rem/1 "Trebuchet MS",system-ui; letter-spacing:2px; text-transform:uppercase; }
-.mk .gunun .ind { color:var(--r-accent); }
-.mk .gunun s { color:var(--r-soluk); font-size:.8rem; }
-.mk .raflar { display:grid; grid-template-columns:1fr 1fr; gap:1.1rem 1.6rem; }
-.mk .raf { position:relative; padding:1.7rem .8rem .7rem; margin-top:.8rem; background:#151827;
-  box-shadow:inset 0 0 0 3px var(--r-ahsap), inset 0 0 0 5px #2a170a, inset 0 0 0 7px #1d2133; }
-.mk .raf .tabela { position:absolute; left:50%; top:-1rem; transform:translateX(-50%); white-space:nowrap; }
-.mk .izg { display:grid; grid-template-columns:repeat(4, 1fr); gap:.4rem; }
-.mk .hucre { position:relative; display:flex; flex-direction:column; align-items:center; gap:.18rem; padding:.3rem .2rem .28rem; background:#20253a; border:none; cursor:pointer;
-  box-shadow:inset 0 0 0 2px #59607a, inset 0 0 0 3px var(--r-ic); color:var(--r-ink); min-height:5.3rem; }
-.mk .hucre:hover { background:#272d46; }
-.mk .hucre .ik { width:3.2rem; height:3.2rem; display:flex; align-items:center; justify-content:center; background:#141826; box-shadow:inset 0 0 0 2px #3a4058; }
-.mk .hucre .ad { font:800 .68rem/1.1 system-ui; text-align:center; color:#d9dbe6; min-height:1rem; display:flex; align-items:center; }
-.mk .hucre[data-durum=kilitli] .ik, .mk .hucre[data-durum=gizli] .ik { background:#0e1019; }
-.mk .hucre[data-durum=sahip] { box-shadow:inset 0 0 0 2px #3f8f60, inset 0 0 0 3px var(--r-ic); }
-.mk .hucre[data-gunun="1"] { box-shadow:inset 0 0 0 2px var(--r-gold), inset 0 0 0 3px var(--r-ic); }
-.mk .hucre .yeni { position:absolute; top:.15rem; right:.15rem; padding:.05rem .3rem; background:var(--r-accent); color:#1a0c04; font:900 .55rem/1.2 system-ui; letter-spacing:.5px; }
-.mk .hucre .ind { position:absolute; top:.15rem; left:.15rem; padding:.05rem .3rem; background:var(--r-gold); color:#2a1d02; font:900 .55rem/1.2 system-ui; }
-.mk .kilitR { display:flex; align-items:center; gap:.3rem; }
-.mk .kilitR .cubukc { width:2.2rem; }
-.mk .ipucu { position:fixed; z-index:30; width:17rem; padding:.6rem .75rem; pointer-events:none; background:#10131f; box-shadow:inset 0 0 0 2px var(--r-edge), inset 0 0 0 3px var(--r-ic);
-  font-size:.8rem; display:none; }
+.mk.k-zemin { display:flex; flex-direction:column; }
+.mk::before { content:""; position:fixed; left:0; right:0; bottom:0; height:48%; z-index:-1; pointer-events:none; background:#4f3019 var(--k-ahsap) 0 0 / calc(64 * var(--p)) calc(16 * var(--p)); }
+.mk { isolation:isolate; }
+.mk .ic { position:relative; flex:1; width:100%; padding:calc(5 * var(--p)) var(--kenar) calc(4 * var(--p)); display:flex; flex-direction:column; gap:calc(3 * var(--p)); }
+.mk .gunun { align-self:center; display:inline-flex; align-items:center; justify-content:center; gap:calc(8 * var(--p)); height:calc(22 * var(--p)); padding:0 calc(14 * var(--p)); cursor:pointer; margin:0;
+  border:0 solid transparent; border-image:var(--k-plaka) 6 fill / calc(6 * var(--p)) / 0 round; color:var(--ink); font:400 var(--y-16)/.75 var(--font-etiket); text-transform:uppercase; box-shadow:var(--odak-g, 0 0 0 0 transparent); }
+.mk .gunun .b { font:400 var(--y-20)/1 var(--font-baslik); letter-spacing:var(--yp); text-shadow:var(--p) var(--p) 0 var(--bronz-0); }
+.mk .gunun .ind { color:#ffb070; }
+.mk .gunun b { font-weight:400; color:var(--ink); }
+.mk .gunun s { color:#e8d9b0; }
+.mk .raflar { flex:1; display:grid; grid-template-columns:1fr 1fr; gap:calc(8 * var(--p)) calc(10 * var(--p)); align-content:start; }
+.mk .raf { position:relative; padding:calc(13 * var(--p)) calc(8 * var(--p)) calc(6 * var(--p)); margin-top:calc(9 * var(--p)); background:var(--panel) var(--k-doku-panel) 0 0 / calc(32 * var(--p));
+  box-shadow:inset 0 0 0 var(--p) var(--harc), inset 0 0 0 calc(4 * var(--p)) #6b4226, inset 0 0 0 calc(5 * var(--p)) var(--harc), 0 calc(3 * var(--p)) 0 0 #2a170a; }
+.mk .raf .tabela { position:absolute; left:50%; top:calc(-12 * var(--p)); transform:translateX(-50%); white-space:nowrap; height:calc(22 * var(--p)); }
+.mk .raf .tabela::before, .mk .raf .tabela::after { content:""; position:absolute; top:calc(-8 * var(--p)); width:var(--p); height:calc(8 * var(--p)); background:#3a3640; }
+.mk .raf .tabela::before { left:calc(10 * var(--p)); } .mk .raf .tabela::after { right:calc(10 * var(--p)); }
+.mk .izg { display:grid; grid-template-columns:repeat(4, 1fr); gap:calc(3 * var(--p)) calc(4 * var(--p)); }
+.mk .hucre { position:relative; display:flex; flex-direction:column; align-items:center; gap:calc(2 * var(--p)); padding:0; background:none; border:0; cursor:pointer; color:var(--ink); margin:0; }
+.mk .hucre .ik { width:calc(40 * var(--p)); height:calc(26 * var(--p)); display:flex; align-items:center; justify-content:center; background:var(--hucre); border:var(--p) solid var(--harc); box-shadow:inset 0 var(--p) 0 0 var(--hucre-isik), var(--odak-g, 0 0 0 0 transparent); }
+.mk .hucre:hover .ik { background:#262d46; }
+.mk .hucre:focus-visible { outline:none !important; }
+.mk .hucre:focus-visible .ik { outline:calc(2 * var(--p)) solid #fff; outline-offset:var(--p); }
+.mk .hucre .ad { font:400 var(--y-16)/.75 var(--font-etiket); text-align:center; color:var(--soluk); text-transform:uppercase; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:none; }
+.mk .hucre[data-durum=kilitli] .ik, .mk .hucre[data-durum=gizli] .ik { background:#11141f; }
+.mk .hucre[data-durum=gizli] .ik img { filter:brightness(0); }
+.mk .hucre[data-durum=sahip] .ik { box-shadow:inset 0 0 0 var(--p) #3f8f60; }
+.mk .hucre[data-gunun="1"] .ik { box-shadow:inset 0 0 0 var(--p) var(--gold); }
+.mk .hucre[data-secili="1"]::before { content:""; position:absolute; left:50%; top:calc(-3 * var(--p)); width:calc(46 * var(--p)); height:calc(36 * var(--p)); transform:translateX(-50%); pointer-events:none;
+  --c:var(--gold); --u:calc(6 * var(--p)); --k:var(--p);
+  background:linear-gradient(var(--c),var(--c)) 0 0 / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 0 0 / var(--k) var(--u) no-repeat, linear-gradient(var(--c),var(--c)) 100% 0 / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 100% 0 / var(--k) var(--u) no-repeat,
+    linear-gradient(var(--c),var(--c)) 0 100% / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 0 100% / var(--k) var(--u) no-repeat, linear-gradient(var(--c),var(--c)) 100% 100% / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 100% 100% / var(--k) var(--u) no-repeat; }
+.mk .hucre .yeni { position:absolute; top:calc(-2 * var(--p)); right:0; padding:0 calc(2 * var(--p)); background:var(--turuncu); color:#1a0c04; font:400 var(--y-16)/.75 var(--font-etiket); text-transform:uppercase; }
+.mk .hucre .ind { position:absolute; top:calc(-2 * var(--p)); left:0; padding:0 calc(2 * var(--p)); background:var(--gold); color:#2a1d02; font:400 var(--y-16)/.75 var(--font-etiket); }
+.mk .kilitR { display:flex; align-items:center; gap:calc(2 * var(--p)); }
+.mk .kilitR .cubukc { width:calc(12 * var(--p)); }
+.mk .ipucu { position:fixed; z-index:30; width:calc(150 * var(--p)); padding:calc(5 * var(--p)) calc(6 * var(--p)); pointer-events:none; background:var(--panel); box-shadow:inset 0 0 0 var(--p) var(--harc), inset 0 0 0 calc(2 * var(--p)) var(--bronz), 0 calc(2 * var(--p)) 0 var(--golge); display:none; }
 .mk .ipucu.acik { display:block; }
-.mk .ipucu h4 { margin:0 0 .2rem; font:900 .95rem/1.2 system-ui; }
-.mk .ipucu p { margin:.15rem 0; color:#c9ccd8; }
-.mk .ipucu .kosul { color:#ffb070; font-weight:800; }
-.mk .dokum { margin-top:1.3rem; padding:.8rem 1rem; }
-.mk .dokum h3 { margin:0 0 .5rem; font:900 1rem/1 "Trebuchet MS",system-ui; letter-spacing:2px; text-transform:uppercase; color:#e0c8a0; }
-.mk .dokum .sat { display:flex; align-items:center; gap:.8rem; padding:.35rem 0; border-top:1px solid #2c3247; flex-wrap:wrap; }
+.mk .ipucu h4 { margin:0 0 calc(3 * var(--p)); font:400 var(--y-20)/1 var(--font-baslik); letter-spacing:var(--yp); text-transform:uppercase; }
+.mk .ipucu p { margin:var(--p) 0; color:var(--soluk); }
+.mk .ipucu .kosul { color:#ffb070; }
+.mk .alt-serit { display:flex; align-items:flex-end; gap:calc(8 * var(--p)); }
+.mk .alt-serit .secim { margin-right:auto; color:var(--ink); text-transform:uppercase; padding:calc(4 * var(--p)) calc(6 * var(--p)); background:rgba(12,11,16,.7); }
+.mk .dokum { padding:calc(6 * var(--p)) calc(8 * var(--p)); }
+.mk .dokum h3 { margin:0 0 calc(4 * var(--p)); }
+.mk .dokum .sat { display:flex; align-items:center; gap:calc(6 * var(--p)); padding:calc(3 * var(--p)) 0; border-top:var(--p) solid #2a3146; flex-wrap:wrap; text-transform:uppercase; }
 .mk .dokum .sat:first-of-type { border-top:none; }
-.mk .dokum .omur { width:9rem; }
-.mk .dokum .omur .cubukc i { background:linear-gradient(90deg,#4d5d6b,#7f95a8); }
-.mk .md-cubuk { display:grid; grid-template-columns:6rem 1fr 3.6rem; gap:.2rem .5rem; align-items:center; font-size:.78rem; margin:.5rem 0; }
-.mk .md-cubuk .bar { position:relative; height:.5rem; background:#11131d; box-shadow:inset 0 0 0 1px #000; }
-.mk .md-cubuk .bar i { position:absolute; left:0; top:0; bottom:0; background:#cfd6e6; }
-.mk .md-cubuk .bar u { position:absolute; top:-2px; bottom:-2px; width:2px; background:var(--r-accent); }
-.mk .md-cubuk .f { text-align:right; font-weight:900; font-variant-numeric:tabular-nums; }
-.mk .md-cubuk .f.art { color:var(--r-yesil); } .mk .md-cubuk .f.azal { color:#ff9a7a; }
-.mk .modal .ust { display:flex; gap:.9rem; align-items:center; margin-bottom:.4rem; }
-.mk .modal .ust .ik { width:5rem; height:5rem; display:flex; align-items:center; justify-content:center; background:#160c0a; box-shadow:inset 0 0 0 2px #6a3a24; }
-.mk .modal .ad { font:900 1.15rem/1.2 system-ui; } .mk .modal .alt { font-size:.8rem; color:#d8c2b0; }
-.mk .modal .fiyat { margin:.6rem 0; font:900 1.05rem/1.2 system-ui; color:var(--r-gold); }
-.mk .modal .fiyat s { color:var(--r-soluk); font-size:.85rem; margin-left:.4rem; }
-.mk .modal .eksik { color:#ff9a7a; font-weight:900; }
-.mk .modal .tamam { color:var(--r-yesil); font-weight:900; }
-.mk .modal .sat { display:flex; gap:.6rem; justify-content:center; margin-top:.8rem; flex-wrap:wrap; }
-.mk .bos { padding:2rem; text-align:center; }
+.mk .dokum .sat b { font-weight:400; }
+.mk .dokum .omur { width:calc(60 * var(--p)); }
+.mk .dokum .omur .cubukc i { background:repeating-linear-gradient(90deg, #7f95a8 0 calc(3 * var(--p)), transparent calc(3 * var(--p)) calc(4 * var(--p))); }
+.mk .md-cubuk { display:grid; grid-template-columns:calc(56 * var(--p)) 1fr calc(30 * var(--p)); gap:calc(2 * var(--p)) calc(4 * var(--p)); align-items:center; margin:calc(4 * var(--p)) 0; text-transform:uppercase; }
+.mk .md-cubuk .bar { position:relative; height:calc(5 * var(--p)); background:#0d0f18; box-shadow:inset 0 0 0 var(--p) var(--harc); }
+.mk .md-cubuk .bar i { position:absolute; left:0; top:0; bottom:0; background:repeating-linear-gradient(90deg, var(--turuncu) 0 calc(3 * var(--p)), transparent calc(3 * var(--p)) calc(4 * var(--p))); }
+.mk .md-cubuk .bar u { position:absolute; top:calc(-1 * var(--p)); bottom:calc(-1 * var(--p)); width:var(--p); background:#fff; }
+.mk .md-cubuk .f { text-align:right; font-variant-numeric:tabular-nums; }
+.mk .md-cubuk .f.art { color:var(--yesil); } .mk .md-cubuk .f.azal { color:var(--tehlike-yazi); }
+.mk .modal .ust { display:flex; gap:calc(8 * var(--p)); align-items:center; margin-bottom:calc(4 * var(--p)); }
+.mk .modal .ust .ik { width:calc(56 * var(--p)); height:calc(44 * var(--p)); display:flex; align-items:center; justify-content:center; background:#160c0a; box-shadow:inset 0 0 0 var(--p) #6a3a24; }
+.mk .modal .ad { font:400 var(--y-20)/1 var(--font-baslik); letter-spacing:var(--yp); text-transform:uppercase; } .mk .modal .alt { color:#d8c2b0; text-transform:uppercase; }
+.mk .modal .alt svg { display:none; }
+.mk .modal .fiyat { display:flex; align-items:center; gap:calc(3 * var(--p)); margin:calc(5 * var(--p)) 0; font:400 var(--y-20)/1 var(--font-baslik); color:var(--gold); }
+.mk .modal .fiyat s { color:var(--soluk); margin-left:calc(3 * var(--p)); }
+.mk .modal .eksik { color:var(--tehlike-yazi); text-transform:uppercase; }
+.mk .modal .tamam { color:var(--yesil); text-transform:uppercase; }
+.mk .modal .sat { display:flex; gap:calc(6 * var(--p)); justify-content:center; margin-top:calc(8 * var(--p)); flex-wrap:wrap; }
+.mk .modal p { line-height:.875; }
+.mk .bos { padding:calc(16 * var(--p)); text-align:center; align-self:center; display:flex; flex-direction:column; gap:calc(8 * var(--p)); align-items:center; }
 `;
 
 const TUR_AD: Record<string, string> = { cekirdek: "Çekirdek", govde: "Gövde", disk: "Disk", uc: "Uç" };
@@ -74,13 +96,14 @@ const TUR_AD: Record<string, string> = { cekirdek: "Çekirdek", govde: "Gövde",
 export async function baslat(b: EkranBaglami): Promise<void> {
   const ben = b.ben;
   if (!ben?.girisli) { git("karsilama"); return; }
+  stilEkle();
   refStilEkle();
   const v = await apiGet<MarketGorunumu>("/api/market");
   new MarketEkrani(b.ustYazi, v);
 }
 
 class MarketEkrani {
-  private kok = el("div", "rf mk");
+  private kok = el("div", "rf mk k-zemin k-pazar");
   private stil = el("style");
   private ipucu = el("div", "ipucu", this.kok);
   private modalEl: HTMLDivElement | null = null;
@@ -138,21 +161,17 @@ class MarketEkrani {
   private ciz(): void {
     const k = this.kok;
     for (const c of [...k.children]) if (c !== this.ipucu) c.remove();
-    const ic = el("div", "ic", k);
-    // üst bant
-    const ub = el("div", "ustbant panel pah", ic);
-    const geri = el("button", "geriK pah", ub, "◄");
-    geri.setAttribute("aria-label", "Geri: Atölye");
-    geri.dataset["eylem"] = "geri";
-    geri.addEventListener("click", () => git("atolye"));
-    el("h2", "", ub, "Market");
-    const cz = el("div", "cuzdan panel pah", ub);
-    cz.innerHTML = `<div><b>ALTIN</b><span data-bakiye>${this.v.bakiye}</span></div>${COIN_SVG(30)}`;
+    // üst lento (◄ · MARKET · Altın yuvası)
+    const lento = lentoKur(k, { baslik: "Market", geri: "atolye", cuzdan: false });
+    lento.querySelector<HTMLElement>(".k-geri")!.dataset["eylem"] = "geri";
+    const cz = el("div", "k-cuzdan", lento);
+    el("span", "", cz, String(this.v.bakiye)).dataset["bakiye"] = "1";
     cz.setAttribute("aria-label", `Bakiye ${this.v.bakiye} Altın`);
+    const ic = el("div", "ic", k);
     if (!this.v.acik) {
-      const p = el("div", "panel pah bos", ic);
+      const p = el("div", "k-panel bos", ic);
       el("p", "", p, "Market kilitli. Antrenman eğitimini bitir: İlk Devir başarımı Market'i açar.");
-      const d = el("button", "dg bir pah", p, "Antrenmana git");
+      const d = el("button", "k-dugme ana yazi20", p, "Antrenmana git");
       d.addEventListener("click", () => git("antrenman"));
       queueMicrotask(() => d.focus());
       return;
@@ -160,7 +179,7 @@ class MarketEkrani {
     // günün parçası
     const gp = this.v.gununParcasi;
     if (gp) {
-      const g = el("button", "gunun pah", ic);
+      const g = el("button", "gunun", ic);
       g.dataset["gunun"] = gp.id;
       const u = this.urun(gp.id);
       g.innerHTML = `<span class="b">Günün parçası <span class="ind">−30%</span></span>${parcaIkonu(gp.tur, gp.element, u?.koken ?? null, u?.katman, 40)}<span><b></b> · ${gp.satisFiyati} Altın <s>${gp.fiyat}</s></span>`;
@@ -175,7 +194,7 @@ class MarketEkrani {
       const raf = el("section", "raf", rf);
       raf.dataset["raf"] = r.tur;
       raf.setAttribute("aria-label", r.ad);
-      el("div", "tabela pah", raf, r.ad);
+      el("div", "tabela", raf, r.ad);
       const izg = el("div", "izg", raf);
       izg.setAttribute("role", "list");
       for (const u of r.urunler) {
@@ -201,7 +220,7 @@ class MarketEkrani {
         if (u.basarimlaAcildi && u.durum === "acik") el("span", "yeni", h, "Açıldı");
         h.addEventListener("click", () => this.ac(u));
         h.addEventListener("mouseenter", () => this.ipucuGoster(u, h));
-        h.addEventListener("focus", () => { if (this.ilkOdak) { this.ilkOdak = false; return; } this.ipucuGoster(u, h); });
+        h.addEventListener("focus", () => { this.sec(u, h); if (this.ilkOdak) { this.ilkOdak = false; return; } this.ipucuGoster(u, h); });
         h.addEventListener("mouseleave", () => this.ipucu.classList.remove("acik"));
         h.addEventListener("blur", () => this.ipucu.classList.remove("acik"));
         hucreler.push(h);
@@ -223,7 +242,7 @@ class MarketEkrani {
     });
     // Dökümhane: Yapay yenileme
     if (this.v.yenileme.length) {
-      const dk = el("section", "dokum panel pah", ic);
+      const dk = el("section", "dokum k-panel", ic);
       dk.dataset["dokumhane"] = "1";
       el("h3", "", dk, "Yapay yenileme");
       for (const s of this.v.yenileme) {
@@ -239,7 +258,27 @@ class MarketEkrani {
         d.addEventListener("click", () => this.yenileAc(s));
       }
     }
-    queueMicrotask(() => (hucreler.find((x) => x.dataset["durum"] === "acik") ?? hucreler[0])?.focus());
+    // alt şerit (b-market): seçili parça adı + fiyat solda, SATIN AL ana sağ altta (onay penceresi aynı)
+    const serit = el("div", "alt-serit", ic);
+    this.secimYazi = el("span", "secim k-e16", serit, "");
+    this.satinAlD = el("button", "k-dugme ana", serit, "Satın al");
+    this.satinAlD.dataset["eylem"] = "satin-al";
+    this.satinAlD.addEventListener("click", () => { if (this.seciliUrun) this.ac(this.seciliUrun); });
+    const ilk = hucreler.find((x) => x.dataset["durum"] === "acik") ?? hucreler[0];
+    if (ilk) { const u = this.urun(ilk.dataset["urun"]!); if (u) this.sec(u, ilk); }
+    queueMicrotask(() => ilk?.focus());
+  }
+
+  private seciliUrun: MarketUrunu | null = null;
+  private secimYazi: HTMLElement | null = null;
+  private satinAlD: HTMLButtonElement | null = null;
+  /** seçili hücre (çentik) + alt şerit metni; SATIN AL yalnız satın alınabilir üründe etkin */
+  private sec(u: MarketUrunu, h: HTMLElement): void {
+    this.seciliUrun = u;
+    for (const x of this.kok.querySelectorAll<HTMLElement>(".hucre[data-secili]")) delete x.dataset["secili"];
+    h.dataset["secili"] = "1";
+    if (this.secimYazi) this.secimYazi.textContent = u.durum === "gizli" ? "???" : u.durum === "sahip" ? `${u.ad} · sende` : u.durum === "kilitli" ? `${u.ad} · kilitli` : `${u.ad} · ${u.satisFiyati}`;
+    if (this.satinAlD) this.satinAlD.disabled = u.durum !== "acik";
   }
 
   private ipucuGoster(u: MarketUrunu, h: HTMLElement): void {

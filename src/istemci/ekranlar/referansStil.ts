@@ -1,48 +1,39 @@
 import type { ElementAdi, KokenAdi } from "../../paylasilan/kurallar/ayar.ts";
 import { ELEMENT_RENK, KOKEN_RENK, renkCss } from "../oyun/renkler.ts";
 
-// D7 referans paneli (docs/art/tasarim-dili.md § 2.5 hedef tokenları, § 4.3 panel kararı; görseller 04 / 05 / 09):
-// lacivert zemin, basamaklı (pahlı) köşe, 2 px bej dış + 1 px koyu iç çizgi, bronz/turuncu vurgu, ahşap tabela başlık,
-// sol üstte kırmızı kare ◄ geri, BÜYÜK HARF başlık. Pixel font ve pixel ikon seti henüz yok (Görsel Uyum Geçişi):
-// ikonlar burada SVG yer tutucu (parça türü silüeti + element/köken rengi). Market, Başarımlar ve Sonuç ortak kullanır.
+// D7 referans paneli → GU-01 menü dili v2 "Kuşak Taşı" (docs/art/menu-tasarim-arastirma.md § 5, § 6.5): eski sınıflar
+// (.rf .panel, .dg, .dg.bir, .tabela, .rozet, .cubukc, .modal) aynı jetonlarla yeni dile eşlenir (Market, Başarımlar, Sonuç).
+// Dokular `--k-*` değişkenlerinden (stil/bilesenler.css). Gradyan / gölge / parlama yok.
 
 export const REF_STIL = `
-:root { --r-bg:#0f1020; --r-panel:#1b2131; --r-panel2:#292d39; --r-edge:#a99e92; --r-ic:#07080f; --r-accent:#e8762f; --r-bronze:#c08e52;
-  --r-gold:#fcd35a; --r-ink:#fbf2c3; --r-soluk:#9aa0b2; --r-back:#9a3d38; --r-ahsap:#6b4226; --r-ahsap2:#8a5a34; --r-yesil:#7fe3a0; }
-.rf { position:absolute; inset:0; overflow:auto; pointer-events:auto; z-index:5; color:var(--r-ink); font:500 .95rem/1.35 "Trebuchet MS",system-ui,sans-serif;
-  background:radial-gradient(ellipse at 50% 30%, #1a1f36 0%, #0f1020 60%, #090a14 100%); }
+.rf { --r-gold:var(--gold); --r-accent:var(--turuncu); --r-ink:var(--ink); --r-soluk:var(--soluk); --r-ic:var(--harc); --r-edge:var(--cerceve-isik); --r-yesil:var(--yesil); --r-ahsap:#6b4226; }
+.rf { position:absolute; inset:0; overflow:auto; pointer-events:auto; z-index:5; color:var(--ink); font:400 var(--y-16)/.875 var(--font-etiket); }
 #ustYazi > .rf { pointer-events:auto; }
-.rf .pah { clip-path:polygon(6px 0,calc(100% - 6px) 0,100% 6px,100% calc(100% - 6px),calc(100% - 6px) 100%,6px 100%,0 calc(100% - 6px),0 6px); }
-.rf .panel { position:relative; background:var(--r-panel); box-shadow:inset 0 0 0 2px var(--r-edge), inset 0 0 0 3px var(--r-ic), inset 0 0 0 5px #252b40; }
-.rf .ustbant { display:grid; grid-template-columns:3.2rem 1fr auto; align-items:center; gap:.8rem; margin:0 0 .5rem; padding:.35rem .6rem; }
-.rf .ustbant h2 { margin:0; text-align:center; font:900 1.7rem/1 "Trebuchet MS",system-ui; letter-spacing:3px; text-transform:uppercase; color:#fff;
-  text-shadow:0 2px 0 #000; }
-.rf .geriK { width:2.8rem; height:2.4rem; display:flex; align-items:center; justify-content:center; background:var(--r-back); color:var(--r-ink);
-  border:none; box-shadow:inset 0 0 0 2px #d8b9a0, inset 0 0 0 3px #3a1210; cursor:pointer; font:900 1.1rem/1 system-ui; }
-.rf .cuzdan { display:flex; align-items:center; gap:.5rem; padding:.35rem .8rem; min-width:9rem; justify-content:flex-end; }
-.rf .cuzdan b { display:block; color:var(--r-gold); font:900 .72rem/1 system-ui; letter-spacing:2px; text-align:right; }
-.rf .cuzdan span { display:block; font:900 1.35rem/1.05 ui-monospace,monospace; color:#fff; text-align:right; font-variant-numeric:tabular-nums; }
+.rf .pah { clip-path:none; }
+.rf .panel { position:relative; border:calc(5 * var(--p)) solid transparent; border-image:var(--k-tas-cerceve) 5 fill / calc(5 * var(--p)) / 0 round; }
 .rf button { font-family:inherit; }
-.rf .dg { padding:.55rem 1rem; background:var(--r-panel2); color:var(--r-ink); border:none; box-shadow:inset 0 0 0 2px var(--r-bronze), inset 0 0 0 3px var(--r-ic);
-  font:900 .95rem/1.2 "Trebuchet MS",system-ui; letter-spacing:1px; text-transform:uppercase; cursor:pointer; }
-.rf .dg.bir { background:linear-gradient(#a8572a,#7c3d1c); box-shadow:inset 0 0 0 2px var(--r-gold), inset 0 0 0 3px var(--r-ic); color:#fff; }
-.rf .dg:disabled { opacity:.45; cursor:default; }
-.rf button:focus-visible, .rf a:focus-visible, .rf [tabindex]:focus-visible { outline:3px solid #fff; outline-offset:2px; box-shadow:0 0 0 6px #050d10; }
-.rf .tabela { position:relative; display:inline-block; padding:.35rem 1.3rem; background:linear-gradient(var(--r-ahsap2),var(--r-ahsap));
-  box-shadow:inset 0 0 0 2px #3a2312, inset 0 0 0 4px #a8784a; font:900 1.2rem/1 "Trebuchet MS",system-ui; letter-spacing:2px; color:#fff7e0;
-  text-transform:uppercase; text-shadow:0 2px 0 #2a170a; }
-.rf .rozet { display:inline-flex; align-items:center; gap:.25rem; padding:.12rem .4rem; font:900 .68rem/1.1 system-ui; letter-spacing:.5px; text-transform:uppercase; }
-.rf .rozet.altin { background:#3b2c0c; color:var(--r-gold); box-shadow:inset 0 0 0 2px #c9a33b; }
-.rf .rozet.kilit { background:#20232f; color:var(--r-ink); box-shadow:inset 0 0 0 2px #59607a; }
-.rf .rozet.sende { background:#173524; color:var(--r-yesil); box-shadow:inset 0 0 0 2px #3f8f60; }
-.rf .rozet.gizli { background:#0c0d14; color:#c8c8d0; box-shadow:inset 0 0 0 2px #2c2f3c; }
-.rf .cubukc { height:.42rem; background:#11131d; box-shadow:inset 0 0 0 1px #000; overflow:hidden; }
-.rf .cubukc i { display:block; height:100%; background:linear-gradient(90deg,#f2622f,var(--r-accent)); }
-.rf .yt { color:#727a90; font-size:.72rem; }
-.rf .modal { position:fixed; inset:0; z-index:40; display:flex; align-items:center; justify-content:center; background:rgba(4,5,12,.7); }
-.rf .modal .kutu { width:min(30rem, calc(100% - 2rem)); padding:1.1rem 1.3rem; background:#2a1814;
-  box-shadow:inset 0 0 0 2px var(--r-accent), inset 0 0 0 3px var(--r-ic), inset 0 0 0 5px #4a2a20; }
-.rf .modal h3 { margin:0 0 .6rem; text-align:center; font:900 1.35rem/1.1 "Trebuchet MS",system-ui; letter-spacing:2px; color:#ffb070; text-transform:uppercase; }
+.rf .dg { --ks: inset 0 0 0 var(--p) var(--bronz), inset 0 calc(2 * var(--p)) 0 0 #3a4258; display:inline-flex; align-items:center; justify-content:center; min-height:calc(20 * var(--p)); padding:calc(3 * var(--p)) calc(10 * var(--p)); cursor:pointer;
+  background:var(--panel-2) var(--k-doku-normal) 0 0 / calc(32 * var(--p)); color:var(--ink); border:var(--p) solid var(--harc); border-radius:0;
+  font:400 var(--y-20)/1 var(--font-baslik); letter-spacing:var(--yp); text-transform:uppercase; box-shadow:var(--ks), 0 calc(2 * var(--p)) 0 0 var(--golge), var(--odak-g, 0 0 0 0 transparent); }
+.rf .dg.bir { --ks: inset 0 0 0 var(--p) var(--gold), inset 0 calc(-5 * var(--p)) 0 0 var(--ana-alt); background:var(--ana) var(--k-doku-ana) 0 0 / calc(32 * var(--p)); color:var(--ana-yazi); border-color:var(--ana-kenar); text-shadow:var(--p) var(--p) 0 var(--ana-alt); padding-bottom:calc(6 * var(--p)); }
+.rf .dg:active:not(:disabled) { transform:translateY(calc(2 * var(--p))); box-shadow:var(--ks); }
+.rf .dg:disabled { --ks: inset 0 0 0 var(--p) var(--cerceve-0), inset 0 0 0 0 transparent; color:var(--kapali-yazi); text-shadow:none; background:var(--tas-2) var(--k-doku-kapali) 0 0 / calc(32 * var(--p)); cursor:default; }
+.rf button:focus-visible, .rf a:focus-visible, .rf [tabindex]:focus-visible { outline:calc(2 * var(--p)) solid #fff; outline-offset:var(--p); --odak-g: 0 0 0 calc(4 * var(--p)) var(--golge); }
+.rf .tabela { position:relative; display:inline-flex; align-items:center; height:calc(20 * var(--p)); padding:0 calc(14 * var(--p)); color:var(--ink); text-transform:uppercase;
+  font:400 var(--y-20)/1 var(--font-baslik); letter-spacing:var(--yp); text-shadow:var(--p) var(--p) 0 #2a170a;
+  background:#6b4226 var(--k-ahsap) 0 0 / calc(64 * var(--p)) calc(16 * var(--p)); box-shadow:inset 0 0 0 var(--p) #2a170a, inset 0 calc(2 * var(--p)) 0 0 #a8784a; }
+.rf .rozet { display:inline-flex; align-items:center; justify-content:center; gap:calc(2 * var(--p)); min-height:calc(11 * var(--p)); padding:0 calc(3 * var(--p)); font:400 var(--y-16)/.75 var(--font-etiket); text-transform:uppercase; }
+.rf .rozet.altin { background:#3b2c0c; color:var(--gold); box-shadow:inset 0 0 0 var(--p) #c9a33b; }
+.rf .rozet.kilit { background:#20232f; color:var(--ink); box-shadow:inset 0 0 0 var(--p) #59607a; }
+.rf .rozet.sende { background:#173524; color:var(--yesil); box-shadow:inset 0 0 0 var(--p) #3f8f60; }
+.rf .rozet.gizli { background:#0c0d14; color:#c8c8d0; box-shadow:inset 0 0 0 var(--p) #2c2f3c; }
+.rf .cubukc { height:calc(5 * var(--p)); background:#0d0f18; box-shadow:inset 0 0 0 var(--p) var(--harc); overflow:hidden; position:relative; }
+.rf .cubukc i { display:block; height:100%; background:repeating-linear-gradient(90deg, var(--turuncu) 0 calc(3 * var(--p)), transparent calc(3 * var(--p)) calc(4 * var(--p))); }
+.rf .yt { color:#7d7688; }
+.rf .modal { position:fixed; inset:0; z-index:40; display:flex; align-items:center; justify-content:center; background:rgba(8,7,12,.78); }
+.rf .modal .kutu { width:min(calc(260 * var(--p)), calc(100% - 2 * var(--kenar))); padding:calc(8 * var(--p)) calc(10 * var(--p)); background:#2a1610;
+  box-shadow:inset 0 0 0 var(--p) var(--harc), inset 0 0 0 calc(2 * var(--p)) var(--turuncu), inset 0 0 0 calc(3 * var(--p)) var(--harc); }
+.rf .modal h3 { margin:0 0 calc(6 * var(--p)); text-align:center; font:400 var(--y-20)/1 var(--font-baslik); letter-spacing:var(--yp); color:#ffb070; text-transform:uppercase; }
 `;
 
 let eklendi = false;
