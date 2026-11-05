@@ -1,67 +1,79 @@
 import { Assets, Rectangle, Texture } from "pixi.js";
+import { TOPAC_GORSEL, kademeDizisi, tanimA, tanimB, type KareKademesi, type KatmanTanimi, type KatmanTuru, type Yon } from "./topacKare.ts";
+import type { Kademe } from "./cizimTurleri.ts";
 
-// Topaç atlas yükleyici (eski AtlasYukleyici deseni korunur: nearest ölçek, istek başına tek yükleme, önbellek).
-// İçerik YER TUTUCU: D1'de topaçlar Graphics ile çizilir (TopacGorsel). Pixel planı § 7.3-7.5 kareleri geldiğinde
-// `public/topac/<parcaId>/atlas.json` + sayfa PNG'leri buradan yüklenir; atlas yoksa null döner ve Graphics kalır.
+// Topaç katman atlası yükleyici (ART-1; pixel planı § 7.3: nearest ölçek, istek başına tek yükleme, önbellek).
+// İki biçim (topacKare.ts): metada `bicimB` listesindeki parçalar için önce Mac hattının biçim B json'u (/topac/<tur>/<id>.json, surum 2) denenir, yoksa bulut
+// hattının biçim A metası (veri/topac-gorsel.json, pakete gömülü). Hiçbiri yoksa ya da doku yüklenemezse null döner:
+// çizim yordamsal yer tutucuda (TopacYandan Graphics) kalır.
 
-export interface TopacAtlasTanimi {
-  surum: 1;
-  parcaId: string;
-  /** kare boyutu (mantıksal px) */
-  kare: number;
-  /** simetri periyodu başına kare (pixel planı § 3.3: F = 8) */
-  periyotKare: number;
-  sayfalar: { keskin: string; bulanik?: string; disk?: string };
+export interface YuklenenKatman {
+  tanim: KatmanTanimi;
+  /** yön → kademe → kareler */
+  kareler: Partial<Record<Yon, Record<KareKademesi, Texture[]>>>;
 }
 
-export interface YuklenenTopacAtlas {
-  tanim: TopacAtlasTanimi;
-  keskin: Texture[];
-  bulanik: Texture[];
-}
-
-const onbellek = new Map<string, Promise<YuklenenTopacAtlas | null>>();
+const onbellek = new Map<string, Promise<YuklenenKatman | null>>();
+const sayfalar = new Map<string, Promise<Texture | null>>();
 
 /** Vite SPA yedeği bilinmeyen yollara 200 + index.html döner; yalnız geçerli JSON'u kabul et. */
-async function jsonGetir<T>(url: string): Promise<T | null> {
+async function jsonGetir(url: string): Promise<unknown> {
   try {
     const yanit = await fetch(url);
     if (!yanit.ok || !(yanit.headers.get("content-type") ?? "").includes("json")) return null;
-    return (await yanit.json()) as T;
+    return (await yanit.json()) as unknown;
   } catch {
     return null;
   }
 }
 
-async function dokuYukle(url: string): Promise<Texture> {
-  const doku = await Assets.load<Texture>(url);
-  doku.source.scaleMode = "nearest"; // piksel sanatı: bulanıklaştırma yok
-  return doku;
-}
-
-function dilimle(sayfa: Texture, kare: number): Texture[] {
-  const n = Math.floor(sayfa.width / kare);
-  const out: Texture[] = [];
-  for (let i = 0; i < n; i++) out.push(new Texture({ source: sayfa.source, frame: new Rectangle(i * kare, 0, kare, kare) }));
-  return out;
-}
-
-async function yukle(parcaId: string): Promise<YuklenenTopacAtlas | null> {
-  const taban = `/topac/${encodeURIComponent(parcaId)}`;
-  const tanim = await jsonGetir<TopacAtlasTanimi>(`${taban}/atlas.json`);
-  if (!tanim || tanim.surum !== 1) return null;
-  const keskin = dilimle(await dokuYukle(`${taban}/${tanim.sayfalar.keskin}`), tanim.kare);
-  const bulanik = tanim.sayfalar.bulanik ? dilimle(await dokuYukle(`${taban}/${tanim.sayfalar.bulanik}`), tanim.kare) : [];
-  return { tanim, keskin, bulanik };
-}
-
-/** Parça atlası; yoksa null (Graphics yer tutucu kullanılır). Parça başına bir kez yüklenir, paylaşılır. */
-export function topacAtlasYukle(parcaId: string): Promise<YuklenenTopacAtlas | null> {
-  let p = onbellek.get(parcaId);
+function sayfaYukle(url: string): Promise<Texture | null> {
+  let p = sayfalar.get(url);
   if (!p) {
-    p = yukle(parcaId);
-    onbellek.set(parcaId, p);
-    p.then((s) => { if (!s) onbellek.delete(parcaId); }, () => onbellek.delete(parcaId));
+    p = Assets.load<Texture>(url).then((d) => { d.source.scaleMode = "nearest"; return d; }, () => null);
+    sayfalar.set(url, p);
   }
   return p;
+}
+
+async function yukle(tur: KatmanTuru, id: string, boya: string | null): Promise<YuklenenKatman | null> {
+  // biçim B yalnız metada `bicimB` listesindeki parçalar için istenir (gereksiz 404 / konsol hatası olmasın)
+  const b = (TOPAC_GORSEL.bicimB ?? []).includes(id) ? tanimB(await jsonGetir(`/topac/${tur}/${encodeURIComponent(id)}.json`)) : null;
+  const t = b ?? tanimA(id);
+  if (!t || t.tur !== tur) return null;
+  const [w, h] = t.kare;
+  const kareler: YuklenenKatman["kareler"] = {};
+  for (const yon of t.yonler) {
+    const k = {} as Record<KareKademesi, Texture[]>;
+    for (const kd of ["keskin", "bulanik", "disk"] as const) {
+      const s = t.serit(kd, yon, boya);
+      const sayfa = await sayfaYukle(s.dosya);
+      if (!sayfa) return null;
+      const adet = Math.min(s.adet, Math.floor(sayfa.width / w));
+      if (adet < 1 || s.y + h > sayfa.height) return null;
+      k[kd] = Array.from({ length: adet }, (_, i) => new Texture({ source: sayfa.source, frame: new Rectangle(i * w, s.y, w, h) }));
+    }
+    kareler[yon] = k;
+  }
+  return { tanim: t, kareler };
+}
+
+/** Katman (parça + Gövde boyası); yoksa null. Parça/boya başına bir kez yüklenir, paylaşılır; hata önbellekte kalmaz. */
+export function topacKatmanYukle(tur: KatmanTuru, id: string, boya: string | null = null): Promise<YuklenenKatman | null> {
+  const anahtar = `${tur}/${id}/${tur === "govde" ? boya ?? "kor" : "-"}`;
+  let p = onbellek.get(anahtar);
+  if (!p) {
+    p = yukle(tur, id, tur === "govde" ? boya ?? "kor" : null).catch(() => null);
+    onbellek.set(anahtar, p);
+    p.then((s) => { if (!s) onbellek.delete(anahtar); }, () => onbellek.delete(anahtar));
+  }
+  return p;
+}
+
+/** Kademe + dönüş yönü için kare dizisi; kiral parçada sol satır, yoksa sağ satır (ters oynar). */
+export function kareDizisi(k: YuklenenKatman, kademe: Kademe | KareKademesi, sol: boolean): { dizi: Texture[]; solSatir: boolean } {
+  const kd: KareKademesi = kademe === "keskin" || kademe === "bulanik" || kademe === "disk" ? kademe : kademeDizisi(kademe);
+  const solSatir = sol && !!k.kareler.l;
+  const y = (solSatir ? k.kareler.l : k.kareler.s)!;
+  return { dizi: y[kd], solSatir };
 }

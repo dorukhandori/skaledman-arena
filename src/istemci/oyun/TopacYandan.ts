@@ -1,4 +1,4 @@
-import { Container, Graphics, Texture } from "pixi.js";
+import { Container, Graphics, Sprite, Texture } from "pixi.js";
 import { AYAR } from "../../paylasilan/kurallar/ayar.ts";
 import { diskBul } from "../../paylasilan/veri/katalog.ts";
 import type { TopacProfili } from "../../paylasilan/veri/profil.ts";
@@ -8,6 +8,8 @@ import { KAMERA } from "./kamera.ts";
 import type { Sahne } from "./Sahne.ts";
 import { SusRastgele } from "./SusRastgele.ts";
 import { GORSEL, kademeBul, kanatSiluet } from "./TopacGorsel.ts";
+import { kareDizisi, topacKatmanYukle, type YuklenenKatman } from "./TopacAtlas.ts";
+import { govdeKaymasi, kareIndeksi } from "./topacKare.ts";
 
 // GU-00 / GU-topaç: Hibrit kamerada yandan / üç çeyrek topaç (yer tutucu; nihai sprite sanat kolu, pixel planı § 3 (c)).
 // Katmanlar alttan üste (pixel planı § 2.2, hibrit sırası): zemin gölgesi (elips, Disk yüksekliğine göre ayrılır) ·
@@ -15,7 +17,9 @@ import { GORSEL, kademeBul, kanatSiluet } from "./TopacGorsel.ts";
 // Gövde (silindir yan bandı + üst yüzde dönen kanat siluet, yatay düzlemde → y·zOranı) · Çekirdek (köken ışığı kubbe) ·
 // dönmeyen parlama. 1 px koyu dış çizgi = element rampasının en koyusu. Hız kademeleri (§ 3.4): > %60 bulanık disk (eş merkezli
 // halkalar + dönen ışık yayı), %25-60 bulanık kanat (iki hayalet), < %25 keskin kanat + yalpa (gövde eğilir, uç etrafında döner).
-// Hepsi Pixi Graphics; her kare yeniden çizilir (iki topaç, ucuz). Sim'e hiçbir şey yazmaz.
+// ART-1: atlas (public/topac, veri/topac-gorsel.json; 3B → pixel) yüklenince Uç / Disk / Gövde / Çekirdek dört Sprite
+// katmanı (aynı çapa = uç temas noktası, 1 doku pikseli = 1 sanat pikseli) kare dizisinden seçilir; çatlak ve flaş
+// Graphics üstte kalır. Atlas yoksa ya da yüklenemezse aşağıdaki yordamsal çizim YEDEKtir. Sim'e hiçbir şey yazmaz.
 
 const TAM = Math.PI * 2;
 /** Topaç dikey ölçüleri (dünya px, zeminden yukarı). Üç çeyrek bakış: topacın kendi elips oranı KT (zeminin 0,62'sinden
@@ -101,6 +105,14 @@ export class TopacYandan implements TopacCizimi {
   private flasG = new Graphics();
   private isaret = new Graphics();
   private parcalar: Parca[] = [];
+  /** ART-1 sprite katmanları (yüklenince); null = yordamsal çizim */
+  private katman: { uc: YuklenenKatman; disk: YuklenenKatman; govde: YuklenenKatman; cekirdek: YuklenenKatman } | null = null;
+  private spriteKap = new Container();
+  private sp = { uc: new Sprite(), disk: new Sprite(), govde: new Sprite(), cekirdek: new Sprite() };
+  private yukNo = 0;
+  private diskSaat = 0;
+  /** sprite kipinde üst yüz elipsi (çatlak/flaş hizası): merkez y ve basıklık */
+  private spriteUst = { y: -H.govdeUst, k: KT };
   private kademe: Kademe | null = null;
   private aci = 0;
   private cekirdekAci = 0;
@@ -121,7 +133,9 @@ export class TopacYandan implements TopacCizimi {
     this.k = KT;
     this.zeminKap.addChild(this.golge, this.takimCemberi);
     sahne.golgeKatmani.addChild(this.zeminKap);
-    this.icKap.addChild(this.govde, this.flasG);
+    this.spriteKap.addChild(this.sp.uc, this.sp.disk, this.sp.govde, this.sp.cekirdek);
+    this.spriteKap.visible = false;
+    this.icKap.addChild(this.spriteKap, this.govde, this.flasG);
     this.sqKap.addChild(this.icKap);
     this.govdeKap.addChild(this.sqKap);
     this.yalpaKap.addChild(this.govdeKap);
@@ -129,6 +143,52 @@ export class TopacYandan implements TopacCizimi {
     this.kok.scale.set(KAMERA.topacCizimOlcek);
     this.zeminKap.scale.set(KAMERA.topacCizimOlcek);
     this.zeminCiz();
+    this.katmanYukle();
+  }
+
+  /** Sprite katmanı mı çiziliyor (test/Lab) */
+  get spriteKatmani(): boolean { return this.katman !== null; }
+
+  /** Dört katmanın atlasını iste; hepsi gelirse sprite kipine geç, biri yoksa yordamsal kalır. */
+  private katmanYukle(): void {
+    const no = ++this.yukNo;
+    this.katman = null;
+    this.spriteKap.visible = false;
+    const pc = this.profil.parcalar;
+    void Promise.all([
+      topacKatmanYukle("uc", pc.uc), topacKatmanYukle("disk", pc.disk), topacKatmanYukle("govde", pc.govde, this.profil.element), topacKatmanYukle("cekirdek", pc.cekirdek),
+    ]).then(([uc, disk, govde, cekirdek]) => {
+      if (no !== this.yukNo || !uc || !disk || !govde || !cekirdek || this.kok.destroyed) return;
+      this.katman = { uc, disk, govde, cekirdek };
+      const kayma = govdeKaymasi(disk.tanim.ustZ, govde.tanim);
+      const e = (govde.tanim.yukselti * Math.PI) / 180;
+      this.spriteUst = { y: -(28 * Math.cos(e) + kayma * govde.tanim.birim), k: Math.sin(e) };
+      for (const [ad, L] of Object.entries(this.katman) as [keyof typeof this.sp, YuklenenKatman][]) {
+        const s = this.sp[ad];
+        const t = L.tanim;
+        s.anchor.set(t.capa[0] / t.kare[0], t.capa[1] / t.kare[1]);
+        s.scale.set(t.birim);
+        s.position.set(0, ad === "govde" || ad === "cekirdek" ? -kayma * t.birim : 0);
+      }
+      this.spriteKap.visible = this.bitisDurum?.tur !== "parcalanma";
+    }, () => undefined);
+  }
+
+  /** Kademe + açıdan katman karelerini seç (§ 3.3: kare = floor(θ / (periyot/8)) mod 8; yüksek = 3 kare bulanık disk 12 fps). */
+  private spriteCiz(kd: Kademe): void {
+    const K = this.katman!;
+    const sol = this.profil.donus === "sol";
+    const sec = (ad: keyof typeof this.sp, kademe: Kademe, aci: number) => {
+      const L = K[ad];
+      const { dizi, solSatir } = kareDizisi(L, kademe, sol);
+      const i = kademe === "yuksek" ? Math.floor(this.diskSaat * 12) % dizi.length : kareIndeksi(aci, L.tanim.simetri, dizi.length, solSatir);
+      const doku = dizi[i];
+      if (doku && this.sp[ad].texture !== doku) this.sp[ad].texture = doku;
+    };
+    sec("uc", kd, this.aci);
+    sec("disk", kd, this.aci);
+    sec("govde", kd, this.aci);
+    sec("cekirdek", "dusuk", this.cekirdekAci);
   }
 
   get gorunurParcaSayisi(): number { return this.parcalar.length; }
@@ -141,6 +201,7 @@ export class TopacYandan implements TopacCizimi {
     this.takim = takim;
     this.kademe = null;
     this.zeminCiz();
+    this.katmanYukle();
   }
 
   private zeminCiz(): void {
@@ -209,6 +270,8 @@ export class TopacYandan implements TopacCizimi {
     this.yalpaKap.rotation = 0;
     this.yalpaKap.scale.set(1);
     this.govde.tint = 0xffffff;
+    this.spriteKap.tint = 0xffffff;
+    this.spriteKap.visible = this.katman !== null;
     this.squashD.kalan = 0;
     this.sqKap.scale.set(1);
     this.yukseklik = 0;
@@ -251,6 +314,7 @@ export class TopacYandan implements TopacCizimi {
     const p = this.profil;
     const yon = p.donus === "sol" ? -1 : 1;
     this.sonOran = oran;
+    this.diskSaat += dt;
     const kd = kademeBul(oran, this.kademe);
     this.kademe = kd;
     let tur: number = G.donus.yuksek;
@@ -284,6 +348,7 @@ export class TopacYandan implements TopacCizimi {
     // squash geri yaylanma (gövde merkezi etrafında: sqKap'ı gövde ortasına taşı)
     this.govdeKap.position.set(0, -H.govdeAlt);
     this.govde.position.set(0, H.govdeAlt);
+    this.spriteKap.position.set(0, H.govdeAlt);
     this.flasG.position.set(0, H.govdeAlt);
     if (this.squashD.kalan > 0) {
       this.squashD.kalan = Math.max(0, this.squashD.kalan - dt * yavas);
@@ -306,6 +371,11 @@ export class TopacYandan implements TopacCizimi {
     const ko = KOKEN_RENK[p.koken];
     const sol = p.donus === "sol";
     const RG = GORSEL.govdeYaricap - 1;
+    if (this.katman) {
+      this.spriteCiz(kd);
+      this.ustCizim(g, this.spriteUst.y, RG, this.spriteUst.k);
+      return;
+    }
     const RD = GORSEL.diskYaricap - 3;
     const cizgi = { width: 1.5, color: el.koyu };
     const metal = 0x8d989e;
@@ -386,17 +456,7 @@ export class TopacYandan implements TopacCizimi {
       }
       g.ellipse(0, ustY, GORSEL.govdeIc - 4, (GORSEL.govdeIc - 4) * k).fill(renkKaristir(el.orta, 0x000000, 0.3)).stroke({ width: 1, color: el.koyu });
     }
-    // H12 çatlak çizgileri (üst yüzde)
-    if (this.catlakSeviye > 0) {
-      const ciz = (pts: number[]) => {
-        const q = pts.map((v, i) => (i % 2 ? ustY + v * k : v));
-        g.poly(q, false).stroke({ width: 3, color: 0x111111, alpha: 0.85 });
-        g.poly(q, false).stroke({ width: 1.2, color: 0xffffff, alpha: 0.95 });
-      };
-      ciz([2, -4, 8, -12, 12, -RG + 2]);
-      ciz([-3, 5, -12, 8, -RG + 6, 18]);
-      if (this.catlakSeviye === 2) { ciz([4, 6, 14, 10, RG - 2, 6]); ciz([-5, -3, -14, -8, -10, -RG + 4]); }
-    }
+    this.catlakCiz(g, ustY, RG, k);
     // Çekirdek: köken ışığı kubbe + Lv. çemberi (yavaş döner)
     const cy = ustY - 2;
     g.ellipse(0, cy, GORSEL.cekirdekYaricap + 2, (GORSEL.cekirdekYaricap + 2) * k).fill(ko.ikinci).stroke({ width: 1.5, color: renkKaristir(ko.ikinci, 0x000000, 0.5) });
@@ -410,6 +470,30 @@ export class TopacYandan implements TopacCizimi {
     g.rect(-RG * 0.55, ustY - RG * k * 0.5 - 1, 3, 2).fill({ color: 0xffffff, alpha: 0.6 });
     // düşük kademe yalpa: koyulaşan yan band (yorgunluk okunur)
     if (yalpa > 0.4) g.poly(yanBant(RG, RG * k, ustY, -H.govdeAlt)).fill({ color: 0x000000, alpha: 0.12 * yalpa });
+    this.flasCiz(RG, ustY, k);
+  }
+
+  /** Sprite kipinde üst katmanlar: çatlak (üst yüzde) + flaş. */
+  private ustCizim(g: Graphics, ustY: number, RG: number, k: number): void {
+    this.catlakCiz(g, ustY, RG, k);
+    this.flasCiz(RG, ustY, k);
+  }
+
+  private catlakCiz(g: Graphics, ustY: number, RG: number, k: number): void {
+    // H12 çatlak çizgileri (üst yüzde)
+    if (this.catlakSeviye > 0) {
+      const ciz = (pts: number[]) => {
+        const q = pts.map((v, i) => (i % 2 ? ustY + v * k : v));
+        g.poly(q, false).stroke({ width: 3, color: 0x111111, alpha: 0.85 });
+        g.poly(q, false).stroke({ width: 1.2, color: 0xffffff, alpha: 0.95 });
+      };
+      ciz([2, -4, 8, -12, 12, -RG + 2]);
+      ciz([-3, 5, -12, 8, -RG + 6, 18]);
+      if (this.catlakSeviye === 2) { ciz([4, 6, 14, 10, RG - 2, 6]); ciz([-5, -3, -14, -8, -10, -RG + 4]); }
+    }
+  }
+
+  private flasCiz(RG: number, ustY: number, k: number): void {
     // flaş: beyaz siluet
     if (this.flasKare > 0) {
       const f = this.flasG.clear();
@@ -445,6 +529,7 @@ export class TopacYandan implements TopacCizimi {
       this.yalpaKap.rotation = 1.15 * t * t;
       this.yalpaKap.position.y = -this.yukseklik + 6 * t;
       this.govde.tint = renkKaristir(0xffffff, 0x7a7a7a, t);
+      this.spriteKap.tint = this.govde.tint;
       this.golge.scale.set(1 + 0.25 * t, 1);
       this.isaret.alpha = 1 - t;
     } else {
@@ -471,6 +556,7 @@ export class TopacYandan implements TopacCizimi {
       g.ellipse(0, -4, GORSEL.cekirdekYaricap + 1, (GORSEL.cekirdekYaricap + 1) * this.k + 1).fill({ color: ko.ikinci, alpha: parla }).stroke({ width: 1.5, color: 0x000000, alpha: 0.5 });
       g.ellipse(0, -6, GORSEL.cekirdekYaricap - 2, (GORSEL.cekirdekYaricap - 2) * this.k).fill({ color: ko.isik, alpha: parla });
       this.flasG.visible = false;
+      this.spriteKap.visible = false;
       this.yalpaKap.rotation = 0;
       this.yalpaKap.position.set(0, 0);
       this.govdeKap.position.set(0, 0);
@@ -480,6 +566,7 @@ export class TopacYandan implements TopacCizimi {
   }
 
   yokEt(): void {
+    this.yukNo++;
     for (const p of this.parcalar) p.g.destroy();
     this.zeminKap.destroy({ children: true });
     this.kok.destroy({ children: true });
