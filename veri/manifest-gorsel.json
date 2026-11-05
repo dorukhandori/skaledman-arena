@@ -676,7 +676,10 @@
      0.8704
     ]
    }
-  }
+  },
+  {"ad": "yazi.jersey10", "dosya": "public/yazi/Jersey10-Regular.ttf", "olay": "Menü/HUD başlık, düğme, rakam yazı tipi (20/30/40 mantıksal px)", "kaynak": "Sarah Cadigan-Fried, Jersey 10 (The Soft Type Project)", "kaynakUrl": "https://github.com/google/fonts/tree/main/ofl/jersey10", "lisans": "OFL-1.1", "atif": "Jersey 10: Sarah Cadigan-Fried (SIL Open Font License 1.1)", "lisansDosyasi": "public/yazi/Jersey10-OFL.txt", "tarih": "2026-11-05", "sha256": "db9cbd091617048a145d249daa2b815fe7083be6ab66ac26626e21a4e01c3e82", "durum": "entegre (GU-01)"},
+  {"ad": "yazi.m5x7", "dosya": "public/yazi/m5x7.ttf", "olay": "Menü/HUD etiket ve açıklama yazı tipi (16/32 mantıksal px)", "kaynak": "Daniel Linssen, m5x7", "kaynakUrl": "https://managore.itch.io/m5x7", "lisans": "CC0-1.0", "atif": "m5x7: Daniel Linssen (CC0)", "lisansDosyasi": "public/yazi/m5x7-CC0.txt", "tarih": "2026-11-05", "sha256": "47c3f0b01f0fd417b3a44c2888a71d3072f750e76f3e6e946a6a9b188d988cbf", "durum": "entegre (GU-01); crates.io m5x7 1.0.0 TTF"},
+  {"ad": "arayuz.menu-dokulari", "dosya": "src/istemci/stil/doku/*.png", "olay": "Menü dili v2 (Kuşak Taşı) dokuları ve ikon sprite'ları", "kaynak": "sentez (araclar/menu-dokulari.ts)", "lisans": "CC0-1.0", "atif": "gerekmez (kendi üretimimiz)", "tarih": "2026-11-05", "durum": "entegre (GU-01)"}
  ],
  "kamera": {
   "karar": "hibrit (fizik tam üstten, sunum eğik elips çanak, topaçlar ~15-20° eğik)",

@@ -1,0 +1,47 @@
+/* Devran menü dili v2 · ekran düzeyi kurallar (Kuşak Taşı). Bileşenler bilesenler.css'te; burada ekran kökleri, eski
+   işaretlemenin (.ekr, .rf, .tam-katman, .ust-bant) yeni dile eşlenmesi ve ekran başına yerleşim. Gradyan / gölge / parlama yok. */
+
+/* ---- ekran kökü ---- */
+.ekr.k-zemin { display: flex; flex-direction: column; padding: 0; }
+.ekr .k-govde { align-items: center; justify-content: flex-start; padding-top: calc(14 * var(--p)); }
+.ekr .kart { width: min(calc(420 * var(--p)), 100%); }
+.ekr .kart.dar { width: min(calc(270 * var(--p)), 100%); }
+.ekr .kart.genis { width: min(calc(560 * var(--p)), 100%); }
+
+/* ---- metin (etiket BÜYÜK HARF; açıklama cümle düzeni) ---- */
+.ekr, .rf { font: 400 var(--y-16)/1.1 var(--font-etiket); color: var(--ink); }
+.ekr h2, .rf h2 { margin: 0 0 calc(4 * var(--p)); font: 400 var(--y-30)/1 var(--font-baslik); letter-spacing: calc(2 * var(--yp)); text-transform: uppercase; color: var(--ink); }
+.ekr h2.k-plaka, .rf h2.k-plaka { font-size: var(--y-20); letter-spacing: var(--yp); margin: 0 0 calc(6 * var(--p)); }
+.ekr h3, .rf h3 { margin: 0 0 calc(3 * var(--p)); font: 400 var(--y-20)/1 var(--font-baslik); letter-spacing: var(--yp); text-transform: uppercase; color: var(--ink); }
+.ekr p, .rf p { margin: calc(2 * var(--p)) 0; }
+.ekr b, .rf b { font-weight: 400; color: var(--gold); }
+.ekr .alt { color: var(--soluk); margin-bottom: calc(6 * var(--p)); }
+.ekr label { display: block; margin: calc(6 * var(--p)) 0 calc(2 * var(--p)); color: var(--soluk); text-transform: uppercase; font-weight: 400; }
+.ekr .ipucu, .rf .ipucu { color: var(--soluk); margin-top: var(--p); }
+.ekr .hata, .rf .hata { min-height: calc(10 * var(--p)); color: var(--tehlike-yazi); margin-top: calc(2 * var(--p)); font-weight: 400; }
+.ekr .satir { display: flex; gap: calc(6 * var(--p)); align-items: center; flex-wrap: wrap; margin-top: calc(8 * var(--p)); }
+.ekr a, .rf a { color: var(--gold); }
+.ekr a.k-dugme, .rf a.k-dugme { color: var(--ink); }
+.ekr .yt, .rf .yt { color: #7d7688; }
+.ekr input.k-alan { width: 100%; }
+.ekr .k-dugme.ana { margin-left: auto; }
+.ekr .satir .k-dugme.ana { order: 9; }
+
+/* ---- tam ekran katman (bakım, dar ekran) ve sürüm bandı ---- */
+.tam-katman { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: var(--kenar); pointer-events: auto;
+  background: rgba(8, 7, 12, .92); color: var(--ink); font: 400 var(--y-16)/1.2 var(--font-etiket); }
+.tam-katman .kart { width: min(calc(300 * var(--p)), 100%); text-align: center; display: flex; flex-direction: column; align-items: center; gap: calc(4 * var(--p)); }
+.tam-katman p { margin: calc(2 * var(--p)) 0; }
+.tam-katman .yt { color: var(--soluk); }
+.tam-katman .k-dugme { margin-top: calc(6 * var(--p)); }
+.tam-katman :focus-visible { outline: calc(2 * var(--p)) solid #fff; outline-offset: var(--p); }
+.ust-bant { position: fixed; left: 50%; top: calc(30 * var(--p)); transform: translateX(-50%); z-index: 50; display: flex; gap: calc(6 * var(--p)); align-items: center; pointer-events: auto;
+  color: var(--ink); font: 400 var(--y-16)/1 var(--font-etiket); }
+
+/* ---- referans ekranları kökü (.rf: Market, Başarımlar) ---- */
+.rf.k-zemin { display: flex; flex-direction: column; }
+.rf .k-govde { padding-top: calc(12 * var(--p)); }
+.rf .modal { position: fixed; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center; background: rgba(8, 7, 12, .78); }
+.rf .modal .kutu { width: min(calc(260 * var(--p)), calc(100% - 2 * var(--kenar))); text-align: center; }
+.rf .modal h3 { color: #ffb070; text-align: center; }
+.rf :focus-visible { outline: calc(2 * var(--p)) solid #fff !important; outline-offset: var(--p) !important; }

@@ -1,0 +1,95 @@
+/* Devran menü dili v2 · Yön B "Kuşak Taşı" (sahip onayı 2026-11-05): jetonlar, yazı tipleri, ölçek.
+   Otorite: docs/art/menu-tasarim-arastirma.md § 5 (kurallar), § 5.2 (renk), § 6.5 (kesin ölçü). Maç HUD'u da bu dosyayı kullanır.
+   Kural: gradyan yok, bulanık gölge yok, parlama yok (ışık yalnız Kuşak halkasında); metin asla taş üstünde durmaz.
+   Ölçek: 1 mantıksal px = var(--p) = var(--o) CSS px; --o tam sayı (arayuz.ts olcekUygula: floor(min(W/480, H/270)), en az 2).
+   Metin ölçeği (%100/125/150): --yo = yazı ölçeği (tam sayı; --o, yukarı yuvarlanmış o×1,25, o×1,5); pixel ızgarası bozulmaz. */
+
+@font-face {
+  font-family: "Jersey 10";
+  src: url("/yazi/Jersey10-Regular.ttf") format("truetype");
+  font-display: block;
+  /* Sarah Cadigan-Fried, SIL OFL 1.1 (public/yazi/Jersey10-OFL.txt) */
+}
+@font-face {
+  font-family: "m5x7";
+  src: url("/yazi/m5x7.ttf") format("truetype");
+  font-display: block;
+  /* Daniel Linssen, CC0 1.0 (public/yazi/m5x7-CC0.txt) */
+}
+
+:root {
+  /* ölçek */
+  --o: 2;
+  --yo: 2;
+  --p: calc(1px * var(--o));
+  --yp: calc(1px * var(--yo));
+
+  /* yazı (Jersey 10: 20/30/40; m5x7: 16/32; yalnız bu boyutlar) */
+  --font-baslik: "Jersey 10", "m5x7", "Trebuchet MS", system-ui, sans-serif;
+  --font-etiket: "m5x7", "Jersey 10", ui-monospace, monospace;
+  --y-20: calc(20px * var(--yo));
+  --y-30: calc(30px * var(--yo));
+  --y-40: calc(40px * var(--yo));
+  --y-16: calc(16px * var(--yo));
+  --y-32: calc(32px * var(--yo));
+
+  /* duvar taşı, harç */
+  --tas-0: #121016; --tas-1: #18161d; --tas-2: #1e1b24; --tas-3: #25222b; --harc: #0c0b10;
+  /* çerçeve taşı */
+  --cerceve-0: #3a3640; --cerceve-1: #4a4550; --cerceve-2: #5a5460; --cerceve-3: #6e6a66; --cerceve-isik: #8f877c;
+  /* panel içi (içerik zemini; metin burada durur) */
+  --panel-0: #171c29; --panel: #1b2131; --panel-2: #1f2638; --panel-kenar: #9a9184;
+  --hucre: #20263a; --hucre-isik: #2e3550;
+  /* bronz */
+  --bronz-0: #2a1a0e; --bronz-1: #6b4a2a; --bronz-2: #8f6538; --bronz: #c08e52; --bronz-isik: #e8c27a;
+  /* Kuşak halkası (tek ışık) */
+  --halka-cekirdek: #fff0d8; --halka: #fbbe88; --hale: #dca97c; --halka-dither: #8a5a34; --halka-sonuk: #3d3638;
+  /* ana eylem (K-2: bronz-turuncu tek ana düğme rengi) */
+  --ana: #a8572a; --ana-alt: #7c3d1c; --ana-kenar: #1a0e08; --ana-yazi: #fff7e0;
+  --secili: #6b4226;
+  --gold: #fcd35a;
+  /* metin */
+  --ink: #fbf2c3; --soluk: #a49c8c; --kapali-yazi: #6a6474;
+  /* işaret renkleri */
+  --accent: #e8762f; --turuncu: #e8762f; --turuncu-koyu: #f2622f;
+  --back: #9a3d38; --back-isik: #c8665e; --back-golge: #5e1f1b;
+  --tehlike: #c82625; --tehlike-yazi: #ff8a7a;
+  --yesil: #7fe3a0;
+  --golge: #05050a;
+  /* takım (ux § 6.1): metinde rakip açık tonu (4,5:1) */
+  --sen: #2fb8e8; --rakip: #e83a8c; --rakip-yazi: #f472b0;
+  /* element (pixel planı § 2.3; renkler.ts ile aynı) */
+  --el-kor: #e8452c; --el-kor-koyu: #7a1d12; --el-kor-acik: #ff8a5c;
+  --el-kasirga: #5bd1a5; --el-kasirga-koyu: #1f6b52; --el-kasirga-acik: #9cebc9;
+  --el-simsek: #f7d83a; --el-simsek-koyu: #8a6a08; --el-simsek-acik: #fbe97f;
+  --el-girdap: #2a5bd7; --el-girdap-koyu: #14286b; --el-girdap-acik: #6f93ee;
+  --el-kaya: #8a7458; --el-kaya-koyu: #45392a; --el-kaya-acik: #b8a283;
+  --el-don: #9fe3f5; --el-don-koyu: #3b7d8f; --el-don-acik: #cff3fb;
+  /* maç HUD (tasarim-dili § 2.5, K-3) */
+  --stamina-iyi: #c9ae72; --stamina-orta: #ffe45e; --stamina-az: #f2622f;
+  --enerji-doluyor: #86e065; --enerji-dolu: #fee55f; --ulti: #e8762f; --ulti-kenar: #e6680c; --telegraf: #c82625;
+
+  /* ızgara (mantıksal px) */
+  --kenar: calc(8 * var(--p));
+  --aralik: calc(8 * var(--p));
+  --aralik-sik: calc(6 * var(--p));
+  --lento-y: calc(26 * var(--p));
+
+  /* hareket (12 fps, steps) */
+  --kare: 83ms;
+
+  color-scheme: dark;
+}
+
+/* metin ölçeği büyükse yerleşim tek sütuna kırılabilir (ekranlar [data-yazi-buyuk] ile) */
+html[data-yazi-buyuk] { --yazi-buyuk: 1; }
+
+/* Ayarlar › "Düz yazı tipi (okunurluk)": sistem sans'a dönüş */
+html[data-duz-yazi] {
+  --font-baslik: "Trebuchet MS", system-ui, sans-serif;
+  --font-etiket: system-ui, sans-serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --kare: 0ms; }
+}

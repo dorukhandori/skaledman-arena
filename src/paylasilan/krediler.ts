@@ -26,8 +26,8 @@ export const YAZILIM: readonly YazilimKredisi[] = [
   { ad: "Vite (yapım aracı)", lisans: "MIT", telif: "Copyright (c) 2019-present VoidZero Inc. and Vite contributors", url: "https://github.com/vitejs/vite" },
 ];
 
-/** Yazı tipleri: oyunla dosya dağıtılmaz (index.html: sistem yazı tipleri, dış istek yok). */
-export const YAZI_TIPI = "Oyun yazı tipi dosyası dağıtmaz: menü ve HUD cihazdaki sistem yazı tiplerini kullanır (system-ui, Trebuchet MS; varsa Nunito Sans, SIL Open Font License 1.1).";
+/** Yazı tipleri (GU-01): yerel dosya public/yazi/ (dış istek yok); lisans metinleri yanında. */
+export const YAZI_TIPI = "Menü ve HUD yazı tipleri oyunla birlikte dağıtılır: Jersey 10 (Sarah Cadigan-Fried, SIL Open Font License 1.1) ve m5x7 (Daniel Linssen, CC0 1.0). Düz yazı tipi seçeneği cihazın sistem yazı tipini kullanır.";
 
 const temizle = (s: string): string => s.replace(/`/g, "").replace(/\*\*?/g, "").replace(/\s+/g, " ").trim();
 

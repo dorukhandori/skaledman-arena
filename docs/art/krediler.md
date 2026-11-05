@@ -1,6 +1,6 @@
 # Krediler ve lisanslar (Devran)
 
-**Güncelleme:** 2026-11-04 · Kaynak kayıtları: `veri/manifest-ses.json`, `veri/manifest-gorsel.json`, `kaynak/efekt/*/KAYNAK.md`.
+**Güncelleme:** 2026-11-05 · Kaynak kayıtları: `veri/manifest-ses.json`, `veri/manifest-gorsel.json`, `kaynak/efekt/*/KAYNAK.md`.
 Kural: yalnız ücretsiz ve lisansı uygun kaynak (CC0 tercih; MIT / CC-BY atıfla; NC ya da yeniden dağıtım yasağı olan kullanılmaz). Oyun içi "Krediler" ekranı bu dosyadan üretilir.
 
 ## Depoda bulunan dış varlıklar
@@ -16,6 +16,13 @@ Kural: yalnız ücretsiz ve lisansı uygun kaynak (CC0 tercih; MIT / CC-BY atıf
 | Büyü efektleri sheet'i (`kaynak/efekt/foozle-pixel-magic/`) | lordfitoi, Foozle dağıtımı — https://foozlecc.itch.io/pixel-magic-sprite-effects | CC0 1.0 | "Büyü efektleri: Foozle / lordfitoi (CC0)" | yedek havuz, atlasa alınmadı |
 | 7 efekt atlası, 16 efekt (`kaynak/efekt/pixelfx/atlas/`) | pixelfx (Patch, Hugo Duprez) | MIT | "Efektler: pixelfx — Patch, Hugo Duprez (MIT)" + aşağıdaki MIT bildirimi | pişirildi, entegre değil |
 
+## Yazı tipleri (GU-01, menü dili v2)
+
+| Varlık | Yazar / kaynak | Lisans | Atıf metni (oyun içi) | Durum |
+|---|---|---|---|---|
+| Jersey 10 (`public/yazi/Jersey10-Regular.ttf`; başlık, düğme, rakam) | Sarah Cadigan-Fried, The Soft Type Project — https://github.com/scfried/soft-type-jersey (google/fonts `ofl/jersey10`) | SIL OFL 1.1 | "Jersey 10: Sarah Cadigan-Fried (SIL Open Font License 1.1)" | entegre; lisans `public/yazi/Jersey10-OFL.txt`; Türkçe glif tam (İ ı Ö ö Ş ş Ğ ğ Ü ü Ç ç) |
+| m5x7 (`public/yazi/m5x7.ttf`; etiket, açıklama) | Daniel Linssen — https://managore.itch.io/m5x7 (crates.io `m5x7` 1.0.0 TTF) | CC0 1.0 | "m5x7: Daniel Linssen (CC0)" | entegre; lisans `public/yazi/m5x7-CC0.txt`; Türkçe glif tam |
+
 ## Pişirilmiş kod kaynaklı efektler
 
 | Kaynak | Telif | Lisans | Not |
@@ -28,6 +35,7 @@ Kural: yalnız ücretsiz ve lisansı uygun kaynak (CC0 tercih; MIT / CC-BY atıf
 | Varlık | Araç | Lisans |
 |---|---|---|
 | 16 sentez ses (`public/ses/*.wav`) | `araclar/ses-uret.ts` | CC0 (bizim) |
+| 22 menü dokusu ve ikon sprite'ı (`src/istemci/stil/doku/*.png`: duvar, taş çerçeve, lento, plaka, düğme dolguları, ahşap, blueprint, gece, tapınak, element/kilit/sikke/kalkan/◄) | `araclar/menu-dokulari.ts` (tohumlu, yordamsal) | CC0 (bizim) |
 | Atari arka plan döngüsü (`kaynak/efekt/muzik-sentez/atari-dongu.ogg`) | `kaynak/efekt/muzik-sentez/atari-dongu.py` | CC0 (bizim) |
 
 ## MIT bildirimi (oyun içi krediler sayfasına eklenecek metin)

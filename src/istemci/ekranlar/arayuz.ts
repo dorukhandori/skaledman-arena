@@ -2,60 +2,117 @@ import { PROTOKOL_SURUMU } from "../../ag/protokol.ts";
 import { KATALOG_OZETI } from "../../ag/katalog.ts";
 import { type Ben, apiPost, git } from "../hesap.ts";
 
-// Menü ekranları ortak DOM kalıbı (D5, ux § 3.2, § 6.3-6.4): kart düzeni, rem birimleri (metin ölçeği %100/125/150
-// kökte), odak halkası 3 px (beyaz + siyah dış), üst gezinti (Atölye · Market · Başarımlar · Oyna · Ayarlar), ◄ geri
-// (Esc / Backspace → Atölye), Enter = ana eylem, sürüm "yenile" bandı, bakım katmanı, dar ekran uyarısı.
+// Menü ekranları ortak DOM kalıbı (D5, ux § 3.2, § 6.3-6.4) · GU-01 menü dili v2 "Kuşak Taşı" (sahip onayı 2026-11-05;
+// docs/art/menu-tasarim-arastirma.md § 5, § 6.5). Tek stil kaynağı: src/istemci/stil/{jetonlar,bilesenler,ekranlar}.css
+// (index.html bağlar). Ekran kökü `.ekr.k-zemin` = taş duvar yeri + üst lento (◄ · başlık plakası · Altın yuvası) + gövde;
+// kart `.kart.k-panel` taş panel. Eski işaretleme (button, button.bir, input, .geri) `kSiniflandir` ile bileşen sınıflarına
+// eşlenir (seçiciler ve data-* korunur). Ölçek: tam sayı `--o` (480×270 mantıksal ızgara), metin ölçeği `--yo`.
+// Web gezinti çubuğu menülerde yok (KM-4): Atölye ana ekran, alt ekranlarda sol üstte ◄; Esc / Backspace → geri.
 
-export const ARAYUZ_STIL = `
-.ekr { position:absolute; inset:0; overflow:auto; pointer-events:auto; z-index:5; color:#f3f1e8; font:400 1rem/1.45 system-ui,sans-serif;
-  background:radial-gradient(circle at 50% 35%, #10222a, #070a1c 75%); display:flex; align-items:flex-start; justify-content:center; padding:2.2rem 1rem; }
-.ekr .kart { position:relative; width:min(52rem, 100%); padding:1.4rem 1.6rem; background:#0c191d; border:3px solid #050d10; border-radius:14px;
-  box-shadow:0 0 0 2px #24414b, 0 10px 30px rgba(0,0,0,.6); }
-.ekr .kart.dar { width:min(28rem, 100%); }
-.ekr h2 { margin:0 0 .3rem; font:900 1.75rem/1.1 "Trebuchet MS",system-ui; letter-spacing:2px; }
-.ekr h3 { margin:0 0 .4rem; font:800 1.05rem/1.2 system-ui; }
-.ekr p { margin:.3rem 0; }
-.ekr .alt { color:#a3b2b6; font-size:.85rem; margin-bottom:.9rem; }
-.ekr label { display:block; font-size:.85rem; color:#c9d3d6; margin:.7rem 0 .25rem; font-weight:700; }
-.ekr .ipucu { font-size:.78rem; color:#a3b2b6; margin-top:.2rem; }
-.ekr input[type=text], .ekr input[type=password] { width:100%; padding:.55rem .7rem; background:#050d10; color:#f3f1e8; border:2px solid #24414b;
-  border-radius:8px; font:600 1rem/1.2 system-ui; }
-.ekr input[aria-invalid=true] { border-color:#ff9a7a; }
-.ekr button { padding:.6rem .9rem; background:#173039; color:#f3f1e8; border:2px solid #050d10; border-radius:8px; font:800 .95rem/1.2 system-ui;
-  cursor:pointer; box-shadow:0 3px 0 #050d10; }
-.ekr button.bir { background:#f4cf47; color:#2a2104; }
-.ekr button:disabled { opacity:.45; cursor:default; }
-.ekr button:focus-visible, .ekr input:focus-visible, .ekr [tabindex]:focus-visible, .ekr a:focus-visible {
-  outline:3px solid #fff; outline-offset:2px; box-shadow:0 0 0 6px #050d10; }
-.ekr .hata { min-height:1.2rem; color:#ff9a7a; font-weight:700; font-size:.88rem; margin-top:.5rem; }
-.ekr .satir { display:flex; gap:.7rem; align-items:center; flex-wrap:wrap; margin-top:1rem; }
-.ekr .geri { position:absolute; left:.8rem; top:.8rem; padding:.3rem .6rem; font-size:.85rem; box-shadow:none; }
-.ekr .geri + h2 { margin-left:3.2rem; }
-.ekr a { color:#f4cf47; }
-.ekr .yt { color:#6f8085; font-size:.75rem; }
-.ust-bant { position:fixed; left:50%; top:46px; transform:translateX(-50%); z-index:50; padding:.5rem .9rem; background:#2a2104; color:#fff6c8;
-  border:2px solid #f4cf47; border-radius:10px; font:800 .95rem/1.3 system-ui; display:flex; gap:.7rem; align-items:center; pointer-events:auto; }
-.ust-bant button { padding:.3rem .7rem; background:#f4cf47; color:#2a2104; border:2px solid #050d10; border-radius:6px; font:800 .85rem system-ui; cursor:pointer; }
-.tam-katman { position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center; padding:1rem;
-  background:rgba(5,9,12,.94); color:#f3f1e8; font:400 1rem/1.45 system-ui; pointer-events:auto; }
-.tam-katman .kart { width:min(30rem,100%); padding:1.4rem 1.6rem; background:#0c191d; border:3px solid #050d10; border-radius:14px; box-shadow:0 0 0 2px #24414b; text-align:center; }
-.tam-katman h2 { margin:0 0 .5rem; font:900 1.5rem/1.2 system-ui; }
-.tam-katman button { margin-top:1rem; padding:.55rem 1rem; background:#173039; color:#f3f1e8; border:2px solid #050d10; border-radius:8px; font:800 .95rem system-ui; cursor:pointer; }
-.tam-katman button:focus-visible { outline:3px solid #fff; outline-offset:2px; }
-body > header nav { display:flex; gap:4px; align-items:center; }
-body > header nav a[aria-disabled=true] { opacity:.5; }
-body > header .kim { margin-left:auto; display:flex; gap:10px; align-items:center; color:#a3b2b6; font:700 13px/1 system-ui; }
-body > header .kim .altinB { color:#fcd35a; text-decoration:none; font:900 13px/1 system-ui; padding:5px 9px; box-shadow:inset 0 0 0 2px #c9a33b; background:#3b2c0c; }
-body > header .kim button { padding:4px 10px; background:transparent; color:#a3b2b6; border:1px solid #24414b; border-radius:6px; font:700 12px system-ui; cursor:pointer; }
-`;
+/** Eski satır içi stil bloğu (geriye uyum): bileşen kuralları artık CSS dosyalarında. */
+export const ARAYUZ_STIL = "";
+
+/** Bilinen son `/api/ben` (Altın yuvası ve lento için; main → ustGezinti verir). */
+let sonBen: Ben | null = null;
 
 let stilEklendi = false;
 export function stilEkle(): void {
   if (stilEklendi) return;
   stilEklendi = true;
-  const s = document.createElement("style");
-  s.textContent = ARAYUZ_STIL;
-  document.head.appendChild(s);
+  olcekUygula();
+  window.addEventListener("resize", () => olcekUygula());
+}
+
+/** Tam sayı UI ölçeği: floor(min(W/480, H/270)), en az 2; yazı ölçeği metin ölçeğiyle tam sayıya yukarı yuvarlanır. */
+export function olcekHesapla(w: number, h: number, metin = 1): { o: number; yo: number } {
+  const o = Math.max(2, Math.floor(Math.min(w / 480, h / 270)));
+  const yo = metin <= 1 ? o : Math.max(o + 1, Math.ceil(o * metin - 0.01));
+  return { o, yo };
+}
+
+export function olcekUygula(metin = metinOlcegiOku()): void {
+  const { o, yo } = olcekHesapla(window.innerWidth, window.innerHeight, metin);
+  const r = document.documentElement;
+  r.style.setProperty("--o", String(o));
+  r.style.setProperty("--yo", String(yo));
+  if (metin > 1) r.dataset["yaziBuyuk"] = String(metin); else delete r.dataset["yaziBuyuk"];
+}
+
+/**
+ * Eski işaretlemeyi bileşen sınıflarına eşler (kök altında; sonradan eklenenler için gözlemci).
+ * `k-` sınıfı ya da `data-k="yok"` taşıyan öğeye dokunmaz.
+ */
+export function kSiniflandir(kok: HTMLElement): void {
+  const isle = (e: Element) => {
+    if (!(e instanceof HTMLElement) || e.dataset["k"] === "yok" || [...e.classList].some((c) => c.startsWith("k-"))) return;
+    if (e instanceof HTMLButtonElement) {
+      if (e.classList.contains("geri") || e.classList.contains("geriK")) {
+        e.classList.add("k-geri");
+        if (!e.getAttribute("aria-label")) e.setAttribute("aria-label", "Geri");
+        // lento varsa ◄ sol üstteki yerine taşınır (ux § 3.2: ◄ yalnız sol üstte)
+        const lento = e.closest(".k-zemin")?.querySelector(":scope > .k-lento");
+        if (lento && e.parentElement !== lento && !lento.querySelector(".k-geri")) lento.prepend(e);
+        return;
+      }
+      e.classList.add("k-dugme");
+      if (e.classList.contains("bir")) e.classList.add("ana");
+      else if (!e.closest(".k-lento")) e.classList.add("kucuk");
+    } else if ((e instanceof HTMLInputElement && ["text", "password", "search", ""].includes(e.type)) || e instanceof HTMLSelectElement || e instanceof HTMLTextAreaElement) {
+      e.classList.add("k-alan");
+    }
+  };
+  const tara = (u: Element) => { isle(u); for (const x of u.querySelectorAll("button, input, select, textarea")) isle(x); };
+  tara(kok);
+  new MutationObserver((ml) => { for (const m of ml) for (const n of m.addedNodes) if (n instanceof Element) tara(n); }).observe(kok, { childList: true, subtree: true });
+}
+
+export interface LentoSecenek {
+  /** plaka metni (null: plaka yok) */
+  baslik?: string | null;
+  /** ◄ hedefi (null: ◄ yok; Atölye ana ekran) */
+  geri?: string | null;
+  /** Altın yuvası (varsayılan: girişliyse göster) */
+  cuzdan?: boolean;
+  /** Atölye: ad + Ayarlar + Çıkış */
+  kim?: boolean;
+}
+
+/** Üst lento: ◄ (20×20 @5,3) · bronz plaka (@30,3) · boşluk · Altın yuvası (80×20). */
+export function lentoKur(kok: HTMLElement, s: LentoSecenek): HTMLElement {
+  const l = el("header", "k-lento", kok);
+  if (s.geri) {
+    const g = el("button", "k-geri", l);
+    g.type = "button";
+    g.setAttribute("aria-label", s.geri === "atolye" ? "Geri: Atölye" : "Geri");
+    g.dataset["geri"] = s.geri;
+    const hedef = s.geri;
+    g.addEventListener("click", () => git(hedef));
+  }
+  if (s.baslik) el("h1", "k-plaka", l, s.baslik);
+  el("span", "k-bosluk", l);
+  const ben = sonBen?.girisli ? sonBen : null;
+  if (s.kim && ben) {
+    const ad = el("span", "k-e16 k-soluk k-buyuk", l, ben.oyuncu.ad);
+    ad.dataset["kim"] = "1";
+    const ay = el("a", "k-dugme kucuk", l, "Ayarlar");
+    ay.href = "?ekran=ayarlar";
+    const c = el("button", "k-dugme kucuk", l, "Çıkış");
+    c.type = "button";
+    c.dataset["eylem"] = "cikis";
+    c.addEventListener("click", () => { void apiPost("/api/cikis").finally(() => git("karsilama")); });
+  }
+  if ((s.cuzdan ?? true) && ben && typeof ben.altin === "number") {
+    const a = el("a", "k-cuzdan", l, String(ben.altin));
+    a.href = "?ekran=market";
+    a.dataset["bakiye"] = String(ben.altin);
+    a.setAttribute("aria-label", `Bakiye ${ben.altin} Altın: Market`);
+  }
+  return l;
+}
+
+/** Lento Altın yuvasını güncelle (Market satın alma sonrası). */
+export function cuzdanYaz(altin: number): void {
+  for (const a of document.querySelectorAll<HTMLElement>(".k-cuzdan[data-bakiye]")) { a.textContent = String(altin); a.dataset["bakiye"] = String(altin); a.setAttribute("aria-label", `Bakiye ${altin} Altın: Market`); }
 }
 
 export function el<K extends keyof HTMLElementTagNameMap>(etiket: K, sinif = "", ust?: HTMLElement, metin = ""): HTMLElementTagNameMap[K] {
@@ -71,20 +128,29 @@ export function kalin(metin: string): string {
   return metin.replace(/[<>&]/g, "").replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
 }
 
-/** Ekran kökü (#ustYazi içinde). */
-export function ekranKok(ust: HTMLElement, etiket: string): { kok: HTMLDivElement; kart: HTMLDivElement } {
+/** Ekran kökü (#ustYazi içinde): taş duvar + lento + gövde + taş panel kart. */
+export function ekranKok(ust: HTMLElement, etiket: string, s: LentoSecenek & { yer?: "duvar" | "gece" | "tapinak" | "lacivert" } = {}): { kok: HTMLDivElement; kart: HTMLDivElement; lento: HTMLElement; govde: HTMLDivElement } {
   stilEkle();
-  const kok = el("div", "ekr", ust);
+  const kok = el("div", `ekr k-zemin${s.yer && s.yer !== "duvar" ? ` yer-${s.yer}` : ""}`, ust);
   kok.setAttribute("role", "main");
   kok.setAttribute("aria-label", etiket);
-  const kart = el("div", "kart", kok);
-  return { kok, kart };
+  const lento = lentoKur(kok, { baslik: s.baslik === undefined ? etiket : s.baslik, geri: s.geri ?? null, cuzdan: s.cuzdan, kim: s.kim });
+  const govde = el("div", "k-govde", kok);
+  const kart = el("div", "kart k-panel", govde);
+  kSiniflandir(kok);
+  return { kok, kart, lento, govde };
 }
 
 /** ◄ geri → Atölye; Esc / Backspace (yazı alanında değilken) aynı (ux § 3.2). */
 export function geriDugmesi(kart: HTMLElement, hedef = "atolye"): HTMLButtonElement {
-  const g = el("button", "geri", kart, "◄ Geri");
-  g.setAttribute("aria-label", "Geri: Atölye");
+  // lentoda ◄ varsa onu kullan; yoksa lentonun ◄ yerine yeni düğme
+  const kok = kart.closest(".ekr");
+  const lento = kok?.querySelector(".k-lento");
+  const g = el("button", "k-geri");
+  g.type = "button";
+  if (lento) lento.prepend(g); else kart.prepend(g);
+  g.setAttribute("aria-label", hedef === "atolye" ? "Geri: Atölye" : "Geri");
+  g.dataset["geri"] = hedef;
   g.addEventListener("click", () => git(hedef));
   window.addEventListener("keydown", (e) => {
     const yazi = e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement;
@@ -103,18 +169,18 @@ export function anaEylem(d: HTMLButtonElement): void {
 }
 
 // ---- üst gezinti ----
-const GEZINTI: [string, string][] = [["atolye", "Atölye"], ["market", "Market"], ["basarimlar", "Başarımlar"], ["lobi", "Oyna"], ["ayarlar", "Ayarlar"]];
 
 export function ustGezinti(ekran: string, ben: Ben | null): void {
   stilEkle();
+  sonBen = ben;
   const nav = document.getElementById("menu");
   const rozet = document.querySelector("body > header h1 span");
   if (rozet) rozet.textContent = "D8";
-  if (!nav) return;
-  nav.innerHTML = "";
-  nav.setAttribute("aria-label", "Ana gezinti");
-  const girisli = ben?.girisli === true;
+  // geliştirici ekranları (maç bota karşı, Topaç Lab) eski üst bandı korur; menüler kabuklu (KM-4)
   if (ekran === "mac" || ekran === "topac-lab") {
+    if (!nav) return;
+    nav.innerHTML = "";
+    nav.setAttribute("aria-label", "Geliştirici gezintisi");
     for (const [k, ad] of [["atolye", "Atölye"], ["mac", "Maç (bota karşı)"], ["topac-lab", "Topaç Lab"]] as const) {
       const a = el("a", "", nav, ad);
       a.href = `?ekran=${k}`;
@@ -122,30 +188,7 @@ export function ustGezinti(ekran: string, ben: Ben | null): void {
     }
     return;
   }
-  if (girisli && ben.oyuncu.profilTamam && ben.cekirdekler.length) {
-    for (const [k, ad] of GEZINTI) {
-      const a = el("a", "", nav, ad);
-      a.href = `?ekran=${k}`;
-      if (k === ekran) a.setAttribute("aria-current", "page");
-    }
-  }
-  const kim = el("div", "kim", document.querySelector("body > header") as HTMLElement);
-  if (girisli) {
-    // D7: Altın bakiyesi üst bantta (defter toplamı; sunucudan)
-    if (typeof ben.altin === "number") {
-      const a = el("a", "altinB", kim, `${ben.altin} Altın`);
-      a.href = "?ekran=market";
-      a.dataset["bakiye"] = String(ben.altin);
-      a.setAttribute("aria-label", `Bakiye ${ben.altin} Altın: Market`);
-    }
-    el("span", "", kim, ben.oyuncu.ad);
-    const c = el("button", "", kim, "Çıkış");
-    c.dataset["eylem"] = "cikis";
-    c.addEventListener("click", () => { void apiPost("/api/cikis").finally(() => git("karsilama")); });
-  } else if (ekran !== "karsilama") {
-    const a = el("a", "", kim, "Giriş yap");
-    a.href = "?ekran=giris";
-  }
+  document.body.classList.add("kabuk");
 }
 
 // ---- hata / uyarı katmanları (nile B-22, B-25) ----
@@ -158,10 +201,10 @@ export function surumDenetle(ben: Ben): boolean {
 export function surumBandi(): void {
   stilEkle();
   if (document.querySelector(".ust-bant")) return;
-  const b = el("div", "ust-bant", document.body);
+  const b = el("div", "ust-bant k-panel sik", document.body);
   b.setAttribute("role", "alert");
-  el("span", "", b, "Oyun güncellendi. Sayfayı yenile.");
-  const d = el("button", "", b, "Yenile");
+  el("span", "k-e16 k-buyuk", b, "Oyun güncellendi. Sayfayı yenile.");
+  const d = el("button", "k-dugme ana kisa yazi20", b, "Yenile");
   d.addEventListener("click", () => location.reload());
 }
 
@@ -171,11 +214,11 @@ export function bakimKatmani(yeniden: () => void): void {
   const k = el("div", "tam-katman", document.body);
   k.setAttribute("role", "alertdialog");
   k.setAttribute("aria-label", "Sunucu bakımda");
-  const kart = el("div", "kart", k);
-  el("h2", "", kart, "Bakım");
+  const kart = el("div", "kart k-panel", k);
+  el("h2", "k-plaka", kart, "Bakım");
   el("p", "", kart, "Devran kısa bir bakımda. Birkaç dakika sonra tekrar dene.");
   const sayac = el("p", "yt", kart, "");
-  const d = el("button", "", kart, "Tekrar dene");
+  const d = el("button", "k-dugme ana kisa", kart, "Tekrar dene");
   d.addEventListener("click", () => { k.remove(); yeniden(); });
   let n = 30;
   const t = window.setInterval(() => {
@@ -199,11 +242,12 @@ export function darEkranDenetle(): void {
   k.dataset["dar"] = "1";
   k.setAttribute("role", "alertdialog");
   k.setAttribute("aria-label", "Ekran uyarısı");
-  const kart = el("div", "kart", k);
-  el("h2", "", kart, "Bu oyun klavye ve fare ister");
+  const kart = el("div", "kart k-panel", k);
+  el("h2", "k-plaka", kart, "Klavye ve fare");
+  el("p", "k-b20 k-buyuk", kart, "Bu oyun klavye ve fare ister");
   el("p", "", kart, dokunmatik ? "Dokunmatik ekranda oynanmaz. Masaüstü tarayıcıda aç." : `Pencere en az 1280×720 olmalı (şu an ${window.innerWidth}×${window.innerHeight}). Pencereyi büyüt ya da masaüstünde aç.`);
   el("p", "yt", kart, "Telefonda maçları seyirci olarak izlemek ileride gelecek.");
-  const d = el("button", "", kart, "Yine de devam et");
+  const d = el("button", "k-dugme ana kisa yazi20", kart, "Yine de devam et");
   d.addEventListener("click", () => { try { sessionStorage.setItem("devran.darGec", "1"); } catch { /* kapalı */ } k.remove(); });
   queueMicrotask(() => d.focus());
 }
@@ -220,4 +264,5 @@ export function metinOlcegiOku(): number {
 
 export function metinOlcegiUygula(o = metinOlcegiOku()): void {
   document.documentElement.style.fontSize = `${15 * o}px`;
+  olcekUygula(o);
 }

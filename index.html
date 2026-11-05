@@ -3,10 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0b1418" />
+    <meta name="theme-color" content="#18161d" />
     <title>Devran</title>
+    <!-- Menü dili v2 · Kuşak Taşı (GU-01): jetonlar + bileşenler; yerel pixel yazı tipleri public/yazi/ (dış istek yok) -->
+    <link rel="preload" href="/yazi/Jersey10-Regular.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="preload" href="/yazi/m5x7.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="stylesheet" href="/src/istemci/stil/jetonlar.css" />
+    <link rel="stylesheet" href="/src/istemci/stil/bilesenler.css" />
+    <link rel="stylesheet" href="/src/istemci/stil/ekranlar.css" />
     <style>
-      /* Devran: koyu zemin, sert kenarlık. Yazı tipleri sistemden (dış istek yok). */
+      /* Devran kabuğu. Menü ekranlarında üst web gezinti çubuğu yok (KM-4): body.kabuk; geliştirici ekranlarında kalır. */
       :root {
         --night: #070a1c; --bg: #0b1418; --panel: #10222a; --panel-2: #173039; --edge: #24414b; --shade: #050d10;
         --ink: #f3f1e8; --muted: #a3b2b6; --gold: #f4cf47; --red: #e3350d;
@@ -26,9 +32,10 @@
       #sahne canvas { display: block; image-rendering: pixelated; }
       #ustYazi { position: absolute; inset: 0; pointer-events: none; }
       #ustYazi > * { pointer-events: none; }
-      #ustYazi > .lab, #ustYazi > .lobi, #ustYazi > .ekr { pointer-events: auto; }
+      #ustYazi > .lab, #ustYazi > .lobi, #ustYazi > .ekr, #ustYazi > .k-zemin { pointer-events: auto; }
       /* D8 seyirci/OBS ve geliştirici kontakt levhası: üst bant yok, tuval tüm pencere */
       body.ciplak { grid-template-rows: 1fr; } body.ciplak > header { display: none; }
+      body.kabuk { grid-template-rows: 1fr; background: #18161d; } body.kabuk > header { display: none; }
       @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
     </style>
   </head>
