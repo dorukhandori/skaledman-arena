@@ -11,3 +11,6 @@ Hat: `araclar/sanat/README.md`. Ham dosyalar ve satır satır kayıt depo dış�
 | 2026-11-05 | Blender 5.2 (yerel) | 6 × 24 kare + yön kontrolleri | — | 0 |
 
 Lisans notu: üretimler projenin kendi özgün varlıklarıdır. Canon kutsal canavar eşlemeleri (`00-lore-cercevesi.md` § 3.4) bilerek kullanılmadı.
+
+Entegrasyon (2026-11-05, `devran-kod`): krediler `docs/art/krediler.md` § Kendi üretimimiz (yapay zekâ notu) ve `veri/manifest-gorsel.json` (`ruh.ata-hologram`, `ruh.ata-kaynak`, `ruh.portre`, `bilgic.pergel`; `yapayZeka: true`, bayt) satırlarıyla eşlendi; `npm run krediler:uret` eksiksiz. Ayrıntı `docs/production/raporlar/SANAT-ENTEGRASYON.md`.
+

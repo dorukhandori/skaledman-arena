@@ -722,6 +722,51 @@
    "lisans": "CC0 (bizim)",
    "tarih": "2026-11-05",
    "durum": "entegre (TopacYandan sprite kipi, yordamsal yedek)"
+  },
+  {
+   "ad": "ruh.ata-hologram",
+   "dosya": "public/ruh/ata/<element>-holo.png, <element>-holo-k.png (6 element × 2 boy)",
+   "olay": "Ulti (ve Takım Ultisi) anında çağıranın çekirdeğinden yükselen Ata hologramı (RuhGorsel.ts); tembel: Ulti Enerjisi yarıyı geçince yalnız o elementin sayfası",
+   "kaynak": "kendi üretimimiz, yapay zekâ üretimi (Gemini gemini-3.1-flash-image konsept → Tripo image-to-model v3.1 → Blender 5.2 render → araclar/sanat/sayfala.py + hologram.py)",
+   "arac": "Gemini, Tripo (ücretli hizmet), Blender 5.2 (GPL; yalnız araç), Pillow + numpy",
+   "lisans": "bizim (yapay zekâ çıktısı; hizmet koşullarına göre çıktı kullanıcıya ait)",
+   "yapayZeka": true,
+   "bayt": 1758606,
+   "tarih": "2026-11-05",
+   "durum": "entegre (SANAT entegrasyonu)"
+  },
+  {
+   "ad": "ruh.ata-kaynak",
+   "dosya": "public/ruh/ata/<element>.png + .json (6)",
+   "olay": "Renkli kaynak sayfa (176 px hücre, 6×4, 24 kare); oyunda yüklenmez, hologram buradan pişirilir",
+   "kaynak": "kendi üretimimiz, yapay zekâ üretimi (aynı hat)",
+   "lisans": "bizim (yapay zekâ çıktısı)",
+   "yapayZeka": true,
+   "bayt": 1415657,
+   "tarih": "2026-11-05",
+   "durum": "kaynak (çalışma anında kullanılmaz)"
+  },
+  {
+   "ad": "ruh.portre",
+   "dosya": "public/ruh/portre/*.png (21)",
+   "olay": "Özel Yetenek ruh portresi; RUH_PORTRE_OZEL_YETENEK = false (sahip kararı), maçta yüklenmez",
+   "kaynak": "kendi üretimimiz, yapay zekâ üretimi (Gemini gemini-3.1-flash-image → araclar/sanat/anahtarla.py)",
+   "lisans": "bizim (yapay zekâ çıktısı)",
+   "yapayZeka": true,
+   "bayt": 474745,
+   "tarih": "2026-11-05",
+   "durum": "varlık (bayrakla kapalı)"
+  },
+  {
+   "ad": "bilgic.pergel",
+   "dosya": "public/bilgic/{anlatiyor,aslinda,sevinc}.png",
+   "olay": "Atölye rehberi Pergel'in üç ifadesi (yalnız Atölye'de, İpuçları açıkken)",
+   "kaynak": "kendi üretimimiz, yapay zekâ üretimi (Gemini gemini-3.1-flash-image → anahtarla.py)",
+   "lisans": "bizim (yapay zekâ çıktısı)",
+   "yapayZeka": true,
+   "bayt": 53227,
+   "tarih": "2026-11-05",
+   "durum": "entegre"
   }
  ],
  "kamera": {

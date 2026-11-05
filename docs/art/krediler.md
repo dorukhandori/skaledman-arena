@@ -38,6 +38,11 @@ Kural: yalnız ücretsiz ve lisansı uygun kaynak (CC0 tercih; MIT / CC-BY atıf
 | 22 menü dokusu ve ikon sprite'ı (`src/istemci/stil/doku/*.png`: duvar, taş çerçeve, lento, plaka, düğme dolguları, ahşap, blueprint, gece, tapınak, element/kilit/sikke/kalkan/◄) | `araclar/menu-dokulari.ts` (tohumlu, yordamsal) | CC0 (bizim) |
 | Topaç parça sprite'ları ve ikonları (`public/topac/`, 27 parça) | `araclar/sanat/topac-uret.ts` + Blender 4.0.2 (`araclar/sanat/blender/topac_render.py`), parametrik modeller `kaynak/topac/parcalar-3b.json` | CC0 (bizim) |
 | Atari arka plan döngüsü (`kaynak/efekt/muzik-sentez/atari-dongu.ogg`) | `kaynak/efekt/muzik-sentez/atari-dongu.py` | CC0 (bizim) |
+| 6 Ata hologram sayfası (`public/ruh/ata/<element>-holo.png` + `-holo-k.png`) ve renkli kaynak sayfaları (`public/ruh/ata/<element>.png` + `.json`) | **Yapay zekâ üretimi:** Gemini `gemini-3.1-flash-image` (konsept) → Tripo `image-to-model` v3.1 (3B model) → Blender 5.2 (kare render) → `araclar/sanat/sayfala.py`, `hologram.py` (palet, kontur, hologram pişirme); kayıt `docs/art/ruh-uretim-kaydi.md` | bizim (yapay zekâ çıktısı; hizmet koşulları: çıktı kullanıcıya ait, sahip doğrulayacak) |
+| 21 ruh portresi (`public/ruh/portre/*.png`; Özel Yetenek bayrağı kapalı, maçta yüklenmez) | **Yapay zekâ üretimi:** Gemini `gemini-3.1-flash-image` → `araclar/sanat/anahtarla.py` (alfa, kırpma) | bizim (yapay zekâ çıktısı; aynı not) |
+| Rehber Pergel portreleri (`public/bilgic/{anlatiyor,aslinda,sevinc}.png`) | **Yapay zekâ üretimi:** Gemini `gemini-3.1-flash-image` (1 taban + 2 referanslı ifade) → `anahtarla.py` | bizim (yapay zekâ çıktısı; aynı not) |
+
+Yapay zekâ notu: ruh/Ata/Pergel görselleri sahibin onayıyla üretim hattında (`araclar/sanat/README.md`) yapay zekâ araçlarıyla üretildi ve elle seçildi/işlendi; mevcut bir serinin karakteri ya da canon kutsal canavar eşlemesi bilerek kullanılmadı (`docs/art/ruh-uretim-kaydi.md`). Ham dosyalar depo dışında (`art-source/`, `.gitignore`).
 
 ## MIT bildirimi (oyun içi krediler sayfasına eklenecek metin)
 
