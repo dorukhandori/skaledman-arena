@@ -158,6 +158,16 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
     ] as const) {
       this.onMessage(tur, (c: Client, m: unknown) => { if (BosMesajSema.safeParse(m).success) f(c); });
     }
+    // D8 yalnız geliştirme (uçtan uca test): gönderenin Takım Enerjisi (0..100); üretimde kayıtlı değil
+    if (process.env.NODE_ENV !== "production") {
+      this.onMessage("gTakimEnerji", (c: Client, m: unknown) => {
+        const i = this.indeks(c);
+        const miktar = Number((m as { miktar?: unknown } | null)?.miktar);
+        if (i < 0 || !this.yon || !Number.isFinite(miktar)) return;
+        this.yon.dunya.takimEnerji[i] = Math.max(0, Math.min(100, miktar));
+        console.log(`[mac ${this.roomId}] geliştirme: Takım Enerjisi ${i} = ${miktar}`);
+      });
+    }
     this.onMessage(MESAJ.takimSec, (c: Client, m: unknown) => {
       const t = TakimSecSema.safeParse(m);
       const i = this.indeks(c);
