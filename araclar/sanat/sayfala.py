@@ -2,8 +2,10 @@
 import json, sys
 import numpy as np
 from PIL import Image
-A = "/Users/dorukhanersoyleyen/dev/skaledman-arena/art-source/ruh/kare"
-P = "/Users/dorukhanersoyleyen/dev/skaledman-arena/public/ruh/ata"
+import os
+DEPO = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")
+A = os.path.join(DEPO, "art-source", "ruh", "kare")
+P = os.path.join(DEPO, "public", "ruh", "ata")
 HUCRE, SUT, SAT = 176, 6, 4
 TON = {"kasirga": ((0.8, 1.0, 0.95), 1.15)}  # çarpan, kontrast
 for ad in sys.argv[1:]:

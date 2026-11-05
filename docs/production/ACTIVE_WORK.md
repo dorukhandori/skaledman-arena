@@ -16,6 +16,8 @@ Her oturum işe başlamadan önce `git pull`, bu dosyayı oku, satırını ekle,
 
 ## Son kapanan işler
 
+- 2026-11-05 · @nile (Claude Code) + @glyph (alt ajan) · `src/istemci/oyun/RuhGorsel.ts`, `YetenekGorsel.ts`, `src/istemci/bilgic/`, `Atolye.ts`, `Ayarlar.ts`, `veri/{ruhlar,ipuclari}.json`, `public/{ruh,bilgic}/`, `araclar/sanat/`, docs 06 + bilgic-pergel · kutsal canavar belirmesi ve Pergel ipucu karakteri (Paca SA #13-18)
+
 - 2026-11-01 · @vault (alt ajan) · `eslint.config.js`, `araclar/veri-cek.ts`, `test/veri-cek.test.ts`, `docs/tech/veri-cekimi.md` · `src/paylasilan` lint kapısı + saatlik Skaledman çekimi
 - 2026-11-01 · @cove (alt ajan) · `docs/design/arenalar/iskeletler-diyari.md` · ilk arena özelliği
 

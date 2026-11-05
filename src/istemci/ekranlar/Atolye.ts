@@ -13,6 +13,7 @@ import { ELEMENT_RENK } from "../oyun/renkler.ts";
 import { TopacOnizleme } from "../oyun/TopacOnizleme.ts";
 import { acilirMenu, anaEylem, bakimKatmani, ekranKok, el, gelistirAcik } from "./arayuz.ts";
 import { parcaPikselIkonu, pikselTopac } from "./pikselTopac.ts";
+import { pergelKur } from "../bilgic/Pergel.ts";
 
 // Atölye (D6, US-2.1; ux § 3.2 ana ekran, geri oku yok). Sol: envanter (Çekirdek / Gövde / Disk / Uç sekmeleri, filtre:
 // element, köken, tip eğilimi, sahip olunan/kilitli; boş sekme mesajı ux § 7). Orta: seçili topaç (katmanlı önizleme
@@ -145,6 +146,8 @@ const STIL = `
 .at .alt-serit { position:absolute; left:0; right:0; bottom:0; display:flex; align-items:flex-end; gap:calc(6 * var(--p)); }
 .at .alt-serit .k-dugme:not(.ana) { min-height:calc(24 * var(--p)); min-width:calc(110 * var(--p)); }
 .at .oyna { margin-left:auto; }
+/* Pergel (docs/ux/bilgic-pergel.md): alt şeridin (Market/Başarımlar/OYNA) üstünde durur, düğmeleri örtmez */
+.at .pergel { bottom:calc(34 * var(--p) + .9rem); }
 .at .oyna[aria-disabled=true] { --ks: inset 0 0 0 var(--p) var(--cerceve-0), inset 0 0 0 0 transparent; color:var(--kapali-yazi); text-shadow:none; background:var(--tas-2); cursor:not-allowed; }
 .at .neden { max-width:calc(220 * var(--p)); color:#ffb070; text-align:right; text-transform:uppercase; line-height:1.1; margin-left:auto; }
 .at .neden:empty { display:none; }
@@ -252,6 +255,7 @@ class AtolyeEkrani {
     if (qp) { try { this.sekme = parcaBul(qp).tur; odakParca = qp; } catch { /* bilinmeyen */ } }
     this.iskelet();
     this.ciz();
+    this.pergelBagla(kok, v);
     if (odakParca) (this.kart.querySelector(`[data-parca="${odakParca}"]`) as HTMLElement | null)?.focus();
     (window as unknown as { __atolye: AtolyeEkrani }).__atolye = this;
   }
@@ -312,6 +316,24 @@ class AtolyeEkrani {
   get oncekiCubuklar(): CubukOzeti | null { return this.onceki; }
   get taslakDurumu(): { taslak: Taslak; degisti: boolean; takimNo: number; uyari: string; neden: string } {
     return { taslak: this.taslak, degisti: this.degisti, takimNo: this.takimNo, uyari: this.uyari, neden: this.neden?.textContent ?? "" };
+  }
+
+  /** Pergel (docs/ux/bilgic-pergel.md): sona eklenir, odağı çalmaz; yalnız açılıştaki takım durumunu okur. */
+  private pergelBagla(kok: HTMLElement, v: AtolyeGorunumu): void {
+    const yv = this.yuvalar();
+    const tanim = (y: (typeof yv)[number]) => y.cekirdek?.tanimId ?? y.oduncCekirdek;
+    pergelKur({
+      kok,
+      oyuncuId: v.oyuncu.id,
+      durum: {
+        takimEksik: yv.filter((y) => y.durum === "bos" || y.durum === "eksik").length,
+        oduncVar: yv.some((y) => y.durum === "odunc" || y.durum === "devreDisi"),
+        seviyeler: v.cekirdekler.map((c) => c.seviye),
+        takimElementleri: yv.map(tanim).filter((t): t is string => !!t).map((t) => cekirdekBul(t).element),
+        marketYeni: new URLSearchParams(location.search).get("mesaj") === "ilkdevir",
+        // sonMacRingOutKayip: /api/ben son maç sonucunu vermiyor (Paca SA #17); ring-out ipucu bu yüzden çalışmaz.
+      },
+    });
   }
 
   // ---- iskelet ----
@@ -741,6 +763,7 @@ class AtolyeEkrani {
       kart.draggable = true;
       kart.dataset["takimYuva"] = String(k);
       kart.dataset["odak"] = `tkart-${k}`;
+      kart.dataset["pergelHedef"] = y.durum === "odunc" || y.durum === "devreDisi" ? "odunc-yuva" : "yuva";
       const cTanim = y.cekirdek?.tanimId ?? y.oduncCekirdek;
       const ik = el("span", "", kart);
       if (cTanim) ik.appendChild(pikselTopac(cekirdekBul(cTanim).element, { r: 9, golge: false, koken: cekirdekBul(cTanim).koken }));

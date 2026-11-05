@@ -1,9 +1,11 @@
 // Ata 3B üretimi: Tripo image-to-model (dokulu). Anahtar yalnız ortamdan (TRIPO_API_KEY), yazdırılmaz.
 import { printBalance, uploadImage, postJson, taskIdOf, pollTask, download, modelUrlOf, creditsOf, H_MODEL } from "/Users/dorukhanersoyleyen/dev/wyrmwar/tools/asset-pipeline/lib/tripo.mjs";
 import { appendFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 const key = process.env.TRIPO_API_KEY;
 if (!key) { console.error("TRIPO_API_KEY yok"); process.exit(2); }
-const A = "/Users/dorukhanersoyleyen/dev/skaledman-arena/art-source/ruh";
+const A = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..", "art-source", "ruh");
 const ids = process.argv.slice(2);
 await printBalance(key);
 if (!ids.length) process.exit(0);

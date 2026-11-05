@@ -96,6 +96,8 @@ export const RuhSema = z.object({
   ozelYetenek: z.string(),
   ulti: z.string().nullable(),
   ata: z.boolean(),
+  /** Yalnız Ata: oyuncuya görünen tür unvanı ("Alaz Bizonu"; docs/design/beyblade/06-kutsal-canavarlar.md § 2). */
+  unvan: z.string().optional(),
 });
 export const RuhlarDosyaSema = z.object({ surum: z.literal(1), ruhlar: z.array(RuhSema) });
 
@@ -182,3 +184,16 @@ export type BaslangicSeti = z.infer<typeof BaslangicSetiSema>;
 export type Ruh = z.infer<typeof RuhSema>;
 export type Yetenek = z.infer<typeof YetenekSema>;
 export type Basarim = z.infer<typeof BasarimSema>;
+
+// Pergel ipucu kataloğu (docs/ux/bilgic-pergel.md § 4). `oncelik` küçük = önce; `hedef` gezinti ipucunun bağlı olduğu öğe.
+export const IpucuSema = z.object({
+  id: z.string().regex(/^[a-z0-9-]{1,40}$/),
+  kosul: z.enum(["ilk-ziyaret", "takim-eksik", "odunc", "ruh-ozel", "ulti-kilit", "ulti-acik", "ring-out", "element-cark", "zitlik", "lab", "market-acildi", "stamina"]),
+  ifade: z.enum(["anlatiyor", "aslinda", "sevinc"]),
+  metin: z.string().min(1).max(160),
+  oncelik: z.number().int(),
+  otomatik: z.boolean(),
+  hedef: z.enum(["odunc-yuva", "yuva", "lab"]).nullable(),
+});
+export const IpuclariDosyaSema = z.object({ ipuclari: z.array(IpucuSema).min(1) });
+export type Ipucu = z.infer<typeof IpucuSema>;

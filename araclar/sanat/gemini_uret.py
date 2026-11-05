@@ -5,7 +5,7 @@ import json, os, sys, base64, urllib.request, urllib.error, concurrent.futures, 
 
 KEY = json.load(open(os.path.expanduser("~/.facecodex/config.json")))["GEMINI_API_KEY"]
 MODEL = "gemini-3.1-flash-image"
-KOK = "/Users/dorukhanersoyleyen/dev/skaledman-arena/art-source"
+KOK = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "art-source")
 KAYIT = KOK + "/ruh/manifest.jsonl"
 
 PORTRE = ("High-quality 16-bit pixel art game sprite, crisp hard-edged pixels, no anti-aliasing, limited palette, bold dark "

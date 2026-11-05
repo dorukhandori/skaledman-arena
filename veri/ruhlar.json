@@ -38,7 +38,8 @@
    "yetenekAilesi": "kor-cukuru",
    "ozelYetenek": "Kor Çukuru",
    "ulti": "ata-kozu",
-   "ata": true
+   "ata": true,
+   "unvan": "Alaz Bizonu"
   },
   {
    "id": "cakmakcakal",
@@ -77,7 +78,8 @@
    "yetenekAilesi": "zincir-kivilcim",
    "ozelYetenek": "Zincir Kıvılcım",
    "ulti": "ata-cakimi",
-   "ata": true
+   "ata": true,
+   "unvan": "Çakım Geyiği"
   },
   {
    "id": "sarmalbaykus",
@@ -116,7 +118,8 @@
    "yetenekAilesi": "savrulan-kusak",
    "ozelYetenek": "Savrulan Kuşak",
    "ulti": "ata-savrugu",
-   "ata": true
+   "ata": true,
+   "unvan": "Yel Vatozu"
   },
   {
    "id": "emisahtapot",
@@ -155,7 +158,8 @@
    "yetenekAilesi": "dip-girdabi",
    "ozelYetenek": "Dip Girdabı",
    "ulti": "ata-girdabi",
-   "ata": true
+   "ata": true,
+   "unvan": "Dip Nautilusu"
   },
   {
    "id": "kiragitilki",
@@ -194,7 +198,8 @@
    "yetenekAilesi": "kiragi-cemberi",
    "ozelYetenek": "Kırağı Çemberi",
    "ulti": "ata-ayazi",
-   "ata": true
+   "ata": true,
+   "unvan": "Ayaz Ayısı"
   },
   {
    "id": "dagzirhli",
@@ -233,7 +238,8 @@
    "yetenekAilesi": "yontu-siperi",
    "ozelYetenek": "Yontu Siperi",
    "ulti": "ata-dagi",
-   "ata": true
+   "ata": true,
+   "unvan": "Dağ Mamutu"
   },
   {
    "id": "kulkartal",
