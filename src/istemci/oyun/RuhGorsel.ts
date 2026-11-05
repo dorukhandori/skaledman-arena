@@ -4,6 +4,7 @@ import { AYAR } from "../../paylasilan/kurallar/ayar.ts";
 import type { Dunya, Olay } from "../../paylasilan/sim/durum.ts";
 import { RUHLAR, YETENEKLER, cekirdekBul } from "../../paylasilan/veri/katalog.ts";
 import type { TopacProfili } from "../../paylasilan/veri/profil.ts";
+import { TAKIM_YUVA, ULTI_YUVA, yuvaBedeli, yuvaYetenegi } from "../../paylasilan/sim/yetenek.ts";
 import { ELEMENT_RENK, TAKIM_RENK } from "./renkler.ts";
 import { SAHNE, type Sahne } from "./Sahne.ts";
 
@@ -113,7 +114,6 @@ export class RuhGorsel {
   private ataKareCache = new Map<string, Texture[]>();
   /** Ata hologramları: topaçların üstünde (efekt katmanı, dünya koordinatı) */
   private holoKap = new Container();
-  private imza = "";
   private readonly portre = ruhPortreAcik();
   private vinyetKalan = 0;
   private vinyetSure = 0;
@@ -143,18 +143,28 @@ export class RuhGorsel {
     return this.sahne.dunyadanEkrana(fx, this.sahne.my + (fy - SAHNE.merkezY) * this.sahne.k);
   }
 
-  /** Maçtaki Ata (ve bayrak açıksa ruh portresi) dokularını önceden yükler (imza değişince). */
+  /**
+   * Tembel yükleme (ilk yükleme bütçesi, SANAT-ENTEGRASYON.md § boyut): maç başında Ata sayfası İNDİRİLMEZ. Bir topacın
+   * Ulti'si açık ve Enerjisi Ulti bedelinin yarısına geldiğinde yalnız O topacın elementinin hologramı (tam + yarım boy)
+   * istenir; Takım Ultisi için Takım Enerjisi yarıya gelince üç üyenin sayfaları. Yetişmezse yedek silüet çizilir.
+   * Bayrak açıksa sahadaki topaçların ruh portreleri baştan istenir. Her kare çağrılır; iş yalnız Set yoklaması.
+   */
   onYukle(d: Dunya): void {
-    const ruhlar = new Set<string>();
-    const elementler = new Set<ElementAdi>();
-    const ekle = (p: TopacProfili) => { const id = ruhKimligi(p); if (id) ruhlar.add(id); elementler.add(p.element); };
-    for (const p of d.profiller) ekle(p);
-    if (d.takimlar) for (const tk of d.takimlar) for (const u of tk.uyeler) ekle(u.profil);
-    const imza = [...ruhlar].sort().join(",") + "|" + [...elementler].sort().join(",");
-    if (imza === this.imza) return;
-    this.imza = imza;
-    if (this.portre) for (const id of ruhlar) this.yukle(portreYolu(id));
-    for (const el of elementler) { this.yukle(ataYolu(el, false)); this.yukle(ataYolu(el, true)); }
+    for (let i = 0; i < d.topaclar.length; i++) {
+      const p = d.profiller[i];
+      const t = d.topaclar[i];
+      if (!p || !t) continue;
+      if (this.portre) { const id = ruhKimligi(p); if (id) this.yukle(portreYolu(id)); }
+      const seviye = d.seviye?.[i] ?? 3;
+      if (seviye >= AYAR.yetenek.seviyeYuva[ULTI_YUVA]! && yuvaYetenegi(d, i, ULTI_YUVA) >= 0 && t.enerji * 2 >= yuvaBedeli(t, p, ULTI_YUVA)) this.ataIste(p.element);
+      const tk = d.takimlar?.[i];
+      if (tk && !this.portre && seviye >= AYAR.yetenek.seviyeYuva[TAKIM_YUVA]! && d.takimEnerji[i]! * 2 >= AYAR.enerji.takimDilim) for (const u of tk.uyeler) this.ataIste(u.profil.element);
+    }
+  }
+
+  private ataIste(el: ElementAdi): void {
+    this.yukle(ataYolu(el, false));
+    this.yukle(ataYolu(el, true));
   }
 
   private yukle(yol: string): void {
@@ -185,7 +195,11 @@ export class RuhGorsel {
       this.sayac.ata++;
     } else if (o.kademe === 4 && d.takimlar && !this.portre) {
       // Takım Ultisi (Ulti katmanı: Ata): takımın üç Ata'sı çağıranın çekirdeğinden; ortadaki tam boy, yanlar yarım boy
-      const uyeler = d.takimlar[o.i]!.uyeler;
+      // ortada sahadaki (çağıran) topacın Ata'sı, yanlarda diğer iki üye
+      const tum = d.takimlar[o.i]!.uyeler;
+      const aktif = tum.find((u) => u.profil.parcalar.cekirdek === p.parcalar.cekirdek);
+      const digerleri = tum.filter((u) => u !== aktif);
+      const uyeler = aktif ? [digerleri[0], aktif, digerleri[1]] : [...tum];
       const B = this.sahne.yakinlik;
       for (const k of [1, 0, 2]) {
         const u = uyeler[k];
