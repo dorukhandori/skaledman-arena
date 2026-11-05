@@ -14,6 +14,10 @@ export default defineConfig({
   server: {
     port: 5173,
     strictPort: true,
+    // MOBIL-1: `npm run dev:ag` (vite --host) yerel ağa açar; IP ile gelen telefon her zaman kabul. Ad ile gelen tünel
+    // (ör. Cloudflare Tunnel *.trycloudflare.com) için: DEV_EK_HOSTLAR=abc.trycloudflare.com npm run dev:ag
+    // (o zaman IZINLI_KOKENLER=https://abc.trycloudflare.com,http://localhost:5173 de verilir; README › Telefonla deneme)
+    allowedHosts: (process.env.DEV_EK_HOSTLAR ?? "").split(",").map((s) => s.trim()).filter(Boolean),
     // SQLite dosyası (.veri/) değişince sayfa yenilenmesin
     watch: { ignored: ["**/.veri/**", "**/*.sqlite*"] },
   },

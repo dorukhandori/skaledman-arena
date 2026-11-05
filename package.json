@@ -6,6 +6,9 @@
   "description": "Devran: özgün, gerçek zamanlı 1v1 dönen topaç dövüşü (tarayıcı). Kâr amaçsız.",
   "scripts": {
     "dev": "vite",
+    "dev:ag": "vite --host",
+    "mobil:denetim": "node araclar/mobil-denetim.cjs",
+    "mobil:mac": "node araclar/mobil-mac.cjs",
     "build": "vite build --app",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",

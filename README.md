@@ -39,6 +39,37 @@ npm run dev          # http://localhost:5173 (istemci + Colyseus sunucusu tek s�
 | `npm run denge:turnuva` | bot turnuvası (süre, bitiş dağılımı, kazanım bandı) |
 | `npm run ag:matris` · `npm run ag:ekran` | ağ profili (N2/N3) iki istemci hash denetimi |
 | `npm run krediler:uret` | krediler ↔ varlık manifestleri denetimi |
+| `npm run dev:ag` | geliştirme sunucusu yerel ağa açık (telefonla deneme, aşağıda) |
+| `npm run mobil:denetim` · `npm run mobil:mac` | telefon emülasyonu: menü denetimi ve dokunmatik maç (Playwright, `KLASOR=… CIHAZ=iphone14\|iphone15max\|pixel7\|kucuk`) |
+
+## Telefonla deneme
+
+Oyun telefonda **yatay** oynanır (iOS Safari, Android Chrome). Dokunmatik cihazda sol başparmak sanal joystick'le sürer,
+sağ altta Dash · Sekme · Yetenek 1-2 · Ulti · Takım Ultisi düğmeleri var; nişan kendiliğinden en yakın rakibe döner,
+sağ tarafta sürükleyerek ya da yetenek düğmesinden sürükleyerek ezilir (ayrıntı: `docs/production/raporlar/MOBIL-1.md`).
+
+**Aynı Wi-Fi'den (en kolayı):**
+
+1. Bilgisayar ve telefon aynı Wi-Fi'de olsun (misafir ağları cihazları birbirinden yalıtabilir).
+2. `npm run dev:ag` çalıştır. Vite çıktısında `Network: http://192.168.x.y:5173/` satırı görünür. Görünmezse bilgisayarın
+   yerel IP'sini bul: Windows `ipconfig` (IPv4 Address), macOS `ipconfig getifaddr en0`, Linux `hostname -I`.
+3. Telefonda `http://<bilgisayarın-IP'si>:5173` aç, cihazı yatay çevir. Port `5173` (Colyseus aynı süreçte, ayrı port yok).
+4. Bağlanmıyorsa bilgisayarın güvenlik duvarı 5173'e gelen bağlantıya izin vermeli (Windows ilk açılışta sorar).
+
+Geliştirme modunda sunucu yerel ağ kökenlerini (10.x, 172.16-31.x, 192.168.x, `*.local`) Origin denetiminden geçirir ve
+oturum çerezi `Secure` olmadan (HTTP) çalışır. **Üretimde değişiklik yok:** `NODE_ENV=production` iken yalnız
+`IZINLI_KOKENLER` listesindeki kökenler kabul edilir, çerez `Secure`'dur.
+
+**Dışarıdan / farklı ağdan (açık adres):** Cloudflare Tunnel hızlı tüneliyle:
+
+```bash
+cloudflared tunnel --url http://localhost:5173          # https://<rastgele>.trycloudflare.com verir
+DEV_EK_HOSTLAR=<rastgele>.trycloudflare.com IZINLI_KOKENLER=https://<rastgele>.trycloudflare.com,http://localhost:5173 npm run dev:ag
+```
+
+`DEV_EK_HOSTLAR` Vite'ın ad denetimine tünel adını ekler; `IZINLI_KOKENLER` verilince Origin denetimi yalnız listeye
+bakar (yerel ağ ayrıcalığı kalkar). Tünel HTTPS olduğu için Tam ekran, Ekran uyku kilidi ve "Ana Ekrana Ekle" (PWA)
+yalnız bu yolla tam denenir; yerel ağdaki `http://` adresinde tarayıcılar bunların bir kısmını kapatır.
 
 ## Görsel varlıklar nasıl üretiliyor
 

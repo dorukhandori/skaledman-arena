@@ -65,12 +65,17 @@ export class AgKatmani {
   }
 
   private gorunurluk = (): void => {
-    if (document.hidden) { this.gizli = true; return; }
+    if (document.hidden) { this.gizli = true; this.gizlenme = performance.now(); return; }
     if (!this.gizli) return;
     this.gizli = false;
     this.ag.yetis();
-    this.donusBandi = performance.now() + 1000;
+    // MOBIL-1: telefon arka plana alınınca maç durmaz; dönüşte ne kadar uzak kalındığı net söylenir (bağlantı da
+    // koptuysa aşağıdaki kopma akışı — "Yeniden bağlanıyoruz…" — bu bandın önüne geçer)
+    this.uzakSn = Math.round((performance.now() - this.gizlenme) / 1000);
+    this.donusBandi = performance.now() + (this.uzakSn >= 2 ? 2500 : 1000);
   };
+  private gizlenme = 0;
+  private uzakSn = 0;
 
   private bantYaz(metin: string, alt = "", dugmeler = false): void {
     const anahtar = `${metin}|${alt}|${dugmeler}`;
@@ -124,7 +129,7 @@ export class AgKatmani {
     } else if (s && s.faz === ODA_FAZI.mac && s.donma && s.kopan === yerel) {
       this.bantYaz("Maç donduruldu.", "Bağlantın geri geldi; rakip bekleniyor.");
     } else if (this.gizli) this.bantYaz("Duraklatıldı");
-    else if (simdi < this.donusBandi) this.bantYaz("Oyuna dönüldü.");
+    else if (simdi < this.donusBandi) this.bantYaz("Oyuna dönüldü.", this.uzakSn >= 2 ? `${this.uzakSn} sn arka plandaydın; maç bu sırada sürdü.` : "");
     else if (simdi < this.afkBitis && s?.faz === ODA_FAZI.mac) this.bantYaz(`Girdi yok: ${Math.ceil((this.afkBitis - simdi) / 1000)} sn içinde terk sayılır.`);
     else this.bantYaz("");
     if (this.dbg) {

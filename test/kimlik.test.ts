@@ -75,6 +75,26 @@ describe("Origin", () => {
     expect(kokenIzinli("http://localhost:5173")).toBe(false);
     expect(kokenIzinli(null)).toBe(false);
   });
+  it("MOBIL-1: geliştirmede yerel ağ kökeni (telefon, aynı Wi-Fi) kabul; genel IP / ad değil", () => {
+    delete process.env.IZINLI_KOKENLER;
+    process.env.NODE_ENV = "development";
+    for (const k of ["http://192.168.1.34:5173", "http://10.0.0.7:5173", "http://172.16.4.2:5173", "http://172.31.255.1:5173", "http://masaustu.local:5173"]) expect(kokenIzinli(k)).toBe(true);
+    for (const k of ["http://172.32.0.1:5173", "http://8.8.8.8:5173", "http://192.169.1.1", "https://kotu.example", "http://192.168.1.300:5173", "ws://192.168.1.2:5173", "http://kotu.local.example"]) expect(kokenIzinli(k)).toBe(false);
+  });
+  it("MOBIL-1: üretimde yerel ağ kökeni de reddedilir (liste yoksa her köken, liste varsa yalnız liste)", () => {
+    process.env.NODE_ENV = "production";
+    delete process.env.IZINLI_KOKENLER;
+    expect(kokenIzinli("http://192.168.1.34:5173")).toBe(false);
+    process.env.IZINLI_KOKENLER = "https://devran.example";
+    expect(kokenIzinli("http://192.168.1.34:5173")).toBe(false);
+    expect(kokenIzinli("http://masaustu.local:5173")).toBe(false);
+  });
+  it("MOBIL-1: geliştirmede liste verilmişse liste kuralı geçerli (yerel ağ ayrıcalığı yok)", () => {
+    process.env.NODE_ENV = "development";
+    process.env.IZINLI_KOKENLER = "https://abc.trycloudflare.com";
+    expect(kokenIzinli("https://abc.trycloudflare.com")).toBe(true);
+    expect(kokenIzinli("http://192.168.1.34:5173")).toBe(false);
+  });
 });
 
 describe("kaba kuvvet sınırı", () => {

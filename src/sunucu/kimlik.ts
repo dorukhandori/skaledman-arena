@@ -179,6 +179,9 @@ export function denemeleriSifirla(): void {
 /**
  * Origin kontrolü (cross-site WS ele geçirme / CSRF). `IZINLI_KOKENLER` virgüllü liste; yoksa geliştirmede
  * localhost / 127.0.0.1 (her port) ve Origin'siz (Node test istemcisi) kabul, üretimde liste zorunlu.
+ * MOBIL-1: geliştirmede (NODE_ENV ≠ production VE liste boş) yerel ağ kökenleri de kabul: özel IPv4 aralıkları
+ * (10/8, 172.16/12, 192.168/16) ve `.local` adları; telefonla aynı Wi-Fi'den deneme (`npm run dev:ag`). Üretim kuralı
+ * aynen sert: liste yoksa her köken reddedilir, liste varsa yalnız listedekiler.
  */
 export function kokenIzinli(koken: string | null): boolean {
   const liste = (process.env.IZINLI_KOKENLER ?? "").split(",").map((s) => s.trim()).filter(Boolean);
@@ -187,8 +190,19 @@ export function kokenIzinli(koken: string | null): boolean {
   if (koken === null) return true;
   try {
     const u = new URL(koken);
-    return u.hostname === "localhost" || u.hostname === "127.0.0.1";
+    if (u.protocol !== "http:" && u.protocol !== "https:") return false;
+    return u.hostname === "localhost" || u.hostname === "127.0.0.1" || yerelAgAdi(u.hostname);
   } catch {
     return false;
   }
+}
+
+/** Özel (RFC 1918) IPv4 adresi ya da mDNS `.local` adı mı (yalnız geliştirme kökeni için). */
+export function yerelAgAdi(ad: string): boolean {
+  if (/^[a-z0-9-]+\.local$/i.test(ad)) return true;
+  const m = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(ad);
+  if (!m) return false;
+  const [a, b, c, d] = m.slice(1).map(Number) as [number, number, number, number];
+  if ([a, b, c, d].some((x) => x > 255)) return false;
+  return a === 10 || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168);
 }
