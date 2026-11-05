@@ -26,7 +26,8 @@
     "krediler:uret": "tsx araclar/krediler-uret.ts",
     "d8:akis": "tsx araclar/d8-akis.ts",
     "qa:bot": "tsx araclar/qa-bot.ts",
-    "qa:cokme": "tsx araclar/qa-cokme.ts"
+    "qa:cokme": "tsx araclar/qa-cokme.ts",
+    "topac:uret": "tsx araclar/sanat/topac-uret.ts"
   },
   "dependencies": {
     "@colyseus/monitor": "0.18.7",

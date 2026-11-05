@@ -1,0 +1,244 @@
+{
+ "surum": 1,
+ "aciklama": "Devran topaç parçalarının parametrik 3B tanımları (ART-1). Üretici: araclar/sanat/blender/topac_render.py. Birim: topaç yerel birimi (Gövde dış yarıçapı ~32). z yukarı; Uç 0-12, Disk ~11-16, Gövde 16-30 (taban 16 sabit; Disk yüksekliği çalışma zamanında kaydırır), Çekirdek 29-37. Şekiller özgündür (veri/parcalar.json adları + pixel planı şekil dili); canon parça kopyası yok.",
+ "parcalar": {
+  "ok-govde": {
+   "tur": "govde",
+   "simetri": 3,
+   "kiral": true,
+   "R0": 21,
+   "loblar": [
+    {
+     "n": 3,
+     "genlik": 11,
+     "bicim": "supurme",
+     "p": 0.72,
+     "a": 0.8,
+     "b": 2.2
+    }
+   ],
+   "profil": [
+    [
+     0,
+     30
+    ],
+    [
+     8,
+     30
+    ],
+    [
+     8.6,
+     28.4
+    ],
+    [
+     16,
+     28.2
+    ],
+    [
+     32,
+     26.4
+    ]
+   ],
+   "halkalar": [
+    {
+     "r0": 8,
+     "r1": 11,
+     "yukseklik": 1.4,
+     "sinif": "metal"
+    },
+    {
+     "r0": 13.2,
+     "r1": 15.4,
+     "yukseklik": -1.8,
+     "sinif": "boya2",
+     "pah": 0.4
+    },
+    {
+     "r0": 19,
+     "r1": 21.5,
+     "yukseklik": 1.3,
+     "pah": 0.7
+    }
+   ],
+   "sirtlar": [
+    {
+     "n": 3,
+     "r0": 11,
+     "r1": 30,
+     "genislik": 7,
+     "yukseklik": 1.6,
+     "kivrim": -1.6,
+     "faz": 20,
+     "profil": "yuvarlak",
+     "ucIncelme": 5
+    }
+   ],
+   "kenarPah": [
+    3.2,
+    1.8
+   ],
+   "zAlt": 16,
+   "duvar": [
+    [
+     1,
+     null
+    ],
+    [
+     1,
+     18.4
+    ],
+    [
+     0.72,
+     16
+    ]
+   ]
+  },
+  "hafif-disk": {
+   "tur": "disk",
+   "simetri": 7,
+   "kiral": false,
+   "R0": 27.5,
+   "loblar": [
+    {
+     "n": 7,
+     "genlik": 3.2,
+     "bicim": "kare",
+     "w": 0.34,
+     "kenar": 0.08
+    }
+   ],
+   "profil": [
+    [
+     0,
+     16
+    ],
+    [
+     33,
+     16
+    ]
+   ],
+   "halkalar": [
+    {
+     "r0": 23.5,
+     "r1": 26.5,
+     "yukseklik": 0.9
+    }
+   ],
+   "sinif": "metal",
+   "kenarPah": [
+    1.6,
+    0.9
+   ],
+   "zAlt": 10,
+   "duvar": [
+    [
+     1,
+     null
+    ],
+    [
+     1,
+     13.6
+    ],
+    [
+     0.62,
+     10
+    ]
+   ]
+  },
+  "duz-uc": {
+   "tur": "uc",
+   "simetri": 6,
+   "kiral": false,
+   "torna": [
+    [
+     3.6,
+     0,
+     "koyu"
+    ],
+    [
+     4.6,
+     1.4,
+     "koyu"
+    ],
+    [
+     5.2,
+     3.6,
+     "koyu"
+    ],
+    [
+     6.6,
+     6.4,
+     "metal"
+    ],
+    [
+     8.2,
+     9,
+     "metal"
+    ],
+    [
+     8.8,
+     11.2,
+     "metal"
+    ],
+    [
+     8.8,
+     12.4,
+     "metal"
+    ]
+   ],
+   "nervur": {
+    "n": 6,
+    "genlik": 0.07,
+    "bicim": "kare",
+    "w": 0.4
+   }
+  },
+  "kor-goktasi": {
+   "tur": "cekirdek",
+   "simetri": 6,
+   "kiral": false,
+   "R0": 8.6,
+   "profil": [
+    [
+     0,
+     30
+    ],
+    [
+     9,
+     30
+    ]
+   ],
+   "halkalar": [
+    {
+     "r0": 6.2,
+     "r1": 8.6,
+     "yukseklik": 2.4,
+     "sinif": "cerceve",
+     "pah": 0.6
+    }
+   ],
+   "fasetler": [
+    {
+     "n": 6,
+     "tepe": 36.5,
+     "egim": 0.95,
+     "r1": 6.2,
+     "sinif": "kubbe"
+    }
+   ],
+   "sinif": "kubbe",
+   "zAlt": 29,
+   "duvar": [
+    [
+     1,
+     null
+    ],
+    [
+     1,
+     29
+    ]
+   ],
+   "puruzAci": 30
+  }
+ }
+}

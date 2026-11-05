@@ -1,0 +1,176 @@
+{
+ "surum": 1,
+ "aciklama": "ART-1 topaç sprite atlas metası (araclar/sanat/topac-uret.ts üretir; elle düzenleme). Sayfalar public/topac/ altında, satır başına 8 kare (bulanık disk 3), kare 64×64, çapa = uç temas noktası.",
+ "kamera": {
+  "yukselti": 26,
+  "birim": 1.1574074074074074,
+  "kare": [
+   64,
+   64
+  ],
+  "capa": [
+   32,
+   54
+  ],
+  "govdeTabanZ": 16
+ },
+ "periyotKare": 8,
+ "diskKare": 3,
+ "zSirasi": [
+  "uc",
+  "disk",
+  "govde",
+  "cekirdek"
+ ],
+ "parcalar": {
+  "ok-govde": {
+   "tur": "govde",
+   "simetri": 3,
+   "periyotDerece": 120,
+   "yonler": [
+    "s",
+    "l"
+   ],
+   "sayfa": "govde/ok-govde-{boya}.png",
+   "boyalar": [
+    "kor",
+    "kasirga",
+    "simsek",
+    "girdap",
+    "kaya",
+    "don"
+   ],
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    },
+    "l": {
+     "keskin": 3,
+     "bulanik": 4,
+     "disk": 5
+    }
+   },
+   "ustZ": 26.4,
+   "disYaricap": 32,
+   "bayt": 69626
+  },
+  "hafif-disk": {
+   "tur": "disk",
+   "simetri": 7,
+   "periyotDerece": 51.42857142857143,
+   "yonler": [
+    "s"
+   ],
+   "sayfa": "disk/hafif-disk.png",
+   "boyalar": null,
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    }
+   },
+   "ustZ": 16,
+   "disYaricap": 30.7,
+   "bayt": 3291
+  },
+  "duz-uc": {
+   "tur": "uc",
+   "simetri": 6,
+   "periyotDerece": 60,
+   "yonler": [
+    "s"
+   ],
+   "sayfa": "uc/duz-uc.png",
+   "boyalar": null,
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    }
+   },
+   "ustZ": 12.4,
+   "disYaricap": 8.8,
+   "bayt": 1012
+  },
+  "kor-goktasi": {
+   "tur": "cekirdek",
+   "simetri": 6,
+   "periyotDerece": 60,
+   "yonler": [
+    "s"
+   ],
+   "sayfa": "cekirdek/kor-goktasi.png",
+   "boyalar": null,
+   "satir": {
+    "s": {
+     "keskin": 0,
+     "bulanik": 1,
+     "disk": 2
+    }
+   },
+   "ustZ": 30,
+   "disYaricap": 8.6,
+   "bayt": 968
+  }
+ },
+ "ikon": {
+  "ikon48": {
+   "sayfa": "ikon-48.png",
+   "kare": 48,
+   "boyut": [
+    384,
+    48
+   ],
+   "bayt": 1060,
+   "yer": {
+    "ok-govde": [
+     0,
+     0
+    ],
+    "hafif-disk": [
+     48,
+     0
+    ],
+    "duz-uc": [
+     96,
+     0
+    ],
+    "kor-goktasi": [
+     144,
+     0
+    ]
+   }
+  },
+  "ikon24": {
+   "sayfa": "ikon-24.png",
+   "kare": 24,
+   "boyut": [
+    192,
+    24
+   ],
+   "bayt": 482,
+   "yer": {
+    "ok-govde": [
+     0,
+     0
+    ],
+    "hafif-disk": [
+     24,
+     0
+    ],
+    "duz-uc": [
+     48,
+     0
+    ],
+    "kor-goktasi": [
+     72,
+     0
+    ]
+   }
+  }
+ }
+}
