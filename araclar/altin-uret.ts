@@ -186,6 +186,10 @@ const senaryolar: AltinSenaryo[] = [
       if (t > 420) { const g = botGirdisi(d, 1, "dolas", 84); Object.assign(b, g); }
       return [a, b];
     }),
+  // ---- FIZIK-1: çanak eğimi + sekme (girdisiz iki İğne merkeze süzülür, çarpışır, ayrılır, yeniden çarpar) ----
+  kaydet({ surum: 1, senaryo: "canak-carpisma", aciklama: "FIZIK-1: iki İğne (desensiz), hiç girdi yok, 1800 adım: çanak eğimiyle merkeze süzülme, çarpışma, sekip ayrılma, yeniden çarpışma.", tohum: 16,
+    profiller: [MADEN, MADEN], adim: 1800, baslangic: null },
+    () => [bosGirdi(), bosGirdi()]),
   kaydet({ surum: 1, senaryo: "berabere", aciklama: "İki aynı topaç aynı adımda Durma: berabere, puan yok.", tohum: 8, profiller: [MADEN, MADEN], adim: 120,
     baslangic: [{ stamina: 1 }, { stamina: 1 }] },
     () => [bosGirdi(), bosGirdi()]),

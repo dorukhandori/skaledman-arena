@@ -336,7 +336,7 @@
     "kCakilma": 1.0,
     "dashMaliyet": 12,
     "sikiDonusCarpani": 0.7,
-    "ringOutHizi": 265
+    "ringOutHizi": 250
    },
    "tipEgilimi": "saldirgan",
    "katki": {
@@ -369,7 +369,7 @@
     "kCakilma": 1.4,
     "dashMaliyet": 18,
     "sikiDonusCarpani": 0.8,
-    "ringOutHizi": 265
+    "ringOutHizi": 250
    },
    "tipEgilimi": "kale",
    "katki": {
@@ -402,7 +402,7 @@
     "kCakilma": 1.0,
     "dashMaliyet": 13,
     "sikiDonusCarpani": 0.5,
-    "ringOutHizi": 265
+    "ringOutHizi": 250
    },
    "tipEgilimi": "denge",
    "katki": {
@@ -435,7 +435,7 @@
     "kCakilma": 0.85,
     "dashMaliyet": 14,
     "sikiDonusCarpani": 0.5,
-    "ringOutHizi": 265
+    "ringOutHizi": 250
    },
    "tipEgilimi": "dayanikli",
    "katki": {
@@ -468,7 +468,7 @@
     "kCakilma": 1.0,
     "dashMaliyet": 13,
     "sikiDonusCarpani": 0.5,
-    "ringOutHizi": 265
+    "ringOutHizi": 250
    },
    "tipEgilimi": "saldirgan",
    "katki": {
@@ -504,7 +504,7 @@
     "kCakilma": 1.0,
     "dashMaliyet": 13,
     "sikiDonusCarpani": 0.5,
-    "ringOutHizi": 265
+    "ringOutHizi": 250
    },
    "tipEgilimi": "denge",
    "katki": {

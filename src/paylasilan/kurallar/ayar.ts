@@ -31,6 +31,13 @@ export const AYAR = {
   kusakHizCarpani: 1.25,
   egimBaslangic: 0.7,
   kEgim: 700,
+  /**
+   * FIZIK-1 SAPMA (tuning § 2 "Çanak eğimi"): tüm yarıçapta merkeze çekim (konik çanak), br/s². d ≥ canakYumusak iken
+   * sabit `canakEgimi`, içeride doğrusal (merkezde 0, titreme yok). Coulomb (`sabitSurtunme`) üstünde olmalı ki girdisiz
+   * topaç da merkeze süzülsün. Önce: yok (yalnız d > 0,7R kenar eğimi).
+   */
+  canakEgimi: 50,
+  canakYumusak: 40,
   eDuvar: 0.5,
   kDuvar: 0.08,
   duvarTik: 0.15,
@@ -39,8 +46,8 @@ export const AYAR = {
   /** VARSAYIM (tuning'de yok): dışa hız bunun altındaysa sekme/bedel/olay yok, topaç duvar boyunca kayar.
    *  Gerekçe: kenara doğru sürmeye devam eden topaç her adım "çarpıp" saniyede ~90 stamina kaybediyordu. */
   duvarOlayHizi: 40,
-  /** Varsayılan vRO; Uç verisi kendi `ringOutHizi`nı taşır. */
-  ringOutHizi: 265,
+  /** Varsayılan vRO; Uç verisi kendi `ringOutHizi`nı taşır. FIZIK-1 SAPMA: 265 → 250 (çanak eğimi Ring Out payını düşürdü). */
+  ringOutHizi: 250,
   dogum: [
     { x: -130, z: 0 },
     { x: 130, z: 0 },
@@ -85,6 +92,12 @@ export const AYAR = {
   tekVurusTavani: 0.3,
   /** Temas eşikleri (yalnız his; sim'e etkisi yok), vn br/s. */
   temasEsik: { hafif: 80, agir: 260, kritik: 420 },
+  /**
+   * FIZIK-1 SAPMA (tuning § 5 "Sekme"): darbeden sonra çiftin normal boyunca ayrılma hızı en az bu (br/s); eksik kalan
+   * kütle oranıyla iki tarafa eklenir (momentum korunur; hasar/tık Ş'den, değişmez). Dönen iki topaç temasta birbirini
+   * iter: yavaş temas yapışık titreşim yerine sekme olur. Önce: yok (ayrılma = e·vn·kb).
+   */
+  ayrilmaHizi: 90,
   kEsit: 0.06,
   kEsitEnFazla: 20,
   /** Kütle referansı (05/flint): oranlar 10 birim kütleye göre okunur. Formüllerde doğrudan kullanılmaz. */
@@ -155,7 +168,8 @@ export const AYAR = {
     dilim: 100,
     /** SAPMA: tuning § 8 `metreDilim` 2 (ilk sürüm) yazar; brief + nile § 0 K-7 revize: Ulti ilk sürümde → 3 dilim. */
     metreDilim: 3,
-    pasifDolum: 1.5,
+    /** FIZIK-1 SAPMA: 1,5 → 1,8 (sekme yapışık mikro-çarpışmaları kaldırınca kaybolan çarpışma Enerjisini telafi eder). */
+    pasifDolum: 1.8,
     /** Çarpışma kazanımı: clamp(katsayi · Ş / bolen, enAz, enCok), vuran ve vurulan ayrı. */
     carpismaKatsayi: 8,
     carpismaBolen: 4000,

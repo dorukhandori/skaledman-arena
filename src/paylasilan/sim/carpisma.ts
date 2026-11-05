@@ -134,10 +134,17 @@ export function topacCarpismasi(d: Dunya): void {
   let kb2 = kbCarpani(t2, p2) * p1.sim.vurusItmeCarpani;
   if (c1.kb !== 1) kb1 *= c1.kb;
   if (c2.kb !== 1) kb2 *= c2.kb;
-  const yeniV1x = t1.vx - (J / m1) * nx * kb1;
-  const yeniV1z = t1.vz - (J / m1) * nz * kb1;
-  const yeniV2x = t2.vx + (J / m2) * nx * kb2;
-  const yeniV2z = t2.vz + (J / m2) * nz * kb2;
+  let yeniV1x = t1.vx - (J / m1) * nx * kb1;
+  let yeniV1z = t1.vz - (J / m1) * nz * kb1;
+  let yeniV2x = t2.vx + (J / m2) * nx * kb2;
+  let yeniV2z = t2.vz + (J / m2) * nz * kb2;
+  // FIZIK-1 sekme: ayrılma hızı en az ayrilmaHizi (eksik kütle oranıyla iki tarafa; momentum korunur)
+  const ayrilma = (yeniV2x - yeniV1x) * nx + (yeniV2z - yeniV1z) * nz;
+  if (AYAR.ayrilmaHizi > 0 && ayrilma < AYAR.ayrilmaHizi) {
+    const eksik = AYAR.ayrilmaHizi - ayrilma;
+    yeniV1x -= nx * eksik * w1; yeniV1z -= nz * eksik * w1;
+    yeniV2x += nx * eksik * w2; yeniV2z += nz * eksik * w2;
+  }
   let H1 = hasarHesapla(S, p1, f1, p2, f2);
   let H2 = hasarHesapla(S, p2, f2, p1, f1);
   if (c1.hasar !== 1) H1 *= c1.hasar;

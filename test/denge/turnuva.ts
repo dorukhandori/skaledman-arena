@@ -65,7 +65,13 @@ export function duello(a: TopacProfili, b: TopacProfili, tohum: number, sinirSn 
   return { tur: "sure", kazanan: -1, sureSn: sinirSn };
 }
 
-export interface MacKaydi { sonuc: MacSonucu; sureSn: number; turlar: TurKaydi[]; geriCek: number; degisim: number; adim: number; yetenek: [number, number, number, number] }
+export interface MacKaydi {
+  sonuc: MacSonucu; sureSn: number; turlar: TurKaydi[]; geriCek: number; degisim: number; adim: number; yetenek: [number, number, number, number];
+  /** FIZIK-1: topaç-topaç çarpışma olayı sayısı ve her turun ilk çarpışmasına kadar geçen süre (s; çarpışmasız tur NaN). */
+  carpisma: number; ilkCarpisma: number[];
+  /** FIZIK-1: ayrı temaslar (önceki çarpışmadan sonra aralarında > 5 br boşluk açılmış çarpışmalar; yapışık titreşim sayılmaz). */
+  temas: number;
+}
 
 /** Tam maç (bot karşı bot); `kipler` verilmezse her topaç kendi tipine göre kademe kullanır. */
 export function tamMac(t0: TakimProfilleri, t1: TakimProfilleri, tohum: number, kipler?: [BotKipi, BotKipi]): MacKaydi {
@@ -75,19 +81,33 @@ export function tamMac(t0: TakimProfilleri, t1: TakimProfilleri, tohum: number, 
   let geriCek = 0;
   let degisim = 0;
   const yetenek: [number, number, number, number] = [0, 0, 0, 0];
+  let carpisma = 0;
+  const ilkCarpisma: number[] = [];
+  let ilkBekleniyor = false;
+  let temas = 0;
+  let ayrik = true;
   const azami = 200 * AYAR.adimHz; // güvenlik: sonsuz maç yok (mutlak sınır 120 s + geri sayım)
   for (let n = 0; n < azami; n++) {
     const k0 = kipler?.[0] ?? kipSec(d.profiller[0]);
     const k1 = kipler?.[1] ?? kipSec(d.profiller[1]);
     adim(d, [botGirdisi(d, 0, k0, tohum * 17 + 3), botGirdisi(d, 1, k1, tohum * 17 + 4)]);
     for (const o of d.olaylar) {
-      if (o.tur === "turBasladi") turBasi = d.mac.saat;
-      else if (o.tur === "turBitti") turlar.push({ tur: o.sonuc.tur, kazanan: o.sonuc.kazanan, sureSn: (d.mac.saat - turBasi) / AYAR.adimHz });
+      if (o.tur === "turBasladi") { turBasi = d.mac.saat; ilkBekleniyor = true; }
+      else if (o.tur === "carpisma") {
+        carpisma++;
+        if (ayrik) { temas++; ayrik = false; }
+        if (ilkBekleniyor) { ilkCarpisma.push((d.mac.saat - turBasi) / AYAR.adimHz); ilkBekleniyor = false; }
+      } else if (o.tur === "turBitti") turlar.push({ tur: o.sonuc.tur, kazanan: o.sonuc.kazanan, sureSn: (d.mac.saat - turBasi) / AYAR.adimHz });
       else if (o.tur === "geriCek") geriCek++;
       else if (o.tur === "degisim") degisim++;
       else if (o.tur === "yetenekBasladi") yetenek[o.yuva]!++;
     }
-    if (d.mac.macSonucu) return { sonuc: d.mac.macSonucu, sureSn: d.mac.saat / AYAR.adimHz, turlar, geriCek, degisim, adim: d.tick, yetenek };
+    if (!ayrik) {
+      const [a, b] = d.topaclar;
+      const bosluk = 2 * AYAR.topacYaricap + 5;
+      if ((a.x - b.x) * (a.x - b.x) + (a.z - b.z) * (a.z - b.z) > bosluk * bosluk) ayrik = true;
+    }
+    if (d.mac.macSonucu) return { sonuc: d.mac.macSonucu, sureSn: d.mac.saat / AYAR.adimHz, turlar, geriCek, degisim, adim: d.tick, yetenek, carpisma, ilkCarpisma, temas };
   }
   throw new Error(`maç ${azami} adımda bitmedi (tohum ${tohum})`);
 }
@@ -139,6 +159,10 @@ export interface TurnuvaRaporu {
   ultiMacOrani: number;
   /** D8: Takım Ultisi görülen maç oranı */
   takimUltiMacOrani: number;
+  /** FIZIK-1: maç saati dakikası başına çarpışma; turun ilk çarpışmasına kadar süre (s) medyan / p90 */
+  carpismaDk: number;
+  temasDk: number;
+  ilkCarpisma: { medyan: number; p90: number };
 }
 
 const bosBitis = () => ({ durma: 0, ringOut: 0, parcalanma: 0, berabere: 0, sure: 0, toplam: 0 });
@@ -177,8 +201,14 @@ export function turnuva(o: TurnuvaSecenekleri): TurnuvaRaporu {
   const yet = [0, 0, 0, 0];
   let ultiMac = 0;
   let takimMac = 0;
+  let carpismaTop = 0;
+  let temasTop = 0;
+  const ilkler: number[] = [];
   const macKaydet = (m: MacKaydi) => {
     macSureleri.push(m.sureSn);
+    carpismaTop += m.carpisma;
+    temasTop += m.temas;
+    ilkler.push(...m.ilkCarpisma);
     for (let k = 0; k < 4; k++) yet[k]! += m.yetenek[k]!;
     if (m.yetenek[2] > 0) ultiMac++;
     if (m.yetenek[3] > 0) takimMac++;
@@ -241,6 +271,9 @@ export function turnuva(o: TurnuvaSecenekleri): TurnuvaRaporu {
     yetenekMac: [0, 1, 2, 3].map((k) => yet[k]! / Math.max(1, macSureleri.length)) as [number, number, number, number],
     ultiMacOrani: ultiMac / Math.max(1, macSureleri.length),
     takimUltiMacOrani: takimMac / Math.max(1, macSureleri.length),
+    carpismaDk: (60 * carpismaTop) / Math.max(1, macSureleri.reduce((a, b) => a + b, 0)),
+    temasDk: (60 * temasTop) / Math.max(1, macSureleri.reduce((a, b) => a + b, 0)),
+    ilkCarpisma: { medyan: yuzdelik(ilkler, 0.5), p90: yuzdelik(ilkler, 0.9) },
   };
 }
 
@@ -250,6 +283,7 @@ export function ozet(r: TurnuvaRaporu): string {
   const y = (x: number) => `${((100 * x) / Math.max(1, b.toplam)).toFixed(1)}%`;
   return `maç ${r.maclar} · süre med ${r.macSuresi.medyan.toFixed(1)} p90 ${r.macSuresi.p90.toFixed(1)} p99 ${r.macSuresi.p99.toFixed(1)} · tur med ${r.turSuresi.medyan.toFixed(1)} · `
     + `Durma ${y(b.durma)} RO ${y(b.ringOut)} Parç ${y(b.parcalanma)} Ber ${y(b.berabere)} · band ${r.bandIci}/20 · neden ${JSON.stringify(r.macNedeni)}`
+    + ` · çarpışma/dk ${r.carpismaDk.toFixed(1)} (ayrı temas ${r.temasDk.toFixed(1)}) ilk med ${r.ilkCarpisma.medyan.toFixed(1)} p90 ${r.ilkCarpisma.p90.toFixed(1)} s`
     + ` · yetenek/maç ${r.yetenekMac.map((x) => x.toFixed(2)).join("/")} · Ulti maç %${(100 * r.ultiMacOrani).toFixed(0)} · Takım Ultisi maç %${(100 * r.takimUltiMacOrani).toFixed(0)}`;
 }
 

@@ -74,12 +74,21 @@ export function hareketAdimla(t: Topac, p: TopacProfili, g: Girdi, tick: number,
   kendiIvmesi(t, p, g, tick, yorgunluk, R, m);
   // alan çekimi / yan kayma (dış ivme; tavana bağlı değil)
   if (m && (m.ax !== 0 || m.az !== 0)) { t.vx += m.ax * dt; t.vz += m.az * dt; }
-  // kenar eğimi: d > 0,7R'den merkeze, kEgim · ((d − 0,7R)/(0,3R))²
+  // Merkeze eğim, büyüklük a (br/s²): kenar eğimi d > 0,7R'den kEgim · ((d − 0,7R)/(0,3R))²; FIZIK-1 çanak eğimi
+  // tüm yarıçapta (d ≥ canakYumusak sabit canakEgimi, içeride doğrusal, merkezde 0). İkisi toplanmaz, büyüğü alınır:
+  // kenarda kenar eğimi baskın (Ring Out çizgisi aynı kalır). Tahmin (tahmin.ts) aynı fonksiyonu koşar.
   const d = kok2(t.x, t.z);
   const egimD = AYAR.egimBaslangic * R;
+  let a = 0;
   if (d > egimD) {
     const q = (d - egimD) / (R - egimD);
-    const a = AYAR.kEgim * q * q;
+    a = AYAR.kEgim * q * q;
+  }
+  if (AYAR.canakEgimi > 0) {
+    const c = d >= AYAR.canakYumusak ? AYAR.canakEgimi : (AYAR.canakEgimi * d) / AYAR.canakYumusak;
+    if (c > a) a = c;
+  }
+  if (a > 0) {
     t.vx -= (t.x / d) * a * dt;
     t.vz -= (t.z / d) * a * dt;
   }

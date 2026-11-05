@@ -113,17 +113,23 @@ describe("hareket", () => {
     expect(v).toBeLessThanOrEqual(MADEN.sim.vSurus + 1e-9);
   });
 
-  it("çiçek deseni girdisiz topacı yürütür; çakılı (İğne) yerinde kalır", () => {
+  it("çiçek deseni girdisiz topacı yürütür; çakılı (İğne) yalnız çanak eğimiyle yavaşça süzülür", () => {
     const d = dunyaKur([GOKTASI, MADEN], 2);
     const x0 = [d.topaclar[0].x, d.topaclar[1].x];
     ileri(d, 60);
     expect(Math.abs(d.topaclar[0].x - x0[0]!) + Math.abs(d.topaclar[0].z)).toBeGreaterThan(20);
-    expect(d.topaclar[1].x).toBe(x0[1]);
+    // FIZIK-1: İğne (sürtünme 3/s) 1 s'de merkeze doğru birkaç birim; yan sapma yok
+    const dx = x0[1]! - d.topaclar[1].x;
+    expect(dx).toBeGreaterThan(0);
+    expect(dx).toBeLessThan(10);
+    expect(d.topaclar[1].z).toBe(0);
   });
 
   it("Sıkı Dönüş: hareket 0, erime × Uç çarpanı", () => {
     const a = dunyaKur([MADEN, MADEN], 1);
     const b = dunyaKur([MADEN, MADEN], 1);
+    // çanak merkezinde: çanak eğimi 0, iki topaç da hızsız kalır (FIZIK-1)
+    a.topaclar[0].x = 0; b.topaclar[0].x = 0;
     ileri(a, 60, g({ dinlen: true }));
     ileri(b, 60);
     const kayipA = MADEN.maxStamina - a.topaclar[0].stamina;
@@ -284,6 +290,6 @@ describe("bitişler ve tur kararı", () => {
     const o = ileri(d, 40);
     expect(o.some((x) => x.tur === "ringOut")).toBe(false);
     expect(d.mac.sonuc?.tur).toBe("durma");
-    expect(d.topaclar[1].vx).toBe(0);
+    expect(Math.abs(d.topaclar[1].vx)).toBe(0); // çanak eğimi içe hız verdiyse sönüm -0 bırakır
   });
 });
