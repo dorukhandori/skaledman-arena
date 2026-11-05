@@ -1,5 +1,22 @@
 # Skaledman Arena — yol haritası ve karar günlüğü
 
+> **TARİHÇE / İPTAL (D8, B-37):** "Durum (2026-11-01)", aşamalar F0–F3 ve K-1…K-16 iptal edilen ilk fikrin (hayran kartlarıyla arena) tarihçesidir; değiştirilmeden tutulur. Proje **Devran**'a döndü: özgün dönen topaç dövüşü, kâr amaçsız.
+
+## Devran durumu (2026-11-05)
+
+| Dilim | Kapsam | Durum |
+|---|---|---|
+| D1 | Deterministik sim, Topaç Lab, altın hash'ler | ✔ |
+| D2 | Tam maç (3'lü takım, tur arası, ani ölüm), bot kademeleri | ✔ |
+| D3 | Enerji, Yetenek / Özel / Ulti, telegraf | ✔ |
+| D4 | Çevrimiçi 1v1 (Colyseus 0.18, tahmin + ara değer, kopma) | ✔ |
+| D5 | Hesaplar (ad + şifre), profil, ilk Çekirdek, eğitim, XP | ✔ |
+| D6 | Atölye, Çekirdek Günlüğü, Dene | ✔ |
+| D7 | Altın, Market, Başarımlar, hızlı maç, sonuç ekranı | ✔ |
+| D8 | Takım Ultisi, yetenek kullanan botlar, seyirci/OBS (`#izle=`), ruh siluetleri, gizlilik + hesap silme, krediler, marka temizliği, QA kapısı, test gecesi belgeleri | ✔ (rapor `raporlar/D8.md`; kırmızı kapılar orada) |
+| Sonra | İlk test gecesi (`test-gecesi.md`), Görsel Uyum Geçişi GU-00..13, Kick OAuth (son dilim, sahip kararı) | sırada |
+
+
 Sahibi: `@nile`. Bu dosya nerede olduğumuzu söyler ve karar veren belgeye işaret eder; kendisi karar vermez.
 
 ## Durum (2026-11-01)

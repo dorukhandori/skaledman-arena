@@ -1,5 +1,7 @@
 # Veri çekimi ve paylaşılan-kod kapısı
 
+> **TARİHÇE / İPTAL (D8, B-37):** Bu belge iptal edilen ilk fikrin (hayran kartlarıyla arena, 2026-11-01) kaydıdır; içerik değiştirilmeden tarihçe olarak tutulur. Proje **Devran**'a (özgün dönen topaç dövüşü, kâr amaçsız) döndü; marka, kart, sprite ve dış site bağımlılığı yoktur. Güncel belgeler: `docs/production/devran-kod-brief.md`, `docs/production/raporlar/D1.md … D8.md`.
+
 `[@vault · Backend Engineer]` · 2026-11-01 · Durum: F0 aracı; sunucudaki saatlik senkron (SQLite) bunu temel alır.
 
 ## 1. Paylaşılan benzetim kapısı (`npm run lint`)

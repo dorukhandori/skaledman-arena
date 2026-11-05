@@ -344,3 +344,17 @@ describe("XSS: kullanıcı / takım adı (güvenlik öz denetimi)", () => {
     expect(ihlal).toStrictEqual([]);
   });
 });
+
+describe("eski marka / varlık temizliği (B-37)", () => {
+  it("kod, public, araçlar, index.html, package.json, README, .github: eski marka ve fan-IP adı yok (depo URL'si hariç)", () => {
+    const yasak = /skaledman|spritecollab|pok[eé]mon|fusion|pokerivals/i;
+    const tara = (k: string): string[] => readdirSync(k).flatMap((f) => { const p = join(k, f); return statSync(p).isDirectory() ? tara(p) : [p]; });
+    const dosyalar = [...tara("src"), ...tara("araclar"), ...tara("public").filter((p) => /\.(html|json|txt|md|js|css)$/.test(p) && !p.startsWith(join("public", "efekt"))), ...tara(".github"), "index.html", "package.json", "README.md", "CONTRIBUTING.md"];
+    const ihlal: string[] = [];
+    for (const f of dosyalar) {
+      readFileSync(f, "utf8").split("\n").forEach((s, n) => { if (yasak.test(s.replace(/github\.com\/dorukhandori\/skaledman-arena/g, ""))) ihlal.push(`${f}:${n + 1}`); });
+    }
+    expect(ihlal).toStrictEqual([]);
+    expect(existsSync("public/fusion")).toBe(false);
+  });
+});

@@ -1,5 +1,7 @@
 # Skaledman'a eklenti olarak arena: entegrasyon yazısı
 
+> **TARİHÇE / İPTAL (D8, B-37):** Bu belge iptal edilen ilk fikrin (hayran kartlarıyla arena, 2026-11-01) kaydıdır; içerik değiştirilmeden tarihçe olarak tutulur. Proje **Devran**'a (özgün dönen topaç dövüşü, kâr amaçsız) döndü; marka, kart, sprite ve dış site bağımlılığı yoktur. Güncel belgeler: `docs/production/devran-kod-brief.md`, `docs/production/raporlar/D1.md … D8.md`.
+
 `[@axiom · Technical Director]` · 2026-11-01 · Durum: teknik öneri; Skaledman deposu görülünce (K-13) kesinleşir. Kaynaklar: [skaledman-sayfa-analizi.md](../research/skaledman-sayfa-analizi.md), [mimari.md](mimari.md), [oyun-konsepti.md § 1b](../design/oyun-konsepti.md).
 
 Bu belge Skaledman'ı yazan kişiye verilecek şekilde yazıldı: arenanın Skaledman'dan ne beklediği, Skaledman'a eklenecek asgari parça ve neden ayrı bir süreç olarak çalıştığı.

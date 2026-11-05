@@ -7,6 +7,8 @@
 // görünür sıçrama, çarpışma olayı varış/işlenme gecikmesi, hayalet çarpma, bant (vekil bayt sayacı), sunucu adım p95.
 // Önce: npm run dev. Çalıştır: npm run ag:matris [-- N0 N3 ...] [--kopma] [--ucuncu] [--bekleme]
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { AgSimulatoru, type AgProfili, simetrik } from "./ag-simulatoru.ts";
 import { TABAN, bekle, bekleKosul, ev, hesapHazirla, istatistik, istemciAc, kayitDogrula, odayiKur, ozetAl, tikla, type Istemci } from "./ag-ortak.ts";
 
@@ -73,7 +75,7 @@ async function profilKos(ad: string): Promise<void> {
     await bekle(800);
     const [oa, ob] = [await ozetAl(a.sayfa), await ozetAl(b.sayfa)];
     const [ka, kb] = [await kayitDogrula(a.sayfa), await kayitDogrula(b.sayfa)];
-    if (process.env.AG_IZ) writeFileSync(`/tmp/claude-0/-home-user-skaledman-arena/cff910d0-ad02-517f-b6da-6f5e134b1c9e/scratchpad/iz-${ad}.json`, JSON.stringify(await ev(a.sayfa, "window.__lobi.agMaci.buyukIz")));
+    if (process.env.AG_IZ) writeFileSync(join(tmpdir(), `devran-iz-${ad}.json`), JSON.stringify(await ev(a.sayfa, "window.__lobi.agMaci.buyukIz")));
     const so = await sunucuOlcumu(kod);
     const bantA = vA.bant().filter((x) => x.yol.includes(kod));
     const bantB = vB.bant().filter((x) => x.yol.includes(kod));

@@ -8,10 +8,10 @@ body:
       label: Aşama
       description: Roadmap'teki hangi aşamaya ait (docs/production/roadmap.md)
       options:
-        - F1 · Çevrimiçi 1v1
-        - F2 · Kick kimliği, kendi kartların, hamleler ve yetenekler
-        - F3 · Yayın entegrasyonu
-        - Sürekli · denge, sprite kalitesi, arenalar, araçlar
+        - Test gecesi sonrası düzeltme
+        - Görsel Uyum Geçişi (GU)
+        - Kick girişi ve yayın entegrasyonu
+        - Sürekli · denge, görsel, ses, araçlar
         - Bilmiyorum
     validations:
       required: true
@@ -26,7 +26,7 @@ body:
     id: oneri
     attributes:
       label: Öneri
-      description: Nasıl çalışmalı. Mekanikse kuralı, sayıysa kaynağını (ana seri, kendi ölçümün, başka bir oyun) yazın.
+      description: Nasıl çalışmalı. Mekanikse kuralı, sayıysa kaynağını (bot turnuvası, kendi ölçümün) yazın.
     validations:
       required: true
   - type: textarea
@@ -39,4 +39,4 @@ body:
     attributes:
       label: Tasarım etkisi
       options:
-        - label: Bu öneri `docs/design/oyun-konsepti.md` ya da bir ADR ile çelişiyor olabilir; önce tartışılmalı
+        - label: Bu öneri `docs/design/tasarim-sutunlari.md` ya da bir ADR ile çelişiyor olabilir; önce tartışılmalı
