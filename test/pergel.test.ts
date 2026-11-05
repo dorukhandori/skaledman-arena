@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { IPUCLARI } from "../src/istemci/bilgic/ipuclari.ts";
-import { OTOMATIK_ARA_MS, gezintiSec, kapatmaSonucu, kosulSagli, otomatikIzin, otomatikSec, sorSec, ucKomsuMu, zitCiftVarMi, type AtolyeDurumu } from "../src/istemci/bilgic/secim.ts";
+import { OTOMATIK_ARA_MS, SEYREK_ARA_MS, gezintiSec, kapatmaSonucu, kosulSagli, otomatikIzin, otomatikSec, sorSec, ucKomsuMu, zitCiftVarMi, type AtolyeDurumu } from "../src/istemci/bilgic/secim.ts";
 
 const taban: AtolyeDurumu = { ziyaret: 5, takimEksik: 0, oduncVar: false, seviyeler: [1, 1, 1], takimElementleri: ["kor", "simsek", "kaya"], marketYeni: false };
 const bos = new Set<string>();
@@ -38,8 +38,11 @@ describe("Pergel ipucu seçimi", () => {
   });
   it("gezinti: ödünç yuva ve lab hedefleri", () => {
     expect(gezintiSec(IPUCLARI, "odunc-yuva", { ...taban, oduncVar: true }, bos)?.id).toBe("odunc");
-    expect(gezintiSec(IPUCLARI, "lab", taban, bos)?.id).toBe("lab");
-    expect(gezintiSec(IPUCLARI, "lab", taban, new Set(["lab"]))).toBeNull();
+    expect(gezintiSec(IPUCLARI, "lab", { ...taban, labVar: true }, bos)?.id).toBe("lab");
+    expect(gezintiSec(IPUCLARI, "lab", { ...taban, labVar: true }, new Set(["lab"]))).toBeNull();
+    // Topaç Lab oyuncuya görünmüyorsa (sadelik S-10) lab ipucu hiç söylenmez
+    expect(gezintiSec(IPUCLARI, "lab", taban, bos)).toBeNull();
+    expect(sorSec(IPUCLARI, { ...taban, ziyaret: 9 }, new Set(IPUCLARI.map((x) => x.id).filter((i) => i !== "lab")), () => 0)?.id).not.toBe("lab");
   });
   it("sor: önce görülmemiş, hepsi görüldüyse rastgele eski", () => {
     const d = { ...taban, ziyaret: 9 };
@@ -53,12 +56,25 @@ describe("Pergel ipucu seçimi", () => {
   it("kendiliğinden izin: mod, susma, ziyaret başına bir, 45 s ara", () => {
     const c = { mod: "acik" as const, susturuldu: false, simdi: 100_000, sonOtomatik: null, buZiyaretOtomatik: 0 };
     expect(otomatikIzin(c)).toBe(true);
-    expect(otomatikIzin({ ...c, mod: "sorunca" })).toBe(false);
     expect(otomatikIzin({ ...c, mod: "kapali" })).toBe(false);
     expect(otomatikIzin({ ...c, susturuldu: true })).toBe(false);
     expect(otomatikIzin({ ...c, buZiyaretOtomatik: 1 })).toBe(false);
     expect(otomatikIzin({ ...c, sonOtomatik: 100_000 - OTOMATIK_ARA_MS + 1 })).toBe(false);
     expect(otomatikIzin({ ...c, sonOtomatik: 100_000 - OTOMATIK_ARA_MS })).toBe(true);
+  });
+  it("azalan sıklık: ilk 3 maçtan sonra 3 dk ara, 10 maçtan sonra yalnız önemli ipuçları", () => {
+    const c = { mod: "acik" as const, susturuldu: false, simdi: 1_000_000, sonOtomatik: 1_000_000 - 60_000, buZiyaretOtomatik: 0 };
+    expect(otomatikIzin({ ...c, bitenMac: 3 })).toBe(true);
+    expect(otomatikIzin({ ...c, bitenMac: 4 })).toBe(false);
+    expect(otomatikIzin({ ...c, bitenMac: 4, sonOtomatik: 1_000_000 - SEYREK_ARA_MS })).toBe(true);
+    const d = { ...taban, ziyaret: 2, seviyeler: [3, 3, 3], takimElementleri: ["kor", "girdap", "kaya"] };
+    const gor = new Set(["ulti-acik"]);
+    expect(otomatikSec(IPUCLARI, { ...d, bitenMac: 2 }, gor)?.id).toBe("zitlik");
+    expect(otomatikSec(IPUCLARI, { ...d, bitenMac: 11 }, gor)).toBeNull();
+    expect(otomatikSec(IPUCLARI, { ...d, bitenMac: 11, takimEksik: 1 }, gor)?.id).toBe("takim-eksik");
+  });
+  it("metinler genel oyun terimleriyle (04-sozluk.md): lore adı 'Ata' oyuncuya görünmez", () => {
+    for (const x of IPUCLARI) expect(x.metin).not.toMatch(/\bAta\b|Ata'/);
   });
   it("üç okunmamış kapatma susturur; okunan sayacı sıfırlar", () => {
     let s = kapatmaSonucu(0, 300);

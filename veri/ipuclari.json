@@ -31,7 +31,7 @@
    "id": "ruh-ozel",
    "kosul": "ruh-ozel",
    "ifade": "aslinda",
-   "metin": "Her Çekirdeğin bir **ruhu** var. Özel Yetenek'i kullandığında arkanda belirir, izle!",
+   "metin": "Her Çekirdeğin **Özel Yetenek**'i farklıdır. Maçta **2** tuşuyla kullanılır.",
    "oncelik": 80,
    "otomatik": false,
    "hedef": "yuva"
@@ -40,7 +40,7 @@
    "id": "ulti-kilit",
    "kosul": "ulti-kilit",
    "ifade": "aslinda",
-   "metin": "**Ulti** Lv.3'te açılır ve maçta bir kez kullanılır. O an elementinin **Ata**'sı uyanır.",
+   "metin": "**Ulti** Lv.3'te açılır ve maçta bir kez kullanılır. O an elementinin **ruhu** belirir.",
    "oncelik": 70,
    "otomatik": true,
    "hedef": null
@@ -49,7 +49,7 @@
    "id": "ulti-acik",
    "kosul": "ulti-acik",
    "ifade": "sevinc",
-   "metin": "Bir Çekirdeğin Lv.3 oldu! Enerjin 3 dilim dolunca **3** tuşu: Ata'yı uyandırırsın.",
+   "metin": "Bir Çekirdeğin Lv.3 oldu! Enerjin 3 dilim dolunca **3** tuşu: Ulti.",
    "oncelik": 30,
    "otomatik": true,
    "hedef": null

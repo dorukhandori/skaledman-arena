@@ -9,8 +9,16 @@ export const OTOMATIK_ARA_MS = 45_000;
 /** Bu kadar kısa sürede kapatılan balon "okunmadı" sayılır. */
 export const OKUNDU_ESIK_MS = 2000;
 export const OKUNMADAN_SUSMA = 3;
+/** Azalan sıklık (SANAT entegrasyonu; sadelik: Pergel yardımcıdır, öğrenen oyuncuyu yalnız açarken konuşur):
+ *  biten maç ≤ ILK_MACLAR iken kurallar aynen; sonra iki kendiliğinden ipucu arası SEYREK_ARA_MS;
+ *  SUSKUN_MAC'tan sonra yalnız ilerlemeyi engelleyen ya da yeni açılan ipuçları (öncelik ≤ ONEMLI_ONCELIK). */
+export const ILK_MACLAR = 3;
+export const SEYREK_ARA_MS = 180_000;
+export const SUSKUN_MAC = 10;
+export const ONEMLI_ONCELIK = 40;
 
-export type PergelModu = "acik" | "sorunca" | "kapali";
+/** Ayarlar › İpuçları: Açık / Kapalı (sadelik: tek anahtar; "yalnız sorunca" kendiliğinden azalan sıklıkla karşılanır). */
+export type PergelModu = "acik" | "kapali";
 
 /** Atölye durumundan çıkarılan anlık görüntü; ipucu seçimi yalnız buna bakar. */
 export interface AtolyeDurumu {
@@ -26,6 +34,10 @@ export interface AtolyeDurumu {
   marketYeni: boolean;
   /** Son maç ring out ile kaybedildi; sunucu bu veriyi vermiyorsa undefined (tetik hiç çalışmaz) */
   sonMacRingOutKayip?: boolean;
+  /** Topaç Lab düğmesi görünür mü (yalnız ?gelistir=1, sadelik S-10); değilse "lab" ipucu söylenmez */
+  labVar?: boolean;
+  /** Bu tarayıcıda biten maç sayısı (azalan sıklık); verilmezse 0 */
+  bitenMac?: number;
 }
 
 function cark(e: string): number { return ELEMENT_CARKI.indexOf(e as (typeof ELEMENT_CARKI)[number]); }
@@ -58,8 +70,8 @@ export function kosulSagli(kosul: Ipucu["kosul"], d: AtolyeDurumu): boolean {
     case "zitlik": return zitCiftVarMi(d.takimElementleri);
     case "market-acildi": return d.marketYeni;
     case "stamina": return d.ziyaret <= 3;
-    case "ruh-ozel":
-    case "lab": return true;
+    case "lab": return d.labVar === true;
+    case "ruh-ozel": return true;
   }
 }
 
@@ -67,7 +79,8 @@ const oncelikSirasi = (a: Ipucu, b: Ipucu): number => a.oncelik - b.oncelik;
 
 /** Ekran açılınca kendiliğinden söylenecek ipucu. "stamina" yalnız başka aday yoksa (spec § 4). */
 export function otomatikSec(liste: readonly Ipucu[], d: AtolyeDurumu, goruldu: ReadonlySet<string>): Ipucu | null {
-  const aday = liste.filter((x) => x.otomatik && !goruldu.has(x.id) && kosulSagli(x.kosul, d)).sort(oncelikSirasi);
+  const tavan = (d.bitenMac ?? 0) > SUSKUN_MAC ? ONEMLI_ONCELIK : Infinity;
+  const aday = liste.filter((x) => x.otomatik && x.oncelik <= tavan && !goruldu.has(x.id) && kosulSagli(x.kosul, d)).sort(oncelikSirasi);
   return aday.find((x) => x.kosul !== "stamina") ?? aday[0] ?? null;
 }
 
@@ -92,12 +105,16 @@ export interface OtomatikBaglam {
   simdi: number;
   sonOtomatik: number | null;
   buZiyaretOtomatik: number;
+  /** biten maç sayısı (azalan sıklık); verilmezse 0 */
+  bitenMac?: number;
 }
 
-/** Kendiliğinden konuşma izni: mod açık, sessizlik yok, ziyarette ilk, son kendiliğinden ipucundan ≥ 45 s. */
+/** Kendiliğinden konuşma izni: mod açık, sessizlik yok, ziyarette ilk, son kendiliğinden ipucundan ≥ 45 s
+ *  (ilk 3 maçtan sonra ≥ 3 dk). */
 export function otomatikIzin(c: OtomatikBaglam): boolean {
   if (c.mod !== "acik" || c.susturuldu || c.buZiyaretOtomatik >= 1) return false;
-  return c.sonOtomatik === null || c.simdi - c.sonOtomatik >= OTOMATIK_ARA_MS;
+  const ara = (c.bitenMac ?? 0) > ILK_MACLAR ? SEYREK_ARA_MS : OTOMATIK_ARA_MS;
+  return c.sonOtomatik === null || c.simdi - c.sonOtomatik >= ara;
 }
 
 /** Balon kapatıldı: okunmadan kapatma sayacı güncellenir (okunduysa sıfırlanır) ve susma gerekir mi. */

@@ -331,6 +331,7 @@ class AtolyeEkrani {
         seviyeler: v.cekirdekler.map((c) => c.seviye),
         takimElementleri: yv.map(tanim).filter((t): t is string => !!t).map((t) => cekirdekBul(t).element),
         marketYeni: new URLSearchParams(location.search).get("mesaj") === "ilkdevir",
+        labVar: gelistirAcik(),
         // sonMacRingOutKayip: /api/ben son maç sonucunu vermiyor (Paca SA #17); ring-out ipucu bu yüzden çalışmaz.
       },
     });

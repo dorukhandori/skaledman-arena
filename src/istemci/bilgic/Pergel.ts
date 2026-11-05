@@ -1,4 +1,4 @@
-import { ayarlariOku } from "../oyun/Ayarlar.ts";
+import { ayarlariOku, bitenMacSayisi } from "../oyun/Ayarlar.ts";
 import { el, kalin } from "../ekranlar/arayuz.ts";
 import { type Ipucu, IPUCLARI } from "./ipuclari.ts";
 import { kayitOku, kayitYaz, oturumOkuPergel, oturumYazPergel } from "./depo.ts";
@@ -10,39 +10,50 @@ import {
 // Pergel: Atölye'nin gözlüklü bilgici (docs/ux/bilgic-pergel.md). Modal değil, odağı çalmaz, sol altta durur;
 // balon role=status/aria-live=polite. UI yalnız okur: oyun durumu üretmez, ipucu seçimi secim.ts'de saf.
 
-const PORTRE_BOYUT = "4.2rem";
 const KUCULT_MS = 12_000;
 const GEZINTI_EN_COK = 3;
 
+// Kuşak Taşı menü dili (src/istemci/stil/jetonlar.css + bilesenler.css): taş-bronz panel, pixel yazı (m5x7 / Jersey 10),
+// gradyan/bulanık gölge/yuvarlak köşe yok; ölçü mantıksal px × var(--p). Balonda tek düğme (TAMAM): ekranın ana eylemi
+// OYNA kalır (sadelik S-2); "başka ipucu" rozet tıklaması ya da H ile.
 const STIL = `
-.pergel { position:fixed; left:.9rem; bottom:.9rem; z-index:20; display:flex; align-items:flex-end; gap:.6rem; max-width:calc(100% - 1.8rem); pointer-events:none; }
+.pergel { position:fixed; left:calc(8 * var(--p)); bottom:calc(8 * var(--p)); z-index:20; display:flex; align-items:flex-end; gap:calc(4 * var(--p));
+  max-width:calc(100% - 16 * var(--p)); pointer-events:none; color:var(--ink); }
 .pergel > * { pointer-events:auto; }
-.pergel .p-rozet { position:relative; width:${PORTRE_BOYUT}; height:${PORTRE_BOYUT}; flex:none; padding:0; background:#10222a; border:3px solid #050d10; border-radius:50%;
-  box-shadow:0 0 0 2px #24414b; cursor:pointer; overflow:hidden; display:flex; align-items:center; justify-content:center; transition:transform .25s ease, opacity .25s ease; }
-.pergel .p-rozet img { width:100%; height:100%; object-fit:contain; image-rendering:pixelated; }
-.pergel .p-rozet .p-yedek { font:900 1.6rem/1 "Trebuchet MS",system-ui; color:#f4cf47; letter-spacing:-2px; }
+.pergel .p-rozet { position:relative; width:calc(32 * var(--p)); height:calc(32 * var(--p)); flex:none; padding:0; cursor:pointer;
+  background:var(--panel-0); border:var(--p) solid var(--harc); border-radius:0;
+  box-shadow:inset 0 0 0 var(--p) var(--bronz), inset 0 0 0 calc(2 * var(--p)) var(--golge), 0 calc(2 * var(--p)) 0 0 var(--golge);
+  overflow:hidden; display:flex; align-items:flex-end; justify-content:center; }
+.pergel .p-rozet:hover { box-shadow:inset 0 0 0 var(--p) var(--bronz-isik), inset 0 0 0 calc(2 * var(--p)) var(--golge), 0 calc(2 * var(--p)) 0 0 var(--golge); }
+.pergel .p-rozet img { width:calc(28 * var(--p)); height:calc(28 * var(--p)); object-fit:contain; image-rendering:pixelated; }
+.pergel .p-rozet .p-yedek { font:400 var(--y-20)/1 var(--font-baslik); color:var(--gold); align-self:center; }
 .pergel .p-rozet .p-yedek::before { content:"o-o"; }
-.pergel .p-nokta { position:absolute; right:.15rem; top:.15rem; width:.8rem; height:.8rem; border-radius:50%; background:#f4cf47; border:2px solid #050d10; display:none; }
+.pergel .p-nokta { position:absolute; right:calc(2 * var(--p)); top:calc(2 * var(--p)); width:calc(4 * var(--p)); height:calc(4 * var(--p));
+  background:var(--gold); box-shadow:0 0 0 var(--p) var(--golge); display:none; }
 .pergel.yeni .p-nokta { display:block; }
-.pergel .p-balon { position:relative; width:min(21rem, calc(100vw - 7.5rem)); padding:.7rem .85rem .6rem; background:#fff6c8; color:#2a2104; border:3px solid #050d10;
-  border-radius:12px 12px 12px 3px; box-shadow:0 4px 14px rgba(0,0,0,.55); font:600 .92rem/1.4 system-ui,sans-serif; opacity:0; transform:translateY(.6rem) scale(.96);
-  visibility:hidden; transition:opacity .25s ease, transform .25s ease, visibility 0s linear .25s; }
-.pergel.acik .p-balon { opacity:1; transform:none; visibility:visible; transition:opacity .25s ease, transform .25s ease; }
-.pergel .p-metin { margin:0 0 .5rem; }
-.pergel .p-metin b { color:#8a2a00; }
+.pergel .p-balon { position:relative; width:min(calc(196 * var(--p)), calc(100vw - 56 * var(--p))); padding:calc(4 * var(--p)) calc(6 * var(--p));
+  background:var(--panel) var(--k-doku-panel, none) 0 0 / calc(32 * var(--p)) calc(32 * var(--p));
+  border:var(--p) solid var(--harc); border-radius:0;
+  box-shadow:inset 0 0 0 var(--p) var(--bronz), inset 0 calc(2 * var(--p)) 0 0 #2a3146, 0 calc(2 * var(--p)) 0 0 var(--golge);
+  font:400 var(--y-16)/.8 var(--font-etiket); letter-spacing:0; visibility:hidden; opacity:0; }
+/* balon kuyruğu: rozete bakan 2 basamaklı pixel üçgen (gradyan değil, düz kutular) */
+.pergel .p-balon::before, .pergel .p-balon::after { content:""; position:absolute; left:calc(-3 * var(--p)); background:var(--bronz); width:calc(3 * var(--p)); }
+.pergel .p-balon::before { bottom:calc(6 * var(--p)); height:calc(4 * var(--p)); }
+.pergel .p-balon::after { left:calc(-5 * var(--p)); bottom:calc(7 * var(--p)); width:calc(2 * var(--p)); height:calc(2 * var(--p)); }
+.pergel.acik .p-balon { visibility:visible; opacity:1; animation:p-gir calc(3 * var(--kare)) steps(3) both; }
+@keyframes p-gir { from { transform:translateY(calc(6 * var(--p))); opacity:0; } to { transform:none; opacity:1; } }
+.pergel .p-metin { margin:0 0 calc(3 * var(--p)); }
+.pergel .p-metin b { color:var(--gold); font-weight:400; }
 .pergel.kucuk .p-metin { margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
 .pergel.kucuk .p-dugmeler { display:none; }
-.pergel .p-dugmeler { display:flex; gap:.5rem; justify-content:flex-end; }
-.pergel .p-dugmeler button { padding:.3rem .7rem; background:#173039; color:#f3f1e8; border:2px solid #050d10; border-radius:7px; font:800 .82rem system-ui; cursor:pointer; box-shadow:0 2px 0 #050d10; }
-.pergel .p-dugmeler button:focus-visible, .pergel .p-rozet:focus-visible { outline:3px solid #fff; outline-offset:2px; box-shadow:0 0 0 6px #050d10; }
+.pergel .p-dugmeler { display:flex; gap:calc(4 * var(--p)); justify-content:flex-end; align-items:center; }
+.pergel .p-dugmeler .p-kisayol { margin-right:auto; color:var(--soluk); }
+.pergel .p-dugme:focus-visible, .pergel .p-rozet:focus-visible { outline:calc(2 * var(--p)) solid #fff; outline-offset:var(--p); }
 .pergel.sessiz-gizli { display:none; }
-@media (prefers-reduced-motion: reduce) {
-  .pergel .p-balon, .pergel.acik .p-balon { transform:none; transition:opacity .25s ease, visibility 0s; }
-  .pergel .p-rozet { transition:none; }
-}
+@media (prefers-reduced-motion: reduce) { .pergel.acik .p-balon { animation:none; } }
 @media (max-width:600px) {
-  .pergel { left:0; right:0; bottom:0; max-width:none; padding:.5rem; background:rgba(7,10,28,.92); border-top:2px solid #24414b; }
-  .pergel:not(.acik) { background:none; border:0; right:auto; padding:.5rem; }
+  .pergel { left:0; right:0; bottom:0; max-width:none; padding:calc(4 * var(--p)); background:var(--tas-1); box-shadow:inset 0 var(--p) 0 0 var(--bronz); }
+  .pergel:not(.acik) { background:none; box-shadow:none; right:auto; }
   .pergel .p-balon { width:auto; flex:1 1 auto; }
   .pergel:not(.acik) .p-balon { display:none; }
 }
@@ -64,7 +75,7 @@ export function pergelKur(g: PergelGirdi): () => void {
   if (mod === "kapali") return () => {};
   const kayit = kayitOku(g.oyuncuId);
   const goruldu = new Set(kayit.goruldu);
-  const durum: AtolyeDurumu = { ...g.durum, ziyaret: kayit.ziyaret + 1 };
+  const durum: AtolyeDurumu = { bitenMac: bitenMacSayisi(), ...g.durum, ziyaret: kayit.ziyaret + 1 };
   kayitYaz(g.oyuncuId, { goruldu: [...goruldu], ziyaret: durum.ziyaret });
   let oturum = oturumOkuPergel();
   let buZiyaretOtomatik = 0;
@@ -90,9 +101,9 @@ export function pergelKur(g: PergelGirdi): () => void {
   balon.setAttribute("aria-atomic", "true");
   const metin = el("p", "p-metin", balon);
   const dg = el("div", "p-dugmeler", balon);
-  const baska = el("button", "", dg, "Başka?");
-  const tamam = el("button", "", dg, "Tamam");
-  baska.type = tamam.type = "button";
+  el("span", "p-kisayol", dg, "H: başka ipucu");
+  const tamam = el("button", "k-dugme kucuk p-dugme", dg, "Tamam");
+  tamam.type = "button";
   img.src = "/bilgic/anlatiyor.png";
 
   const zamanla = (f: () => void, ms: number): number => {
@@ -143,14 +154,13 @@ export function pergelKur(g: PergelGirdi): () => void {
     if (x) goster(x, false);
   }
 
-  // Rozet yanındaki nokta: gösterilmemiş otomatik ipucu bekliyorsa (ör. "Yalnız sorunca" ya da susturulmuş)
+  // Rozet yanındaki nokta: gösterilmemiş otomatik ipucu bekliyorsa (ör. azalan sıklık ya da susturulmuş)
   const beklemede = () => otomatikSec(IPUCLARI, durum, goruldu) !== null;
   const notuYenile = () => { if (!acikMi()) kap.classList.toggle("yeni", beklemede()); };
   notuYenile();
 
   rozet.addEventListener("click", () => { if (acikMi() && !kap.classList.contains("kucuk")) kapat(); else sor(); });
   tamam.addEventListener("click", () => { kapat(); });
-  baska.addEventListener("click", () => { sor(); });
   metin.addEventListener("click", () => { if (kap.classList.contains("kucuk")) { kap.classList.remove("kucuk"); } });
 
   const tus = (e: KeyboardEvent): void => {
@@ -186,7 +196,7 @@ export function pergelKur(g: PergelGirdi): () => void {
 
   // Kendiliğinden belirme: ekran açılışından 1,5 s sonra
   zamanla(() => {
-    if (!otomatikIzin({ mod, susturuldu: oturum.susturuldu, simdi: simdi(), sonOtomatik: oturum.sonOtomatik, buZiyaretOtomatik })) return;
+    if (!otomatikIzin({ mod, susturuldu: oturum.susturuldu, simdi: simdi(), sonOtomatik: oturum.sonOtomatik, buZiyaretOtomatik, bitenMac: durum.bitenMac })) return;
     if (acikMi()) return;
     const x = otomatikSec(IPUCLARI, durum, goruldu);
     if (x) goster(x, true);

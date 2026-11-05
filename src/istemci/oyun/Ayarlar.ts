@@ -15,8 +15,8 @@ export interface OyunAyarlari {
   kontrast: "kapali" | "acik";
   /** GU-00: "acik" = eski tam üstten sunum (erişilebilirlik); varsayılan Hibrit eğik sunum. Sonraki maçta uygulanır. */
   duzGorunum: "kapali" | "acik";
-  /** Atölye'deki bilgiç Pergel (docs/ux/bilgic-pergel.md § 2.6) */
-  pergel: "acik" | "sorunca" | "kapali";
+  /** Ayarlar › İpuçları: Atölye'deki rehber Pergel (docs/ux/bilgic-pergel.md § 2.6; SANAT: tek anahtar Açık/Kapalı) */
+  pergel: "acik" | "kapali";
 }
 
 export const AYAR_SECENEKLERI: { [K in keyof OyunAyarlari]: { ad: string; secenekler: { deger: OyunAyarlari[K]; ad: string }[] } } = {
@@ -29,7 +29,7 @@ export const AYAR_SECENEKLERI: { [K in keyof OyunAyarlari]: { ad: string; secene
   ses: { ad: "Ses (M)", secenekler: [{ deger: "acik", ad: "Açık" }, { deger: "kapali", ad: "Kapalı" }] },
   kontrast: { ad: "Yüksek kontrast HUD", secenekler: [{ deger: "kapali", ad: "Kapalı" }, { deger: "acik", ad: "Açık" }] },
   duzGorunum: { ad: "Düz görünüm (sonraki maç)", secenekler: [{ deger: "kapali", ad: "Kapalı" }, { deger: "acik", ad: "Açık" }] },
-  pergel: { ad: "Pergel ipuçları", secenekler: [{ deger: "acik", ad: "Açık" }, { deger: "sorunca", ad: "Yalnız sorunca" }, { deger: "kapali", ad: "Kapalı" }] },
+  pergel: { ad: "İpuçları", secenekler: [{ deger: "acik", ad: "Açık" }, { deger: "kapali", ad: "Kapalı" }] },
 };
 
 const ANAHTAR = "devran.ayarlar.v1";
@@ -85,6 +85,10 @@ export function hisAyari(a: OyunAyarlari): HisAyarlari {
 const IPUCU_ANAHTAR = "devran.sekmeIpucu.v1";
 export function sekmeIpucuGoster(): boolean {
   try { return Number(localStorage.getItem(IPUCU_ANAHTAR) ?? 0) < 3; } catch { return true; }
+}
+/** Bu tarayıcıda biten maç sayısı (aynı sayaç; Pergel'in azalan sıklığı). */
+export function bitenMacSayisi(): number {
+  try { return Number(localStorage.getItem(IPUCU_ANAHTAR) ?? 0) || 0; } catch { return 0; }
 }
 export function sekmeIpucuMacBitti(): void {
   try { localStorage.setItem(IPUCU_ANAHTAR, String(Number(localStorage.getItem(IPUCU_ANAHTAR) ?? 0) + 1)); } catch { /* yok */ }
