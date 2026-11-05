@@ -37,12 +37,15 @@ const META = join(KOK, "veri", "topac-gorsel.json");
 
 /** Sanat kamerası. 1 sprite pikseli = 1 sanat pikseli maçta: topaç kökü × KAMERA.topacCizimOlcek, dünya × KAMERA.yakinlik, pixel önbelleği ×0,5. */
 export const SANAT = {
-  /** GU-C: 26° → 36°: üst yüz (eş merkezli sırtlar + amblem) referans 07 gibi okunur, yan bant hâlâ görünür */
-  yukselti: 36,
+  /** GU-C: 26° → 36°: üst yüz (eş merkezli sırtlar + amblem) referans 07 gibi okunur, yan bant hâlâ görünür.
+   *  GU-D: 36° → 45° (referans 07'nin topaçları ~45° eğik; 42° ve 45° kıyaslandı: ekran/GU-D-egim-kiyas.png). Deneme için
+   *  TOPAC_YUKSELTI ortam değişkeni ezer. Zemin elipsi (KAMERA.zOrani 0,52 ≈ 31°) daha basık kalır: referanstaki gibi
+   *  stilize, topacın üst yüzü kameraya dönük. */
+  yukselti: Number(process.env.TOPAC_YUKSELTI ?? 45),
   birim: 1 / (KAMERA.topacCizimOlcek * KAMERA.yakinlik * KAMERA.pikselCozunurluk),
-  /** GU-D: çanak ×1,83 ile birim 1,16 → 1,01 (topaç sprite'ı ×1,14 iri); 64×64 kare taşıyordu → 76×72 */
+  /** GU-D: çanak ×1,83 ile birim 1,16 → 1,01 (topaç sprite'ı ×1,14 iri); 64×64 kare taşıyordu → 76×76 (42–45° eğimde ön alt kenar için pay) */
   kareW: 76,
-  kareH: 72,
+  kareH: 76,
   capaX: 38,
   capaY: 60,
   superOrnek: 4,
