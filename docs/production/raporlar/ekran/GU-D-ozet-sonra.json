@@ -1,0 +1,15 @@
+{
+ "cekilen": [
+  "docs/production/raporlar/ekran/GU-D-01-normal-sonra.png",
+  "docs/production/raporlar/ekran/GU-D-02-carpisma-sonra.png",
+  "docs/production/raporlar/ekran/GU-D-03-sarmal-iz-sonra.png",
+  "docs/production/raporlar/ekran/GU-D-04-ulti-sonra.png",
+  "docs/production/raporlar/ekran/GU-D-05-topac-lab-sonra.png",
+  "docs/production/raporlar/ekran/GU-D-kiyas-07-sonra.png",
+  "docs/production/raporlar/ekran/GU-D-kiyas-08-sonra.png"
+ ],
+ "cozunurluk": "1280×720 CSS, DPR 2 (2560×1440)",
+ "atlas": true,
+ "carpismaVn": 576.9107739952584,
+ "hatalar": []
+}
