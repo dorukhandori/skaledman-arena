@@ -1,0 +1,153 @@
+{
+ "cekilen": [
+  "docs/production/raporlar/ekran/GU-E-01-seyirci-kartlar.png",
+  "docs/production/raporlar/ekran/GU-E-02-hafif-tam.png",
+  "docs/production/raporlar/ekran/GU-E-02-hafif.png",
+  "docs/production/raporlar/ekran/GU-E-03-orta-tam.png",
+  "docs/production/raporlar/ekran/GU-E-03-orta.png",
+  "docs/production/raporlar/ekran/GU-E-04-agir-tam.png",
+  "docs/production/raporlar/ekran/GU-E-04-agir.png",
+  "docs/production/raporlar/ekran/GU-E-05-kritik-tam.png",
+  "docs/production/raporlar/ekran/GU-E-05-kritik.png",
+  "docs/production/raporlar/ekran/GU-E-06-serit-hafif.png",
+  "docs/production/raporlar/ekran/GU-E-07-serit-agir.png",
+  "docs/production/raporlar/ekran/GU-E-08-serit-kritik.png",
+  "docs/production/raporlar/ekran/GU-E-kiyas-07-ham.png",
+  "docs/production/raporlar/ekran/GU-E-09-temas-yavas-tam.png",
+  "docs/production/raporlar/ekran/GU-E-09-temas-yavas.png",
+  "docs/production/raporlar/ekran/GU-E-09-temas-yavas-serit.png",
+  "docs/production/raporlar/ekran/GU-E-10-temas-hizli-tam.png",
+  "docs/production/raporlar/ekran/GU-E-10-temas-hizli.png",
+  "docs/production/raporlar/ekran/GU-E-10-temas-hizli-serit.png",
+  "docs/production/raporlar/ekran/GU-E-11-temas-biter-serit.png",
+  "docs/production/raporlar/ekran/GU-E-kiyas-08-ham.png",
+  "docs/production/raporlar/ekran/GU-E-kiyas-07-yakin.png",
+  "docs/production/raporlar/ekran/GU-E-kiyas-07.png",
+  "docs/production/raporlar/ekran/GU-E-kiyas-08.png"
+ ],
+ "cozunurluk": "1280×720 CSS, DPR 2 (2560×1440)",
+ "seyirci": {
+  "yigin": [
+   [
+    8,
+    450,
+    148,
+    532
+   ],
+   [
+    812,
+    450,
+    952,
+    532
+   ]
+  ],
+  "yiginKesisim": [
+   0,
+   0
+  ],
+  "panel": [
+   [
+    8,
+    8,
+    308,
+    86
+   ],
+   [
+    652,
+    8,
+    952,
+    86
+   ]
+  ],
+  "panelKesisim": [
+   0,
+   0
+  ]
+ },
+ "atlas": true,
+ "carpisma": {
+  "02-hafif": {
+   "ok": true,
+   "olay": {
+    "vn": 93,
+    "hasar": [
+     10.8,
+     9.6
+    ],
+    "dTik": [
+     0.27,
+     0.26
+    ]
+   }
+  },
+  "03-orta": {
+   "ok": true,
+   "olay": {
+    "vn": 207,
+    "hasar": [
+     26.5,
+     26.7
+    ],
+    "dTik": [
+     0.6,
+     0.96
+    ]
+   }
+  },
+  "04-agir": {
+   "ok": true,
+   "olay": {
+    "vn": 366,
+    "hasar": [
+     46.8,
+     47.1
+    ],
+    "dTik": [
+     1.05,
+     1.2
+    ]
+   }
+  },
+  "05-kritik": {
+   "ok": true,
+   "olay": {
+    "vn": 535,
+    "hasar": [
+     68.4,
+     68.9
+    ],
+    "dTik": [
+     1.2,
+     1.2
+    ]
+   }
+  }
+ },
+ "temas": {
+  "09-temas-yavas": {
+   "temas": {
+    "aktif": true,
+    "sure": 0.13,
+    "guc": 0.15,
+    "kivilcim": 2
+   },
+   "olay": 0
+  },
+  "10-temas-hizli": {
+   "temas": {
+    "aktif": true,
+    "sure": 0.67,
+    "guc": 0.89,
+    "kivilcim": 67
+   },
+   "olay": 0
+  },
+  "biter": {
+   "aktif": false,
+   "sure": 0,
+   "guc": 0.11,
+   "kivilcim": 95
+  }
+ },
+ "hatalar": []
+}
