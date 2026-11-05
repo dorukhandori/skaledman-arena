@@ -43,3 +43,31 @@ export function siddetBul(vn: number, dash: boolean): Siddet {
   if (vn >= HIS.esik.agir) return dash ? "kritik" : "agir";
   return "hafif";
 }
+
+/**
+ * GU-E sürekli şiddet puanı (0..1,2): kıvılcım adedi/hızı/uzunluğu, flaş boyu, hitstop, sarsıntı, squash, yalpa ve ses
+ * perdesi bununla ölçeklenir. Girdiler olaydan: `vn` normal hız, `hasarOran` en büyük hasar / tek vuruş tavanı,
+ * `tikOran` en büyük dTik / tikTavan (0..1). Kademe (siddetBul) aynı kalır; puan kademenin İÇİNDE de değişir.
+ */
+export function siddetPuani(vn: number, hasarOran: number, tikOran: number, kritik: boolean, dash: boolean): number {
+  const e = HIS.esik;
+  const k = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
+  let g = 0.7 * k((vn - e.hafif * 0.6) / (e.kritik - e.hafif * 0.6)) + 0.2 * k(hasarOran) + 0.1 * k(tikOran);
+  if (kritik) g = Math.max(g, 0.85) + 0.15;
+  if (dash) g += 0.1;
+  return g < 0 ? 0 : g > 1.2 ? 1.2 : g;
+}
+
+/** Sürekli temas (sürtünme) akışı: hepsi istemci görseli; sim'in temas durumu okunur, yazılmaz. */
+export const TEMAS = {
+  /** merkezler arası ≤ 2r + bu (sim ayırması sonrası temas = tam 2r) */
+  payPx: 2,
+  /** temas bitince bu kadar s tolerans (tek karelik ayrılmalar akışı kesmesin) */
+  toleransSn: 0.08,
+  /** temas süresi rampası: guc çarpanı = taban + tavan·(1 − e^(−süre/τ)) */
+  rampa: { taban: 0.35, tavan: 0.95, tauSn: 0.7 },
+  /** saniyede kıvılcım: taban + egim·guc */
+  oran: { taban: 8, egim: 130 },
+  /** sürtünme sesi aralığı (s): taban − egim·guc */
+  ses: { taban: 0.17, egim: 0.08, esik: 0.15 },
+} as const;

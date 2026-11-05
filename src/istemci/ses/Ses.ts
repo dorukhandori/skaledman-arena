@@ -124,7 +124,8 @@ class SesCephesi {
   /** M tuşu. Yeni hâli döner. */
   degistir(): boolean { if (this.acik) this.kapat(); else this.ac(); return this.acik; }
 
-  cal(ad: SesAdi, hacim = 1): void {
+  /** `perde` oynatma hızı (1 = özgün; GU-E: çarpışma şiddetiyle ağır vuruş pes, sürtünme tiz). */
+  cal(ad: SesAdi, hacim = 1, perde = 1): void {
     this.sayac[ad] = (this.sayac[ad] ?? 0) + 1;
     if (!this.acik || !this.kilitAcik || !this.yuklenen.has(ad)) return;
     const simdi = performance.now();
@@ -134,10 +135,11 @@ class SesCephesi {
       const katman = KAYIT_KATMANI[ad];
       const hazir = katman?.dosyalar.filter((f) => this.yuklenen.has(`kayit:${f}`)) ?? [];
       hacim *= this.hacim.efekt;
-      void sound.play(ad, { volume: Math.min(1, hacim * (HACIM[ad] ?? 1) * (hazir.length ? SENTEZ_KATMANLI : 1)) });
+      const speed = Math.max(0.5, Math.min(2, perde));
+      void sound.play(ad, { volume: Math.min(1, hacim * (HACIM[ad] ?? 1) * (hazir.length ? SENTEZ_KATMANLI : 1)), speed });
       if (katman && hazir.length) {
         const i = (this.kayitSira[ad] = ((this.kayitSira[ad] ?? -1) + 1) % hazir.length);
-        void sound.play(`kayit:${hazir[i]!}`, { volume: Math.min(1, hacim * katman.hacim) });
+        void sound.play(`kayit:${hazir[i]!}`, { volume: Math.min(1, hacim * katman.hacim), speed });
         this.calinan[`kayit:${hazir[i]!}`] = (this.calinan[`kayit:${hazir[i]!}`] ?? 0) + 1;
       }
       this.calinan[ad] = (this.calinan[ad] ?? 0) + 1;

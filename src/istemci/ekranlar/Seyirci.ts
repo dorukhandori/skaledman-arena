@@ -92,7 +92,7 @@ class SeyirciEkrani {
     this.yetenekGorsel.flas = a.flas;
     Ses.yukle();
     if (a.ses === "acik") Ses.ac(); else Ses.kapat();
-    this.efektler.sesKanca = (ad, hacim) => Ses.cal(ad, hacim);
+    this.efektler.sesKanca = (ad, hacim, perde) => Ses.cal(ad, hacim, perde);
     b.ustYazi.appendChild(this.ust);
     b.app.ticker.add(this.kare);
     (window as unknown as { __seyirci: SeyirciEkrani }).__seyirci = this;

@@ -2,7 +2,9 @@ import { Graphics } from "pixi.js";
 import { AYAR } from "../../paylasilan/kurallar/ayar.ts";
 import type { Dunya, Olay } from "../../paylasilan/sim/durum.ts";
 import { type AtlasAdi, efektAtlasYukle, efektSprite } from "./EfektAtlas.ts";
-import { HIS, type Siddet, siddetBul } from "./his.ts";
+import { aktifMi, staminaOrani } from "../../paylasilan/sim/topac.ts";
+import { HIS, type Siddet, TEMAS, siddetBul, siddetPuani } from "./his.ts";
+import { KivilcimDemeti } from "./Kivilcim.ts";
 import { Parcaciklar } from "./Parcaciklar.ts";
 import { ELEMENT_RENK, renkKaristir } from "./renkler.ts";
 import { SAHNE, type Sahne } from "./Sahne.ts";
@@ -20,7 +22,8 @@ interface Sok { g: Graphics; t: number; sure: number; x: number; y: number; r0: 
 interface Yildiz { x: number; y: number; t: number; sure: number; r: number; n: number; aci: number; renk: number; ex: number; ey: number; f: number }
 interface HizCizgisi { x: number; y: number; dx: number; dy: number; t: number; sure: number; renk: number; uz: number }
 interface Kivrim { x: number; y: number; a0: number; yon: number; t: number; sure: number }
-interface KonumDurumu { hold: { x: number; y: number } | null; kalanMs: number; nx: number; ny: number; x: number; y: number; ilk: boolean }
+/** `yetis`: hitstop bitti, görsel sim'e kritik sönümlü yetişiyor (yalnız o sırada; GU-E öncesi her karede gecikiyordu) */
+interface KonumDurumu { hold: { x: number; y: number } | null; kalanMs: number; nx: number; ny: number; x: number; y: number; ilk: boolean; yetis: boolean; ox: number; oy: number }
 
 export interface HisAyarlari {
   sarsinti: number; // 1 / 0,5 / 0
@@ -32,7 +35,10 @@ export interface HisAyarlari {
 }
 
 /** Ses kancası (05 § 3.3): olay anahtarı → ses adı; ses yoksa sessiz. */
-export type SesKancasi = (ad: "carpisma-hafif" | "carpisma-agir" | "carpisma-kritik" | "duvar" | "dash" | "sekme" | "ring-out" | "parcalanma" | "durma" | "telegraf" | "ulti" | "enerji-doldu" | "mac-sonu", hacim?: number) => void;
+export type SesKancasi = (ad: "carpisma-hafif" | "carpisma-agir" | "carpisma-kritik" | "duvar" | "dash" | "sekme" | "ring-out" | "parcalanma" | "durma" | "telegraf" | "ulti" | "enerji-doldu" | "mac-sonu", hacim?: number, perde?: number) => void;
+
+/** GU-E sürekli temas durumu (doğrulama / ekran görüntüsü). */
+export interface TemasDurumu { aktif: boolean; sure: number; guc: number; kivilcim: number }
 
 export class Efektler {
   readonly parcaciklar = new Parcaciklar();
@@ -54,6 +60,9 @@ export class Efektler {
   private kivrimlar: Kivrim[] = [];
   /** GU-C: sarmal zeminde (iz katmanı, topaçların ALTINDA); efekt katmanında topacın üstünden geçiyordu */
   private kivrimG = new Graphics();
+  /** GU-E: pixel kıvılcım demeti (çarpışma + sürekli temas) */
+  readonly kivilcimlar: KivilcimDemeti;
+  private temas = { sure: 0, guc: 0, birikim: 0, sesSn: 0, kopuk: 1, sayac: 0 };
   /** pişmiş atlas kullanım sayacı (doğrulama) */
   readonly atlasSayac: Record<string, number> = {};
   private atlasDenetimSn = 0;
@@ -62,9 +71,9 @@ export class Efektler {
   sesKanca: SesKancasi = () => {};
 
   constructor(private sahne: Sahne, private gorseller: () => readonly TopacCizimi[]) {
-    sahne.efektKatmani.addChild(this.hizG, this.parcaciklar.kap);
+    this.kivilcimlar = new KivilcimDemeti(new SusRastgele(0x5a4c), sahne.k, sahne.hibrit);
+    sahne.efektKatmani.addChild(this.hizG, this.parcaciklar.kap, this.kivilcimlar.g);
     sahne.izKatmani.addChild(this.kivrimG);
-    if (sahne.hibrit) void efektAtlasYukle("efekt-cekirdek");
     this.ekranFlas.rect(0, 0, SAHNE.genislik, SAHNE.yukseklik).fill(0xffffff);
     this.ekranFlas.alpha = 0;
     sahne.ekranKatmani.addChild(this.ekranFlas);
@@ -72,7 +81,7 @@ export class Efektler {
   }
 
   private static bosKonum(): KonumDurumu {
-    return { hold: null, kalanMs: 0, nx: 0, ny: 0, x: 0, y: 0, ilk: true };
+    return { hold: null, kalanMs: 0, nx: 0, ny: 0, x: 0, y: 0, ilk: true, yetis: false, ox: 0, oy: 0 };
   }
 
   /** Efekt saati çarpanı (Parçalanma yavaş çekimi). */
@@ -82,6 +91,8 @@ export class Efektler {
 
   temizle(): void {
     this.parcaciklar.temizle();
+    this.kivilcimlar.temizle();
+    this.temas = { sure: 0, guc: 0, birikim: 0, sesSn: 0, kopuk: 1, sayac: 0 };
     this.yildizlar = [];
     this.cizgiler = [];
     this.kivrimlar = [];
@@ -96,8 +107,8 @@ export class Efektler {
   }
 
   /**
-   * Görsel konum: hitstop sırasında son konumda bekler (±1 px dik titreme); sonra sim konumuna τ = 60 ms
-   * kritik sönümlü yaklaşma. Fark vMutlak·hitstop'u aşarsa atlar (axiom #32).
+   * Görsel konum: hitstop sırasında son konumda bekler (±1 px dik titreme); sonra bekleme farkı τ = 60 ms kritik
+   * sönümlü söner. Fark vMutlak·hitstop'u aşarsa atlar (axiom #32). Hitstop dışında görsel = sim (ara değerli).
    */
   konum(i: number, hedefX: number, hedefY: number, dt: number): { x: number; y: number } {
     const k = this.konumlar[i]!;
@@ -107,17 +118,21 @@ export class Efektler {
       const tit = (this.rng.sayi() < 0.5 ? -1 : 1) * HIS.hitstopTitremePx;
       return { x: k.hold.x - k.ny * tit, y: k.hold.y + k.nx * tit };
     }
-    k.hold = null;
-    const dx = k.x - hedefX;
-    const dy = k.y - hedefY;
+    // GU-E: yetişme yalnız hitstop sonrası ve hareketten bağımsız: bekleme konumu ile sim arasındaki FARK kritik sönümlü
+    // söner (konum = sim + fark). Önceden her karede görsel, hareket eden sim'in peşinden τ = 60 ms ile geliyordu: hızlı
+    // topaç v·2τ geride çizildiği için çarpışma anında iki topaç ekranda birbirine DEĞMİYORDU (300 br/s'de ~66 px boşluk).
+    if (k.hold) { k.hold = null; k.yetis = true; k.ox = k.x - hedefX; k.oy = k.y - hedefY; }
     const atla = (AYAR.vMutlak * HIS.hitstopMs.bitisTavan) / 1000;
-    if (!Number.isFinite(dx + dy) || Math.hypot(dx, dy) > atla || dt <= 0) { k.x = hedefX; k.y = hedefY; return { x: k.x, y: k.y }; }
-    // kritik sönümlü yaklaşımın kare hızından bağımsız, koşulsuz kararlı biçimi: (1 + t/τ)·e^(−t/τ) çarpanı
-    const t = dt / (HIS.yetismeTauMs / 1000);
-    const c = (1 + t) * Math.exp(-t);
-    k.x = hedefX + dx * c;
-    k.y = hedefY + dy * c;
-    if (Math.hypot(k.x - hedefX, k.y - hedefY) < 0.25) { k.x = hedefX; k.y = hedefY; }
+    if (k.yetis && (!Number.isFinite(k.ox + k.oy) || Math.hypot(k.ox, k.oy) > atla || dt <= 0)) k.yetis = false;
+    if (k.yetis) {
+      // kritik sönümlü sönümün kare hızından bağımsız, koşulsuz kararlı biçimi: (1 + t/τ)·e^(−t/τ) çarpanı
+      const t = dt / (HIS.yetismeTauMs / 1000);
+      const c = (1 + t) * Math.exp(-t);
+      k.ox *= c; k.oy *= c;
+      if (Math.hypot(k.ox, k.oy) < 0.25) k.yetis = false;
+    }
+    k.x = hedefX + (k.yetis ? k.ox : 0);
+    k.y = hedefY + (k.yetis ? k.oy : 0);
     return { x: k.x, y: k.y };
   }
 
@@ -185,13 +200,14 @@ export class Efektler {
   private hava(y: number): number { return this.sahne.hibrit ? y - 30 : y; }
 
   /**
-   * Atlasları ihtiyaç anında yükle (TEMIZLIK #2; efekt-kaynaklari § 8.7). Açılışta yalnız `efekt-cekirdek` (ilk çarpışma
-   * kıvılcım/kritik, kurucuda). `efekt` (toz bulutu, Enerji doldu) ilk çarpışmada ya da Enerji gelince; element atlası
+   * Atlasları ihtiyaç anında yükle (TEMIZLIK #2; efekt-kaynaklari § 8.7). GU-E: açılışta hiçbiri; çarpışma kıvılcımı
+   * yordamsal (Kivilcim.ts), `efekt-cekirdek` (yalnız Parçalanma'nın kritik patlaması) bir topacın staminası yarıya inince. `efekt` (toz bulutu, Enerji doldu) ilk çarpışmada ya da Enerji gelince; element atlası
    * (Ulti, parçalanma) o topacın Enerjisi yarıya yaklaşınca, staminası yarıya inince ya da yetenek başlayınca; Şimşek'in
    * çarpışma kıvılcımı her çarpışmada çalındığından hemen. Yüklenmeden çalınan an yordamsal yedekle çizilir.
    */
   private atlasHazirla(d: Dunya, o: Olay | null): void {
     if (!this.sahne.hibrit) return;
+    if (d.topaclar.some((t, i) => t.stamina <= d.profiller[i]!.maxStamina * ATLAS_ESIK.elementStamina)) void efektAtlasYukle("efekt-cekirdek");
     if (o?.tur === "carpisma" || d.topaclar.some((t) => t.enerji >= ATLAS_ESIK.ortakEnerji)) void efektAtlasYukle("efekt");
     for (let i = 0; i < d.profiller.length; i++) {
       const p = d.profiller[i]!;
@@ -216,6 +232,19 @@ export class Efektler {
     this.sahne.efektKatmani.addChild(s);
     this.atlasSayac[anim] = (this.atlasSayac[anim] ?? 0) + 1;
     return true;
+  }
+
+  /** Son çarpışmanın şiddet puanı (doğrulama). */
+  sonSiddet = 0;
+
+  /** Çarpışma sonrası topaç tepkisi (yalnız görsel): squash puanla ölçeklenir. */
+  private tepki(o: Extract<Olay, { tur: "carpisma" }>, _d: Dunya, gp: number, dash: boolean, sd: Siddet, _hitstopMs: number): void {
+    const g = this.gorseller();
+    const g1 = Math.min(1, gp);
+    const [sx, sy] = dash && sd !== "hafif" ? HIS.squash.dash : [1 - (0.08 + 0.24 * g1), 1 + (0.08 + 0.24 * g1)];
+    const sure = (70 + 100 * g1) / 1000;
+    g[0]?.squash(o.nx, o.nz, sx, sy, sure);
+    g[1]?.squash(o.nx, o.nz, sx, sy, sure);
   }
 
   /** Işınsal yıldız patlaması (referans 07 temas noktası). */
@@ -250,38 +279,49 @@ export class Efektler {
         if (o.zitElement) this.sayac.zitElement++;
         const x = S.ekranX(o.x);
         const y = S.ekranY(o.z);
+        const hy = this.hava(y);
+        const h0 = y - hy;
         const r0 = ELEMENT_RENK[o.taraflar[0].element];
         const r1 = ELEMENT_RENK[o.taraflar[1].element];
-        if (sd === "yok") { this.toz(x, y, 2, 0x9aa8ad); return; }
-        this.sesKanca(sd === "kritik" ? "carpisma-kritik" : sd === "agir" ? "carpisma-agir" : "carpisma-hafif");
-        // hitstop
-        let ms: number = HIS.hitstopMs[sd];
+        // GU-E: sürekli şiddet puanı (vn + hasar + tik + kritik/dash); kademe içinde de ölçekler
+        const hasarOran = Math.max(...o.taraflar.map((t, i) => t.hasar / (AYAR.tekVurusTavani * d.profiller[i]!.maxStamina)));
+        const tikOran = Math.max(o.taraflar[0].dTik, o.taraflar[1].dTik) / AYAR.tikTavan;
+        const gp = siddetPuani(o.vn, hasarOran, tikOran, sd === "kritik", dash);
+        this.sonSiddet = gp;
+        if (sd === "yok") {
+          // hafif sürtme: birkaç kıvılcım, flaşsız; çok kısık tık
+          this.kivilcimlar.patlat(x, y, h0, o.nx, o.nz, gp * 0.5, this.ayar.parcacik, false);
+          this.toz(x, y, 2, 0x9aa8ad);
+          if (o.vn > HIS.esik.hafif * 0.4) this.sesKanca("carpisma-hafif", 0.18, 1.3 + this.rng.aralik(0, 0.15));
+          return;
+        }
+        // ses: şiddetle yükselen hacim, ağırlaştıkça pesleşen perde (CC0 sentez + Kenney katmanı aynı)
+        const g1 = Math.min(1, gp);
+        this.sesKanca(sd === "kritik" ? "carpisma-kritik" : sd === "agir" ? "carpisma-agir" : "carpisma-hafif", 0.45 + 0.55 * g1, 1.12 - 0.22 * g1 + this.rng.isaretli() * 0.04);
+        // hitstop: 25 → 100 ms puanla (05 § 3.2 hafif 33 / ağır 66 / kritik 100 ile örtüşür; tavanlar hitstop() içinde)
+        let ms = 25 + 75 * g1;
         if (o.zitElement) ms += HIS.hitstopMs.zitEk;
         if (dash) ms = Math.max(HIS.hitstopMs.dashTaban, ms) + HIS.hitstopMs.dashEk;
-        this.hitstop(0, ms, o.nx, o.nz, false, sd === "kritik");
+        const ms0 = this.hitstop(0, ms, o.nx, o.nz, false, sd === "kritik");
         this.hitstop(1, ms, o.nx, o.nz, false, sd === "kritik");
-        // sarsıntı (ilk 2 kare normal boyunca)
-        let px: number = dash ? Math.max(HIS.sarsintiPx.dash, HIS.sarsintiPx[sd]) : HIS.sarsintiPx[sd];
+        // sarsıntı (ilk 2 kare normal boyunca): 1 → 7 px puanla
+        let px = 1 + 6 * g1;
+        if (dash) px = Math.max(HIS.sarsintiPx.dash, px);
         if (o.zitElement) px *= HIS.zitSarsintiCarpani;
         S.sars(Math.sqrt(px / SAHNE.sarsintiTavan) * Math.sqrt(this.ayar.sarsinti), o.nx, o.nz);
         // flaş: topaç tint, kritikte tam ekran
         g[0]?.flas(HIS.tintKare[sd]);
         g[1]?.flas(HIS.tintKare[sd]);
         if (sd === "kritik") this.ekranFlasi(HIS.ekranFlas.kritik[0], HIS.ekranFlas.kritik[1]);
-        // squash/stretch normal ekseninde
-        const [sx, sy] = dash && sd !== "hafif" ? HIS.squash.dash : HIS.squash[sd];
-        const sure = HIS.squashMs[sd] / 1000;
-        g[0]?.squash(o.nx, o.nz, sx, sy, sure);
-        g[1]?.squash(o.nx, o.nz, sx, sy, sure);
-        // kıvılcım: element renkleri (yarı yarı), karşıtta iki renkli çift çember
-        const n = Math.round(HIS.parcacik[sd] * (o.zitElement ? HIS.zitParcacikCarpani : 1));
-        const hiz: [number, number] = sd === "kritik" ? [220, 520] : sd === "agir" ? [160, 400] : [110, 260];
-        const hy = this.hava(y);
-        this.kivilcim(x, hy, o.nx, o.nz, n, [r0.acik, r1.acik, 0xffffff, r0.vurgu, r1.vurgu], hiz);
-        // GU-04: yıldız patlaması + iki yanda topaçların renginde hız çizgileri; ağır/kritikte pişmiş kıvılcım sheet'i
+        this.tepki(o, d, gp, dash, sd, ms0);
+        // GU-E kıvılcım demeti (referans 07): çekirdek flaş + zemin elipsinde sıçrayan çizgiler; adet/hız/uzunluk/parlaklık puanla
+        this.kivilcimlar.patlat(x, y, h0, o.nx, o.nz, gp * (o.zitElement ? 1.1 : 1), this.ayar.parcacik);
+        // element renkli birkaç kırıntı (iki topacın kimliği; kıvılcımın kendisi sarı-beyaz)
+        const n = Math.round(HIS.parcacik[sd] * 0.2 * (o.zitElement ? HIS.zitParcacikCarpani : 1));
+        this.kivilcim(x, hy, o.nx, o.nz, n, [r0.acik, r1.acik, r0.vurgu, r1.vurgu], [90, 200 + 200 * g1]);
         const e = S.ekranYon(o.nx, o.nz);
-        // GU-D: ışınlar normal boyunca %40'a basık (referans 07: yıldız iki topacın arasında dar, topaçları örtmez)
-        this.yildiz(x, hy, sd === "kritik" ? 34 : sd === "agir" ? 24 : 13, sd === "hafif" ? 6 : 10, sd === "kritik" ? 0.2 : 0.14, undefined, e.x, e.y, 0.4);
+        // kritik: GU-D dar yıldız (ışınlar normal boyunca %40'a basık) korunur
+        if (sd === "kritik") this.yildiz(x, hy, 34, 10, 0.2, undefined, e.x, e.y, 0.4);
         const ta = d.topaclar[0]!;
         const tb = d.topaclar[1]!;
         if (sd !== "hafif" || dash) {
@@ -296,14 +336,15 @@ export class Efektler {
           if (this.kivrimlar.length > 3) this.kivrimlar.shift();
           this.kivrimlar.push({ x: S.ekranX(tj.x), y: S.ekranY(tj.z), a0: Math.atan2(y - S.ekranY(tj.z), x - S.ekranX(tj.x)), yon: d.profiller[j]!.donus === "sol" ? -1 : 1, t: 0, sure: sd === "kritik" ? 0.6 : 0.45 });
         }
-        // GU-D: kritik sheet'i ×0,6 (tam boyda halkası iki topacın üst yüzünü örtüyordu)
-        if (sd === "kritik") this.sheet("efekt-cekirdek", "kritik", x, hy, e.x < 0, 0.6);
-        else if (sd === "agir") this.sheet("efekt-cekirdek", "kivilcim", x, hy, e.x < 0);
+        // GU-E: pişmiş kritik sheet'i (yumuşak sarı halka; referansta yok) çarpışmadan çıktı, yalnız Parçalanma'da kalır
         if (sd !== "hafif" && (o.taraflar[0].element === "simsek" || o.taraflar[1].element === "simsek")) this.sheet("efekt-simsek", "simsek-carpma", x, hy, e.x < 0, 0.6);
+        if (gp >= 0.45) {
+          // halka şok dalgası (zeminde elips), boyu ve süresi puanla
+          const sure2 = HIS.sok.agirMs + (HIS.sok.kritikMs - HIS.sok.agirMs) * Math.min(1, (gp - 0.45) / 0.55);
+          this.sok(x, y, 6, 26 + 34 * g1, sure2, renkKaristir(r0.orta, r1.orta, 0.5), o.zitElement ? r1.orta : null, gp > 0.8 ? 4 : 3);
+          this.sok(x, y, 2, 14 + 24 * g1, sure2 * 0.7, 0xfff6c8, null, 2);
+        }
         if (sd !== "hafif") {
-          const sure2 = sd === "kritik" ? HIS.sok.kritikMs : HIS.sok.agirMs;
-          this.sok(x, y, 6, sd === "kritik" ? 56 : 40, sure2, renkKaristir(r0.orta, r1.orta, 0.5), o.zitElement ? r1.orta : null, 3);
-          if (sd === "kritik") this.sok(x, y, 2, 36, sure2 * 0.8, 0xffffff, null, 2);
           const z = sd === "kritik" ? HIS.zoom.kritik : HIS.zoom.agir;
           this.zoom(z[0], z[1]);
         }
@@ -505,6 +546,68 @@ export class Efektler {
     }
   }
 
+  /** GU-E: sürekli temas durumu (doğrulama). */
+  get temasDurumu(): TemasDurumu {
+    return { aktif: this.temas.kopuk < TEMAS.toleransSn, sure: Math.round(this.temas.sure * 100) / 100, guc: Math.round(this.temas.guc * 100) / 100, kivilcim: this.temas.sayac };
+  }
+
+  /**
+   * GU-E sürekli temas (sürtünme): iki topaç birbirine yaslıyken (merkezler arası ≤ 2r + pay; sim ayırması sonrası temas tam
+   * 2r) sim olayı beklenmeden temas noktasında kıvılcım akışı + ışıma. Güç = dönüş (stamina oranı; aynı dönüş yönünde
+   * yüzeyler zıt kayar, daha çok) + bağıl teğet hız + itme, temas süresiyle rampalanır; temas bitince söner. Sim'e yazmaz.
+   */
+  private temasGuncelle(dt: number, d: Dunya): void {
+    const T = this.temas;
+    const [a, b] = d.topaclar;
+    const [pa, pb] = d.profiller;
+    let hedef = 0;
+    let nx = 1, nz = 0, yon = 0;
+    if (a && b && pa && pb && aktifMi(a) && aktifMi(b) && a.sekmeKalan === 0 && b.sekmeKalan === 0 && a.koruma === 0 && b.koruma === 0) {
+      const dx = b.x - a.x, dz = b.z - a.z;
+      const mesafe = Math.hypot(dx, dz);
+      if (mesafe <= AYAR.topacYaricap * 2 + TEMAS.payPx) {
+        if (mesafe > 1e-6) { nx = dx / mesafe; nz = dz / mesafe; }
+        const rvx = a.vx - b.vx, rvz = a.vz - b.vz;
+        const vt = rvx * -nz + rvz * nx;
+        const vn = rvx * nx + rvz * nz;
+        yon = Math.abs(vt) > 20 ? Math.sign(vt) : 0;
+        const donus = (staminaOrani(a, pa) + staminaOrani(b, pb)) / 2 * (pa.donus === pb.donus ? 1 : 0.6);
+        const R = TEMAS.rampa;
+        const rampa = R.taban + R.tavan * (1 - Math.exp(-T.sure / R.tauSn));
+        hedef = Math.min(1.3, (0.22 * donus + Math.abs(vt) / 350 + Math.max(0, vn) / 400) * rampa);
+        T.sure += dt;
+        T.kopuk = 0;
+      }
+    }
+    if (hedef === 0) {
+      T.kopuk += dt;
+      if (T.kopuk >= TEMAS.toleransSn) T.sure = 0;
+    }
+    T.guc += (hedef - T.guc) * Math.min(1, dt * (hedef > T.guc ? 12 : 8));
+    if (T.guc < 0.01) { T.guc = 0; this.kivilcimlar.isimaAyarla(0, 0, 0); return; }
+    // temas noktası: iki topacın GÖRSEL konumlarının ortası, gövde yüksekliğinde
+    const ka = this.konumlar[0]!, kb = this.konumlar[1]!;
+    const x = (ka.x + kb.x) / 2, y = (ka.y + kb.y) / 2;
+    const hy = this.hava(y);
+    const aktif = T.kopuk < TEMAS.toleransSn;
+    this.kivilcimlar.isimaAyarla(x, hy, aktif ? T.guc : T.guc * 0.5);
+    if (!aktif) return;
+    T.birikim += dt * (TEMAS.oran.taban + TEMAS.oran.egim * T.guc);
+    const adet = Math.floor(T.birikim);
+    if (adet > 0) {
+      T.birikim -= adet;
+      T.sayac += adet;
+      this.kivilcimlar.akit(x, y, y - hy, nx, nz, T.guc, adet, yon, this.ayar.parcacik);
+    }
+    // ara sıra küçük çekirdek titremesi (sürtünme parlaması)
+    if (this.rng.sayi() < dt * (4 + 10 * T.guc)) this.kivilcimlar.flas(x, hy, nx, nz, 0.12 + 0.25 * Math.min(1, T.guc));
+    T.sesSn -= dt;
+    if (T.guc > TEMAS.ses.esik && T.sesSn <= 0) {
+      T.sesSn = TEMAS.ses.taban - TEMAS.ses.egim * Math.min(1, T.guc) + this.rng.aralik(0, 0.04);
+      this.sesKanca("carpisma-hafif", 0.1 + 0.22 * Math.min(1, T.guc), 1.35 + this.rng.aralik(0, 0.3));
+    }
+  }
+
   /** Her kare; `dt` gerçek saniye. `d` verilirse tembel atlas eşikleri ~4 Hz denetlenir (olaysız Enerji/stamina değişimi). */
   guncelle(dt: number, d?: Dunya): void {
     this.saat += dt;
@@ -514,6 +617,8 @@ export class Efektler {
     // hitstop sırasında parçacıklar yaşlanmaz (05 § 3.3: "yaşları dondurulur")
     const donuk = this.hitstopVar(0) || this.hitstopVar(1);
     this.parcaciklar.guncelle(donuk ? ydt * 0.15 : ydt);
+    if (d) this.temasGuncelle(ydt, d);
+    this.kivilcimlar.guncelle(donuk ? ydt * 0.15 : ydt);
     const h = this.hizG.clear();
     for (const y of this.yildizlar) {
       y.t += ydt;

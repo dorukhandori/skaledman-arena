@@ -311,7 +311,7 @@ export class MacEkrani {
     this.ayarlariUygula();
     Ses.yukle();
     Ses.muzikBaslat();
-    this.efektler.sesKanca = (ad, hacim) => Ses.cal(ad, hacim);
+    this.efektler.sesKanca = (ad, hacim, perde) => Ses.cal(ad, hacim, perde);
     // arayüz tıkı: menü ve sonuç düğmeleri
     this.ust.addEventListener("click", (e) => { if ((e.target as HTMLElement).closest("button")) Ses.cal("ui-tik"); });
     this.stil.textContent = STIL;
@@ -727,8 +727,11 @@ export class MacEkrani {
     this.egitim?.adimSonrasi(d, g0);
   }
 
-  private kare = (): void => {
-    const dt = Math.min(this.b.app.ticker.deltaMS / 1000, 0.25);
+  private kare = (): void => { this.kareIsle(Math.min(this.b.app.ticker.deltaMS / 1000, 0.25)); };
+  /** GU-E debug (yalnız ?debug, ekran görüntüsü kare şeridi): ticker durmuşken sabit `dt` ile tek kare işle ve çiz. */
+  kareAt(dt: number): void { this.kareIsle(dt); this.b.app.render(); }
+
+  private kareIsle(dt: number): void {
     this.zaman += dt;
     if (this.ag) this.agKare(dt);
     else {
@@ -764,7 +767,7 @@ export class MacEkrani {
     this.ciz(dt, this.ag ? 1 : Math.min(1, this.birikim / AYAR.dt));
     const dur = this.durTalebi;
     if (dur?.oldu && dur.kare-- <= 0) { this.sonDurmaOlayi = dur.oldu; this.durTalebi = null; this.b.app.ticker.stop(); this.b.app.render(); }
-  };
+  }
 
   private ciz(dt: number, alfa: number): void {
     const d = this.dunya;

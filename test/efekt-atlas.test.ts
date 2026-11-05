@@ -25,8 +25,9 @@ describe("efekt atlasları (TEMIZLIK #2)", () => {
     expect(fs.readdirSync("public/efekt").filter((f) => f.endsWith(".png")).sort()).toStrictEqual(Object.keys(GRUP).map((a) => `${a}.png`).sort());
   });
 
-  it("açılışta yalnız çekirdek atlas istenir (diğerleri atlasHazirla eşiklerinde)", () => {
-    expect(kod).toMatch(/if \(sahne\.hibrit\) void efektAtlasYukle\("efekt-cekirdek"\)/);
+  it("GU-E: açılışta hiçbir efekt atlası istenmez; hepsi atlasHazirla eşiklerinde (çarpışma kıvılcımı yordamsal)", () => {
+    expect(kod).not.toMatch(/constructor[\s\S]{0,600}efektAtlasYukle\(/);
+    expect(kod).toMatch(/maxStamina \* ATLAS_ESIK\.elementStamina\)\) void efektAtlasYukle\("efekt-cekirdek"\)/);
     expect([...kod.matchAll(/efektAtlasYukle\(/g)].length).toBe(3);
   });
 });
