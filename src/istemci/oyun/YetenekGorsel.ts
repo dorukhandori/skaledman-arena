@@ -6,6 +6,7 @@ import { yetenekHedefi } from "../../paylasilan/sim/yetenek.ts";
 import { YETENEK_SIM, type YetenekSim } from "../../paylasilan/veri/yetenekSablon.ts";
 import { YOL } from "./elementSimge.ts";
 import { ruhSiluetCiz } from "./ruhSiluet.ts";
+import { RuhGorsel } from "./RuhGorsel.ts";
 import { ELEMENT_RENK, SAHNE_RENK, TAKIM_RENK } from "./renkler.ts";
 import { SAHNE, type Sahne } from "./Sahne.ts";
 import { SusRastgele } from "./SusRastgele.ts";
@@ -24,7 +25,6 @@ const KENAR_RENK = 0xe6680c;
 const KENAR_PARLAMA_SN = 0.3;
 const SILUET_BELIRME = 0.3;
 /** D8: Takım Ultisi'nde üç ruhun belirme aralığı (s). */
-const TAKIM_RUH_ARALIK = 0.3;
 const TAM_TUR = Math.PI * 2;
 
 export interface NisanDurumu { yuva: number; x: number; z: number }
@@ -70,13 +70,19 @@ export class YetenekGorsel {
   private zaman = 0;
   private rng = new SusRastgele(0x7e1e);
   /** Ayarlar: flaş (kenar parlaması yalnız normal), "Sekme: Space" ipucu, nişan modu. */
-  flas: "normal" | "azaltilmis" | "kapali" = "normal";
+  /** Kutsal canavar belirmesi (06-kutsal-canavarlar.md). */
+  readonly ruh: RuhGorsel;
+  private flasDeger: "normal" | "azaltilmis" | "kapali" = "normal";
+  get flas(): "normal" | "azaltilmis" | "kapali" { return this.flasDeger; }
+  set flas(v: "normal" | "azaltilmis" | "kapali") { this.flasDeger = v; this.ruh.flas = v; }
   ipucuAcik = true;
   readonly sayac = { telegrafKare: 0, rakipTelegrafKare: 0, dekalKare: 0, nisanKare: 0, siluet: 0, takimUlti: 0, kenarParlama: 0, ipucuKare: 0, engelKare: 0 };
 
   constructor(private sahne: Sahne, private yerel: number) {
     TEHLIKE = sahne.hibrit ? TEHLIKE_HIBRIT : SAHNE_RENK.tehlike;
-    this.zemin.addChild(this.dekal, this.tel);
+    this.ruh = new RuhGorsel(sahne, yerel, (el) => this.ruhCiz(el));
+    // canavar zemin düzleminde, dekal ve telegraftan önce: zeminin üstünde, telegraf/nişan/topaçların altında (06 § 1.1)
+    this.zemin.addChild(this.ruh.kap, this.dekal, this.tel);
     sahne.zeminDuzlem.addChild(this.zemin);
     // simge ve ruh dik durur (basılmaz): zemin katmanında, düzlemin üstünde
     sahne.zeminKatmani.addChild(this.simgeKap, this.ruhKap);
@@ -96,40 +102,24 @@ export class YetenekGorsel {
     this.siluetler = [];
     this.kenarKalan = 0;
     this.kenar.clear();
+    this.ruh.temizle();
     this.sahne.sarsintiTaban = 0;
   }
 
   olay(o: Olay, d: Dunya): void {
+    this.ruh.olay(o, d);
     switch (o.tur) {
       case "zincir":
         this.simsekler.push({ x1: sx(o.x1), y1: sy(o.z1), x2: sx(o.x2), y2: sy(o.z2), kalan: 0.18, tohum: o.tick });
         break;
       case "yetenekBasladi":
+        // Kutsal canavarları RuhGorsel çizer (06-kutsal-canavarlar.md): kademe 2 ruh, 3 Ata, 4 takımın üç ruhu.
+        // Burada yalnız sayaçlar ve ekran kenarı parlaması (yalnız Flaş: Normal).
         if (o.kademe === 4 && d.takimlar) {
-          // D8 Takım Ultisi anı: takımın üç ruhu sırayla belirir (0,3 s arayla; soldan sağa), kenar parlaması
-          const tk = d.takimlar[o.i]!;
-          const sure = o.telegraf / AYAR.adimHz + 1.2;
-          tk.uyeler.forEach((u, k) => {
-            const el = u.profil.element;
-            const kap = new Container();
-            kap.addChild(this.ruhCiz(el));
-            kap.alpha = 0;
-            this.ruhKap.addChild(kap);
-            this.siluetler.push({ el, t: -k * TAKIM_RUH_ARALIK, sure, x: SAHNE.merkezX + ((k - 1) * 150) / this.sahne.yakinlik, kap, olcek: 0.7 / this.sahne.yakinlik });
-            this.sayac.siluet++;
-          });
+          this.sayac.siluet += 3;
           this.sayac.takimUlti++;
           if (this.flas === "normal") { this.kenarKalan = KENAR_PARLAMA_SN; this.sayac.kenarParlama++; }
         } else if (o.kademe === 3) {
-          // Ulti anı: ruh silüeti (telegraf + 0,5 s), ekran kenarı parlaması (yalnız Flaş: Normal)
-          const el = d.profiller[o.i]!.element;
-          const kap = new Container();
-          kap.addChild(this.ruhCiz(el));
-          kap.alpha = 0;
-          this.ruhKap.addChild(kap);
-          const t = d.topaclar[o.i]!;
-          this.siluetler.push({ el, t: 0, sure: o.telegraf / AYAR.adimHz + 0.7, x: SAHNE.merkezX, kap, olcek: 1 / this.sahne.yakinlik });
-          void t;
           this.sayac.siluet++;
           if (this.flas === "normal") { this.kenarKalan = KENAR_PARLAMA_SN; this.sayac.kenarParlama++; }
         }
@@ -557,6 +547,8 @@ export class YetenekGorsel {
     if (nisan && d.mac.faz === "tur") this.nisanCiz(d, nisan);
     this.simsekCiz(dt);
     this.siluetIlerlet(dt);
+    this.ruh.onYukle(d);
+    this.ruh.ilerle(dt);
     this.kenarCiz(dt);
     this.ipucu.visible = !!ipucu && this.ipucuAcik;
     if (ipucu && this.ipucuAcik) {

@@ -1,0 +1,112 @@
+{
+ "ipuclari": [
+  {
+   "id": "ilk-ziyaret",
+   "kosul": "ilk-ziyaret",
+   "ifade": "anlatiyor",
+   "metin": "Hoş geldin! Ben Pergel. Aslında topaç dediğin **dört parça**dır: Çekirdek, Gövde, Disk, Uç. Ben buralardayım.",
+   "oncelik": 10,
+   "otomatik": true,
+   "hedef": null
+  },
+  {
+   "id": "takim-eksik",
+   "kosul": "takim-eksik",
+   "ifade": "aslinda",
+   "metin": "OYNA için takımda **3 farklı Çekirdek** gerekir. Antrenmanda kazandıkça yeni Çekirdek gelir.",
+   "oncelik": 20,
+   "otomatik": true,
+   "hedef": null
+  },
+  {
+   "id": "odunc",
+   "kosul": "odunc",
+   "ifade": "anlatiyor",
+   "metin": "Gri çerçeveli topaç **ödünç**: tecrübe almaz. Yeni Çekirdek edinince yerini kendiliğinden alır.",
+   "oncelik": 60,
+   "otomatik": true,
+   "hedef": "odunc-yuva"
+  },
+  {
+   "id": "ruh-ozel",
+   "kosul": "ruh-ozel",
+   "ifade": "aslinda",
+   "metin": "Her Çekirdeğin bir **ruhu** var. Özel Yetenek'i kullandığında arkanda belirir, izle!",
+   "oncelik": 80,
+   "otomatik": false,
+   "hedef": "yuva"
+  },
+  {
+   "id": "ulti-kilit",
+   "kosul": "ulti-kilit",
+   "ifade": "aslinda",
+   "metin": "**Ulti** Lv.3'te açılır ve maçta bir kez kullanılır. O an elementinin **Ata**'sı uyanır.",
+   "oncelik": 70,
+   "otomatik": true,
+   "hedef": null
+  },
+  {
+   "id": "ulti-acik",
+   "kosul": "ulti-acik",
+   "ifade": "sevinc",
+   "metin": "Bir Çekirdeğin Lv.3 oldu! Enerjin 3 dilim dolunca **3** tuşu: Ata'yı uyandırırsın.",
+   "oncelik": 30,
+   "otomatik": true,
+   "hedef": null
+  },
+  {
+   "id": "ring-out",
+   "kosul": "ring-out",
+   "ifade": "anlatiyor",
+   "metin": "Aslında kenara yakın dönmek Enerji doldurur ama riskli. Ağır rakibe karşı **Space ile sekme** kurtarır.",
+   "oncelik": 50,
+   "otomatik": true,
+   "hedef": null
+  },
+  {
+   "id": "element-cark",
+   "kosul": "element-cark",
+   "ifade": "aslinda",
+   "metin": "Takımın çarkta **yan yana** üç element: Tab ile geçişte yeni topacın Enerjisi bir parça dolu gelir.",
+   "oncelik": 75,
+   "otomatik": true,
+   "hedef": null
+  },
+  {
+   "id": "zitlik",
+   "kosul": "zitlik",
+   "ifade": "anlatiyor",
+   "metin": "Karşıt elementler çarpışınca ikisinin de Enerjisi **%25 hızlı** dolar. Gösteri sever misin?",
+   "oncelik": 76,
+   "otomatik": true,
+   "hedef": null
+  },
+  {
+   "id": "lab",
+   "kosul": "lab",
+   "ifade": "aslinda",
+   "metin": "Lab'da parçaları maç dışı dene: sayılar değil **his** önemli. Ben her parçayı yüz kez denedim. Aslında yüz bir.",
+   "oncelik": 85,
+   "otomatik": false,
+   "hedef": "lab"
+  },
+  {
+   "id": "market-acildi",
+   "kosul": "market-acildi",
+   "ifade": "sevinc",
+   "metin": "Market açıldı! **Altın** biriktirip parça al; bazı parçalar başarımla açılır.",
+   "oncelik": 40,
+   "otomatik": true,
+   "hedef": null
+  },
+  {
+   "id": "stamina",
+   "kosul": "stamina",
+   "ifade": "anlatiyor",
+   "metin": "Topaç **stamina** bitince durur. Uç ne kadar sürtünürse o kadar hızlı erir.",
+   "oncelik": 90,
+   "otomatik": true,
+   "hedef": null
+  }
+ ]
+}

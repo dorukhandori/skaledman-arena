@@ -28,3 +28,12 @@ Sayılar ve eşikler `economy-designer` ile `tuning.md`'de kararlaştırılır. 
 
 ## Onaylanan referans görünümler (sahip, 2026-11-04)
 Dokuz ekranın referans görünümü (Gemini `gemini-3.1-flash-image` ile üretilmiş konsept, nihai sanat değil) sahip tarafından tek tek onaylandı: giriş/profil, ilk çekirdek, atölye, market, başarımlar, lobi, maç arenası, ulti anı, sonuç. Canvas: <https://claude.ai/artifact/8P44Vjnp72DtkoLXFut5Ks>. Yerel dosyalar: `docs/research/beyblade/gorunum/0[1-9]-*.jpg` (repo dışı). Pixel planı (`docs/art/topac-pixel-plani.md`) ve HUD tasarımı bu kompozisyonları hedef alır; sözlük `04-sozluk.md`.
+
+## 2026-11-05: Kutsal canavarlar ve Pergel
+
+Sahip istedi, tüm üretim hatlarına (Tripo dahil) izin verdi. Varsayılanlar:
+
+- Ulti'de elementin **Ata**'sı belirir (`06-kutsal-canavarlar.md`).
+- Altı Ata'nın türleri **onaylandı**: Alaz Bizonu (Kor), Çakım Geyiği (Şimşek), Yel Vatozu (Kasırga), Dip Nautilusu (Girdap), Dağ Mamutu (Kaya), Ayaz Ayısı (Don).
+- Kapsam = pixel planı § 4: ilk sürümde canavar yalnız Ulti'de. Özel Yetenek'te ruh portresi `RUH_PORTRE_OZEL_YETENEK = false` ile kapalı, sonraki sürümde açılır.
+- Atölye'nin ipucu karakteri **Pergel** (`docs/ux/bilgic-pergel.md`). Adı ve kişiliği sahip onayı bekliyor.

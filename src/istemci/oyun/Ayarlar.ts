@@ -15,6 +15,8 @@ export interface OyunAyarlari {
   kontrast: "kapali" | "acik";
   /** GU-00: "acik" = eski tam üstten sunum (erişilebilirlik); varsayılan Hibrit eğik sunum. Sonraki maçta uygulanır. */
   duzGorunum: "kapali" | "acik";
+  /** Atölye'deki bilgiç Pergel (docs/ux/bilgic-pergel.md § 2.6) */
+  pergel: "acik" | "sorunca" | "kapali";
 }
 
 export const AYAR_SECENEKLERI: { [K in keyof OyunAyarlari]: { ad: string; secenekler: { deger: OyunAyarlari[K]; ad: string }[] } } = {
@@ -27,13 +29,14 @@ export const AYAR_SECENEKLERI: { [K in keyof OyunAyarlari]: { ad: string; secene
   ses: { ad: "Ses (M)", secenekler: [{ deger: "acik", ad: "Açık" }, { deger: "kapali", ad: "Kapalı" }] },
   kontrast: { ad: "Yüksek kontrast HUD", secenekler: [{ deger: "kapali", ad: "Kapalı" }, { deger: "acik", ad: "Açık" }] },
   duzGorunum: { ad: "Düz görünüm (sonraki maç)", secenekler: [{ deger: "kapali", ad: "Kapalı" }, { deger: "acik", ad: "Açık" }] },
+  pergel: { ad: "Pergel ipuçları", secenekler: [{ deger: "acik", ad: "Açık" }, { deger: "sorunca", ad: "Yalnız sorunca" }, { deger: "kapali", ad: "Kapalı" }] },
 };
 
 const ANAHTAR = "devran.ayarlar.v1";
 
-export const VARSAYILAN_AYARLAR: OyunAyarlari = { sarsinti: "normal", flas: "normal", hitstop: "tam", yavasZoom: "acik", parcacik: "tam", nisan: "fare", ses: "acik", kontrast: "kapali", duzGorunum: "kapali" };
+export const VARSAYILAN_AYARLAR: OyunAyarlari = { sarsinti: "normal", flas: "normal", hitstop: "tam", yavasZoom: "acik", parcacik: "tam", nisan: "fare", ses: "acik", kontrast: "kapali", duzGorunum: "kapali", pergel: "acik" };
 /** prefers-reduced-motion: "Azaltılmış" ön ayarı. */
-export const AZALTILMIS_AYARLAR: OyunAyarlari = { sarsinti: "yari", flas: "azaltilmis", hitstop: "yari", yavasZoom: "kapali", parcacik: "az", nisan: "fare", ses: "acik", kontrast: "kapali", duzGorunum: "kapali" };
+export const AZALTILMIS_AYARLAR: OyunAyarlari = { sarsinti: "yari", flas: "azaltilmis", hitstop: "yari", yavasZoom: "kapali", parcacik: "az", nisan: "fare", ses: "acik", kontrast: "kapali", duzGorunum: "kapali", pergel: "acik" };
 
 function azaltilmisIstek(): boolean {
   try { return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true; } catch { return false; }
