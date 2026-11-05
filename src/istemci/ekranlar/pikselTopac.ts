@@ -208,6 +208,9 @@ export function topac3bIkonu(p: { parcalar: { cekirdek: string; govde: string; d
   if (!odunc) {
     const W = r * 2 + 4;
     topacIkonIsaretle(c, { ...p.parcalar, element: p.element as never, koken: p.koken as never, sol: p.donus === "sol" }, W, W);
+    // GU-C: 3B ikon kare (W × W), yordamsal tuval W × H (H < W); uç ucu yordamsalda H − 3. satırda (kaideye değer).
+    // Yükseltilen ikon bu satıra hizalanır ve yerleşim yüksekliği H kalır (kaide kaymaz).
+    c.dataset["ikon3bTaban"] = String(c.height - 3);
   }
   return c;
 }

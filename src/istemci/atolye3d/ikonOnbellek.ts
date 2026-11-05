@@ -170,7 +170,38 @@ export function ikonlariYukselt(kok: ParentNode): void {
       img.style.width = `calc(${gor} * var(--p))`;
       img.style.height = `calc(${gor} * var(--p))`;
       img.style.imageRendering = "pixelated";
+      const taban = Number(e.dataset["ikon3bTaban"]);
+      if (Number.isFinite(taban) && taban > 0 && e instanceof HTMLCanvasElement) tabanaHizala(img, url, gor, taban, e.height);
       if (img !== e) e.replaceWith(img);
     });
   }
+}
+
+/** En alttaki opak satır (uç ucu); bulunamazsa null. */
+async function enAltSatir(url: string, boyut: number): Promise<number | null> {
+  const im = new Image();
+  im.src = url;
+  await im.decode();
+  const c = document.createElement("canvas");
+  c.width = boyut; c.height = boyut;
+  const g = c.getContext("2d");
+  if (!g) return null;
+  g.drawImage(im, 0, 0, boyut, boyut);
+  const v = g.getImageData(0, 0, boyut, boyut).data;
+  for (let y = boyut - 1; y >= 0; y--) for (let x = 0; x < boyut; x++) if (v[(y * boyut + x) * 4 + 3]! > 127) return y;
+  return null;
+}
+
+/**
+ * GU-C (lobi takım kartı): kare 3B ikonu yordamsal tuvalin yerleşimine oturt. Yordamsal tuval `yuk` px yüksek, uç ucu
+ * `taban` satırında; ikonun en alt opak satırı aynı yere gelir, yerleşim yüksekliği `yuk` kalır (kaide kaymaz).
+ */
+function tabanaHizala(img: HTMLImageElement, url: string, gor: number, taban: number, yuk: number): void {
+  void enAltSatir(url, gor).then((alt) => {
+    if (alt === null) return;
+    const ust = taban - alt;
+    img.style.marginTop = `calc(${ust} * var(--p))`;
+    img.style.marginBottom = `calc(${yuk - gor - ust} * var(--p))`;
+    img.dataset["ikon3bHizali"] = String(ust);
+  }).catch(() => undefined);
 }
