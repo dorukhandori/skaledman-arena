@@ -1,191 +1,184 @@
-# Skaledman Arena: iskelet seçimi ve mimari
+# Devran: mimari
 
-Tarih: 2026-11-01. Önceki belge: [oyun-konsepti.md](../design/oyun-konsepti.md). Bu belge "hangi hazır iskeletten başlıyoruz, kod nasıl bölünüyor, ağ nasıl çalışıyor, nasıl yayına çıkıyor" sorularını kapatır.
+`[@axiom · Technical Director]` · 2026-11-06 · dal `devran-kod` (23a772b üstü çalışma ağacı) · Bu belge koddan doğrulanarak
+baştan yazıldı. 2026-11-01 tarihli Skaledman çağı sürümü git geçmişinde durur; neden değiştiği: [ADR-006](adr/ADR-006-devran-donusumu.md).
+Kaynak gösterilmeyen sayı yoktur; doğrulanamayan her şey "doğrulanmadı" diye işaretlidir.
 
-## 1. Karar özeti
+Bağlı belgeler: [netcode.md](netcode.md) (oda, protokol, tahmin), [backend.md](backend.md) (kimlik, API, SQLite),
+[veri-modeli.md](veri-modeli.md) (`veri/*.json`, tablolar, sim durumu), ADR-001…006 (`adr/`), sayılar için
+`docs/design/tuning.md` (tek otorite).
 
-**Tek bir hazır oyun iskeleti klonlanmaz.** GitHub'da "PixiJS 8 + Colyseus + gerçek zamanlı arena" olarak güncel ve bakımlı tek repo yok. Bunun yerine üç **resmî** kaynak birleştirilir; hepsi Colyseus ve PixiJS ekiplerinin kendi depoları, bakımlı ve MIT:
+## 1. Yığın ve sürümler (`package.json`, 2026-11-06)
 
-| Katman | Kaynak | Ne alınır |
-|---|---|---|
-| Proje iskeleti ve geliştirme döngüsü | [colyseus/vite](https://github.com/colyseus/vite) (resmî başlangıç, Nisan 2026) | Tek `vite` süreci içinde hem istemci hem sunucu, iki tarafta da HMR; `vite build --app` ile tek komutta üretim paketi. React kısmı atılır, yerine Pixi gelir |
-| Ağ kodu (tahmin, uzlaştırma, gecikme telafisi) | [colyseus/prediction-playground](https://github.com/colyseus/prediction-playground) (resmî, Ekim 2026) + [netcode belgeleri](https://docs.colyseus.io/netcode/client-prediction) | Colyseus **0.18'e gömülü** `defineInput`, `setFixedTimestep`, `Predict.reconciler`, `attachAll` (lerp), `allowRewindState` + `lastSeenBy`, `predict.spawns`, `defineEvent`. 11 laboratuvarın kodu birebir örnek |
-| Oda ve dünya kalıbı | [colyseus/realtime-tanks-demo](https://github.com/colyseus/realtime-tanks-demo) `server/` (0.17, Nisan 2026) | `BattleRoom`: ızgara tabanlı uzamsal dünya (`World`/`Cluster`), daire-dikdörtgen çarpışma (`Block`), mermiler, toplanabilirler, takımlar, yeniden doğma, 20 Hz döngü, yük testi botu (A* ile). Üstten bakışlı aksiyon odasının tamamı |
-| İstemci klasör yapısı | [pixijs/open-games](https://github.com/pixijs/open-games) `bubbo-bubbo` | `screens/` + `navigation.ts`, `game/systems`, `game/entities`, `Pool`, `SystemRunner`, AssetPack ile varlık hattı, `@pixi/ui`, `@pixi/sound`, gsap |
+| Katman | Paket | Sürüm | Not |
+|---|---|---|---|
+| İstemci render | `pixi.js` | 8.22.0 | maç, menü sahneleri |
+| Atölye 3B | `three` | 0.186.1 | yalnız `src/istemci/atolye3d/` (Goruntuleyici, ikon önbelleği) |
+| Ses | `@pixi/sound` | 6.0.2 | |
+| Sunucu | `colyseus` | 0.18.10 | yetkili oda, `colyseus/vite` eklentisi |
+| İstemci SDK | `@colyseus/sdk` | 0.18.9 | yalnız `src/istemci/ag/**` |
+| Şema | `@colyseus/schema` | 5.0.43 | yalnız `src/sunucu/**` |
+| Geliştirme panelleri | `@colyseus/monitor` 0.18.7, `@colyseus/playground` 0.18.6 | | yalnız `NODE_ENV≠production` (`src/sunucu/index.ts`) |
+| Veritabanı | `better-sqlite3` | 13.0.3 | yalnız `src/sunucu/db/**` |
+| Doğrulama | `zod` | 4.6.7 | veri şemaları, ağ mesajları, REST gövdeleri |
+| Derleme | `vite` ^8.3.5, `typescript` ^5.9.3 | | |
+| Test | `vitest` ^5.0.5 | | ayrı `vitest.config.ts` (Colyseus eklentisi testte yok) |
+| Lint | `eslint` ^10.14.0, `typescript-eslint` ^8.72.1 | | kapı, stil değil |
+| Araç | `tsx` ^4.21.0, `sharp` ^0.34.5 | | yalnız `araclar/` (Node), tarayıcıya girmez |
 
-Elenenler ve nedeni:
-
-| Aday | Yıldız | Neden değil |
-|---|---:|---|
-| halftheopposite/TOSIOS | 448 | Colyseus 0.14, Pixi 6, React 16; 2019 mimarisi, taşıması yazmaktan pahalı |
-| HasangerGames/suroi | 513 | Pixi 8 ve iyi netcode ama 2 767 dosyalık battle royale; kendi WS protokolü, Colyseus'un hazır tahmin katmanını kaybederiz |
-| keldaanCommunity/pokemonAutoChess | 1 834 | Colyseus 0.18 ve SpriteCollab kullanıyor, bu iyi; ama Phaser 4 + React + Redux, 59 bin dosya. Referans olarak bakılır, iskelet olmaz |
-| endel/colyseus-pixijs-boilerplate | 72 | Pixi 8.14 + Colyseus 0.17, 17 dosya; iyi ama `colyseus/vite` onun yerini aldı (tek süreç, HMR) |
-| freddie-nelson/emile | 2 | Tek kişinin motoru, Colyseus 0.15'e bağlı |
-| timetocode/nengi | 356 | 2.0 hâlâ alpha, JS; Colyseus 0.18 aynı şeyi resmî olarak veriyor |
-| geckos.io | 1 487 | UDP/WebRTC; 1v1 nişanlı oyunda TCP WebSocket yeterli, Cloudflare Tunnel'dan UDP geçmez |
-| Nevanyte/RougeHalla | 0 | Colyseus 0.18 + Phaser 4 üstten bakışlı arena, 5 gün önce başlamış; `packages/{client,server,shared}` bölümü ve bot turnuva koşum takımı fikir olarak alınır |
-
-**Risk:** Colyseus 0.18 çok taze (0.18.10, 22 Ekim 2026; SDK 0.18.9, 30 Ekim). Netcode API'si resmî ve belgeli ama hata çıkabilir. Geri dönüş planı: 0.17 + elle interpolasyon (tanks demosunun yaptığı). Bu yüzden ağ kodu `src/client/ag/` altında tek modülde tutulur.
+- Çalışma zamanı bağımlılıkları **tam sabit** (caret yok); geliştirme bağımlılıkları caret'li. Colyseus yükseltmesi ayrı commit +
+  `npm run ag:matris` (netcode.md § 1).
+- Node `>=22` (`engines`; CI Node 22, `.github/workflows/ci.yml`). Paket yöneticisi npm (`package-lock.json`).
+- Planlanıp **kurulmayanlar**: `@pixi/ui`, gsap, AssetPack, `@colyseus/loadtest`. Yük testi aracı yok (§ 7).
+- Kick OAuth kodu **yok**; kimlik ad + şifre (scrypt). Askıda, sahip söyleyene kadar yazılmaz (ADR-006, backend.md § 6).
 
 ## 2. Depo yerleşimi
 
-Tek paket, tek `vite.config.ts`, `colyseus/vite` başlangıcının düzeni. Workspace yok: üç kişiyi aşmayan ekipte pnpm workspace yalnız sürtünme. İstemci ve sunucu zaten aynı `src/paylasilan` kodunu import ettiği için tek paket doğal.
+Tek paket, tek `vite.config.ts` (`colyseus({ serverEntry: "/src/sunucu/index.ts", port: 2567, serveClient: true })`).
 
 ```
-skaledman-arena/
-├── index.html
-├── vite.config.ts            # colyseus({ serverEntry: '/src/sunucu/index.ts', serveClient: true })
-├── package.json
-├── tsconfig.json
-├── veri/
-│   ├── kartlar.json          # Skaledman /api/kartlar anlık görüntüsü (fixture + çevrimdışı mod)
-│   ├── gecmis.json           # /api/history anlık görüntüsü
-│   └── tip-tablosu.json      # 18×18 etkinlik (PokéAPI'den bir kez üretilir)
-├── public/
-│   └── sprite/               # izinle aynalanan fusion PNG'leri; yoksa hotlink (yalnız geliştirme)
-├── src/
-│   ├── paylasilan/           # İKİ TARAFTA DA ÇALIŞIR; DOM yok, Node yok, Math.random yok
-│   │   ├── kurallar/
-│   │   │   ├── tipler.ts         # etkinlik, STAB
-│   │   │   ├── statlar.ts        # kart statı → HP, hız, hasar formülleri (tasarım §3)
-│   │   │   ├── aileler.ts        # (tip, güç bandı) → hamle ailesi geri dönüşü
-│   │   │   ├── hamleler.ts       # el yapımı hamle kuralları (familia, aviso, cooldown, alcance, radio, durum)
-│   │   │   └── yetenekler.ts     # pasifler
-│   │   ├── sim/
-│   │   │   ├── Girdi.ts          # defineInput şeması: yon x/z (int8), nisanAci (float32), tus (uint8 bitmask), seq
-│   │   │   ├── adim.ts           # applyInput: hareket + dash; sunucu ve Predict aynı fonksiyonu çalıştırır
-│   │   │   ├── Arena.ts          # sahne tanımı: halfWidth/depth, engeller (daire/kapsül/dikdörtgen), zeminler
-│   │   │   ├── carpisma.ts       # daire-daire, daire-dikdörtgen, kapsül (tanks demosu Block.ts'den)
-│   │   │   ├── mermiler.ts       # mermi/alan/koni ilerletme ve vuruş testi (deterministik)
-│   │   │   └── rastgele.ts       # seed + seq → PRNG (playground lab 11)
-│   │   ├── Durum.ts              # @colyseus/schema: ArenaDurumu { oyuncular, dovusculer, mermiler, alanlar, faz, sure }
-│   │   └── kart.ts               # Skaledman kart tipi (zod) → Dovuscu profili
-│   ├── sunucu/
-│   │   ├── index.ts              # defineServer: odalar, createRouter (api), express (monitor, auth)
-│   │   ├── odalar/
-│   │   │   ├── ArenaOdasi.ts     # defineInput + setFixedTimestep(30) + allowRewindState; maç akışı
-│   │   │   ├── LobiOdasi.ts      # oda kodu ABCD-EFGH, davet, takım seçimi, hazır
-│   │   │   └── bot.ts            # basit bot: yaklaş, nişan al, cooldown'u dolanı bas
-│   │   ├── kimlik/kick.ts        # OAuth 2.1 PKCE (id.kick.com), user:read → user_id, name; oturum çerezi
-│   │   ├── veri/
-│   │   │   ├── skaledman.ts      # saatte bir /api/kartlar + /api/history → SQLite; hata olursa son kopya
-│   │   │   └── db.ts             # better-sqlite3: oyuncu, kart, mac, elo
-│   │   └── yayin/kickWebhook.ts  # F3: chat.message.sent (!dövüş), channel.reward.redemption.updated
-│   └── istemci/
-│       ├── main.ts               # Pixi Application, navigation, ilk ekran
-│       ├── navigation.ts         # open-games kalıbı
-│       ├── ekranlar/             # Giris, Lobi, TakimSec, Arena, Sonuc, Dojo
-│       ├── ag/
-│       │   ├── baglanti.ts       # Client, joinOrCreate/joinById, yeniden bağlanma
-│       │   └── tahmin.ts         # Predict.get, reconciler(kendi), attachAll(diğerleri, lerp 100 ms), spawns
-│       ├── oyun/
-│       │   ├── Sahne.ts          # 2.5D kamera, katman sırası (z'ye göre), zemin, engeller
-│       │   ├── Dovuscu.ts        # sprite + prosedürel animasyon (bob, flip, squash, flaş, gölge)
-│       │   ├── Efektler.ts       # koni/ışın/mermi/alan/aviso çizimleri (Graphics + parçacık havuzu)
-│       │   ├── Hud.ts            # HP, cooldown halkaları, takım, süre
-│       │   └── Girdi.ts          # klavye + fare → Girdi şeması; her tahmin adımında input.send()
-│       └── ui/                   # @pixi/ui düğme, panel; DOM menüler için küçük yardımcılar
-├── test/
-│   ├── paylasilan/*.test.ts      # vitest: formüller, etkinlik, deterministik adım (aynı girdi → aynı durum)
-│   └── denge/botTurnuvasi.ts     # 20 rastgele kart, bot-bot 200 maç, kazanma oranı raporu
-└── deploy/
-    ├── skaledman-arena.service   # systemd (kullanıcı arena, CPUQuota=150%, MemoryMax=1G)
-    └── yayinla.sh                # build → rsync → restart
+src/paylasilan/    iki tarafta koşar, determinizm kapısı (§ 4)
+  sim/             Dunya, adim, fizik, carpisma, topac, yetenek, enerji, mac, tahmin, hash, rastgele, Girdi, durum
+  kurallar/        ayar (AYAR: tuning sabitleri), sinTablo, ekonomi, market, basarim, ilerleme, atolye, kuyruk
+  veri/            semalar (zod), katalog (veri/*.json yükleyici), profil, takimlar, cubuklar, yetenekSablon
+  bot/bot.ts       paylaşılan bot (antrenman rakibi, hızlı maç dolgusu, denge turnuvası)
+  egitim.ts, krediler.ts
+src/ag/            ortak ağ sözleşmesi, Colyseus'suz: protokol (sabitler, mesajlar, zod), durum (wire alan tablosu),
+                   katalog (KATALOG_OZETI), kayit (maç kaydı yeniden oynatma)
+src/sunucu/        index (defineServer: odalar mac + izle, REST), odalar/ (MacOdasi, IzleOdasi, şema sınıfları),
+                   mac/MacYonetimi (girdi tüketimi, adım, hash), api/ (rotalar, atolye, market), db/ (sema, depo),
+                   oyuncu/ (maç sonu, XP, başarım yazımı, takım), kimlik, odaKayit, izleKayit, olcum
+src/istemci/       main (ekran yönlendirici, dinamik import), ekranlar/, oyun/ (Pixi sahne, HUD, efekt, kamera),
+                   ag/ (Baglanti, AgKatmani, AgMaci, IzleAgi), atolye3d/, bilgic/ (Pergel), ses/, stil/
+veri/              parçalar, ruhlar, yetenekler, başarımlar, ipuçları, görsel/model/ses manifestleri, yasak sözcükler
+araclar/           Node/tsx araçları: ağ matrisi ve simülatörü, ekran görüntüsü, ölçüm, altın hash üretimi, krediler,
+                   sanat/ (Mac hattı: Gemini + Tripo + Blender, sharp ile atlas; Python betikleri)
+kaynak/            sanat kaynakları (efekt, ruh, topac); public/ derlenmiş varlıklar (topac, efekt, ruh, ses, yazi, bilgic)
+test/              vitest (26 dosya), test/altin/ (altın girdi + hash), test/denge/ (bot turnuvası)
+deploy/            devran.service, devran-yedek.{service,timer}, kur.sh, yedek.sh, README.md
 ```
 
-Kural: `src/paylasilan` içinde `Math.random`, `Date.now`, DOM veya Node API'si **yasak**; ESLint `no-restricted-globals` ile zorlanır. Tahmin ancak iki taraf aynı adımı bit bit aynı çalıştırırsa işler.
+Modül sınırları ESLint ile zorlanır (`eslint.config.js`, netcode.md § 1):
+`src/ag/**` zod + `src/paylasilan` dışında bağımlılık almaz; `@colyseus/sdk` yalnız `src/istemci/ag/**`; `colyseus` ve
+`@colyseus/schema` yalnız `src/sunucu/**`; `@colyseus/core` hiçbir yerde doğrudan; `better-sqlite3` yalnız `src/sunucu/db/**`;
+istemci sunucuyu, sunucu istemciyi import etmez. Ağ katmanının değişimi (0.17'ye dönüş) bu yüzden `src/istemci/ag/` +
+`src/sunucu/odalar/` ile sınırlı kalır.
 
-## 3. Çalışma zamanı: bir vuruşun yolculuğu
+Kalıntı: `veri/spritecollab-tracker.json` (10 MB) Pokémon çağından; git'te yok, koda bağlı değil (grep ile
+doğrulandı). Silinmesi ya da gitignore'a alınması sahibin onayına bağlı (durum-20261105 § 3).
 
-```
-İstemci (60 fps)                              Sunucu (30 Hz sabit adım)
-──────────────────                            ─────────────────────────
-predict.tick(now) → n adım                    inputs.get(sid).next()        ← aynı Girdi
-  girdi.data = {yon, nisan, tus}                applyInput(dovuscu, cmd, dt) ← aynı adim.ts
-  input.send()  ─────── WS ───────►            hamleBas(cmd.tus) → mermi/alan üret
-reconciler: kendi dövüşçümü anında              mermiler.ilerlet(dt)
-  ilerlet, ack gelince rollback+replay           vuruş testi: rewind.lastSeenBy(sid)
-attachAll(dovusculer, lerp, 100 ms)             (oyuncunun GÖRDÜĞÜ konuma göre)
-predict.spawns: mermiyi tıklar tıklamaz        hasar = formül(atk/spa, def/spd, tip, STAB)
-  çiz, sunucunun gerçek mermisine devret        durum: yanma/felç/donma zamanlayıcıları
-defineEvent("vurus"): flaş + sayı anında,  ◄──  broadcast patch (20 Hz) + olaylar
-  sunucu reddederse geri al
-```
+## 3. Çalışma akışı
 
-- **Tick:** sunucu **60 Hz** (`setFixedTimestep`, K-6), yama yayını 20 Hz, istemci render 60 fps.
-- **Yetki:** konum, HP, cooldown, mermi ömrü yalnız sunucuda. İstemci yalnız `Girdi` gönderir; `sanitize` ile eksenler [-1,1], açı [-π,π] kırpılır (hız hilesi kapanır).
-- **Gecikme telafisi:** vuruş testleri `allowRewindState({ maxRewindMs: 250 })` ile oyuncunun gördüğü ana geri sarılır; 60 ms Türkiye-Almanya hattında "vurduğumu gördüm ama girmedi" olmaz.
-- **Rastgelelik:** %10 yanma gibi ihtimaller `seed ⊕ seq` ile türetilir; istemci ve sunucu aynı sonucu üretir, telde hiçbir şey gitmez.
-- **Durum şeması:** `Dovuscu { x, z, aci, hp, maxHp, kartId, sahip, faz, cooldown[4] }`, `Mermi { x, z, vx, vz, tip, aile, sahip }`, `Alan { x, z, radius, kalan }`. Düz alanlar, `float32`; `@colyseus/schema` 5 ile `schema()` fonksiyonel tanım.
+**Geliştirme:** `npm run dev` = tek `vite` süreci; istemci 5173 (`strictPort`), Colyseus 2567, iki tarafta HMR.
+`.veri/` ve `*.sqlite*` izlenmez. Ekran seçimi `?ekran=<ad>` (`src/istemci/main.ts` yönlendiricisi, ekranlar dinamik import).
 
-## 4. Veri ve kimlik
+**Üretim:** `npm run build` = `vite build --app` → `dist/client/` + `dist/server/server.mjs`; tek süreç sunucu istemciyi de
+dağıtır (`serveClient`). Derlenmiş giriş `server.listen(2567)` çağırır, yani **kod 127.0.0.1'e bağlamaz**; dış erişimi
+systemd `IPAddressDeny=any` + `IPAddressAllow=localhost` keser (`deploy/README.md` notu, `dist/server/server.mjs` okundu).
+Birimdeki `HOST=127.0.0.1` ortamının etkisi doğrulanmadı.
 
-**Kick girişi.** OAuth 2.1 + PKCE, uçlar `https://id.kick.com/oauth/authorize` ve `/oauth/token`, kapsam yalnız `user:read`. Geri dönüşte `GET https://api.kick.com/public/v1/users` → `user_id`, `name`, `profile_picture`. `user_id`, Skaledman `history` kayıtlarındaki `userId` ile birebir aynı alan; eşleşme doğrudan. Oturum: imzalı HTTP-only çerez; Colyseus odasına girerken `onAuth` çerezi doğrular. Kick App açmak için hesapta 2FA şart (geliştirici paneli koşulu).
+**Zamanlama (sunucu, `MacOdasi` + `src/ag/protokol.ts`):**
+- `setFixedTimestep(() => this.adim(), SIM_HZ)`, `SIM_HZ = round(1 / AYAR.dt) = 60` (ADR-002). Sıra önemli: önce sabit adım,
+  sonra `patchRate = null`; tersi adım hızını 4-50 Hz'e düşürüyordu (netcode.md § 5).
+- Yama elle, adım hizalı: `YAMA_HZ = 20`, `YAMA_ADIMI = 3` adımda bir `broadcastPatch()`; hash adımında zorunlu yama.
+- Olaylar her adım sonunda `MESAJ.olaylar` ile (yamayı beklemez); `HASH_ARALIGI = 60` adımda bir `h` (float64 hash) ve
+  `hw` (wire f32 hash).
+- Girdi `defineInput` ile güvenilir kanal (WebSocket/TCP); `BOSTA_TASIMA_ADIMI = 30`, `BIRIKME_ESIGI = 4`.
+- Oda `mac` (`filterBy(["mod"])`, modlar `oda · hizli · antrenman`, `maxClients = 2`), seyirci odası `izle`
+  (`filterBy(["kod"])`, `SEYIRCI_SINIRI = 50`). `PROTOKOL_SURUMU = 6`.
 
-> Çekici aracı ve `src/paylasilan` lint kapısı: [veri-cekimi.md](veri-cekimi.md).
+**Tahmin modeli A (ADR-005, `src/istemci/ag/AgMaci.ts`, `src/paylasilan/sim/tahmin.ts`):** istemci yalnız kendi topacının
+sürüşünü `kendiAdimi` ile tahmin eder; topaç-topaç impulsu, hasar, Enerji, yetenek etkileri, puan yalnız sunucudan. Uzlaşma
+`UZLASMA = { yokSay 0,5 · yumusakAdim 4 · buyukEsik 8 · buyukAdim 6 · sicrama 40 }` br (40 br eşiği sahip kararı N3). Rakip ve
+seyircide topaçlar `ARA_DEGER_GECIKMESI_MS = 100` geriden ara değerlenir. SDK'nın `Predict.reconciler`'ı **kullanılmıyor**
+(ADR-005 T1); uzlaşma bizim kodumuz. Hitstop yalnız görsel.
 
-**Skaledman verisi.** Saatte bir `/api/kartlar` ve `/api/history` çekilir, SQLite'a yazılır; başarısızsa son kopya kullanılır. Oyun Skaledman'ı asla istek anında çağırmaz. `veri/*.json` anlık görüntüsü testlerin fixture'ı ve çevrimdışı geliştirme kaynağıdır. Site sahibiyle anlaşılırsa çekme yerine webhook veya tek toplu uç.
+**Katılma ve uyum:** istemci `KATALOG_OZETI` (parcalar + ruhlar + yetenekler JSON'ları ve `AYAR`, `ELEMENT_EGILIM`,
+`KOKEN_PASIF` üzerinden FNV-1a 64, `src/ag/katalog.ts`) yollar; uyuşmazsa ret 4102. Kimlik: oturum çerezi → `/api/bilet`
+(60 s, tek kullanımlık HMAC bileti) → `MacOdasi.onAuth`; misafir yalnız `antrenman` (backend.md § 2).
 
-Sayfa analizinden (`docs/research/skaledman-sayfa-analizi.md`) gelen kesin kurallar: uçlarda **CORS yok**, çekim yalnız sunucu tarafında (`sunucu/veri/skaledman.ts`), tarayıcıdan asla; **ETag yok**, her çekim tam gövde (≈180 KB), ucuz değişiklik testi `history` imzası (kayıt sayısı + son ULID); kart görseli **`sprite` alanından** alınır, fusionId'den türetilmez (29 `a`, 5 `b` alternatif sprite); shiny ayrı görsel değil, `hue-rotate(hue) saturate(1.3)`; dövüşçü `id` (ULID) ile, kurallar `fusionId` ile anahtarlanır; kart gövdesi açılıştan dakikalar sonra dolabilir (`v: 2`), eksik gövdeli kayıt oynanabilir sayılmaz; `/api/detay` kart başına tembel çekilir (yetenek `key`'i pasif eşlemesi için gerekir). Yazma ucu yok: rozet ve galibiyet arenanın SQLite'ında kalır.
+## 4. Determinizm sözleşmesi (ADR-004)
 
-**Yayın olayları (F3).** Kick webhook'ları `events:subscribe` kapsamıyla: `chat.message.sent` (`!dövüş @ad`), `channel.reward.redemption.updated` (kanal puanı "Düello"). İmza doğrulama Kick'in açık anahtarıyla. kicklive bu akışı zaten kurmuş; aynı kalıp.
+- Sim float64, `Math.fround` yok; float32 yalnız wire biçimi (`src/ag/durum.ts`). İstemci `gorunumdenDunya(…, f32)` ile
+  tam `Dunya` kurar.
+- `src/paylasilan/**` ESLint kapısı: yasak globaller (window, document, navigator, localStorage, fetch, WebSocket, crypto,
+  performance, setTimeout/setInterval, process, Buffer, require, globalThis…), `Math.random`, `Date`/`Date.now`/`new Date`,
+  `performance.now`, `Math.hypot`, trigonometri, `pow/exp/log/cbrt`, `**`, `Math.fround`, `Intl`, `toLocale*`,
+  karşılaştırıcısız `sort`/`toSorted`, `for..in`; Node modülleri, `pixi.js`, `colyseus`, `@colyseus/*`, `better-sqlite3`
+  ve sunucu/istemci/araç importları. Trig için `kurallar/sinTablo.ts`, rastgelelik için `sim/rastgele.ts` (tohum + sıra).
+- Lint kapısının kendisi testli: `test/lint-kapisi.test.ts` (yasak örneklerin gerçekten yakalandığı; ayrıntısı o dosyada).
+- **Altın hash'ler:** `test/altin/*.json` girdi senaryoları + `*.hash` beklenen FNV-1a 64 (`sim/hash.ts`, `dunyaHash`); 17
+  senaryo (boş girdi, durma, ring out, parçalanma, dash/çanak çarpışma, ulti, takım ultisi, tam bot maçı…). Üretim
+  `npm run altin:uret`; Chromium'da aynı hash `npm run test:tarayici`.
+- **Ağ üstünde:** wire hash her 60 adımda karşılaştırılır; tek sapma = S1. Sunucu maç kaydı tarayıcıda yeniden oynatılır
+  (`AgMaci.kayitDogrula`, `test/ag.test.ts`). D8 ölçümü: N2 1348/1348, N3 1248/1248 karşılaştırma, sapma 0
+  (`docs/production/raporlar/D8.md` § kapılar).
+- Bilinen tutarsızlık: `eslint.config.js` içindeki `Math.fround` iletisi "ADR-004 yazılmadı" diyor; ADR-004 yazıldı. Kural
+  doğru, yalnız ileti eski (düzeltme `@byte`/`@relay` işi).
 
-**Veritabanı.** better-sqlite3, tek dosya, günlük yedek. Tablolar: `oyuncu(kick_id, ad, avatar, elo, son_giris)`, `kart(fusion_id, sahip_kick_id, json, shiny, acilis)`, `mac(id, oda, a, b, kazanan, sure, baslangic)`.
+## 5. Test ve kapılar
 
-## 5. Yayına alma
+| Komut | Ne yapar |
+|---|---|
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run lint` | `eslint src` (determinizm + yalıtım kapısı) |
+| `npm test` | `vitest run`, `test/**/*.test.ts`, `testTimeout` 30 s |
+| `npm run build` | `vite build --app` |
+| `npm run test:tarayici` | altın hash'ler Chromium'da |
+| `npm run denge:turnuva` | bot-bot turnuvası (`test/denge/`) |
+| `npm run ag:matris`, `ag:simulator`, `ag:ekran` | iki gerçek istemci, gecikme/jitter/kayıp profilleri N0-N6 |
+| `npm run qa:bot`, `qa:cokme` | toplu bot maçı, çökme denemeleri |
+| `npm run d5:akis` … `d8:akis`, `mac:ekran`, `lab:ekran`, `yetenek:ekran` | uçtan uca akış ve ekran görüntüsü |
+| `npm run krediler:uret` | atıfı eksik manifest kaynağı → çıkış 1 |
 
-- `vite build --app` → `dist/client/` (statik) + `dist/server/server.mjs` (tek dosya sunucu). `serveClient: true` ile sunucu statiği de dağıtır: **tek süreç, tek port**.
-- VPS'te ayrı kullanıcı `arena`, systemd `skaledman-arena.service`, `CPUQuota=150%`, `MemoryMax=1G`, port `127.0.0.1:2567`. Mevcut VPS kuralına uygun (ayrı birim + kullanıcı + kota).
-- Dışarı açılış Cloudflare Tunnel (WebSocket geçer, UDP gerekmez); alan adı Skaledman sahibiyle konuşulur (`arena.skaledman.com` ideal; yoksa kendi alanımız).
-- Colyseus `monitor` ve `playground` yalnız basic auth arkasında, üretimde playground kapalı.
-- Ölçek: Colyseus tek süreç 1v1 odalarında yüzlerce eşzamanlı oyuncuyu taşır; 112 koleksiyoncu için fazlasıyla yeter. Redis'siz başlanır.
+CI (`.github/workflows/ci.yml`, PR ve `main` push): `npm ci` → typecheck → lint → test → build, Node 22, 15 dk. `devran-kod`
+dalına push CI'ı tetiklemez (yalnız PR açılınca). Son bilinen sonuç: 26 dosyada 488/488 test, typecheck/lint/build temiz
+(`durum-20261105.md` § 1, 23a772b). Bu belge yazılırken testler yeniden koşulmadı.
 
-## 6. İlk haftanın adımları (F0)
+## 6. Dağıtım planı (`deploy/`)
 
-1. **Gün 1:** `colyseus/vite` klonu, React çıkar, `pixi.js@8`, `@pixi/ui`, `@pixi/sound`, `zod`, `better-sqlite3`, `vitest` ekle. `src/{paylasilan,sunucu,istemci}` iskeleti. `npm run dev` tek komutla açılıyor.
-2. **Gün 1–2:** `veri/kartlar.json` + `gecmis.json` indir; `kart.ts` zod şeması; `statlar.ts` formülleri ve testleri; `tip-tablosu.json` üret.
-3. **Gün 2–3:** `Girdi.ts` + `adim.ts` (hareket + dash) + `Arena.ts` (tek sahne, 4 engel). Sunucuda `defineInput`/`setFixedTimestep`, istemcide `Predict.reconciler`. Playground lab 03 ve 04 birebir uyarlanır. Hedef: iki sekmede iki kare pürüzsüz dolaşıyor.
-4. **Gün 3–4:** `hamleler.ts` ile 6 hamle (poke, mermi, koni, alan, embestida, ışın), `mermiler.ts`, `rewind` ile vuruş, hasar formülü. Lab 06, 09, 11 uyarlanır.
-5. **Gün 4–5:** Pixi sahne: fusion sprite + prosedürel animasyon, HP çubuğu, cooldown halkaları, aviso halkası, efektler. Bot rakip.
-6. **Gün 5:** Bot-bot turnuvası ile 20 kartın kazanma oranı; formüller %35–65 bandına çekilir. VPS'e ilk deploy, bağlantı paylaşılır.
+Durum: dosyalar hazır, **VPS'e henüz kurulmadı**, alan adı sahip kararı (öneri `devran.ovarlak.games`).
+- `deploy/kur.sh` (root): Node 22 yoksa NodeSource, `devran` sistem kullanıcısı, `/opt/devran` (rsync), `.env`
+  (`.env.example`'dan, `OTURUM_SIRRI` `openssl rand -base64 48`), `npm ci`, `npm run build`, systemd birimi, `/api/saglik`.
+- `deploy/devran.service`: `User=devran`, `NODE_ENV=production`, `ExecStart=/usr/bin/node dist/server/server.mjs`,
+  `Restart=on-failure` / `RestartSec=3`, **`CPUQuota=150%`, `MemoryMax=1G`, `TasksMax=256`**, `ProtectSystem=strict`,
+  `ReadWritePaths=/opt/devran/veri-db`, `IPAddressDeny=any` + `IPAddressAllow=localhost`. Kick OAuth gelirse dış çıkış
+  için gevşetilmesi gerekir (backend.md § 6).
+- Ortam: `KIMLIK_MODU=sifre`, `OTURUM_SIRRI` (≥ 32), `IZINLI_KOKENLER`, `VERI_DIZINI=/opt/devran/veri-db`,
+  `GUVENILIR_VEKIL=1`; eksikse sunucu açılmaz (`kimlikAyarlariniDenetle`).
+- Dış erişim Cloudflare Tunnel `devran` → `http://127.0.0.1:2567` (WebSocket geçer, UDP yok); test döneminde Cloudflare
+  Access. Tünel `--config` ve tünel kimliğiyle kurulmalı: VPS'te varsayılan `config.yml` tradebot tünelidir (`~/.claude/rules/vps.md`
+  tuzağı; `deploy/README.md` örneği varsayılan dosyayı kullanıyor, kurulumda düzeltilmeli).
+- Yedek: `devran-yedek.timer` her gün 01:30 UTC (04:30 TR) `deploy/yedek.sh`. Site dışı kopya tanımlı değil.
+- Güncelleme `git pull && sudo bash deploy/kur.sh`; süren maçlar düşer (tek süreç, durum belleğinde).
 
-Başlangıç komutları:
+## 7. Bütçeler ve ölçümler
 
-```bash
-git clone https://github.com/colyseus/vite skaledman-arena && cd skaledman-arena && rm -rf .git && git init
-```
+Bütçe yazılı değilse yoktur. Aşağıdakiler kaynaklı; "ölçülmedi" olanlar açık iştir.
 
-```bash
-npm i pixi.js@8 @pixi/ui @pixi/sound zod better-sqlite3 && npm i -D vitest @types/better-sqlite3
-```
+| Bütçe | Eşik | Son ölçüm | Kaynak |
+|---|---|---|---|
+| Sim adımı (sunucu) | ADR-002: 1v1 oda adımı < 1 ms | p95 0,065 ms | D8.md |
+| Oda adımı (sim + yama + seyirci yansıtma) | **çelişki:** D4 ≤ 0,2 ms, D8 4 ms | D4 p95 0,19-0,25 ms; D8 (22 seyirci) p95 1,163 · p99 2,83 ms | D4.md, D8.md |
+| Eşzamanlı oda | ADR-002: 50 oda tek çekirdekte | **ölçülmedi** (yük testi aracı yok) | ADR-002 |
+| Bant, oyuncu başına | aşağı ≤ 6 KB/s, yukarı ≤ 4 KB/s | aşağı 3,0-3,9, yukarı 0,7-0,85 KB/s | D4.md |
+| Bant, seyirci başına | ≤ 6 KB/s | 1,57 KB/s | D8.md |
+| İlk yükleme, varlık | ≤ 1,5 MB | 533 KB | TEMIZLIK.md § 2 |
+| İlk yükleme, toplam | hedef 1,5 MB sıkıştırmasız | 1 621 KB sıkıştırmasız (aşım kod), gzip tahmini ≈ 750 KB | TEMIZLIK.md § 2 |
+| Lobi JS parçası | ilk JS ≤ 350 KB | 63,6 KB gzip | D4.md |
+| Parçacık | en çok 400 | 51 | GU-F.md |
+| Kare süresi | 16 ms (10 dövüşçü + efekt, axiom görevi) | yalnız CPU: `kareAt` medyan 1,5-1,6, p95 6,5-8 ms; gerçek GPU'da **ölçülmedi** (SwiftShader ≈ 100 ms/kare yazılım GL) | GU-F.md |
+| Olay gecikmesi (N3) | p95 ≤ 200 ms | 348-490 ms; sıçrama/10 çarpışma 1,46-1,67 (kapı ≤ 1) | netcode.md "Karar N3" |
+| Süreç | CPUQuota 150 %, MemoryMax 1 GiB | VPS'te **ölçülmedi** (kurulu değil) | devran.service |
 
-## 7. Test ve kalite
+Oda adımı için iki farklı eşik yazılı; hangisinin geçerli olduğu `@relay` ile birlikte tek sayıya indirilmeli. Benim önerim 4 ms
+(60 Hz'de adım aralığı 16,7 ms; 4 ms aynı çekirdekte başka odalara pay bırakır); D4'ün 0,2 ms'si seyircisiz odaya aitti. Bu bir öneri, kayıt edilmiş karar değil.
 
-- **Determinizm testi:** aynı girdi dizisi ile `adim.ts` istemci ve sunucu bağlamında aynı durumu üretir (vitest, float karşılaştırma `toBeCloseTo` değil, tam eşitlik).
-- **Kural testleri:** her hamle ailesi için menzil/yarıçap/cooldown sınırları; tip tablosu 324 hücre.
-- **Denge koşumu:** `test/denge/botTurnuvasi.ts` sunucusuz, `paylasilan/sim` üzerinde 200 maç/dakika.
-- **Yük:** `@colyseus/loadtest` ile 50 bot, 25 oda; tanks demosunun `loadtest.ts`'i kalıp.
-- **Gecikme provası:** `@colyseus/sdk/debug` panelleri ile 150 ms yapay gecikmede oynanabilirlik; playground bunu hazır veriyor.
+## 8. Riskler ve geri dönüş
 
-## 8. Açık kararlar
-
-| Karar | Önerim | Alternatif |
-|---|---|---|
-| Paket düzeni | Tek paket (`colyseus/vite`) | pnpm workspaces `packages/{client,server,shared}` (RougeHalla gibi); ekip büyürse geçilir |
-| Colyseus sürümü | 0.18 (gömülü tahmin) | 0.17 + elle interpolasyon; 0.18'de ciddi hata çıkarsa |
-| Sprite kaynağı | İzinle aynalama (`public/sprite/`) | Hotlink; yalnız geliştirmede |
-| Alan adı | `arena.skaledman.com` (sahip onayıyla) | Kendi alanımız |
-| Kod dili | Türkçe tanımlayıcılar, İngilizce kütüphane API'si | Tamamen İngilizce |
-| Paket yöneticisi | npm (başlangıç reposu npm) | pnpm |
-
-## 3b. Referans netcode ile karşılaştırma (2026-11-01 paket analizi sonrası)
-
-Kaynak: yerel paket analizi notu § 1. Referans oyun: tek WebSocket, JSON + zod, **60 Hz tick**, tick başına 1 girdi mesajı (hareket vektörü + nişan noktası + ≤4 eylem), yalnız kendi konumu tahmin, uzlaştırma eşikleri 1,5 / 96 birim ve 10/s yumuşatma, uzak oyuncu için 2–4 tick uyarlamalı enterpolasyon gecikmesi + 15 tick'e kadar ekstrapolasyon, vuruşlar tamamen sunucuda, kendi HP'si olaylardan öne alınır, saniyede 1 ping, maç sonu ≤8 KB telemetri.
-
-Bizim seçimimiz Colyseus 0.18 aynı modeli hazır veriyor (`defineInput` = girdi mesajı, `Predict.reconciler` = uzlaştırma, `attachAll lerp` = enterpolasyon, `allowRewindState` = referansta olmayan gecikme telafisi). İki açık nokta:
-
-- **Tick hızı (K-6, karar: 60 Hz):** 30 Hz önermiştik; referans 60 Hz, sahip 60'ı seçti. 0,08 s'lik telegraf 30 Hz'de 2,4 tick'e sığar; vuruş zamanlaması ±17 ms oynar. Seçenekler: (a) 60 Hz tick + 20 Hz yama (sunucu CPU ×2, 1v1 odada önemsiz), (b) 30 Hz ve en kısa telegraf 0,1 s. F0'da ikisi ölçülür; `network-programmer` + `technical-director`.
-- **Girdi biçimi:** nişanı açı değil **dünya noktası** olarak göndermek hedefli alan hamleleri ve düşüş noktası seçimi için gerekli; `Girdi` şemasına `nisanX/nisanZ` (float32, ±2000 kırpma) eklenir.
-
-Alınacak küçük şeyler: ağ kalitesi göstergesi eşikleri (RTT > 220 ms veya 400 ms snapshot yok → kötü; > 120 ms veya gecikme > 3 tick → orta), maç sonu telemetri alanları (ping medyan/p95, jitter, düzeltme sayıları, kare histogramı; DNT'ye uyum), hata kodu listesi (flood, orden, salaLlena, reanudacion…), yazılım rasterizer uyarısı.
+- **Colyseus 0.18 tazeliği:** geri dönüş tetikleri ADR-005 § "0.17 + elle ara değerleme" (T1-T4). T1 (SDK reconciler) D4'te
+  zaten aşıldı: SDK'nın tahmin katmanı kullanılmıyor, yalnız `defineInput`, `setFixedTimestep`, şema ve yeniden bağlanma.
+  Dönüşün maliyeti bu yüzden `src/istemci/ag/` + `src/sunucu/odalar/` ile sınırlı.
+- **Ağ N3** (p95 olay gecikmesi): taşıma kaynaklı; yol sahip kararı (güvenilmez girdi kanalı ya da tahmin B).
+- **Tek süreç:** çökme ya da güncellemede süren maçlar kaydedilmez; systemd 3 sn'de kaldırır.
+- **Kimlik:** Kick OAuth yok; `oyuncu.kick_id` sütunu boş bekliyor (veri-modeli.md).

@@ -1,11 +1,11 @@
-# Kalan iş raporu (2026-11-05)
+# Kalan iş raporu (2026-11-06)
 
 Kaynak: D1–D8, GU-A…GU-E, TEMIZLIK, DENGE-1/2, FIZIK-1 raporları ve `test-gecesi.md`. Süre ve yüzde tahminleri bu raporun
 yazarının **varsayımıdır**, ölçüm değildir.
 
 ## 1. Nerede duruyoruz
 - **Oyun işlevi tamam:** sim, yetenek/Ulti/Takım Ultisi, çevrimiçi 1v1, hesaplar, Atölye (3B), Market, Başarımlar, Altın,
-  hızlı maç, seyirci/OBS, gizlilik + hesap silme, krediler. `npm test` 479/479, lint, typecheck, build yeşil; Node = Chromium
+  hızlı maç, seyirci/OBS, gizlilik + hesap silme, krediler. `npm test` 488/488, lint, typecheck, build yeşil; Node = Chromium
   17/17 altın hash.
 - **Denge (botlarla):** kazanım bandı 20/20 (3 tohum × 1 000 maç), Ring Out %25-34, maç p90 ≤ 81 sn, Ulti görülen maç ≈ %41.
 - **Fizik:** girdisiz topaçlar çarpışıyor (720/720 koşuda 15 sn içinde), çarpışma sonrası ayrılıp tekrar çarpıyor.
@@ -14,10 +14,10 @@ yazarının **varsayımıdır**, ölçüm değildir.
 ## 2. Geliştirme tarafında kalanlar (benim/ajanların işi)
 | # | İş | Büyüklük | Not |
 |---|---|---|---|
-| 1 | **Kıvılcımı yeni fiziğe ayarla (GU-F)** | küçük | çalışıyor |
+| 1 | ~~Kıvılcımı yeni fiziğe ayarla (GU-F)~~ | küçük | **bitti** (`raporlar/GU-F.md`) |
 | 2 | Menü sanatı: parça/topaç/kalkan ikonları, para yığını, ruh silueti (Çekirdek Günlüğü), Pazar arka planı yer tutucu | orta | 3B ikon önbelleği hazır; el çizimi pixel kalite için sahibin Mac hattı veya ayrı sanat turu |
-| 3 | Topaç sprite'larında nihai kalite (Tripo/Blender GLB) | orta, **sahibe bağlı** | parametrik render şimdilik; GLB kancası hazır |
-| 4 | Görsel uyum kalanları: Takım seçimi, Sonuç, İlk Çekirdek, Profil, Antrenman/HUD ≈ 3,5/5; VS rozet bandı (veri yok); Sonuç ekranı kesirli ölçek; çanak halkası %78 (referans %82) | orta | halka kararı sahibin: %78 kalsın dedi |
+| 3 | Topaç sprite'larında nihai kalite (Tripo/Blender GLB) | orta | **Parti 1-3 işlendi** (yedi Çekirdek, gövdeler; `raporlar/MAC-PARCA.md`); Disk ve Uç sahip kararıyla parametrik |
+| 4 | Görsel uyum kalanları: Takım seçimi, Sonuç, İlk Çekirdek, Profil, Antrenman/HUD ≈ 3,5/5; VS rozet bandı (veri yok); Sonuç ekranı kesirli ölçek; çanak halkası %78 (referans %82) | orta | halka kararı sahibin: %78 kalsın dedi. **Menü hataları tek listede: `raporlar/MENU-DENETIM.md` (2026-11-05, 14 hata + 18 karmaşa, paket P1-P5); S-1…S-3 kararları sahip tarafından 2026-11-05'te onaylandı** |
 | 5 | **Ağ (N3):** p95 olay gecikmesi 350-490 ms (hedef ≤ 200), sıçrama/10 çarpışma 1,5 (kapı ≤ 1) | orta-büyük | çare: güvenilmez girdi kanalı (WebTransport, deneysel) ya da tahmin B; karar sahibin |
 | 6 | Maç ilk yükleme: sıkıştırmasız 1,62 MB (hedef 1,5), gzip ≈ 750 KB | küçük | tünel sıkıştırınca sorun yok; istenirse kod bölme |
 | 7 | **İnsan oyun testi yok:** his ve denge yalnız botla ölçüldü | büyük (sahip/izleyici) | ilk test gecesi bunu yapacak |
@@ -25,6 +25,10 @@ yazarının **varsayımıdır**, ölçüm değildir.
 | 9 | Karar bekleyenler: Takım Ultisi'nde üç Ata kapsamı, ruh portre bayrağı, şok halkası kalsın mı, sürtünme sesi | küçük | sahip tek satırla |
 | 10 | **Kick OAuth** | orta | **sahip söyleyene kadar ASKIDA**, kod yazılmadı |
 | 11 | Sezon 2 (ilk sürüm dışı): 4. yuva Parça Tekniği, Karanlık Pazarı, parça sayısı 27→genişleme, Altın fiyat revizyonu | büyük | ilk canlı haftadan sonra |
+| 12 | **Sunucu kendisi 127.0.0.1'e bağlanmıyor:** derlenmiş sunucu `listen(2567)` çağırıyor; `HOST=127.0.0.1` (systemd) kodda okunmuyor. Dış erişimi bugün yalnız systemd `IPAddressDeny` ve nftables kesiyor | küçük | VPS kurulumundan önce kodda host verilmeli ya da kurulumda doğrulanmalı (teknik inceleme 2026-11-06) |
+| 13 | CI yalnız PR ve `main`'e push'ta koşuyor; `devran-kod`'a push CI tetiklemiyor | küçük | `ci.yml` tetikleyicisine `devran-kod` eklenmesi önerilir |
+| 14 | `deploy/README.md` tünel örneği varsayılan `config.yml`'yi kullanıyor; VPS'te o dosya tradebot tünelinin | küçük | kurulumda `--config <devran>.yml` ve tünel kimliği ver (`vps.md` tuzağı) |
+| 15 | Oda adımı bütçesi iki yerde farklı (D4 ≤ 0,2 ms, D8 4 ms); Lv.4 eşiği `ilerleme.ts`'de var, tasarım tavanı Lv.3 | küçük | `@relay` ile tek sayıya indir; tasarımla karşılaştır |
 
 Tahmin (varsayım): madde 1-4, 6, 8 için 4-6 ajan turu (her biri birkaç saat). Madde 5 karar + 1-2 tur. Madde 10 Kick kayıtlı
 uygulama gelince 1-2 tur.

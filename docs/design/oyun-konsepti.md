@@ -1,5 +1,7 @@
 # Skaledman Arena: fusion kartlarıyla gerçek zamanlı dövüş (tasarım önerisi)
 
+> **TARİHÇE (2026-11-04'ten beri geçerli değil):** Bu belge Skaledman/Pokémon füzyon arenası çağına (2026-11-01) aittir. Sahip 2026-11-04'te projeyi Skaledman ve Pokémon'dan ayırdı ("skaledman'dan bağımsız bir proje olacak"); proje artık özgün topaç dövüşü **Devran**. Gövde değiştirilmeden tarihçe olarak tutulur. **Geçerli belge:** `docs/design/beyblade/00-lore-cercevesi.md`, `docs/design/beyblade/01-arena-eslemesi.md`, sayılar `docs/design/tuning.md`.
+
 Tarih: 2026-11-01. Hedef: [skaledman.com](https://skaledman.com)'daki fusion kartlarını gerçek zamanlı bir arenada dövüştürmek. Yalnız dövüş katmanı; albüm, kart açma ve Kick kanal puanı akışı Skaledman'da kalır.
 
 ## 1. Skaledman'da elimizde ne var

@@ -1,6 +1,6 @@
 # Fusion Pokémon'ları arenada canlandırma
 
-> **TARİHÇE / İPTAL (D8, B-37):** Bu belge iptal edilen ilk fikrin (hayran kartlarıyla arena, 2026-11-01) kaydıdır; içerik değiştirilmeden tarihçe olarak tutulur. Proje **Devran**'a (özgün dönen topaç dövüşü, kâr amaçsız) döndü; marka, kart, sprite ve dış site bağımlılığı yoktur. Güncel belgeler: `docs/production/devran-kod-brief.md`, `docs/production/raporlar/D1.md … D8.md`.
+> **TARİHÇE (2026-11-04'ten beri geçerli değil):** Bu belge Skaledman/Pokémon füzyon arenası çağına (2026-11-01) aittir. Sahip 2026-11-04'te projeyi Skaledman ve Pokémon'dan ayırdı ("skaledman'dan bağımsız bir proje olacak"); proje artık özgün topaç dövüşü **Devran**. Gövde değiştirilmeden tarihçe olarak tutulur. **Geçerli belge:** `docs/art/topac-pixel-plani.md`, `docs/design/beyblade/06-kutsal-canavarlar.md`.
 
 Tarih: 2026-11-01 (ikinci sürüm; sahibin kararıyla yeniden yazıldı). Bağlam: [oyun-konsepti.md](../design/oyun-konsepti.md), [mimari.md](../tech/mimari.md).
 

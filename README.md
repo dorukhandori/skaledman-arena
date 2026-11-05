@@ -5,10 +5,13 @@ rakibi durdur, dışarı at ya da parçala. Klavye sürer, fare nişan alır; he
 yetenekleri, Ulti'si ve takımın paylaştığı **Takım Ultisi** var. Kick yayınlarında izleyicilerin kendi hesabıyla
 oynaması ve yayıncının OBS'te **seyirci görünümünü** göstermesi için yapıldı. Reklam yok, satın alma yok.
 
-**Durum (Kasım 2026):** D1–D8 dilimleri bitti (sim, yetenekler + Ulti + Takım Ultisi, çevrimiçi maç, hesaplar,
+**Durum (6 Kasım 2026):** D1–D8 dilimleri bitti (sim, yetenekler + Ulti + Takım Ultisi, çevrimiçi maç, hesaplar,
 Atölye, Market, Başarımlar, Altın, hızlı maç, sonuç ekranı, seyirci/OBS görünümü, gizlilik + hesap silme, krediler).
-Sırada: ilk test gecesi ([docs/production/test-gecesi.md](docs/production/test-gecesi.md)), Görsel Uyum Geçişi ve Kick
-girişi. Ayrıntı: [docs/production/roadmap.md](docs/production/roadmap.md), dilim raporları `docs/production/raporlar/`.
+Üstüne: üç boyutlu Atölye, çarpışma fiziği ve kıvılcım cilası, Gemini + Tripo + Blender parça hattı, altı element için kutsal
+canavar (Ata) ve rehber karakter Pergel. Kod kapıları yeşil (`npm test` 488/488, lint, typecheck, build). İnsanla oyun testi
+henüz yapılmadı. Sırada: ilk test gecesi ([docs/production/test-gecesi.md](docs/production/test-gecesi.md)), menü düzeltmeleri,
+ağ gecikmesi hedefi ve Kick girişi. Güncel tablo ve çıkış planı:
+[docs/production/durum-20261105.md](docs/production/durum-20261105.md); dilim raporları `docs/production/raporlar/`.
 
 ## Hızlı başlangıç
 
@@ -43,6 +46,26 @@ npm run dev          # http://localhost:5173 (istemci + Colyseus sunucusu tek s�
 - **Sunucu** (`src/sunucu/`): Colyseus 0.18 yetkili oda, SQLite (better-sqlite3), REST uçları. Ayrıntı: [docs/tech/backend.md](docs/tech/backend.md).
 - **Ağ** (`src/ag/`): protokol, durum şeması; istemci kendi topacını tahmin eder, rakibi 100 ms geriden ara değerler. [docs/tech/netcode.md](docs/tech/netcode.md).
 - **İstemci** (`src/istemci/`): Vite + TypeScript + PixiJS 8; HUD DOM katmanı.
+
+## Belge haritası
+
+| Konu | Nerede |
+|---|---|
+| Durum ve çıkış planı | [docs/production/durum-20261105.md](docs/production/durum-20261105.md), [kalan-is.md](docs/production/kalan-is.md), [roadmap.md](docs/production/roadmap.md) |
+| Oyun tasarımı ve dünya | `docs/design/beyblade/` (lore, arena, sahip kararları, oyuncu yolculuğu, sözlük, çarpışma hissi, kutsal canavarlar), sayılar: [docs/design/tuning.md](docs/design/tuning.md) |
+| Teknik | [mimari](docs/tech/mimari.md), [netcode](docs/tech/netcode.md), [backend](docs/tech/backend.md), [veri modeli](docs/tech/veri-modeli.md), `docs/tech/adr/` |
+| Sanat | [docs/art/topac-pixel-plani.md](docs/art/topac-pixel-plani.md), [krediler](docs/art/krediler.md), araç hattı `araclar/sanat/` |
+| Kontrol ve arayüz | [docs/ux/kontrol-ve-hud.md](docs/ux/kontrol-ve-hud.md), [Pergel](docs/ux/bilgic-pergel.md) |
+| Dağıtım | [deploy/README.md](deploy/README.md) |
+
+## Geliştirme kuralları
+
+- **Paylaşılan sim kutsaldır:** `src/paylasilan` içinde DOM, Node API, `Date.now`, tohumsuz `Math.random` yok; istemci ve sunucu aynı adımı bit bit çalıştırır (ESLint kapısı).
+- **Sunucu yetkilidir:** konum, Stamina, vuruş ve sonuç sunucuda belirlenir; istemci yalnız girdi yollar.
+- **Sayılarda** [docs/design/tuning.md](docs/design/tuning.md) kazanır; oyuncuya görünen terimler genel oyun terimleridir.
+- **Kod kimlikleri** Türkçe ASCII, kitaplık API'leri ve commit iletileri İngilizce (`feat:`, `fix:`, `docs:`, `art:`…).
+- **Ağ iddiası** için gecikme, titreşim ve kayıp değerleri yazılı iki gerçek istemci testi gerekir; yerel test çok oyunculu kanıt sayılmaz.
+- **Ücretli çağrılar, alan adı ve bulut kaynağı** için önce sahip onayı; anahtarlar yalnız ortamdan, depoya girmez.
 
 ## Lisans ve krediler
 

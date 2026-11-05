@@ -37,3 +37,21 @@ Sahip istedi, tüm üretim hatlarına (Tripo dahil) izin verdi. Varsayılanlar:
 - Altı Ata'nın türleri **onaylandı**: Alaz Bizonu (Kor), Çakım Geyiği (Şimşek), Yel Vatozu (Kasırga), Dip Nautilusu (Girdap), Dağ Mamutu (Kaya), Ayaz Ayısı (Don).
 - Kapsam = pixel planı § 4: ilk sürümde canavar yalnız Ulti'de. Özel Yetenek'te ruh portresi `RUH_PORTRE_OZEL_YETENEK = false` ile kapalı, sonraki sürümde açılır.
 - Atölye'nin ipucu karakteri **Pergel** (`docs/ux/bilgic-pergel.md`). Adı ve kişiliği sahip onayı bekliyor.
+
+## Menü kararları (2026-11-05, sahip: "onaylıyorum", `raporlar/MENU-DENETIM.md` önerileri olduğu gibi)
+
+- **S-1 Gezinti modeli:** Atölye ana üs. Üst bantta yalnız lento (ekran adı + ◄), Altın ve tek ⚙ (Ayarlar; Çıkış onun içinde). Atölye alt sırası: MARKET · BAŞARIMLAR · GÜNLÜK · PROFİL. "Daha fazla" açılırı kalkar.
+- **S-2 Oda QR'ı:** kaldırılır. Bağlantıyı kopyala yeterli; yayın için seyirci bağlantısı zaten var.
+- **S-3 Krediler:** oyuncu sürümü yalnız oyunda kullanılanları gösterir; aday ve iç durum notları yalnız `docs/art/krediler.md`'de kalır.
+
+## Devran karar özeti (2026-11-06)
+
+[@nile · Producer] Yukarıdaki K-1…K-12 numaraları değişmedi. Bu bölüm beş maddeyi **kodla doğrulanmış** hâliyle yazar; çelişen eski satır varsa bu bölüm kazanır. Kaynak her satırda.
+
+| Konu | Geçerli durum | Kod / belge kanıtı |
+|---|---|---|
+| İlk arena | **Kuşak Arenası**: daire çanak, dış hız şeridi 0,60R–0,85R, kenardan Ring Out. İskeletler Diyarı (eski roadmap K-14) tarihçe. | `boslukler/nile-kapsam.md` B-12; `src/istemci/oyun/KusakArenasi.ts`, `HibritArena.ts` ("Hibrit Kuşak Arenası"); `ayar.ts` `kusakIc`/`kusakDis`; `tuning.md` § 2 |
+| Ödünç topaç | Sahip olunan kullanılabilir Çekirdek üçe ulaşana kadar boş yuvalar ödünç topaçla dolar: **Lv.1**, tecrübe almaz, başarımda "sahip olunan" sayılmaz; ömrü biten Yapay yuvası da ödünçle dolar (kota dışı). | B-10, B-27; `src/paylasilan/kurallar/atolye.ts` `oduncKotasi`; `ilerleme.ts` `oduncSeviye: 1`; `basarim.ts`; `test/db.test.ts` "takım ve ödünç" |
+| Antrenman ve misafir | **Antrenman misafire açık** (girişsiz, oyuncuId yok, ilerleme/Altın yazılmaz). Oda kodu ve hızlı maç bilet (giriş) ister. `03-oyuncu-yolculugu.md` US-1.1'deki "misafir oyun yok" Antrenman için geçerli değil. | `tide-ux.md` O-1 (b); `src/sunucu/odalar/MacOdasi.ts` (misafir yalnız `antrenman`); `test/api.test.ts`; `ekonomi.ts` Antrenman Altını 0 |
+| Rakip terk ederse | Kalan oyuncu **galibiyet + yarım Altın** (×0,5), stil bonusu yok, maç başarım sayacını işletmez. Terk eden 0 Altın, 0 XP. | `tide-ux.md` G-17, O-4; `src/paylasilan/kurallar/ekonomi.ts` `rakipTerkCarpani: 0.5`, `terkAltin: 0`; `src/sunucu/oyuncu/macSonu.ts`; `test/d7.test.ts` (G-17 satırı) |
+| Parça seviyesi | Kodda **parçalar sabit** (`parca` tablosunda seviye yok); yalnız Çekirdek seviyelenir, ilk sürüm tavanı **Lv.3**. Kalıcı karar hâlâ sahipte (durum-20261105 § 6-7, öneri: sabit kalsın). | `src/sunucu/db/sema.ts` (`cekirdek.seviye` var, `parca` yok); `ilerleme.ts` `tavan: 3`; `nile-kapsam.md` 03 § 7-1 önerisi |

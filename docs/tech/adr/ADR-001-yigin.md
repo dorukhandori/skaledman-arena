@@ -25,3 +25,7 @@ Kurulum 2026-11-01: `colyseus@0.18.10` (Vite eklentisi `colyseus/vite` ile tek s
 - Ağ kodu `src/istemci/ag/` ve `src/sunucu/odalar/` ile sınırlı tutulur.
 - **Geri dönüş tetiği (0.18 → 0.17 + elle interpolasyon):** F1'de iki gerçek istemciyle 150 ms yapay gecikmede `Predict.reconciler` düzeltmeleri görünür zıplama yapıyorsa ya da `allowRewindState` vuruşları 1 hafta içinde çözülemeyen bir hatayla yanlış sayıyorsa `@axiom` geri dönüşü önerir; karar sahibin.
 - Üretim: `vite build --app` → `dist/server/server.mjs` + `dist/client`, tek süreç, VPS'te ayrı systemd birimi (`docs/tech/mimari.md` § 5).
+
+Not (2026-11-06, `@axiom`): Bağlam paragrafı Skaledman kartlarına dayanıyor; proje 2026-11-04 sahip kararıyla Skaledman ve
+Pokémon'dan ayrılıp özgün Devran oldu ([ADR-006](ADR-006-devran-donusumu.md)). Yığın kararı aynen geçerli. Geri dönüş
+tetikleri için ADR-005 § "0.17 + elle ara değerleme tetikleri" esas alınır; dağıtım bölümü artık `docs/tech/mimari.md` § 6.
