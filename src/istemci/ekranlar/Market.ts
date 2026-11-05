@@ -21,7 +21,7 @@ const parcaIkonu = (id: string, tur: string, element: string | null | undefined,
 // bandı, 2×2 ahşap tabelalı raf (Çekirdekler · Gövdeler · Diskler · Uçlar; tezgâh alt başlığı), hücre = ikon + rozet
 // (fiyat / kilit + ilerleme / ??? / Sende). Odakta ve fareyle ipucu: ad + fiyat + kilit koşulu (tide C-13). Satın al →
 // tek adım onay (iptal edilebilir) → "Satın alındı" + Atölye bağlantısı. Dökümhane: Yapay yenileme. ERİTME YOK.
-// URL: ?ekran=market&parca=<id> (ürünü aç) · &yenile=<cekirdekId> (yenileme onayı).
+// URL: ?ekran=market&parca=<id> (ürünü aç) · &vurgu=<id> (ürüne kaydır + vurgula; Atölye "Market'te aç") · &yenile=<cekirdekId> (yenileme onayı).
 
 const STIL = `
 .mk.k-zemin { display:flex; flex-direction:column; }
@@ -46,6 +46,9 @@ const STIL = `
 .mk .hucre:hover .ik { background:#262d46; }
 .mk .hucre:focus-visible { outline:none !important; }
 .mk .hucre:focus-visible .ik { outline:calc(2 * var(--p)) solid #fff; outline-offset:var(--p); }
+.mk .hucre[data-vurgu] .ik { outline:calc(2 * var(--p)) solid var(--gold, #f2c447); outline-offset:var(--p); animation:mk-vurgu .6s steps(2) 6; }
+@keyframes mk-vurgu { 50% { outline-color:#fff; } }
+@media (prefers-reduced-motion: reduce) { .mk .hucre[data-vurgu] .ik { animation:none; } }
 .mk .hucre .ad { font:400 var(--y-16)/.75 var(--font-etiket); text-align:center; color:var(--soluk); text-transform:uppercase; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:none; }
 .mk .hucre[data-durum=kilitli] .ik, .mk .hucre[data-durum=gizli] .ik { background:#11141f; }
 .mk .hucre[data-durum=gizli] .ik img { filter:brightness(0); }
@@ -132,7 +135,9 @@ class MarketEkrani {
     const q = new URLSearchParams(location.search);
     const p = q.get("parca");
     const y = q.get("yenile");
+    const vurgu = q.get("vurgu");
     if (p) { const u = this.urun(p); if (u) this.ac(u); }
+    else if (vurgu) queueMicrotask(() => this.vurgula(vurgu));
     else if (y) { const s = this.v.yenileme.find((x) => String(x.cekirdekId) === y); if (s) this.yenileAc(s); }
   }
 
@@ -266,7 +271,9 @@ class MarketEkrani {
     this.satinAlD = el("button", "k-dugme ana", serit, "Satın al");
     this.satinAlD.dataset["eylem"] = "satin-al";
     this.satinAlD.addEventListener("click", () => { if (this.seciliUrun) this.ac(this.seciliUrun); });
-    const ilk = hucreler.find((x) => x.dataset["durum"] === "acik") ?? hucreler[0];
+    // ilk odak: ?vurgu=<id> (Atölye "Market'te aç") o ürün, yoksa ilk satın alınabilir ürün
+    const vurguId = new URLSearchParams(location.search).get("vurgu");
+    const ilk = (vurguId ? hucreler.find((x) => x.dataset["urun"] === vurguId) : undefined) ?? hucreler.find((x) => x.dataset["durum"] === "acik") ?? hucreler[0];
     if (ilk) { const u = this.urun(ilk.dataset["urun"]!); if (u) this.sec(u, ilk); }
     queueMicrotask(() => ilk?.focus());
   }
@@ -275,6 +282,19 @@ class MarketEkrani {
   private secimYazi: HTMLElement | null = null;
   private satinAlD: HTMLButtonElement | null = null;
   /** seçili hücre (çentik) + alt şerit metni; SATIN AL yalnız satın alınabilir üründe etkin */
+  /** TEMIZLIK #6 (Atölye "Market'te aç", ?vurgu=<id>): ürüne kaydır, seç ve kısa süre vurgula (modal açılmaz). */
+  vurgula(id: string): void {
+    const h = this.kok.querySelector<HTMLElement>(`.hucre[data-urun="${CSS.escape(id)}"]`);
+    const u = this.urun(id);
+    if (!h || !u) return;
+    h.scrollIntoView({ block: "center", behavior: "auto" });
+    this.ilkOdak = false;
+    h.focus({ preventScroll: true });
+    this.sec(u, h);
+    h.dataset["vurgu"] = "1";
+    window.setTimeout(() => { delete h.dataset["vurgu"]; }, 4000);
+  }
+
   private sec(u: MarketUrunu, h: HTMLElement): void {
     this.seciliUrun = u;
     for (const x of this.kok.querySelectorAll<HTMLElement>(".hucre[data-secili]")) delete x.dataset["secili"];

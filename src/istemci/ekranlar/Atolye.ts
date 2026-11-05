@@ -105,6 +105,7 @@ const STIL = `
 .at .g3-etiket:hover small, .at .g3-etiket[aria-pressed=true] small { color:var(--gold); }
 .at .g3-cizgi { position:absolute; height:var(--p); background:var(--turuncu); margin-top:calc(1 * var(--p)); }
 .at .g3-cizgi.sag { margin-top:0; opacity:.8; }
+.at .parca-karti .pk-market { align-self:flex-start; margin-top:calc(3 * var(--p)); }
 .at .g3-arac { position:absolute; right:var(--p); bottom:var(--p); display:flex; gap:calc(3 * var(--p)); }
 .at .k-sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
 .at .ayrinti { position:absolute; inset:calc(24 * var(--p)) var(--p) var(--p); z-index:3; overflow:auto; display:flex; flex-direction:column; gap:calc(4 * var(--p)); }
@@ -920,6 +921,16 @@ class AtolyeEkrani {
     const yd = this.yuvalar()[this.secili]!;
     const durum = yd.durum === "odunc" || yd.durum === "devreDisi" ? "Ödünç" : g.durum === "sahip" ? "Takılı" : g.etiket;
     el("div", `pk-durum k-e16${g.durum === "kilitli" ? " kilit" : ""}`, kart, durum);
+    // TEMIZLIK #6: kilitli ya da satın alınmamış parça (ödünç topaç, önizleme) → Market'te o ürüne git; tek ana eylem
+    // ilkesi (sadelik-ilkeleri): küçük ikincil düğme, ana düğme Kaydet olarak kalır
+    if (sahip === 0 && (g.durum === "market" || g.durum === "kilitli")) {
+      const m = el("button", "k-dugme kucuk pk-market", kart, "Market'te aç");
+      m.type = "button";
+      m.dataset["eylem"] = "markette-ac";
+      m.dataset["marketBag"] = p.id;
+      m.setAttribute("aria-label", `${p.ad}: Market'te aç (${g.etiket})`);
+      m.addEventListener("click", () => git("market", `&vurgu=${encodeURIComponent(p.id)}`));
+    }
     const tavan = katkiTavani();
     const d = katkiDegerleri(p);
     const kk = el("div", "", kart);
