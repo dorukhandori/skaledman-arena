@@ -16,7 +16,11 @@ import { SusRastgele } from "./SusRastgele.ts";
 // Tehlike = kırmızı + çapraz tarama + dolu kenar; kendi önizlemen = kesikli, taramasız (renk tek kanal değil).
 
 const r = AYAR.topacYaricap;
-const TEHLIKE = SAHNE_RENK.tehlike;
+/** GU-05: telegraf kırmızısı referans 08'den (#C82625, tasarım dili § 2.5); düz görünümde eski ton. */
+const TEHLIKE_HIBRIT = 0xc82625;
+let TEHLIKE: number = SAHNE_RENK.tehlike;
+/** Ulti kenar parlaması (08: #E6680C) */
+const KENAR_RENK = 0xe6680c;
 const KENAR_PARLAMA_SN = 0.3;
 const SILUET_BELIRME = 0.3;
 /** D8: Takım Ultisi'nde üç ruhun belirme aralığı (s). */
@@ -71,6 +75,7 @@ export class YetenekGorsel {
   readonly sayac = { telegrafKare: 0, rakipTelegrafKare: 0, dekalKare: 0, nisanKare: 0, siluet: 0, takimUlti: 0, kenarParlama: 0, ipucuKare: 0, engelKare: 0 };
 
   constructor(private sahne: Sahne, private yerel: number) {
+    TEHLIKE = sahne.hibrit ? TEHLIKE_HIBRIT : SAHNE_RENK.tehlike;
     this.zemin.addChild(this.dekal, this.tel);
     sahne.zeminDuzlem.addChild(this.zemin);
     // simge ve ruh dik durur (basılmaz): zemin katmanında, düzlemin üstünde
@@ -110,7 +115,7 @@ export class YetenekGorsel {
             kap.addChild(this.ruhCiz(el));
             kap.alpha = 0;
             this.ruhKap.addChild(kap);
-            this.siluetler.push({ el, t: -k * TAKIM_RUH_ARALIK, sure, x: SAHNE.merkezX + (k - 1) * 150, kap, olcek: 0.7 });
+            this.siluetler.push({ el, t: -k * TAKIM_RUH_ARALIK, sure, x: SAHNE.merkezX + ((k - 1) * 150) / this.sahne.yakinlik, kap, olcek: 0.7 / this.sahne.yakinlik });
             this.sayac.siluet++;
           });
           this.sayac.takimUlti++;
@@ -123,7 +128,7 @@ export class YetenekGorsel {
           kap.alpha = 0;
           this.ruhKap.addChild(kap);
           const t = d.topaclar[o.i]!;
-          this.siluetler.push({ el, t: 0, sure: o.telegraf / AYAR.adimHz + 0.7, x: SAHNE.merkezX, kap });
+          this.siluetler.push({ el, t: 0, sure: o.telegraf / AYAR.adimHz + 0.7, x: SAHNE.merkezX, kap, olcek: 1 / this.sahne.yakinlik });
           void t;
           this.sayac.siluet++;
           if (this.flas === "normal") { this.kenarKalan = KENAR_PARLAMA_SN; this.sayac.kenarParlama++; }
@@ -394,7 +399,15 @@ export class YetenekGorsel {
       if (rakip) this.kesikliDaire(u, kx, ky, r + 6, TAKIM_RENK.rakip, 3, 0.5 + 0.5 * nabiz);
       else u.circle(kx, ky, r + 6).stroke({ width: 3, color: TAKIM_RENK.oyuncu, alpha: 0.5 + 0.5 * nabiz });
       // Ulti telegrafı: kaynak element renginde parlar (aviso boyunca artar)
-      if (y.kademe >= 3 || YETENEK_SIM[t.yetenekNo]!.kademe >= 3) u.circle(kx, ky, r + 12).stroke({ width: 6, color: c.acik, alpha: 0.25 + 0.55 * oran });
+      if (y.kademe >= 3 || YETENEK_SIM[t.yetenekNo]!.kademe >= 3) {
+        u.circle(kx, ky, r + 12).stroke({ width: 6, color: c.acik, alpha: 0.25 + 0.55 * oran });
+        if (this.sahne.hibrit) {
+          // referans 08: atanın altında eş merkezli iki kırmızı halka (zeminde elips) + dışta dolan halka; üstünde element aurası
+          u.circle(kx, ky, r + 22).stroke({ width: 5, color: TEHLIKE, alpha: 0.95 });
+          u.circle(kx, ky, r + 22 + 46 * (0.6 + 0.4 * oran)).stroke({ width: 5, color: TEHLIKE, alpha: 0.85 });
+          this.aura(el, kx, this.py(ky), oran);
+        }
+      }
       if (rakip && y.kacilabilir && !ipucuYeri) ipucuYeri = { x: merkezX, y: Math.min(462, (s.tur === "serit" ? merkezY : yy + Math.min(s.R, 200)) + 10) };
     }
     return ipucuYeri;
@@ -431,6 +444,38 @@ export class YetenekGorsel {
     else this.kesikliDaire(u, kx, ky, s.R, renk, 2, 0.85);
   }
 
+  /** Ulti telegrafında topaç üstünde element aurası (08: Kor topacın üstünde alev). Ekranda dik. */
+  private aura(el: ElementAdi, x: number, yZemin: number, oran: number): void {
+    const g = this.ustEkran;
+    const c = ELEMENT_RENK[el];
+    const tepe = yZemin - 44;
+    for (let k = 0; k < 7; k++) {
+      const fx = x + (k - 3) * 7;
+      const faz = Math.sin(this.zaman * 11 + k * 1.7);
+      const h = (14 + 14 * oran) * (k === 3 ? 1.4 : k === 2 || k === 4 ? 1.15 : 0.85) * (0.8 + 0.2 * faz);
+      const yb = tepe + Math.abs(k - 3) * 2;
+      g.poly([fx - 5, yb, fx + 5, yb, fx + faz * 2, yb - h]).fill({ color: k % 2 ? c.orta : c.acik, alpha: 0.85 });
+      g.poly([fx - 2, yb, fx + 2, yb, fx + faz, yb - h * 0.55]).fill({ color: c.vurgu, alpha: 0.9 });
+    }
+  }
+
+  /** Dash koni izi (08: atılan topacın arkasında renkli üçgen iz): zemin düzleminde, düz koordinat. */
+  private dashKonisi(d: Dunya): void {
+    if (!this.sahne.hibrit) return;
+    const u = this.ust;
+    for (const [i, t] of d.topaclar.entries()) {
+      if (t.dashKalan <= 0) continue;
+      const v = Math.hypot(t.vx, t.vz);
+      if (v < 40) continue;
+      const ux = t.vx / v, uz = t.vz / v;
+      const c = ELEMENT_RENK[d.profiller[i]!.element];
+      const x = sx(t.x), y = sy(t.z);
+      const L = Math.min(150, 60 + v * 0.25);
+      u.poly([x - uz * r * 0.9, y + ux * r * 0.9, x + uz * r * 0.9, y - ux * r * 0.9, x - ux * L, y - uz * L]).fill({ color: c.orta, alpha: 0.45 });
+      u.poly([x - uz * r * 0.45, y + ux * r * 0.45, x + uz * r * 0.45, y - ux * r * 0.45, x - ux * L * 0.75, y - uz * L * 0.75]).fill({ color: c.acik, alpha: 0.55 });
+    }
+  }
+
   private simsekCiz(dt: number): void {
     const u = this.ust;
     for (const s of this.simsekler) {
@@ -460,7 +505,8 @@ export class YetenekGorsel {
       const cikis = Math.min(1, Math.max(0, (s.sure - s.t) / 0.3));
       s.kap.alpha = 0.75 * giris * cikis; // avatar oyun alanını kapatamaz: alfa ≤ %75
       s.kap.scale.set((s.olcek ?? 1) * (0.9 + 0.1 * giris));
-      s.kap.position.set(s.x, 160 - 10 * giris);
+      // hibrit: arenanın üstünde, uzak duvar hizasında (referans 08); dünya yakınlığı ölçekte telafi edildi
+      s.kap.position.set(s.x, (this.sahne.hibrit ? 196 : 160) - 10 * giris);
       // yükselen parıltılar
       const g = this.ustEkran;
       const c = ELEMENT_RENK[s.el];
@@ -481,6 +527,16 @@ export class YetenekGorsel {
     if (this.flas !== "normal") return;
     // tek yönlü yumuşak sönme (ux § 2.2): tepe ≤ %25
     const a = 0.25 * (this.kenarKalan / KENAR_PARLAMA_SN);
+    if (this.sahne.hibrit) {
+      // referans 08: sol ve sağ kenarda dikey turuncu parlama, içe doğru söner (tepe ≤ %25, tek yönlü sönme)
+      for (let k = 0; k < 10; k++) {
+        const w = 6;
+        const al = a * (1 - k / 10);
+        g.rect(k * w, 0, w, SAHNE.yukseklik).fill({ color: KENAR_RENK, alpha: al });
+        g.rect(SAHNE.genislik - (k + 1) * w, 0, w, SAHNE.yukseklik).fill({ color: KENAR_RENK, alpha: al });
+      }
+      return;
+    }
     for (let k = 0; k < 8; k++) {
       const p = k * 6;
       g.rect(p + 3, p + 3, SAHNE.genislik - 2 * p - 6, SAHNE.yukseklik - 2 * p - 6).stroke({ width: 6, color: 0xff8a3d, alpha: a * (1 - k / 8) });
@@ -497,6 +553,7 @@ export class YetenekGorsel {
     for (const c of [...this.simgeKap.children]) { this.simgeKap.removeChild(c); this.simgeHavuz.push(c as Graphics); }
     this.dekalCiz(d);
     const ipucu = this.telegrafCiz(d);
+    this.dashKonisi(d);
     if (nisan && d.mac.faz === "tur") this.nisanCiz(d, nisan);
     this.simsekCiz(dt);
     this.siluetIlerlet(dt);
