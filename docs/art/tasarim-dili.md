@@ -503,3 +503,5 @@ Yer: [`docs/art/maketler/`](maketler/) (README orada). Hepsi **yer tutucu sanat,
 | `karsilastirma-*.png` | Önce (D5/D6 ekran görüntüsü) / sonra (maket) ve kaldırılan–eklenen öğe listesi: `ilk-cekirdek`, `atolye`, `market`, `basarimlar`, `oyna`, `lobi`, `sonuc`, `mac`, `ulti` |
 | `m4-kamera-kiyas.png` | M4 · şimdiki oyun / Hibrit maket / referans 07 yan yana; kayıp, kazanç, "fizik değişmez", önlemler ve dönüşüm şeması |
 
+
+**Menü dili v2 önerisi:** bkz. [`menu-tasarim-arastirma.md`](menu-tasarim-arastirma.md) (maketler `maketler/menu-v2/`).
