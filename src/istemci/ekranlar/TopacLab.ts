@@ -14,9 +14,11 @@ import { OyuncuGirdisi } from "../oyun/Girdi.ts";
 import { Hud } from "../oyun/Hud.ts";
 import { Iz } from "../oyun/Iz.ts";
 import { kenarUyarisiCiz } from "../oyun/KenarUyari.ts";
+import { ayarlariOku, kameraKipi } from "../oyun/Ayarlar.ts";
 import { ELEMENT_RENK } from "../oyun/renkler.ts";
-import { SAHNE, Sahne } from "../oyun/Sahne.ts";
+import { Sahne } from "../oyun/Sahne.ts";
 import { TopacGorsel } from "../oyun/TopacGorsel.ts";
+import type { TopacCizimi } from "../oyun/cizimTurleri.ts";
 
 // Topaç Lab (D1, nile § 2): WASD ile topaç sür, bota çarp; Stamina kaydırıcısı kademeleri sürer, üç hız kademesi
 // yan yana, parça seçimi veri'den, bitişler (gerekirse "zorla" düğmeleriyle). Sim çevrimdışı, 60 Hz sabit adım.
@@ -70,8 +72,8 @@ export function baslat(b: EkranBaglami): void {
 class TopacLab {
   private sahne: Sahne;
   private efektler: Efektler;
-  private gorseller: TopacGorsel[] = [];
-  private onizleme: TopacGorsel[] = [];
+  private gorseller: TopacCizimi[] = [];
+  private onizleme: TopacCizimi[] = [];
   private izler: Iz[] = [];
   private hud: Hud;
   private girdi: OyuncuGirdisi;
@@ -103,14 +105,13 @@ class TopacLab {
     this.botKipi = kip === "rota" || kip === "pasif" ? kip : "saldirgan";
     this.secim = [setSecimi(q.get("oyuncu") ?? "goktasi"), setSecimi(q.get("rakip") ?? "maden")];
 
-    this.sahne = new Sahne(b.app);
+    this.sahne = new Sahne(b.app, kameraKipi(ayarlariOku()));
     this.sahne.sagBosluk = PANEL_GENISLIK;
     this.efektler = new Efektler(this.sahne, () => this.gorseller);
     this.sahne.efektKatmani.addChild(this.kenarUyari);
     this.profilleriKur();
     for (let i = 0; i < 2; i++) {
-      const g = new TopacGorsel(this.profiller[i]!, i === YEREL ? "oyuncu" : "rakip", this.sahne.golgeKatmani, this.sahne.efektKatmani);
-      this.sahne.nesneKatmani.addChild(g.kok);
+      const g = this.sahne.topacOlustur(this.profiller[i]!, i === YEREL ? "oyuncu" : "rakip");
       this.gorseller.push(g);
       const iz = new Iz(ELEMENT_RENK[this.profiller[i]!.element].acik);
       this.sahne.izKatmani.addChild(iz.rope);
@@ -150,18 +151,21 @@ class TopacLab {
     baslik.anchor.set(0.5, 0);
     baslik.position.set(104, 92);
     kap.addChild(baslik);
+    const hibrit = this.sahne.hibrit;
     KADEME_ONIZLEME.forEach((k, j) => {
       const y = 160 + j * 128;
-      const g = new TopacGorsel(this.profiller[YEREL], "yok", kap, kap);
-      g.kok.position.set(104, y);
-      kap.addChild(g.kok);
+      // hibrit: önizleme de yandan topaç; dünya konumu ekran (104, y)'ye denk (kamera yakınlığı)
+      const B = this.sahne.yakinlik;
+      const g: TopacCizimi = hibrit ? this.sahne.topacOlustur(this.profiller[YEREL], "yok") : new TopacGorsel(this.profiller[YEREL], "yok", kap, kap);
+      g.kok.position.set(hibrit ? 480 + (104 - 480) / B : 104, hibrit ? 270 + (y + 16 - 270) / B : y);
+      if (!hibrit) kap.addChild(g.kok);
       const t = new Text({ text: k.ad, style: { fill: 0xf3f1e8, fontSize: 11, fontWeight: "700", fontFamily: "system-ui" } });
       t.anchor.set(0.5, 0);
       t.position.set(104, y + 44);
       kap.addChild(t);
       this.onizleme.push(g);
     });
-    this.sahne.nesneKatmani.addChild(kap);
+    (hibrit ? this.sahne.ekranKatmani : this.sahne.nesneKatmani).addChild(kap);
   }
 
   private yeniTur(): void {
@@ -419,7 +423,7 @@ class TopacLab {
   }
 
   private kenarUyarisiCiz(): void {
-    kenarUyarisiCiz(this.kenarUyari, this.dunya, YEREL, SAHNE.merkezX, SAHNE.merkezY, performance.now() / 1000);
+    kenarUyarisiCiz(this.kenarUyari, this.dunya, YEREL, this.sahne, performance.now() / 1000);
   }
 }
 

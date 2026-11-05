@@ -6,7 +6,7 @@ import { Parcaciklar } from "./Parcaciklar.ts";
 import { ELEMENT_RENK, renkKaristir } from "./renkler.ts";
 import { SAHNE, type Sahne } from "./Sahne.ts";
 import { SusRastgele } from "./SusRastgele.ts";
-import type { TopacGorsel } from "./TopacGorsel.ts";
+import type { TopacCizimi } from "./cizimTurleri.ts";
 
 // Sim olayı → his (05 § 3): sim `adim` sonunda `olaylar`'a koyar, burada okunur. Hiçbiri sim'e geri yazmaz.
 // Görsel hitstop: çarpışan topaçların RENDER konumu bekler, sim akmaya devam eder; bitince kritik sönümlü yetişme.
@@ -42,7 +42,7 @@ export class Efektler {
   ayar: HisAyarlari = { sarsinti: 1, flas: "normal", hitstop: 1, parcacik: 1, yavasZoom: true };
   sesKanca: SesKancasi = () => {};
 
-  constructor(private sahne: Sahne, private gorseller: () => readonly TopacGorsel[]) {
+  constructor(private sahne: Sahne, private gorseller: () => readonly TopacCizimi[]) {
     sahne.efektKatmani.addChild(this.parcaciklar.kap);
     this.ekranFlas.rect(0, 0, SAHNE.genislik, SAHNE.yukseklik).fill(0xffffff);
     this.ekranFlas.alpha = 0;
@@ -135,9 +135,10 @@ export class Efektler {
 
   private kivilcim(x: number, y: number, nx: number, ny: number, n: number, renkler: readonly number[], hiz: [number, number], koni = 0.9): void {
     const adet = Math.round(n * this.ayar.parcacik);
+    const e = this.sahne.ekranYon(nx, ny);
     for (let k = 0; k < adet; k++) {
       const yon = k % 2 === 0 ? 1 : -1;
-      const a = Math.atan2(ny * yon, nx * yon) + this.rng.isaretli() * koni;
+      const a = Math.atan2(e.y * yon, e.x * yon) + this.rng.isaretli() * koni;
       const v = this.rng.aralik(hiz[0], hiz[1]);
       const renk = renkler[k % renkler.length] as number;
       this.parcaciklar.ekle(x, y, Math.cos(a) * v, Math.sin(a) * v, this.rng.aralik(0.22, 0.45), renk, this.rng.sayi() < 0.35 ? 3 : 2, 4);
@@ -149,7 +150,8 @@ export class Efektler {
     for (let k = 0; k < adet; k++) {
       const a = this.rng.aralik(0, Math.PI * 2);
       const v = this.rng.aralik(20, 70);
-      this.parcaciklar.ekle(x + Math.cos(a) * yaricap, y + Math.sin(a) * yaricap, Math.cos(a) * v, Math.sin(a) * v, this.rng.aralik(0.4, 0.8), renk, 3, 2);
+      const k = this.sahne.k;
+      this.parcaciklar.ekle(x + Math.cos(a) * yaricap, y + Math.sin(a) * yaricap * k, Math.cos(a) * v, Math.sin(a) * v * k - (k < 1 ? 12 : 0), this.rng.aralik(0.4, 0.8), renk, 3, 2);
     }
   }
 
@@ -216,7 +218,7 @@ export class Efektler {
         for (let k = 0; k < adet; k++) {
           const yon = k % 2 === 0 ? 1 : -1;
           const v = this.rng.aralik(60, 180);
-          this.parcaciklar.ekle(x, y, -o.nz * v * yon - o.nx * 30, o.nx * v * yon - o.nz * 30, this.rng.aralik(0.2, 0.4), 0xcfe0e5, 2, 4);
+          this.parcaciklar.ekle(x, y, -o.nz * v * yon - o.nx * 30, (o.nx * v * yon - o.nz * 30) * S.k, this.rng.aralik(0.2, 0.4), 0xcfe0e5, 2, 4);
         }
         this.sok(x, y, 4, 18, 120, 0xcfe0e5, null, 2);
         break;
@@ -230,7 +232,7 @@ export class Efektler {
         const renk = ELEMENT_RENK[d.profiller[o.i]!.element].acik;
         for (let k = 0; k < HIS.parcacik.dash; k++) {
           const v = this.rng.aralik(80, 160);
-          const a = Math.atan2(-o.dz, -o.dx) + this.rng.isaretli() * 0.5;
+          const a = Math.atan2(-o.dz * S.k, -o.dx) + this.rng.isaretli() * 0.5;
           this.parcaciklar.ekle(x, y, Math.cos(a) * v, Math.sin(a) * v, 0.25, renk, 2, 5);
         }
         break;
@@ -251,7 +253,7 @@ export class Efektler {
         this.hitstop(o.i, 133, o.vx / u, o.vz / u, true, true);
         S.sars(Math.sqrt(HIS.sarsintiPx.ringOut / SAHNE.sarsintiTavan) * Math.sqrt(this.ayar.sarsinti), o.vx / u, o.vz / u);
         this.ekranFlasi(HIS.ekranFlas.ringOut[0], HIS.ekranFlas.ringOut[1]);
-        this.toz(x + (o.vx / u) * 20, y + (o.vz / u) * 20, HIS.parcacik.ringOut, 0xb9c6ca, 8);
+        this.toz(x + (o.vx / u) * 20, y + (o.vz / u) * 20 * S.k, HIS.parcacik.ringOut, 0xb9c6ca, 8);
         this.sok(x, y, 10, 70, HIS.sok.ringOutMs, ELEMENT_RENK[d.profiller[o.i]!.element].orta);
         this.zoom(HIS.zoom.ringOut[0], HIS.zoom.ringOut[1]);
         g[o.i]?.bitis("ringOut", o.vx, o.vz);
@@ -392,8 +394,9 @@ export class Efektler {
       const t = Math.min(1, s.t / s.sure);
       const r = s.r0 + (s.r1 - s.r0) * (1 - (1 - t) * (1 - t));
       const a = 1 - t;
-      s.g.clear().circle(s.x, s.y, r).stroke({ width: s.kalinlik, color: s.renk, alpha: a });
-      if (s.renk2 !== null) s.g.circle(s.x, s.y, r * 0.72).stroke({ width: s.kalinlik, color: s.renk2, alpha: a });
+      const k = this.sahne.k;
+      s.g.clear().ellipse(s.x, s.y, r, r * k).stroke({ width: s.kalinlik, color: s.renk, alpha: a });
+      if (s.renk2 !== null) s.g.ellipse(s.x, s.y, r * 0.72, r * 0.72 * k).stroke({ width: s.kalinlik, color: s.renk2, alpha: a });
     }
     for (let i = this.soklar.length - 1; i >= 0; i--) {
       const s = this.soklar[i]!;

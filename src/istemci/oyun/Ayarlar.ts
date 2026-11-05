@@ -13,6 +13,8 @@ export interface OyunAyarlari {
   ses: "acik" | "kapali";
   /** D6: yüksek kontrast HUD (ux § 6.3) */
   kontrast: "kapali" | "acik";
+  /** GU-00: "acik" = eski tam üstten sunum (erişilebilirlik); varsayılan Hibrit eğik sunum. Sonraki maçta uygulanır. */
+  duzGorunum: "kapali" | "acik";
 }
 
 export const AYAR_SECENEKLERI: { [K in keyof OyunAyarlari]: { ad: string; secenekler: { deger: OyunAyarlari[K]; ad: string }[] } } = {
@@ -24,13 +26,14 @@ export const AYAR_SECENEKLERI: { [K in keyof OyunAyarlari]: { ad: string; secene
   nisan: { ad: "Nişan", secenekler: [{ deger: "fare", ad: "Fare" }, { deger: "hareket", ad: "Hareket yönü" }] },
   ses: { ad: "Ses (M)", secenekler: [{ deger: "acik", ad: "Açık" }, { deger: "kapali", ad: "Kapalı" }] },
   kontrast: { ad: "Yüksek kontrast HUD", secenekler: [{ deger: "kapali", ad: "Kapalı" }, { deger: "acik", ad: "Açık" }] },
+  duzGorunum: { ad: "Düz görünüm (sonraki maç)", secenekler: [{ deger: "kapali", ad: "Kapalı" }, { deger: "acik", ad: "Açık" }] },
 };
 
 const ANAHTAR = "devran.ayarlar.v1";
 
-export const VARSAYILAN_AYARLAR: OyunAyarlari = { sarsinti: "normal", flas: "normal", hitstop: "tam", yavasZoom: "acik", parcacik: "tam", nisan: "fare", ses: "acik", kontrast: "kapali" };
+export const VARSAYILAN_AYARLAR: OyunAyarlari = { sarsinti: "normal", flas: "normal", hitstop: "tam", yavasZoom: "acik", parcacik: "tam", nisan: "fare", ses: "acik", kontrast: "kapali", duzGorunum: "kapali" };
 /** prefers-reduced-motion: "Azaltılmış" ön ayarı. */
-export const AZALTILMIS_AYARLAR: OyunAyarlari = { sarsinti: "yari", flas: "azaltilmis", hitstop: "yari", yavasZoom: "kapali", parcacik: "az", nisan: "fare", ses: "acik", kontrast: "kapali" };
+export const AZALTILMIS_AYARLAR: OyunAyarlari = { sarsinti: "yari", flas: "azaltilmis", hitstop: "yari", yavasZoom: "kapali", parcacik: "az", nisan: "fare", ses: "acik", kontrast: "kapali", duzGorunum: "kapali" };
 
 function azaltilmisIstek(): boolean {
   try { return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true; } catch { return false; }
@@ -53,6 +56,15 @@ export function ayarlariOku(): OyunAyarlari {
 
 export function ayarlariYaz(a: OyunAyarlari): void {
   try { localStorage.setItem(ANAHTAR, JSON.stringify(a)); } catch { /* depolama kapalı */ }
+}
+
+/** GU-00 kamera kipi: URL `?gorunum=duz|hibrit` (geliştirici/ekran görüntüsü) ayarı ezer. */
+export function kameraKipi(a: OyunAyarlari): "hibrit" | "duz" {
+  try {
+    const q = new URLSearchParams(location.search).get("gorunum");
+    if (q === "duz" || q === "hibrit") return q;
+  } catch { /* yok */ }
+  return a.duzGorunum === "acik" ? "duz" : "hibrit";
 }
 
 /** Efektler'in sayısal ayarları. */

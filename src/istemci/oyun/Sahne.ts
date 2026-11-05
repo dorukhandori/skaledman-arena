@@ -1,6 +1,12 @@
-import { Application, Container, Graphics } from "pixi.js";
+import { Application, Container, Graphics, Rectangle } from "pixi.js";
+import type { TopacProfili } from "../../paylasilan/veri/profil.ts";
+import { HibritArena } from "./HibritArena.ts";
 import { KusakArenasi } from "./KusakArenasi.ts";
 import { SusRastgele } from "./SusRastgele.ts";
+import { type TakimIsareti, TopacGorsel } from "./TopacGorsel.ts";
+import { TopacYandan } from "./TopacYandan.ts";
+import type { ArenaCizimi, TopacCizimi } from "./cizimTurleri.ts";
+import { KAMERA, type KameraKipi } from "./kamera.ts";
 
 /** Mantıksal tuval 960×540; arena merkezi (480, 270). 1 sim birimi = 1 mantıksal piksel (axiom karar 3). */
 export const SAHNE = {
@@ -14,23 +20,36 @@ export const SAHNE = {
   traumaSonum: 1,
 } as const;
 
+export { KAMERA, type KameraKipi } from "./kamera.ts";
+
 /**
- * Tam üstten sahne (pixel planı § 1.1 C): zemin, iz, gölge, nesne, efekt ve ekran katmanları.
- * Sarsıntı trauma modelidir: genlik = trauma² · tavan; ilk 2 kare normal boyunca tek yönlü, sonra tohumlu gürültü.
- * Zoom darbesi kok'u merkez etrafında ölçekler. Letterbox: tam sayı olmayan ölçek de kabul (Lab).
+ * Sahne (pixel planı § 1.1; GU-00 Hibrit): arka (tribün, parallax), zemin, iz, gölge, nesne (ekranY'ye göre sıralı), dudak
+ * (yakın çanak dudağı topacın ÜSTÜNDE), efekt ve ekran katmanları. Sarsıntı trauma modelidir: genlik = trauma² · tavan;
+ * ilk 2 kare normal boyunca tek yönlü, sonra tohumlu gürültü. Zoom darbesi dünyayı merkez etrafında ölçekler.
+ * Hibrit kipte dünya 480×270 önbellek dokusuna çizilip `nearest` büyütülür (pixel görünüm, İ-4); "Düz" kipte eski çizim aynen.
  */
 export class Sahne {
   readonly kok = new Container();
+  /** pixel önbelleği (hibrit): dünya + arka; sınırı sabit 960×540 */
+  private piksel = new Container();
   /** sarsıntı ve zoom bu kapsayıcıya uygulanır; HUD dışı her şey içinde */
   readonly dunya = new Container();
+  /** tribün (hibrit; sarsıntının yarısını alır: hafif parallax) */
+  readonly arkaKatmani = new Container();
+  /** çanağın arkası (uzak duvarın gerisine düşen Ring Out topacı) */
+  readonly arkaNesneKatmani = new Container();
   readonly zeminKatmani = new Container();
+  /** zemin düzlemi: içindeki çizimler düz sim koordinatında (merkezX + x, merkezY + z) yapılır, kapsayıcı basar (elips) */
+  readonly zeminDuzlem = new Container();
   readonly izKatmani = new Container();
   readonly golgeKatmani = new Container();
   readonly nesneKatmani = new Container();
   /** çanak dudağı: topacın üstünde (Ring Out'ta kenarın arkasına düşüş, pixel planı § 6.1) */
   readonly dudakKatmani = new Container();
   readonly efektKatmani = new Container();
-  readonly arena: KusakArenasi;
+  /** efekt üstü zemin düzlemi (nişan, bağ çizgisi, kenar uyarısı): düz koordinat, basılı */
+  readonly ustDuzlem = new Container();
+  readonly arena: ArenaCizimi;
   /** ekran flaşı: sarsıntıdan etkilenmez */
   readonly ekranKatmani = new Container();
   /** sağda DOM panel için ayrılan CSS piksel */
@@ -38,6 +57,12 @@ export class Sahne {
   olcek = 1;
   /** D8 seyirci/OBS (ux § 5): sabit 960×540, tam sayı ölçek (≥ 1 iken) — yayın ölçeklemesinde bulanıklık yok. */
   tamSayiOlcek = false;
+  /** z basıklığı (hibrit 0,62; düz 1) */
+  readonly k: number;
+  /** kamera yakınlığı (hibrit 1,4; düz 1) */
+  readonly yakinlik: number;
+  /** çanak merkezinin dünya y'si */
+  readonly my: number;
   private trauma = 0;
   private yonluKare = 0;
   private yon = { x: 0, y: 0 };
@@ -48,27 +73,76 @@ export class Sahne {
   /** Sürekli asgari trauma (Ulti telegrafı: 0,5 px). Her kare yeniden yazılır. */
   sarsintiTaban = 0;
 
-  constructor(private app: Application) {
+  constructor(private app: Application, readonly kip: KameraKipi = "duz") {
+    const hibrit = kip === "hibrit";
+    this.k = hibrit ? KAMERA.zOrani : 1;
+    this.yakinlik = hibrit ? KAMERA.yakinlik : 1;
+    this.my = SAHNE.merkezY + (hibrit ? KAMERA.kaymaY : 0);
+    for (const d of [this.zeminDuzlem, this.ustDuzlem]) {
+      d.pivot.set(SAHNE.merkezX, SAHNE.merkezY);
+      d.position.set(SAHNE.merkezX, this.my);
+      d.scale.set(1, this.k);
+    }
     const maske = new Graphics().rect(0, 0, SAHNE.genislik, SAHNE.yukseklik).fill(0xffffff);
-    this.dunya.addChild(this.zeminKatmani, this.izKatmani, this.golgeKatmani, this.nesneKatmani, this.dudakKatmani, this.efektKatmani);
+    this.zeminKatmani.addChild(this.zeminDuzlem);
+    this.efektKatmani.addChild(this.ustDuzlem);
+    this.nesneKatmani.sortableChildren = true;
+    this.dunya.addChild(this.arkaNesneKatmani, this.zeminKatmani, this.izKatmani, this.golgeKatmani, this.nesneKatmani, this.dudakKatmani, this.efektKatmani);
     this.dunya.pivot.set(SAHNE.merkezX, SAHNE.merkezY);
     this.dunya.position.set(SAHNE.merkezX, SAHNE.merkezY);
-    this.kok.addChild(this.dunya, this.ekranKatmani, maske);
+    this.arkaKatmani.pivot.set(SAHNE.merkezX, SAHNE.merkezY);
+    this.arkaKatmani.position.set(SAHNE.merkezX, SAHNE.merkezY);
+    if (hibrit) {
+      // sabit sınırlı pixel önbelleği: arka plan dikdörtgeni + boundsArea → doku her zaman 480×270, ızgara kaymaz
+      this.piksel.addChild(new Graphics().rect(0, 0, SAHNE.genislik, SAHNE.yukseklik).fill(0x0f1020), this.arkaKatmani, this.dunya);
+      this.piksel.boundsArea = new Rectangle(0, 0, SAHNE.genislik, SAHNE.yukseklik);
+      this.piksel.cacheAsTexture({ resolution: KAMERA.pikselCozunurluk, antialias: false, scaleMode: "nearest" });
+      this.kok.addChild(this.piksel, this.ekranKatmani, maske);
+      const a = new HibritArena(this);
+      this.arena = a;
+      this.arkaKatmani.addChild(a.arka);
+      this.zeminKatmani.addChildAt(a.zemin, 0);
+      this.zeminDuzlem.addChild(a.zeminDuzlemCizim);
+      this.dudakKatmani.addChild(a.dudak);
+    } else {
+      this.kok.addChild(this.dunya, this.ekranKatmani, maske);
+      const a = new KusakArenasi(SAHNE.merkezX, SAHNE.merkezY, SAHNE.genislik, SAHNE.yukseklik);
+      this.arena = a;
+      this.zeminKatmani.addChildAt(a.zemin, 0);
+      this.dudakKatmani.addChild(a.dudak);
+    }
     this.kok.mask = maske;
-    this.arena = new KusakArenasi(SAHNE.merkezX, SAHNE.merkezY, SAHNE.genislik, SAHNE.yukseklik);
-    this.zeminKatmani.addChild(this.arena.zemin);
-    this.dudakKatmani.addChild(this.arena.dudak);
     app.stage.addChild(this.kok);
     this.boyutla(true);
   }
 
-  /** Sim (x, z) → mantıksal ekran (x, y). */
-  ekranX(x: number): number { return SAHNE.merkezX + x; }
-  ekranY(z: number): number { return SAHNE.merkezY + z; }
+  get hibrit(): boolean { return this.kip === "hibrit"; }
 
-  /** Tuval pikseli (CSS) → sim noktası. */
+  /** Sim (x, z) → dünya (x, y) (zemin, yükseklik 0). */
+  ekranX(x: number): number { return SAHNE.merkezX + x; }
+  ekranY(z: number): number { return this.my + z * this.k; }
+
+  /** Sim yönü (nx, nz) → dünya ekranında birim yön (sarsıntı, squash normali, parçacık yönü; 05 § 3.3). */
+  ekranYon(nx: number, nz: number): { x: number; y: number } {
+    const y = nz * this.k;
+    const u = Math.hypot(nx, y);
+    return u > 1e-9 ? { x: nx / u, y: y / u } : { x: 0, y: 0 };
+  }
+
+  /** Dünya noktası → mantıksal ekran (sarsıntı/zoom darbesi hariç; ekran katmanı ve DOM hizası için). */
+  dunyadanEkrana(wx: number, wy: number): { x: number; y: number } {
+    const B = this.yakinlik;
+    return { x: SAHNE.merkezX + (wx - SAHNE.merkezX) * B, y: SAHNE.merkezY + (wy - SAHNE.merkezY) * B };
+  }
+
+  /** Tuval pikseli (CSS) → sim noktası (zemin düzlemi; ters dönüşüm: z = (ekran − merkez) / zOrani). */
   ekrandanDunyaya(px: number, py: number): { x: number; z: number } {
-    return { x: (px - this.kok.x) / this.olcek - SAHNE.merkezX, z: (py - this.kok.y) / this.olcek - SAHNE.merkezY };
+    const lx = (px - this.kok.x) / this.olcek;
+    const ly = (py - this.kok.y) / this.olcek;
+    const B = this.yakinlik;
+    const wx = SAHNE.merkezX + (lx - SAHNE.merkezX) / B;
+    const wy = SAHNE.merkezY + (ly - SAHNE.merkezY) / B;
+    return { x: wx - SAHNE.merkezX, z: (wy - this.my) / this.k };
   }
 
   /** Mantıksal çerçevenin CSS konumu (DOM HUD hizalaması için). */
@@ -76,17 +150,24 @@ export class Sahne {
     return { x: this.kok.x, y: this.kok.y, olcek: this.olcek };
   }
 
+  /** Kipine göre topaç çizimi (hibrit: yandan katmanlı; düz: eski tam üstten) ve katmanlara ekleme. */
+  topacOlustur(p: TopacProfili, takim: TakimIsareti): TopacCizimi {
+    const g: TopacCizimi = this.hibrit ? new TopacYandan(p, takim, this) : new TopacGorsel(p, takim, this.golgeKatmani, this.efektKatmani);
+    this.nesneKatmani.addChild(g.kok);
+    return g;
+  }
+
   /** Ayar › Ekran sarsıntısı: 1 / 0,5 / 0. */
   sarsintiAyari(c: number): void { this.sarsintiCarpani = c; }
 
   /**
-   * Trauma ekler (0..1). `nx, ny` verilirse ilk 2 kare bu yönde tek yönlü itme (vuruş yönü okunsun).
+   * Trauma ekler (0..1). `nx, ny` (sim yönü) verilirse ilk 2 kare bu yönün ekran izdüşümünde tek yönlü itme.
    * `tekYon` true ise (duvar) tüm sarsıntı normal boyunca kalır.
    */
   sars(trauma: number, nx = 0, ny = 0, tekYon = false): void {
     this.trauma = Math.min(1, this.trauma + trauma);
-    const u = Math.hypot(nx, ny);
-    if (u > 0) { this.yon = { x: nx / u, y: ny / u }; this.yonluKare = tekYon ? 1e9 : 2; }
+    const e = this.ekranYon(nx, ny);
+    if (e.x !== 0 || e.y !== 0) { this.yon = e; this.yonluKare = tekYon ? 1e9 : 2; }
   }
 
   /** Zoom darbesi: tepe oranı (0,03 = %3), süre s. Büyüğü kazanır. */
@@ -130,8 +211,14 @@ export class Sahne {
       z = 1 + this.zoom.tepe * (t < 0.3 ? t / 0.3 : (1 - t) / 0.7);
       if (this.zoom.kalan === 0) this.zoom.tepe = 0;
     }
-    this.dunya.scale.set(z);
+    this.dunya.scale.set(z * this.yakinlik);
     this.dunya.position.set(SAHNE.merkezX + Math.round(sx), SAHNE.merkezY + Math.round(sy));
+    if (this.hibrit) {
+      // tribün: sarsıntının yarısı, zoom'un yarısı (hafif parallax)
+      this.arkaKatmani.scale.set(1 + (z - 1) * 0.5);
+      this.arkaKatmani.position.set(SAHNE.merkezX + Math.round(sx * 0.5), SAHNE.merkezY + Math.round(sy * 0.5));
+      this.piksel.updateCacheTexture();
+    }
   }
 
   yokEt(): void {

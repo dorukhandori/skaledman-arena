@@ -17,10 +17,10 @@ import { Iz } from "../oyun/Iz.ts";
 import { kenarUyarisiCiz } from "../oyun/KenarUyari.ts";
 import { MacHud } from "../oyun/MacHud.ts";
 import { ELEMENT_RENK } from "../oyun/renkler.ts";
-import { SAHNE, Sahne } from "../oyun/Sahne.ts";
+import { Sahne } from "../oyun/Sahne.ts";
 import { takimProfilleri, takimlariOku } from "../oyun/takimlar.ts";
-import { TopacGorsel } from "../oyun/TopacGorsel.ts";
-import { AYAR_SECENEKLERI, type OyunAyarlari, ayarlariOku, ayarlariYaz, hisAyari, sekmeIpucuGoster, sekmeIpucuMacBitti } from "../oyun/Ayarlar.ts";
+import type { TopacCizimi } from "../oyun/cizimTurleri.ts";
+import { AYAR_SECENEKLERI, type OyunAyarlari, ayarlariOku, kameraKipi, ayarlariYaz, hisAyari, sekmeIpucuGoster, sekmeIpucuMacBitti } from "../oyun/Ayarlar.ts";
 import { YetenekGorsel } from "../oyun/YetenekGorsel.ts";
 import { Ses } from "../ses/Ses.ts";
 import { ENERJI_TAVAN } from "../../paylasilan/sim/enerji.ts";
@@ -210,7 +210,7 @@ export class MacEkrani {
   private rakip = RAKIP;
   private sahne: Sahne;
   private efektler: Efektler;
-  private gorseller: TopacGorsel[] = [];
+  private gorseller: TopacCizimi[] = [];
   private izler: Iz[] = [];
   private hud!: MacHud;
   private girdi: OyuncuGirdisi;
@@ -274,14 +274,14 @@ export class MacEkrani {
     this.hiz = q.has("debug") ? Math.max(1, Math.min(8, Number(q.get("hiz") ?? 1) | 0)) : 1;
     this.seviye = q.get("seviye") === "2" ? 2 : 3;
 
-    this.sahne = new Sahne(b.app);
+    this.ayarlar = ayarlariOku();
+    this.sahne = new Sahne(b.app, kameraKipi(this.ayarlar));
     this.efektler = new Efektler(this.sahne, () => this.gorseller);
     this.sahne.efektKatmani.addChild(this.kenarUyari);
     this.girdi = new OyuncuGirdisi(b.app.canvas, () => b.app.screen);
     this.yetenekGorsel = new YetenekGorsel(this.sahne, this.yerel);
     // iptal bölgesi: alt şerit (mantıksal y > 492, ux § 1)
     this.girdi.iptalBolgesi = (px, py) => { const c = this.sahne.cerceve(); return (py - c.y) / c.olcek > 492; };
-    this.ayarlar = ayarlariOku();
     this.ayarlariUygula();
     Ses.yukle();
     this.efektler.sesKanca = (ad, hacim) => Ses.cal(ad, hacim);
@@ -382,8 +382,7 @@ export class MacEkrani {
     this.efektler.temizle();
     if (!this.gorseller.length) {
       for (let i = 0; i < 2; i++) {
-        const g = new TopacGorsel(this.dunya.profiller[i]!, i === this.yerel ? "oyuncu" : "rakip", this.sahne.golgeKatmani, this.sahne.efektKatmani);
-        this.sahne.nesneKatmani.addChild(g.kok);
+        const g = this.sahne.topacOlustur(this.dunya.profiller[i]!, i === this.yerel ? "oyuncu" : "rakip");
         this.gorseller.push(g);
         const iz = new Iz(ELEMENT_RENK[this.dunya.profiller[i]!.element].acik);
         this.sahne.izKatmani.addChild(iz.rope);
@@ -745,7 +744,7 @@ export class MacEkrani {
     });
     const daralma = d.mac.aniOlum ? Math.min(1, d.mac.aniOlumTick / MAC_ADIM.aniOlumDaralma) : 0;
     S.arena.guncelle(dt, d.arenaYaricap, d.topaclar.some((t) => aktifMi(t) && kusakta(t, d.arenaYaricap)), d.mac.aniOlum ? Math.max(0.05, daralma) : 0);
-    kenarUyarisiCiz(this.kenarUyari, d, this.yerel, SAHNE.merkezX, SAHNE.merkezY, this.zaman);
+    kenarUyarisiCiz(this.kenarUyari, d, this.yerel, S, this.zaman);
     // H9 nişan (yalnız Fare modu; "Hareket yönü" modunda çizgi çizilmez) + H13 telegraf + dekaller + Ulti anı
     const basili = this.menuAcik ? -1 : this.girdi.basiliYuva;
     const nisan = basili >= 0 && basili < 3 && this.girdi.nisanModu === "fare" ? { yuva: basili, ...this.girdi.nisanNoktasi(S, d.topaclar[this.yerel]!) } : null;

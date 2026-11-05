@@ -5,13 +5,13 @@ import { MAC_ADIM } from "../../paylasilan/sim/mac.ts";
 import { aktifMi, staminaOrani } from "../../paylasilan/sim/topac.ts";
 import type { EkranBaglami } from "../main.ts";
 import { IzleAgi } from "../ag/IzleAgi.ts";
-import { ayarlariOku, hisAyari } from "../oyun/Ayarlar.ts";
+import { ayarlariOku, hisAyari, kameraKipi } from "../oyun/Ayarlar.ts";
 import { Efektler } from "../oyun/Efektler.ts";
 import { Iz } from "../oyun/Iz.ts";
 import { ELEMENT_RENK } from "../oyun/renkler.ts";
 import { Sahne } from "../oyun/Sahne.ts";
 import { SeyirciHud } from "../oyun/SeyirciHud.ts";
-import { TopacGorsel } from "../oyun/TopacGorsel.ts";
+import type { TopacCizimi } from "../oyun/cizimTurleri.ts";
 import { YetenekGorsel } from "../oyun/YetenekGorsel.ts";
 import { Ses } from "../ses/Ses.ts";
 
@@ -54,7 +54,7 @@ class SeyirciEkrani {
   private sahne: Sahne;
   private efektler: Efektler;
   private yetenekGorsel: YetenekGorsel;
-  private gorseller: TopacGorsel[] = [];
+  private gorseller: TopacCizimi[] = [];
   private izler: Iz[] = [];
   private hud: SeyirciHud | null = null;
   private ust = el("div", "sy");
@@ -76,7 +76,7 @@ class SeyirciEkrani {
     document.head.appendChild(this.stil);
     document.body.classList.add("seyirci");
     if (seffaf) document.body.classList.add("seffaf");
-    this.sahne = new Sahne(b.app);
+    this.sahne = new Sahne(b.app, kameraKipi(ayarlariOku()));
     this.sahne.tamSayiOlcek = true;
     this.sahne.boyutla(true);
     if (seffaf) this.sahne.arena.arkaPlanGoster(false);
@@ -102,8 +102,7 @@ class SeyirciEkrani {
     this.yetenekGorsel.temizle();
     if (!this.gorseller.length) {
       for (let i = 0; i < 2; i++) {
-        const g = new TopacGorsel(d.profiller[i]!, i === 0 ? "oyuncu" : "rakip", this.sahne.golgeKatmani, this.sahne.efektKatmani);
-        this.sahne.nesneKatmani.addChild(g.kok);
+        const g = this.sahne.topacOlustur(d.profiller[i]!, i === 0 ? "oyuncu" : "rakip");
         this.gorseller.push(g);
         const iz = new Iz(ELEMENT_RENK[d.profiller[i]!.element].acik);
         this.sahne.izKatmani.addChild(iz.rope);

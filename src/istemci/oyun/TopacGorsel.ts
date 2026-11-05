@@ -4,15 +4,14 @@ import { diskBul } from "../../paylasilan/veri/katalog.ts";
 import type { TopacProfili } from "../../paylasilan/veri/profil.ts";
 import { ELEMENT_RENK, KOKEN_RENK, TAKIM_RENK, renkKaristir } from "./renkler.ts";
 import { SusRastgele } from "./SusRastgele.ts";
+import type { GorselBitis, Kademe, TakimIsareti, TopacCizimi } from "./cizimTurleri.ts";
+export type { GorselBitis, Kademe, TakimIsareti } from "./cizimTurleri.ts";
 
 // Topaç görseli v0: Pixi Graphics yer tutucu, katmanlı (pixel planı § 2.2): gölge, takım çemberi, Uç, Disk,
 // Gövde (kanatlı siluet), Çekirdek, dönmeyen parlama. Dönüş `rotation` ile (pixel planı § 3.2 (a), v0).
 // Hız kademeleri (§ 3.4) Stamina oranından: > %60 bulanık disk, %25-60 bulanık kanat, < %25 keskin kanat + yalpa.
 // Kozmetik dönüş hızı sim'den bağımsızdır; yalpa salt görseldir (05 § 2.6, %40'ta başlar).
 
-export type Kademe = "yuksek" | "orta" | "dusuk";
-export type TakimIsareti = "oyuncu" | "rakip" | "yok";
-export type GorselBitis = "ringOut" | "parcalanma" | "durma";
 
 export const GORSEL = {
   govdeYaricap: 32,
@@ -43,7 +42,7 @@ export function kademeBul(oran: number, onceki: Kademe | null): Kademe {
 }
 
 /** Kanatlı gövde silueti: süpürülmüş dişler, sol dönüşte aynalı. */
-function kanatSiluet(n: number, rIc: number, rDis: number, sol: boolean): number[] {
+export function kanatSiluet(n: number, rIc: number, rDis: number, sol: boolean): number[] {
   const nokta: number[] = [];
   const orneklem = 24 * n;
   for (let i = 0; i < orneklem; i++) {
@@ -59,7 +58,7 @@ function kanatSiluet(n: number, rIc: number, rDis: number, sol: boolean): number
 
 interface Parca { g: Graphics; vx: number; vy: number; w: number; yuk: number; vyuk: number; sekti: boolean }
 
-export class TopacGorsel {
+export class TopacGorsel implements TopacCizimi {
   readonly kok = new Container();
   readonly golge = new Graphics();
   private takimCemberi = new Graphics();

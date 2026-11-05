@@ -52,7 +52,10 @@ export class YetenekGorsel {
   private tel = new Graphics();
   private simgeKap = new Container();
   private ruhKap = new Container();
+  /** zemin düzleminde, topaçların üstünde (nişan, bağ çizgisi, nabız çemberi, zincir): düz koordinat, Sahne basar */
   private ust = new Graphics();
+  /** ekranda dik (basılmaz): ruh parıltıları */
+  private ustEkran = new Graphics();
   private kenar = new Graphics();
   private ipucu: Text;
   private simgeler = new Map<ElementAdi, Graphics>();
@@ -68,14 +71,18 @@ export class YetenekGorsel {
   readonly sayac = { telegrafKare: 0, rakipTelegrafKare: 0, dekalKare: 0, nisanKare: 0, siluet: 0, takimUlti: 0, kenarParlama: 0, ipucuKare: 0, engelKare: 0 };
 
   constructor(private sahne: Sahne, private yerel: number) {
-    this.zemin.addChild(this.dekal, this.tel, this.simgeKap, this.ruhKap);
-    sahne.zeminKatmani.addChild(this.zemin);
-    sahne.efektKatmani.addChild(this.ust);
+    this.zemin.addChild(this.dekal, this.tel);
+    sahne.zeminDuzlem.addChild(this.zemin);
+    // simge ve ruh dik durur (basılmaz): zemin katmanında, düzlemin üstünde
+    sahne.zeminKatmani.addChild(this.simgeKap, this.ruhKap);
+    sahne.ustDuzlem.addChild(this.ust);
+    sahne.efektKatmani.addChild(this.ustEkran);
     sahne.ekranKatmani.addChild(this.kenar);
     this.ipucu = new Text({ text: "Sekme: Space", style: { fontFamily: "system-ui, sans-serif", fontSize: 11, fontWeight: "800", fill: 0xffffff, stroke: { color: 0x050d10, width: 3 } } });
     this.ipucu.anchor.set(0.5, 0);
     this.ipucu.visible = false;
-    sahne.efektKatmani.addChild(this.ipucu);
+    // metin pixel önbelleğine girmez (okunurluk): ekran katmanında, dünya → ekran çevrimiyle
+    sahne.ekranKatmani.addChild(this.ipucu);
   }
 
   temizle(): void {
@@ -126,6 +133,9 @@ export class YetenekGorsel {
         break;
     }
   }
+
+  /** Düz (zemin düzlemi) y → dünya y (dik duran öğeler için: simge, ipucu). */
+  private py(yDuz: number): number { return this.sahne.my + (yDuz - SAHNE.merkezY) * this.sahne.k; }
 
   // ---- çizim yardımcıları ----
   private simge(el: ElementAdi): Graphics {
@@ -371,7 +381,7 @@ export class YetenekGorsel {
       }
       // merkezde element silüeti
       const sim = this.simge(el);
-      sim.position.set(merkezX, merkezY);
+      sim.position.set(merkezX, this.py(merkezY));
       sim.scale.set(1.6);
       // bağ çizgisi kaynak → alan + kaynağın takım çemberi nabız
       const kx = sx(t.x);
@@ -452,7 +462,7 @@ export class YetenekGorsel {
       s.kap.scale.set((s.olcek ?? 1) * (0.9 + 0.1 * giris));
       s.kap.position.set(s.x, 160 - 10 * giris);
       // yükselen parıltılar
-      const g = this.ust;
+      const g = this.ustEkran;
       const c = ELEMENT_RENK[s.el];
       for (let k = 0; k < 10; k++) {
         const faz = (s.t * 0.8 + k / 10) % 1;
@@ -483,6 +493,7 @@ export class YetenekGorsel {
     this.dekal.clear();
     this.tel.clear();
     this.ust.clear();
+    this.ustEkran.clear();
     for (const c of [...this.simgeKap.children]) { this.simgeKap.removeChild(c); this.simgeHavuz.push(c as Graphics); }
     this.dekalCiz(d);
     const ipucu = this.telegrafCiz(d);
@@ -491,7 +502,11 @@ export class YetenekGorsel {
     this.siluetIlerlet(dt);
     this.kenarCiz(dt);
     this.ipucu.visible = !!ipucu && this.ipucuAcik;
-    if (ipucu && this.ipucuAcik) { this.ipucu.position.set(ipucu.x, ipucu.y); this.sayac.ipucuKare++; }
+    if (ipucu && this.ipucuAcik) {
+      const e = this.sahne.dunyadanEkrana(ipucu.x, this.py(ipucu.y));
+      this.ipucu.position.set(e.x, e.y);
+      this.sayac.ipucuKare++;
+    }
     // Ulti telegrafı: sürekli 0,5 px sarsıntı
     const ultiTel = d.topaclar.some((t) => t.yetenekFaz === 1 && t.yetenekYuva === 2);
     this.sahne.sarsintiTaban = ultiTel ? Math.sqrt(0.5 / SAHNE.sarsintiTavan) : 0;
