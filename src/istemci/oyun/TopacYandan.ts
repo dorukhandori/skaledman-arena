@@ -494,11 +494,14 @@ export class TopacYandan implements TopacCizimi {
   }
 
   private flasCiz(RG: number, ustY: number, k: number): void {
-    // flaş: beyaz siluet
+    // flaş: beyaz siluet. GU-C: sprite kipinde hafif dolgu + parlak kenar (referans 07'de çarpışma anında topacın rengi
+    // okunur; tam beyazlama Element rengini siliyordu)
     if (this.flasKare > 0) {
       const f = this.flasG.clear();
-      f.poly(yanBant(RG + 1, (RG + 1) * k, ustY, -H.ucUst)).fill({ color: 0xffffff, alpha: 0.55 });
-      f.ellipse(0, ustY, RG + 1, (RG + 1) * k).fill({ color: 0xffffff, alpha: 0.55 });
+      const a = this.katman ? 0.22 : 0.55;
+      f.poly(yanBant(RG + 1, (RG + 1) * k, ustY, -H.ucUst)).fill({ color: 0xffffff, alpha: a });
+      f.ellipse(0, ustY, RG + 1, (RG + 1) * k).fill({ color: 0xffffff, alpha: a });
+      if (this.katman) f.ellipse(0, ustY, RG + 1, (RG + 1) * k).stroke({ width: 2, color: 0xfff6d0, alpha: 0.9 });
       f.position.set(0, H.govdeAlt);
     }
   }

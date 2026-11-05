@@ -3,9 +3,11 @@
 //   npm run topac:uret                 # Blender render + pişirme + önizleme (tüm parçalar)
 //   npm run topac:uret -- --parca ok-govde,hafif-disk   # yalnız bu parçalar (render + pişirme)
 //   npm run topac:uret -- --render-yok # ham render önbelleğini (.cache/topac-ham) kullan, yalnız pişir
+//   npm run topac:uret -- --motor blender  # veri render'ı Blender ile (varsayılan: başsız Chromium, GU-C)
 //
 // Adımlar:
-//  1. Blender 4.x (`blender` PATH'te ya da BLENDER ortam değişkeni) `araclar/sanat/blender/topac_render.py` ile
+//  1. Başsız Chromium (SwiftShader WebGL2, `topac-render-chromium.ts`; Atölye 3B ile aynı parametrik ağ) ya da
+//     `--motor blender` ile Blender 4.x (`blender` PATH'te ya da BLENDER ortam değişkeni) `araclar/sanat/blender/topac_render.py` ile
 //     `kaynak/topac/parcalar-3b.json` modellerini kurar, her parça için periyot başına 32 ince açıda ×4 çözünürlükte
 //     ışıksız veri geçişi (normal + sınıf/derinlik) yazar.
 //  2. Bu betik ×4'ü 1 sanat pikseline indirir (kapsama ≥ %50, sınıf çoğunluk oyu, normal ortalaması), sabit sol-üst
@@ -26,6 +28,7 @@ import sharp from "sharp";
 import { ELEMENT_RENK, KOKEN_RENK, renkKaristir } from "../../src/istemci/oyun/renkler.ts";
 import { KAMERA } from "../../src/istemci/oyun/kamera.ts";
 import type { ElementAdi, KokenAdi } from "../../src/paylasilan/kurallar/ayar.ts";
+import { chromiumRender, type RenderAyar } from "./topac-render-chromium.ts";
 
 const KOK = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const HAM = join(KOK, ".cache", "topac-ham");
@@ -34,7 +37,8 @@ const META = join(KOK, "veri", "topac-gorsel.json");
 
 /** Sanat kamerası. 1 sprite pikseli = 1 sanat pikseli maçta: topaç kökü ×1,2, dünya ×1,44, pixel önbelleği ×0,5. */
 export const SANAT = {
-  yukselti: 26,
+  /** GU-C: 26° → 36°: üst yüz (eş merkezli sırtlar + amblem) referans 07 gibi okunur, yan bant hâlâ görünür */
+  yukselti: 36,
   birim: 1 / (KAMERA.topacCizimOlcek * KAMERA.yakinlik * KAMERA.pikselCozunurluk),
   kareW: 64,
   kareH: 64,
@@ -49,6 +53,8 @@ export const SANAT = {
   bulanikEnCok: 40,
   diskPencere: 0.85,
   govdeTabanZ: 16,
+  /** GU-C: sprite render'ında yatay ölçek (Çekirdek amblemi okunsun diye ×1,7, referans 07 orta rozeti ≈ çapın %45i; Atölye 3B modeli değişmez) */
+  xyOlcek: { cekirdek: 1.7 } as Record<string, number>,
 } as const;
 
 const IKON = [
@@ -60,8 +66,10 @@ const IKON_BIRIM: Record<Tur, number> = { govde: 1.5, disk: 1.45, uc: 0.5, cekir
 const IKON_DY: Record<Tur, number> = { govde: 11, disk: 8, uc: 9, cekirdek: 18 };
 
 type Tur = "govde" | "disk" | "uc" | "cekirdek";
-type Sinif = "boya" | "boya2" | "metal" | "koyu" | "altin" | "kubbe" | "cerceve" | "lastik" | "beyaz";
-const SINIF_AD: Sinif[] = ["boya", "boya", "boya2", "metal", "koyu", "altin", "kubbe", "cerceve", "lastik", "beyaz"];
+type Sinif = "boya" | "boya2" | "metal" | "koyu" | "altin" | "kubbe" | "cerceve" | "lastik" | "beyaz" | "amblem";
+const SINIF_AD: Sinif[] = ["boya", "boya", "boya2", "metal", "koyu", "altin", "kubbe", "cerceve", "lastik", "beyaz", "amblem"];
+/** GU-C: Çekirdek amblemi (pişirmede üst yüze basılır; render sınıfı değil) */
+const AMBLEM_KOD = 10;
 const ELEMENTLER: ElementAdi[] = ["kor", "kasirga", "simsek", "girdap", "kaya", "don"];
 
 interface Parca3B { tur: Tur; simetri: number; kiral?: boolean; profil?: number[][]; R0?: number; [k: string]: unknown }
@@ -72,15 +80,19 @@ interface KatalogParca { id: string; ad: string; tur: Tur; element: ElementAdi |
 /** 5 tonlu rampa: [çizgi, koyu, orta, açık, vurgu] */
 type Rampa = [number, number, number, number, number];
 
-const METAL: Rampa = [0x1c2326, 0x4a555b, 0x7c888e, 0xb3bec3, 0xeef4f5];
+// GU-C: metal koyulaştı (Disk Gövde'nin altında gölgede kalır; açık gri "su birikintisi" gibi okunuyordu)
+const METAL: Rampa = [0x121519, 0x2b3238, 0x4b555c, 0x78848b, 0xb9c4c9];
 const KOYU: Rampa = [0x101316, 0x23282d, 0x3a4248, 0x5c666d, 0x96a1a7];
 const ALTIN: Rampa = [0x452c0a, 0x8a5a14, 0xc8902a, 0xf2c447, 0xfff0b8];
 const LASTIK: Rampa = [0x0e1012, 0x1d2125, 0x2d3237, 0x434a50, 0x5f686e];
 const BEYAZ: Rampa = [0x3a4448, 0x9aa6ab, 0xd5dcdf, 0xf4f7f8, 0xffffff];
 
+/** GU-C ton kaydırması (elle çizilmiş pixel art): gölge mora-koyuya, ışık sıcak sarıya kayar; orta ton belgedeki hex. */
+const SICAK_ISIK = 0xffd36a, SOGUK_GOLGE = 0x2a0f3c;
 function elementRampa(e: ElementAdi): Rampa {
   const r = ELEMENT_RENK[e];
-  return [renkKaristir(r.koyu, 0x000000, 0.45), r.koyu, r.orta, r.acik, r.vurgu];
+  const koyu = renkKaristir(r.koyu, SOGUK_GOLGE, 0.18);
+  return [renkKaristir(koyu, 0x0a0410, 0.55), koyu, r.orta, renkKaristir(r.acik, SICAK_ISIK, 0.3), renkKaristir(r.vurgu, 0xfff6d0, 0.35)];
 }
 function kokenRampa(k: KokenAdi): Rampa {
   const r = KOKEN_RENK[k];
@@ -101,6 +113,7 @@ function rampa(s: Sinif, b: Boya): Rampa {
     case "altin": return ALTIN;
     case "lastik": return LASTIK;
     case "beyaz": return BEYAZ;
+    case "amblem": return elementRampa(b.element ?? "kor");
   }
 }
 
@@ -183,13 +196,94 @@ const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map((v) => 
 const bayer = (x: number, y: number): number => BAYER[(y & 3) * 4 + (x & 3)]!;
 
 /** Sabit nokta ışık: sol üst, öne doğru (referans 07: parlak sol üst, koyu sağ alt). */
-export const ISIK = { konum: [-75, -60, 120], ortam: 0.18, esik: [0.57, 0.8], parlamaUs: 26, parlamaEsik: 0.62, dither: 0.05 };
+// GU-C: eşikler düştü: üst yüz açık tonda (referans 07'de üst yüz parlak turuncu, yan bant koyu)
+export const ISIK = { konum: [-75, -60, 120], ortam: 0.18, esik: [0.5, 0.71], parlamaUs: 26, parlamaEsik: 0.62, dither: 0.025 };
 const PARLAK: Partial<Record<Sinif, number>> = { boya: 1, metal: 1.15, altin: 1.1, kubbe: 1.2, cerceve: 1, beyaz: 1 };
 
+/**
+ * GU-C: Element amblemi, ekran pikseliyle elle çizilmiş 15×9 (`#` koyu, `o` vurgu, `.` rozet zemini açık ton). Çekirdek üst
+ * yüzündeki rozetin (dünya yarıçapı AMBLEM_R içi, yukarı bakan yüz) ağırlık merkezine basılır: dönmez (pixel planı § 2.2
+ * "sabit parlama" gibi), bu yüzden bulanık karelerde de keskin kalır. Referans 07'deki alev / sarmal okuması. Özgün çizim
+ * (CC0, bu depo); canon amblem yok.
+ */
+const AMBLEMLER: Record<ElementAdi, string[]> = {
+  kor: [
+    ".......#.......",
+    "......##...#...",
+    "..#...###..##..",
+    "..##.#####.##..",
+    "...#########...",
+    "...####o####...",
+    "....##ooo##....",
+    ".....##o##.....",
+    "......###......",
+  ],
+  girdap: [
+    "....######.....",
+    "..##......##...",
+    ".#...####...#..",
+    "#...#....#...#.",
+    "#..#..##..#..#.",
+    "#...#...##...#.",
+    ".#...###....#..",
+    "..##.......#...",
+    "....#######....",
+  ],
+  kasirga: [
+    ".#############.",
+    "...............",
+    "...#########...",
+    "...............",
+    ".....######....",
+    "......####.....",
+    ".......###.....",
+    "........##.....",
+    ".........#.....",
+  ],
+  simsek: [
+    "........####...",
+    ".......####....",
+    "......####.....",
+    ".....#######...",
+    "....#######....",
+    ".......###.....",
+    "......###......",
+    ".....##........",
+    "....#..........",
+  ],
+  kaya: [
+    "......###......",
+    ".....#####.....",
+    "....###o###....",
+    "..#####oo####..",
+    ".####o#######..",
+    ".###oo###o####.",
+    "###############",
+    ".#############.",
+    "...............",
+  ],
+  don: [
+    ".......#.......",
+    "...#...#...#...",
+    "....#..#..#....",
+    ".....#####.....",
+    ".#############.",
+    ".....#####.....",
+    "....#..#..#....",
+    "...#...#...#...",
+    ".......#.......",
+  ],
+};
+/** amblem yarıçapı (topaç birimi; Çekirdek üst yüzü ~9-11) ve üst yüz eşiği (normal z) */
+const AMBLEM_R = 10.4, AMBLEM_NZ = 0.55;
+/** sırt/oluk çizgisi: komşu normaller arası açı eşikleri (cos) */
+const OLUK = { guclu: 0.6, hafif: 0.72 };
+
 /** Piksel kodu: 0 saydam; aksi halde sinif * 8 + ton (ton 0 çizgi, 1 koyu .. 4 vurgu). */
-function golgele(k: Katman, yukselti: number, icCizgi = true): Uint8Array {
+function golgele(k: Katman, yukselti: number, icCizgi = true, amblem: string[] | null = null, enCokTon = 4, amblemR = AMBLEM_R): Uint8Array {
   const { w, h } = k;
   const out = new Uint8Array(w * h);
+  const deger = new Float32Array(w * h);
   const e = (yukselti * Math.PI) / 180;
   const Vx = 0, Vy = -Math.cos(e), Vz = Math.sin(e);
   for (let y = 0; y < h; y++) {
@@ -214,7 +308,45 @@ function golgele(k: Katman, yukselti: number, icCizgi = true): Uint8Array {
         const sp = Math.pow(Math.max(0, nx * hx + ny * hy + nz * hz), ISIK.parlamaUs) * p;
         if (sp + (bayer(x + 2, y + 1) - 0.5) * 0.12 > ISIK.parlamaEsik) ton = 4;
       }
-      out[j] = c * 8 + ton;
+      out[j] = c * 8 + Math.min(ton, enCokTon);
+      deger[j] = v;
+    }
+  }
+  // GU-C oluk çizgileri: üst yüzde normal kırığı (eş merkezli sırtlar, pahlar) koyu çizgi; komşudan karanlık olan piksele
+  if (icCizgi) {
+    const kopya = out.slice();
+    for (let y = 1; y < h; y++) {
+      for (let x = 1; x < w; x++) {
+        const j = y * w + x;
+        if (!kopya[j]) continue;
+        for (const q of [j - w, j - 1]) {
+          if (!kopya[q] || (kopya[q]! >> 3) !== (kopya[j]! >> 3)) continue;
+          const d = k.n[j * 3]! * k.n[q * 3]! + k.n[j * 3 + 1]! * k.n[q * 3 + 1]! + k.n[j * 3 + 2]! * k.n[q * 3 + 2]!;
+          if (d >= OLUK.hafif || Math.max(k.n[j * 3 + 2]!, k.n[q * 3 + 2]!) < 0.35) continue;
+          const hedef = deger[j]! <= deger[q]! ? j : q;
+          const c = kopya[hedef]! >> 3;
+          out[hedef] = c * 8 + (d < OLUK.guclu ? 0 : Math.min(1, kopya[hedef]! & 7));
+        }
+      }
+    }
+  }
+  if (amblem) {
+    // rozet maskesi: Çekirdek üst yüzünde dünya yarıçapı AMBLEM_R içi; amblem bu maskenin ağırlık merkezine ortalanır
+    const rozet: number[] = [];
+    let sx = 0, sy = 0;
+    for (let j = 0; j < w * h; j++) {
+      if (!out[j] || k.n[j * 3 + 2]! < AMBLEM_NZ) continue;
+      const wx = k.px[j * 3]!, wy = k.px[j * 3 + 1]!;
+      if ((wx * wx + wy * wy) / (amblemR * amblemR) > 0.92) continue;
+      rozet.push(j); sx += j % w; sy += Math.floor(j / w);
+    }
+    if (rozet.length) {
+      const AW = amblem[0]!.length, AH = amblem.length;
+      const ox = Math.round(sx / rozet.length) - (AW >> 1), oy = Math.round(sy / rozet.length) - (AH >> 1);
+      for (const j of rozet) {
+        const ch = amblem[Math.floor(j / w) - oy]?.[(j % w) - ox];
+        out[j] = AMBLEM_KOD * 8 + (ch === "#" ? 1 : ch === "o" ? 4 : 3);
+      }
     }
   }
   if (icCizgi) {
@@ -384,7 +516,8 @@ async function parcaPisir(id: string, spec: Parca3B, kat: KatalogParca | undefin
     const siniflar = new Set<number>();
     for (let k = 0; k < M; k++) {
       const kat_ = await katmanOku(join(HAM, spec.tur, id, yon, String(k).padStart(2, "0")), g, S.superOrnek);
-      const kod = golgele(kat_, S.yukselti);
+      // Disk Gövde'nin altında gölgede: en açık ton 3 (vurgu yok) (referans 07'de Gövde altı koyu bant, gri "birikinti" değil)
+      const kod = golgele(kat_, S.yukselti, true, spec.tur === "cekirdek" ? AMBLEMLER[kat?.element ?? "kor"] : null, spec.tur === "disk" ? 3 : 4);
       for (const v of kod) if (v) siniflar.add(v >> 3);
       ince.push(kod);
     }
@@ -450,7 +583,7 @@ async function ikonPisir(idler: string[], specler: Record<string, Parca3B>, kata
       const yol = join(HAM, spec.tur, id, `${ik.ad}-s`, "00");
       if (!existsSync(`${yol}_n.png`)) continue;
       const k = await katmanOku(yol, g, SANAT.superOrnek);
-      const kod = golgele(k, ik.yukselti, ik.kare >= 48);
+      const kod = golgele(k, ik.yukselti, ik.kare >= 48, spec.tur === "cekirdek" && ik.kare >= 48 ? AMBLEMLER[kat?.element ?? "kor"] : null, 4, AMBLEM_R / SANAT.xyOlcek.cekirdek!);
       const b: Boya = { ad: "", element: kat?.element ?? "kor", koken: kat?.koken ?? "goktasi" };
       const img = disCizgi(renklendir(kod, b), ik.kare, ik.kare, rampa(anaSinif(spec.tur), b)[0]);
       const x = (i % sutun) * ik.kare, y = Math.floor(i / sutun) * ik.kare;
@@ -521,6 +654,7 @@ async function main(): Promise<void> {
   const parcaArg = arg.includes("--parca") ? arg[arg.indexOf("--parca") + 1]!.split(",") : [];
   const renderYok = arg.includes("--render-yok");
   const ikonYok = arg.includes("--ikon-yok");
+  const motor = arg.includes("--motor") ? arg[arg.indexOf("--motor") + 1]! : "chromium";
   const specDosya = join(KOK, "kaynak/topac/parcalar-3b.json");
   const specler = (JSON.parse(readFileSync(specDosya, "utf8")) as { parcalar: Record<string, Parca3B> }).parcalar;
   const katalog = new Map((JSON.parse(readFileSync(join(KOK, "veri/parcalar.json"), "utf8")) as { parcalar: KatalogParca[] }).parcalar.map((p) => [p.id, p]));
@@ -533,16 +667,21 @@ async function main(): Promise<void> {
       parcalar: idler,
       inceKare: SANAT.inceKare,
       superOrnek: SANAT.superOrnek,
+      xyOlcek: SANAT.xyOlcek,
       kamera: { yukselti: SANAT.yukselti, kareBirim: SANAT.birim, kareW: SANAT.kareW, kareH: SANAT.kareH, capaX: SANAT.capaX, capaY: SANAT.capaY },
       ikonlar: ikonYok ? [] : IKON.map((ik) => ({ ad: ik.ad, kare: ik.kare, yukselti: ik.yukselti, kareBirim: Object.fromEntries(Object.entries(IKON_BIRIM).map(([t, b]) => [t, b * (24 / ik.kare) * 2])), capaDy: Object.fromEntries(Object.entries(IKON_DY).map(([t, d]) => [t, d * (ik.kare / 48)])) })),
     };
     writeFileSync(join(HAM, "ayar.json"), JSON.stringify(ayar, null, 1));
-    const blender = process.env.BLENDER ?? "blender";
     const t0 = Date.now();
-    const r = spawnSync(blender, ["-b", "--factory-startup", "-P", join(KOK, "araclar/sanat/blender/topac_render.py"), "--", join(HAM, "ayar.json")], { encoding: "utf8", maxBuffer: 1 << 28 });
-    if (r.status !== 0 || /Traceback|Error:/.test(r.stdout + r.stderr)) {
-      console.error((r.stdout + r.stderr).split("\n").filter((s) => /Traceback|Error|File "|^\s/.test(s)).slice(-30).join("\n"));
-      throw new Error(`Blender başarısız (kod ${r.status}); BLENDER ortam değişkeniyle yol verilebilir.`);
+    if (motor === "chromium") {
+      await chromiumRender({ ...ayar, specler: specler as RenderAyar["specler"] });
+    } else {
+      const blender = process.env.BLENDER ?? "blender";
+      const r = spawnSync(blender, ["-b", "--factory-startup", "-P", join(KOK, "araclar/sanat/blender/topac_render.py"), "--", join(HAM, "ayar.json")], { encoding: "utf8", maxBuffer: 1 << 28 });
+      if (r.status !== 0 || /Traceback|Error:/.test(r.stdout + r.stderr)) {
+        console.error((r.stdout + r.stderr).split("\n").filter((s) => /Traceback|Error|File "|^\s/.test(s)).slice(-30).join("\n"));
+        throw new Error(`Blender başarısız (kod ${r.status}); BLENDER ortam değişkeniyle yol verilebilir.`);
+      }
     }
     console.log(`render: ${idler.length} parça, ${((Date.now() - t0) / 1000).toFixed(1)} s`);
   }

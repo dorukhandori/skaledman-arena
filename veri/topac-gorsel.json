@@ -2,7 +2,7 @@
  "surum": 1,
  "aciklama": "ART-1 topaç sprite atlas metası (araclar/sanat/topac-uret.ts üretir; elle düzenleme). Sayfalar public/topac/ altında, satır başına 8 kare (bulanık disk 3), kare 64×64, çapa = uç temas noktası.",
  "kamera": {
-  "yukselti": 26,
+  "yukselti": 36,
   "birim": 1.1574074074074074,
   "kare": [
    64,
@@ -55,7 +55,7 @@
    },
    "ustZ": 26.4,
    "disYaricap": 32,
-   "bayt": 69626
+   "bayt": 89429
   },
   "hafif-disk": {
    "tur": "disk",
@@ -75,7 +75,7 @@
    },
    "ustZ": 16,
    "disYaricap": 30.7,
-   "bayt": 3291
+   "bayt": 3784
   },
   "duz-uc": {
    "tur": "uc",
@@ -95,7 +95,7 @@
    },
    "ustZ": 12.4,
    "disYaricap": 8.8,
-   "bayt": 1012
+   "bayt": 1272
   },
   "kor-goktasi": {
    "tur": "cekirdek",
@@ -115,7 +115,7 @@
    },
    "ustZ": 30,
    "disYaricap": 8.6,
-   "bayt": 968
+   "bayt": 1461
   },
   "kalkan-govde": {
    "tur": "govde",
@@ -142,7 +142,7 @@
    },
    "ustZ": 27.2,
    "disYaricap": 32.1,
-   "bayt": 33683
+   "bayt": 40434
   },
   "savrulan-govde": {
    "tur": "govde",
@@ -175,7 +175,7 @@
    },
    "ustZ": 26.6,
    "disYaricap": 31.5,
-   "bayt": 69464
+   "bayt": 86225
   },
   "halka-govde": {
    "tur": "govde",
@@ -202,7 +202,7 @@
    },
    "ustZ": 27.4,
    "disYaricap": 33.1,
-   "bayt": 18209
+   "bayt": 20676
   },
   "ayaz-govde": {
    "tur": "govde",
@@ -229,7 +229,7 @@
    },
    "ustZ": 27,
    "disYaricap": 31.5,
-   "bayt": 21925
+   "bayt": 26224
   },
   "dusurucu-govde": {
    "tur": "govde",
@@ -262,7 +262,7 @@
    },
    "ustZ": 26.4,
    "disYaricap": 33,
-   "bayt": 64941
+   "bayt": 79639
   },
   "sivri-govde": {
    "tur": "govde",
@@ -295,7 +295,7 @@
    },
    "ustZ": 26.2,
    "disYaricap": 35,
-   "bayt": 68244
+   "bayt": 80539
   },
   "izli-govde": {
    "tur": "govde",
@@ -328,7 +328,7 @@
    },
    "ustZ": 26.8,
    "disYaricap": 32.2,
-   "bayt": 77527
+   "bayt": 90308
   },
   "agir-disk": {
    "tur": "disk",
@@ -348,7 +348,7 @@
    },
    "ustZ": 15.25,
    "disYaricap": 31.1,
-   "bayt": 3374
+   "bayt": 3832
   },
   "denge-disk": {
    "tur": "disk",
@@ -368,7 +368,7 @@
    },
    "ustZ": 16.75,
    "disYaricap": 30.1,
-   "bayt": 2932
+   "bayt": 3406
   },
   "alcak-disk": {
    "tur": "disk",
@@ -388,7 +388,7 @@
    },
    "ustZ": 14.5,
    "disYaricap": 31.8,
-   "bayt": 2816
+   "bayt": 3089
   },
   "parlak-disk": {
    "tur": "disk",
@@ -408,7 +408,7 @@
    },
    "ustZ": 18.25,
    "disYaricap": 30.6,
-   "bayt": 3685
+   "bayt": 4376
   },
   "igne-uc": {
    "tur": "uc",
@@ -428,7 +428,7 @@
    },
    "ustZ": 12.4,
    "disYaricap": 8.8,
-   "bayt": 907
+   "bayt": 1200
   },
   "dengeli-uc": {
    "tur": "uc",
@@ -448,7 +448,7 @@
    },
    "ustZ": 12.4,
    "disYaricap": 8.8,
-   "bayt": 1027
+   "bayt": 1304
   },
   "top-uc": {
    "tur": "uc",
@@ -468,7 +468,7 @@
    },
    "ustZ": 12.4,
    "disYaricap": 8.8,
-   "bayt": 1019
+   "bayt": 1220
   },
   "kusak-ucu": {
    "tur": "uc",
@@ -488,7 +488,7 @@
    },
    "ustZ": 12.4,
    "disYaricap": 8.8,
-   "bayt": 1009
+   "bayt": 1334
   },
   "karanlik-ucu": {
    "tur": "uc",
@@ -508,7 +508,7 @@
    },
    "ustZ": 12.4,
    "disYaricap": 8.8,
-   "bayt": 1159
+   "bayt": 1385
   },
   "simsek-goktasi": {
    "tur": "cekirdek",
@@ -528,7 +528,7 @@
    },
    "ustZ": 30,
    "disYaricap": 8.6,
-   "bayt": 1137
+   "bayt": 1794
   },
   "kor-kalbi": {
    "tur": "cekirdek",
@@ -548,7 +548,7 @@
    },
    "ustZ": 30,
    "disYaricap": 8.6,
-   "bayt": 509
+   "bayt": 769
   },
   "kaya-maden": {
    "tur": "cekirdek",
@@ -568,7 +568,7 @@
    },
    "ustZ": 30,
    "disYaricap": 9.5,
-   "bayt": 1283
+   "bayt": 2753
   },
   "girdap-maden": {
    "tur": "cekirdek",
@@ -588,7 +588,7 @@
    },
    "ustZ": 30,
    "disYaricap": 9.5,
-   "bayt": 1228
+   "bayt": 2543
   },
   "sabir-tasi": {
    "tur": "cekirdek",
@@ -608,7 +608,7 @@
    },
    "ustZ": 30,
    "disYaricap": 9.299999999999999,
-   "bayt": 923
+   "bayt": 1871
   },
   "kasirga-yapay": {
    "tur": "cekirdek",
@@ -628,7 +628,7 @@
    },
    "ustZ": 30,
    "disYaricap": 10,
-   "bayt": 1082
+   "bayt": 2971
   },
   "kul-cekirdegi": {
    "tur": "cekirdek",
@@ -648,7 +648,7 @@
    },
    "ustZ": 30,
    "disYaricap": 11.2,
-   "bayt": 1636
+   "bayt": 3278
   }
  },
  "ikon": {
@@ -659,7 +659,7 @@
     384,
     192
    ],
-   "bayt": 6302,
+   "bayt": 6130,
    "yer": {
     "ok-govde": [
      0,
@@ -778,7 +778,7 @@
     192,
     96
    ],
-   "bayt": 2489,
+   "bayt": 2346,
    "yer": {
     "ok-govde": [
      0,
