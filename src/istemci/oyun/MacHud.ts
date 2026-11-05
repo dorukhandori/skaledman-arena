@@ -4,6 +4,7 @@ import { MAC_ADIM, geriCekAcik } from "../../paylasilan/sim/mac.ts";
 import { staminaOrani } from "../../paylasilan/sim/topac.ts";
 import { TAKIM_ULTI_KART, TAKIM_YUVA, ULTI_YUVA, elenmemisKart, yuvaBedeli, yuvaDurumu, yuvaYetenegi } from "../../paylasilan/sim/yetenek.ts";
 import { AYAR as AYAR_ } from "../../paylasilan/kurallar/ayar.ts";
+import { RUHLAR } from "../../paylasilan/veri/katalog.ts";
 import { YETENEK_SIM } from "../../paylasilan/veri/yetenekSablon.ts";
 import { elementSvg } from "./elementSimge.ts";
 import { ELEMENT_RENK, KOKEN_RENK } from "./renkler.ts";
@@ -56,7 +57,7 @@ const STIL = `
 .mh .sure.ani { color:#fff; background:#a3260a; letter-spacing:.5px; font-size:12px; }
 .mh .bant { position:absolute; left:240px; top:84px; width:480px; height:36px; text-align:center; font:800 16px/32px system-ui; letter-spacing:1px; background:rgba(5,13,16,.86); border:2px solid #f4cf47; border-radius:8px; opacity:0; transition:opacity .15s; }
 .mh .bant.acik { opacity:1; }
-/* SANAT: Ulti anında bant Shift/Space şeridinin hemen üstünde (Ata'nın başı üstte serbest; referans 08) */
+/* SANAT: Ulti anında bant Shift/Space şeridinin hemen üstünde (Ata hologramının başı üstte serbest; 06 § 1.2) */
 .mh.mh .bant.asagi { top:438px; }
 .mh .gs { position:absolute; left:330px; top:220px; width:300px; height:80px; text-align:center; font:900 48px/80px system-ui; letter-spacing:2px; color:#fff; text-shadow:0 3px 0 #050d10,0 0 12px rgba(0,0,0,.6); opacity:0; }
 .mh .gs.acik { opacity:1; }
@@ -422,10 +423,15 @@ export class MacHud {
         if (o.i !== ben && d.mac.faz === "turArasi") this.bantGoster("Rakip topaç değiştiriyor", 1.4);
         break;
       case "yetenekBasladi":
-        // Ulti / Takım Ultisi: Ata'lar arenanın arkasında yükselir (RuhGorsel); bant üstte başlarını örtmesin diye aşağıda
+        // Ulti / Takım Ultisi: Ata hologramı çağıranın çekirdeğinden yukarı açılır (RuhGorsel); tek bant alt-ortada
+        // (06-kutsal-canavarlar.md § 1.2: canavarın başına ve üst HUD'a binmez)
         if (o.kademe === 4) this.bantGoster(o.i === ben ? "TAKIM ULTİSİ" : "Rakip: Takım Ultisi hazırlıyor", 1.8, false, true);
         else if (o.kademe === 3 && o.i !== ben) this.bantGoster(`Rakip: Ulti hazırlıyor${elementSvg(d.profiller[o.i]!.element, 16)}`, 1.8, true, true);
-        else if (o.kademe === 3) this.bantGoster(`ULTİ · ${YETENEK_SIM[o.no]!.ad}${elementSvg(d.profiller[o.i]!.element, 16)}`, 1.6, true, true);
+        else if (o.kademe === 3) {
+          const el = d.profiller[o.i]!.element;
+          const unvan = RUHLAR.find((x) => x.ata && x.element === el)?.unvan;
+          this.bantGoster(`ULTİ · ${YETENEK_SIM[o.no]!.ad}${unvan ? ` · ${unvan}` : ""}${elementSvg(el, 16)}`, 1.8, true, true);
+        }
         break;
       case "yetenekReddi":
         if (o.i === ben) this.bantGoster(this.retMetni(o.neden, o.yuva, d), 1.4);
