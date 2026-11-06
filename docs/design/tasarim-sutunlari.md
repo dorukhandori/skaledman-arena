@@ -19,3 +19,6 @@ Görsel dil, onaylı 9 referans ekranın en yakın karşılığı olacak (`docs/
 
 ## S4. Dereceli ilerleme kapısıyla açılır
 Dereceli düğmesi yeni oyuncuya gösterilmez; ilk Çekirdek Lv.3'e çıkınca (varsayım, ≈17 maç) lobide belirir. Ustalaşma yolunun parçasıdır, ilk deneyimin parçası değil.
+
+## Tutarlılık notu: Harita / Maden / İşleme (2026-11-06, taslak)
+Yeni mekanik (`docs/design/harita/`) S1–S4'ü değiştirmez. S1 kademeli açılmaya bir ara basamak ekler: sürüş ve çarpma → (İlk Devir) → Harita Bölge 1 (isteğe bağlı "ikinci antrenman") → dash/sekme/Yetenek… Harita, maden ve Ustalık maç gücüne hiçbir şey katmaz (`harita/00-genel-bakis.md` § 1, kural G-0); S4 Dereceli kapısı aynen.

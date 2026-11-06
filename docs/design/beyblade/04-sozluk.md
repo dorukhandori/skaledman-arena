@@ -39,3 +39,24 @@ Kural: **Arayüzde, HUD'da, market ve başarım adlarında yalnız sağ sütunda
 - Yeni icat sözcük yalnız lore'da; arayüzde asla.
 - HUD'da ilk bakışta okunması gereken üç şey: **Stamina**, **Enerji**, **bitiş uyarısı** (kenar / parçalanma çatlağı).
 - Kod: `stamina`, `enerji`, `altin`, `govde`, `disk`, `uc`, `cekirdek`, `element`, `koken`, `yetenek`, `ulti`.
+
+## Harita, maden, işleme terimleri (2026-11-06, taslak; `docs/design/harita/`)
+
+| Lore / tasarım terimi | Oyuncuya görünen (genel) | Kod | Not |
+|---|---|---|---|
+| Dünya haritası | **Harita** | `harita` | Oyna'da 4. mod (İlk Devir sonrası) |
+| Bölge | **Bölge** (adıyla: OCAK YAMACI…) | `bolge` | 6 bölge, ilk sürümde 3 |
+| Düğüm (nokta) | Türüyle görünür: **DÜŞMAN / MADEN / SANDIK / PATRON** | `dugum` | "Düğüm" sözcüğü arayüzde geçmez |
+| Damar | **Damar** / **Nadir damar** / **Derin damar** | `damar` | Maden düğümündeki kazı yeri |
+| Cevher | **Cevher** (KAYA CEVHERİ, DEMİR, DEVİR TAŞI) | `cevher` | Lore adları (Dağ Bakırı…) yalnız Dünya sayfasında |
+| Kademe | **Kademe** (rozette yalnız rakam 1–8) | `kademe` | |
+| Külçe | **Külçe** | `kulce` | |
+| UO "skill" | **Ustalık** (MADENCİLİK, İŞLEME) | `ustalik`, `madencilik`, `isleme` | "Yetenek" topaç yetenekleri için ayrılmıştır; karıştırma |
+| Kazı | **Kaz** (düğme), **vuruş** | `kazi`, `vurus` | |
+| İsabet | **İsabet** | `isabet` | Kuşak halkası bronz yayı |
+| Ocak (Atölye alt ekranı) | **Ocak** | `ocak` | |
+| Eritme / dövme | **Erit** / **Döv** | `erit`, `dov` | |
+| Cüruf | **Cüruf** | `curuf` | Eritmede kaybolan 1 cevher |
+| Usta işi | **Usta işi** | `ustaIsi` | Parlak kozmetik varyant |
+| Cila | **Cila** | `cila` | Gövde/Disk metal paleti; güç vermez |
+| Yıldız | **Yıldız** | `yildiz` | Düğüm başına 3 şart |

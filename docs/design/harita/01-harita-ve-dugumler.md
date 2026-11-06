@@ -21,7 +21,7 @@
 
 ## 2. Yerleşim (topoloji, tüm bölgeler)
 
-Mantıksal ızgara 480×270 (menü ızgarası, `menu-tasarim-arastirma.md` § 5.4); harita alanı x 8–472, y 30–230. Koordinatlar `harita.json` `konum`.
+Mantıksal ızgara 480×270 (menü ızgarası, `menu-tasarim-arastirma.md` § 5.4); harita alanı x 8–472, y 28–214 (altında düğüm şeridi, y 218–266). Düğüm merkezleri y 40–192 aralığında: altta yıldız satırı için 20 px boşluk (maket kontrolüyle bulundu). Koordinatlar `harita.json` `konum`.
 
 ```
                          (05)M───────(07)D───(08)M──┐
@@ -59,15 +59,15 @@ Sim **değişmez**: düğüm maçı tam olarak hızlı maçın bot maçıdır (D
 | `yildiz` (3 şart) | `harita.json` | **Sunucu, maç sonunda** maç özetinden değerlendirir (`ozetSayaci`) |
 | tohum | sunucu | mevcut |
 
-Zorluk → bot eşlemesi:
+Zorluk → bot eşlemesi (her bölgenin tek takımı vardır: üç tip, bölge elementinin parçaları; `harita.json` `takim`):
 
 | Zorluk | Bot kipi | Bot seviyesi | Takım | Hedef kazanım (insan, ilk deneme; H-H4) |
 |---|---|---|---|---|
 | 1 | `kukla` | Lv.1 | Bölge takımı | %85+ |
 | 2 | `dolas` | Lv.2 | Bölge takımı | %70–80 |
-| 3 | `kenar` | Lv.2 | Bölge takımı (karışık tip) | %60–70 |
+| 3 | `kenar` | Lv.2 | Bölge takımı | %60–70 |
 | 4 | `dayaniklilik` | Lv.3 | Bölge takımı | %50–60 |
-| 5 | `dayaniklilik` | Lv.3 | Bölge takımı, hizip parçalı | %40–55 |
+| 5 | `dayaniklilik` | Lv.3 | Bölge takımı (Kor, Şimşek, Girdap bölgelerinde hizip parçalı) | %40–55 |
 
 ### 3.2 Yıldız şartları (sunucu, maç özeti)
 
@@ -96,7 +96,7 @@ Maçlar arasında hiçbir şey taşınmaz (stamina, hasar, Yapay ömrü hariç):
 | SANDIK | `150·n` | 6 cevher K=n | tek sefer |
 | MADEN | — | 02 § 2–5 | |
 
-Bölge 1 tam yıldızla tek seferlik toplam: **1 850 Altın**, 30 Demir + 12 Kaya cevheri + 3 Kaya külçesi (06 § 3).
+Bölge 1 tam yıldızla tek seferlik toplam: **1 850 Altın**, 42 Demir + 6 Kaya cevheri + 3 Kaya külçesi (06 § 3).
 
 ## 5. Tekrar oynanabilirlik ve yenilenme
 
@@ -156,18 +156,18 @@ Takım (bütün DÜŞMAN ve PATRON): `kaya-maden + kalkan-govde + agir-disk + ig
 
 | Düğüm | Tür | Konum | Komşu → | Zorluk / bot | Yıldızlar | Damar | Ödül (ilk) |
 |---|---|---|---|---|---|---|---|
-| b1-01 | DÜŞMAN | 40, 200 | 02 | 1 · kukla Lv.1 | kazan · temiz · hizli | — | 3★: 150 Altın + 6 Demir |
+| b1-01 | DÜŞMAN | 40, 188 | 02 | 1 · kukla Lv.1 | kazan · temiz · hizli | — | 3★: 150 Altın + 6 Demir |
 | b1-02 | MADEN | 92, 160 | 03, 04 | — | — | K1 Demir, 6/gün, nadir K2 %10 | kazı |
 | b1-03 | DÜŞMAN | 150, 110 | 05 | 1 · kukla Lv.1 | kazan · yetenekBitis · hizli | — | 3★: 150 Altın + 6 Demir |
-| b1-04 | SANDIK | 160, 205 | 06 | — | — | — | 150 Altın + 6 Demir |
+| b1-04 | SANDIK | 160, 190 | 06 | — | — | — | 150 Altın + 6 Demir |
 | b1-05 | MADEN | 215, 80 | 07 | — | — | K1 Demir, 6/gün, nadir K2 %10 | kazı |
-| b1-06 | DÜŞMAN | 228, 190 | 07 | 2 · dolas Lv.2 | kazan · ringOut · hizli | — | 3★: 150 Altın + 6 Demir |
+| b1-06 | DÜŞMAN | 228, 180 | 07 | 2 · dolas Lv.2 | kazan · ringOut · hizli | — | 3★: 150 Altın + 6 Demir |
 | b1-07 | DÜŞMAN | 285, 140 | 08, 09 | 2 · dolas Lv.2 | kazan · ringOut · temiz | — | 3★: 150 Altın + 6 Demir |
 | b1-08 | MADEN | 335, 80 | 10 | — | — | K2 Kaya, 6/gün, nadir K3 %10 | kazı |
-| b1-09 | DÜŞMAN | 345, 200 | 10 | 3 · kenar Lv.2 | kazan · durma · hizli | — | 3★: 150 Altın + 6 Demir |
+| b1-09 | DÜŞMAN | 345, 188 | 10 | 3 · kenar Lv.2 | kazan · durma · hizli | — | 3★: 150 Altın + 6 Demir |
 | b1-10 | SANDIK | 392, 140 | 11 | — | — | — | 150 Altın + 6 Demir |
 | b1-11 | PATRON "OCAK USTASI" | 440, 95 | 12, b2-01 | 4 · dayaniklilik Lv.3 | kazan · durma · hizli | — | 500 Altın + 3 Kaya külçesi; 3★: +300 Altın + 6 Kaya |
-| b1-12 | MADEN "DERİN DAMAR" | 440, 200 | — | — | — | K2 Kaya, 8/gün, nadir K3 %15 | kazı |
+| b1-12 | MADEN "DERİN DAMAR" | 440, 188 | — | — | — | K2 Kaya, 8/gün, nadir K3 %15 | kazı |
 
 Not: b1-12 patron sonrası açılır; Bölge 1'e "geri dönme" sebebi olarak Kaya cevherinin en verimli kaynağıdır (Bölge 2'nin erken damarları da K2'dir, bilerek örtüşür).
 

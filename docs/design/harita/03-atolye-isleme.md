@@ -68,7 +68,7 @@ Alt kademe külçesinin her tarifte istenmesi (**alaşım**) eski cevherleri de�
 | 9 | KOR ARMASI | 3 Kor + 2 Don | 400 | 40 |
 | 10 | KOR ÇERÇEVE | 6 Kor + 4 Don | 800 | 45 |
 | 11 | KOR CİLASI | 10 Kor + 6 Don | 1 600 | 50 |
-| | **Toplam** | 102 külçe | **6 600** | |
+| | **Toplam** | 108 külçe | **6 600** | |
 
 Sezon 2 (K5–K8): 12 kozmetik tarif daha (Kasırga, Şimşek, Girdap, Devir; arma + çerçeve + cila), toplam 23 kozmetik; Altın 24 800 (06 § 3).
 

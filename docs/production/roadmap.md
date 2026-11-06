@@ -40,6 +40,10 @@ Sağlık (`devran-kod` 23a772b, durum-20261105 § 1): typecheck, lint, build tem
 ### Sırada (tek liste `durum-20261105.md` § 4-6)
 Menü düzeltmeleri P1 → ilk test gecesi (`test-gecesi.md`; alan adı ve VPS kurulumu sahipte) → ağ N3 kararı (sahip) → Kick OAuth (askıda, sahip söyleyene kadar yazılmaz).
 
+| İş | Kapsam | Durum | Konum önerisi |
+|---|---|---|---|
+| **Harita / Maden / İşleme** (H1–H8) | Düğüm haritası (bota karşı maç, kazı, sandık, patron), 8 kademe cevher, Madencilik/İşleme Ustalığı, Atölye › Ocak (kozmetik + bayraklı yan-grade), 23 başarım | **tasarım ✔** (`docs/design/harita/`, rapor `raporlar/HARITA-TASARIM.md`); kod yok | Kick'ten **önce**, ilk test gecesinden **sonra** (ekranlar H6–H8); sunucu dilimleri H1–H5 test gecesi hazırlığıyla paralel. Kick askıda kalır, Harita Kick'e bağlı değil (`harita/09` § 4) |
+
 ### Eski K-1…K-16 → Devran eşlemesi (2026-11-06)
 
 Eski kararlar aşağıda **olduğu gibi** durur; numaralar yeniden kullanılmaz. Devran'ın kendi karar listesi ayrı numaralıdır: `docs/design/beyblade/02-sahip-kararlari.md` (orada da K-1…K-12 var; karışmasın diye burada "02 K-n" yazılır). Kaynaklar: 02-sahip-kararlari, ADR-001…005, CLAUDE.md, kod.
