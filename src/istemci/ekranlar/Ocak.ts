@@ -6,7 +6,8 @@ import { type Ipucu } from "../bilgic/ipuclari.ts";
 import { ipucuBas, ipucuSec } from "../bilgic/haritaIpucu.ts";
 import { cuzdanYaz, ekranKok, el } from "./arayuz.ts";
 import { Ses } from "../ses/Ses.ts";
-import { CEVHER_IKON, GORUNUM_IKON, USTALIK_IKON } from "./haritaVarlik.ts";
+import { CEVHER_IKON, GORUNUM_IKON, KULCE_IKON, USTALIK_IKON, USTA_PARILTI } from "./haritaVarlik.ts";
+import { efektStili, halkaDalga, kirintiPatlat, merkez, parilti } from "./haritaEfekt.ts";
 
 // Ocak ekranı (docs/design/harita/07 § 5, 03, 12): Atölye'nin masası. Üst bant iki Ustalık çubuğu; solda cevher listesi
 // (K1–K4; kilitli kademe "USTALIK n"), sağda seçili kademe paneli: ERİT (parti −/+ 1–20, önizleme, başarı %, oran, bant),
@@ -50,10 +51,11 @@ const STIL = `
 .ock .ipucu { color:var(--turuncu, #e8762f); }
 .ock img { image-rendering:pixelated; vertical-align:middle; }
 .ock .oc-ust img.ui { width:22px; height:22px; margin-right:4px; }
+.ock .oc-liste .oc-sayi { display:inline-flex; align-items:center; gap:2px; }
 .ock .oc-tarifler img.gi { width:24px; height:24px; margin-right:4px; }
 .ock .oc-sonuc img.gi.buyuk { width:48px; height:48px; margin-right:8px; }
 .ock .oc-sonuc { position:relative; display:flex; align-items:center; flex-wrap:wrap; }
-.ock .oc-sonuc .parilti { position:absolute; right:6px; top:6px; width:32px; height:32px; background:url(/harita/efekt/usta-isi.png) 0 0 / 256px 32px; image-rendering:pixelated; animation: oc-parilti .8s steps(8) infinite; }
+.ock .oc-sonuc .parilti { position:absolute; right:6px; top:6px; width:32px; height:32px; background-position:0 0; background-size:256px 32px; image-rendering:pixelated; animation: oc-parilti .8s steps(8) infinite; }
 @keyframes oc-parilti { to { background-position:-256px 0; } }
 @media (prefers-reduced-motion: reduce) { .ock .oc-sonuc .parilti { animation:none; } }
 html[data-telefon] .ock .oc-govde { grid-template-columns:calc(120 * var(--p)) 1fr; }
@@ -80,7 +82,9 @@ class OcakEkrani {
   private kademe: number;
   private parti = 1;
   private secim: Secim = { tur: "erit" };
-  private sonuc: { metin: string; usta: boolean; parca?: UretilenG; gorunum?: string } | null = null;
+  private sonuc: { metin: string; usta: boolean; parca?: UretilenG; gorunum?: string; kulce?: number } | null = null;
+  /** Bir sonraki çizimde sonuç kartında oynatılacak efekt (yalnız görsel). */
+  private efekt: "erit" | "dov" | null = null;
   private mesaj = "";
   /** bu ziyaretin Pergel ipucu (bir kez; 07 § 10) */
   private ipucu: Ipucu | null | undefined;
@@ -138,7 +142,8 @@ class OcakEkrani {
       const rz = el("span", "rz", d); rz.style.background = k.renk.koyu;
       const ci = el("img", "", rz); ci.src = CEVHER_IKON(k.kademe); ci.alt = ""; ci.width = 16; ci.height = 16;
       el("span", "", d, kAd(k.kademe));
-      el("span", "", d, k.eritilebilir ? `${k.cevher} · ${k.kulce}` : `İŞL ${k.esik}`);
+      const sy = el("span", "oc-sayi", d, k.eritilebilir ? `${k.cevher} · ${k.kulce}` : `İŞL ${k.esik}`);
+      if (k.eritilebilir) { const ki = el("img", "", sy); ki.src = KULCE_IKON(k.kademe); ki.alt = ""; ki.width = 16; ki.height = 16; }
       d.setAttribute("aria-label", `${kAd(k.kademe)}: ${k.cevher} cevher, ${k.kulce} külçe${k.eritilebilir ? "" : `, İşleme ${k.esik} gerekir`}`);
       d.addEventListener("click", () => { this.kademe = k.kademe; this.secim = { tur: "erit" }; this.parti = this.enCokParti(); this.sonuc = null; this.mesaj = ""; this.ciz(); });
     }
@@ -190,7 +195,9 @@ class OcakEkrani {
     if (this.sonuc) {
       const s = el("div", `oc-sonuc${this.sonuc.usta ? " usta" : ""}`, p, this.sonuc.metin);
       if (this.sonuc.gorunum) { const gi = el("img", "gi buyuk", s); gi.src = GORUNUM_IKON(this.sonuc.gorunum); gi.alt = ""; s.prepend(gi); }
-      if (this.sonuc.usta) el("span", "parilti", s).setAttribute("aria-hidden", "true");
+      else if (this.sonuc.kulce) { const gi = el("img", "gi buyuk", s); gi.src = KULCE_IKON(this.sonuc.kulce); gi.alt = ""; s.prepend(gi); }
+      if (this.sonuc.usta) { const pr = el("span", "parilti", s); pr.setAttribute("aria-hidden", "true"); pr.style.backgroundImage = `url(${USTA_PARILTI()})`; }
+      if (this.efekt) { const tur = this.efekt, usta = this.sonuc.usta; this.efekt = null; requestAnimationFrame(() => this.sonucEfekti(s, tur, usta)); }
       s.dataset["sonuc"] = "1";
       s.setAttribute("role", "status");
     }
@@ -220,6 +227,18 @@ class OcakEkrani {
     d.addEventListener("click", () => void this.ana());
   }
 
+  /** ERİT: kademe renginde kor kıvılcımı; DÖV/ÜRET: çekiç kıvılcımı; usta işi: halka + iki parıltı. */
+  private sonucEfekti(s: HTMLElement, tur: "erit" | "dov", usta: boolean): void {
+    if (!s.isConnected) return;
+    efektStili();
+    const ikon = s.querySelector("img.gi") ?? s;
+    const [x, y] = merkez(s, ikon);
+    const r = this.k.renk;
+    if (tur === "erit") kirintiPatlat(s, x, y, [r.ana, "#ff8a5c", "#ffd2a8", r.koyu], { adet: 14, guc: 36, boy: 4, yukari: 18, yercekimi: -6 });
+    else kirintiPatlat(s, x, y, ["#fcd35a", "#fff6d0", "#e8762f", "#ffffff"], { adet: 16, guc: 46, boy: 3 });
+    if (usta) { halkaDalga(s, x, y, "#fcd35a", 10); parilti(s, x - 14, y - 12, 3); parilti(s, x + 16, y + 6, 2, 520); }
+  }
+
   private async yenile(): Promise<void> {
     this.o = await apiGet<OcakG>("/api/ocak");
     cuzdanYaz(this.o.bakiye);
@@ -241,7 +260,8 @@ class OcakEkrani {
     if (r.durum === 200) {
       Ses.cal("eritme");
       const x = r.veri.sonuc;
-      this.sonuc = { metin: `${x.kulce} KÜLÇE${x.curuf ? ` · ${x.curuf} CÜRUF` : ""}${r.veri.yeniBasarimlar?.length ? ` · AÇILDI: ${r.veri.yeniBasarimlar.map((y) => y.ad).join(", ")}` : ""}`, usta: false };
+      this.efekt = x.kulce > 0 ? "erit" : null;
+      this.sonuc = { kulce: this.kademe, metin: `${x.kulce} KÜLÇE${x.curuf ? ` · ${x.curuf} CÜRUF` : ""}${r.veri.yeniBasarimlar?.length ? ` · AÇILDI: ${r.veri.yeniBasarimlar.map((y) => y.ad).join(", ")}` : ""}`, usta: false };
       this.mesaj = "";
     } else this.mesaj = r.veri.hata === "ustalik" ? "İŞLEME YETMİYOR" : r.veri.hata === "yetersiz" ? "CEVHER YETMİYOR" : "ERİTİLEMEDİ";
     await this.yenile();
@@ -256,6 +276,7 @@ class OcakEkrani {
     const r = await apiPost<{ cikti: string; usta: boolean; yeniBasarimlar: { ad: string }[] }>("/api/ocak/dov", { tarif: id, ref: yeniRef(), ...(yeniden ? { yeniden: true } : {}) });
     if (r.durum === 201) {
       Ses.cal("dovme");
+      this.efekt = "dov";
       this.sonuc = { metin: `${r.veri.cikti.startsWith("arma") ? "ARMA" : "ÇERÇEVE"} AÇILDI · PROFİLDE KULLAN${r.veri.usta ? " · USTA İŞİ" : ""}`, usta: r.veri.usta, gorunum: r.veri.cikti };
       this.mesaj = r.veri.yeniBasarimlar?.length ? `AÇILDI: ${r.veri.yeniBasarimlar.map((y) => y.ad).join(", ")}` : "";
     } else this.mesaj = r.veri.hata === "altin" ? "ALTIN YETMİYOR" : r.veri.hata === "eksik" ? "KÜLÇE EKSİK" : r.veri.hata === "ustalik" ? "İŞLEME YETMİYOR" : "DÖVÜLEMEDİ";
@@ -267,6 +288,7 @@ class OcakEkrani {
     const r = await apiPost<{ parca: UretilenG; yeniBasarimlar: { ad: string }[] }>("/api/ocak/parca", { tanim: id, kademe: this.kademe, ref: yeniRef() });
     if (r.durum === 201) {
       Ses.cal("dovme");
+      this.efekt = "dov";
       const p = r.veri.parca;
       this.sonuc = { metin: `${p.ad} · YAPAN: ${p.yapimciAd.toLocaleUpperCase("tr")} · NO. ${String(p.seri).padStart(4, "0")} · ${new Date(p.uretim).toLocaleDateString("tr-TR")}${p.usta ? " · USTA İŞİ" : ""}`, usta: p.usta, parca: p };
       this.mesaj = r.veri.yeniBasarimlar?.length ? `AÇILDI: ${r.veri.yeniBasarimlar.map((y) => y.ad).join(", ")}` : "";

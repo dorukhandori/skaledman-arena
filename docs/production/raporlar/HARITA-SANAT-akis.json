@@ -1,0 +1,128 @@
+{
+ "not": "Otomatik oynanış (oyuncu topacı paylaşılan bot ?oto=dolas). İnsan play pass değil.",
+ "hesap": "Harita 40pgh",
+ "hazirlik": [
+  201,
+  200,
+  201,
+  200
+ ],
+ "haritaIlk": {
+  "secili": "b1-01",
+  "konum": null,
+  "ana": "YÜRÜ"
+ },
+ "hiyerarsi": {
+  "plaka": [
+   94,
+   98,
+   310,
+   40
+  ],
+  "ana": [
+   1010,
+   486,
+   220,
+   86
+  ],
+  "secili": [
+   300,
+   371,
+   81,
+   81
+  ],
+  "karakter": [
+   214,
+   354,
+   270,
+   156
+  ]
+ },
+ "lobiZorluk": "DÜŞMAN · ZORLUK ●○○○○",
+ "sonuc": {
+  "yildiz": "1",
+  "asama": "3",
+  "metin": "★ Kazan ☆ Temiz kazan ☆ 60 sn'de kazan PERGEL: Eksik yıldız için düğümü tekrar oyna; ödül bir kez daha gelir. +50 ALTIN · +2 DEMIR DÜĞÜM: TEMİZLE 1 YENİ DÜĞÜM AÇILDI Sayılan harita maçı 1/10"
+ },
+ "donus": {
+  "b102": "1",
+  "b101": "3"
+ },
+ "kazi": {
+  "ucuslar": [
+   "ISKA +5",
+   "ISKA +5",
+   "ISKA +5",
+   "+3 ◆1 | MADENCİLİK 1 | AÇILDI: İlk Kazı",
+   "+4 ◆1 İSABET",
+   "ISKA +5"
+  ],
+  "kalan": "0",
+  "dinc": "6"
+ },
+ "erit": "3 KÜLÇE · 3 CÜRUF · AÇILDI: İlk Külçe",
+ "ilkParca": {
+  "metin": "DEMİR DÜZ UÇ · YAPAN: HARİTA 40PGH · NO. 0001 · 06.11.2026",
+  "sureSn": 176
+ },
+ "atolyeBicim": [
+  "K1"
+ ],
+ "market": {
+  "ucretsiz": true
+ },
+ "profil": 2,
+ "vitrin": [
+  "p20"
+ ],
+ "telefonHarita": {
+  "kayma": false,
+  "kucuk": [
+   "BUTTON 20×20",
+   "550 80×20"
+  ],
+  "genislik": 844,
+  "W": 844
+ },
+ "telefonOcak": {
+  "kayma": false,
+  "kucuk": [
+   "BUTTON 20×20",
+   "550 80×20"
+  ],
+  "genislik": 844,
+  "W": 844
+ },
+ "telefonMaden": {
+  "kayma": false,
+  "kucuk": [
+   "BUTTON 20×20",
+   "550 80×20"
+  ],
+  "genislik": 844,
+  "W": 844
+ },
+ "konsolHatalari": [],
+ "ekranlar": [
+  "docs/production/raporlar/ekran/HARITA-SANAT-oyna-harita-modu.png",
+  "docs/production/raporlar/ekran/HARITA-SANAT-harita-ilk.png",
+  "docs/production/raporlar/ekran/HARITA-SANAT-harita-dusman-dovus.png",
+  "docs/production/raporlar/ekran/HARITA-SANAT-lobi-dugum-botu.png",
+  "docs/production/raporlar/ekran/HARITA-SANAT-sonuc-harita-eki.png",
+  "docs/production/raporlar/ekran/HARITA-SANAT-harita-donus.png",
+  "docs/production/raporlar/ekran/HARITA-SANAT-harita-maden-kaz.png",
+  "docs/production/raporlar/ekran/HARITA-SANAT-maden-ilk.png",
+  "docs/production/raporlar/ekran/HARITA-SANAT-maden-vurus.png",
+  "docs/production/raporlar/ekran/HARITA-SANAT-maden-bitti.png",
+  "docs/production/raporlar/ekran/HARITA-SANAT-atolye-ocak-dugmesi.png",
+  "docs/production/raporlar/ekran/HARITA-SANAT-ocak-ilk.png",
+  "docs/production/raporlar/ekran/HARITA-SANAT-ocak-erit.png",
+  "docs/production/raporlar/ekran/HARITA-SANAT-ocak-parca-uretildi.png",
+  "docs/production/raporlar/ekran/HARITA-SANAT-atolye-bicim.png",
+  "docs/production/raporlar/ekran/HARITA-SANAT-market-ucretsiz.png",
+  "docs/production/raporlar/ekran/HARITA-SANAT-profil-karakter-vitrin.png",
+  "docs/production/raporlar/ekran/HARITA-SANAT-telefon-harita.png",
+  "docs/production/raporlar/ekran/HARITA-SANAT-telefon-ocak.png",
+  "docs/production/raporlar/ekran/HARITA-SANAT-telefon-maden.png"
+ ]
+}

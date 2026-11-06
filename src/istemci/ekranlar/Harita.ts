@@ -7,7 +7,8 @@ import { ELEMENT_RENK, renkCss } from "../oyun/renkler.ts";
 import { bakimKatmani, cuzdanYaz, ekranKok, el } from "./arayuz.ts";
 import { type Ipucu } from "../bilgic/ipuclari.ts";
 import { ipucuBas, ipucuSec } from "../bilgic/haritaIpucu.ts";
-import { CEVHER_IKON, DUGUM_IKON, KARAKTER_KARE, KILIT_IKON, type KarakterAnim, animKaresi, karakterSayfasi, kareKonumu } from "./haritaVarlik.ts";
+import { BOLGE_ZEMIN, CEVHER_IKON, DUGUM_IKON, KARAKTER_KARE, KILIT_IKON, type KarakterAnim, animKaresi, karakterSayfasi, kareKonumu } from "./haritaVarlik.ts";
+import { ayakTozu, efektStili, kirintiPatlat, ortamParcaciklari, parilti, svgNoktasi } from "./haritaEfekt.ts";
 
 // Harita ekranı (docs/design/harita/07 § 2–3, 13): bölge başına sabit kamera düğüm haritası (480×270 mantıksal ızgara,
 // SVG), oyuncu KARAKTERİ (yer tutucu: 3 dikdörtgen + taşıdığı aktif topaç; sanat hattı 10 § 3.6), açık düğüme dokununca
@@ -76,6 +77,8 @@ const svgEl = <K extends keyof SVGElementTagNameMap>(ad: K, ust: Element, ozel: 
   return e;
 };
 const hareketiAzalt = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true || document.documentElement.dataset["azalt"] === "1";
+/** Bölge zemini üstüne koyu örtü: düğüm, yol ve karakter okunur kalsın (10 § 3.2). */
+const ZEMIN_ORTU = 0.42;
 
 export function baslat(b: EkranBaglami): void {
   const ben = b.ben;
@@ -194,11 +197,21 @@ class HaritaEkrani {
     el("span", "", sy, `★ ${b.yildiz.alinan}/${b.yildiz.toplam}`);
 
     this.alan = el("div", "hr-alan", k);
+    // SVG en-boyu korunur; yan şeritleri aynı zeminin koyu kopyası doldurur
+    this.alan.style.background = `linear-gradient(rgba(7,11,18,.78), rgba(7,11,18,.78)), #101a1e url(${BOLGE_ZEMIN(b.id)}) center / cover`;
+    this.alan.style.imageRendering = "pixelated";
     this.svg = svgEl("svg", this.alan, { viewBox: "0 18 480 200", role: "group", "aria-label": `${b.ad} haritası` });
+    efektStili();
+    // bölge zemini (Gemini, 10 § 3.2 Z1) + okunurluk örtüsü + ortam parçacıkları (kar, kor, rüzgâr…)
+    const zemin = svgEl("image", this.svg, { href: BOLGE_ZEMIN(b.id), x: 0, y: 18, width: 480, height: 200, preserveAspectRatio: "none", style: "image-rendering:pixelated", "aria-hidden": "true" });
+    zemin.dataset["zemin"] = b.id;
+    svgEl("rect", this.svg, { x: 0, y: 18, width: 480, height: 200, fill: "#070b12", opacity: b.acik ? ZEMIN_ORTU : 0.7, "aria-hidden": "true" });
+    if (b.acik) ortamParcaciklari(this.svg, b.element);
     this.yollariCiz();
     for (const d of b.dugumler) this.dugumCiz(d);
     this.karakterCiz();
     if (!b.acik) el("div", "kilitliB", this.alan, `${b.ad} · KİLİTLİ · ${b.kilitNedeni ?? ""}`);
+    if (this.kutla.size && !this.kutlaOynadi) { this.kutlaOynadi = true; requestAnimationFrame(() => this.kutlaEfekti()); }
     this.serit = el("div", "hr-serit k-e16", k);
     this.serit.dataset["serit"] = "1";
     this.seritCiz();
@@ -234,6 +247,9 @@ class HaritaEkrani {
     g.setAttribute("aria-label", `${TUR_AD[d.tur]}${d.ad ? ` ${d.ad}` : ""} · ${d.asama}${kilitli ? " · kilitli" : ""}`);
     // isabet alanı (görünmez; ≥ 48 CSS px hedefi telefonda da)
     svgEl("circle", g, { r: 27, fill: "transparent", "data-isabet": "1" });
+    // keşfedilmemiş açık düğüm nabız atar; maden damarı kademe renginde ışır (efekt, yalnız görsel)
+    if (d.durum === DURUM.acik) svgEl("circle", g, { r: 17, fill: "none", stroke: "#fcd35a", "stroke-width": 1.5, class: "ef-nabiz", "aria-hidden": "true" });
+    if (d.tur === "maden" && !kilitli) svgEl("circle", g, { r: 13, fill: kademeRengi(d.kademe ?? 1), class: "ef-isima", opacity: 0.5, "aria-hidden": "true" });
     // 3 çentikli Kuşak halkası: KEŞFET/TEMİZLE/USTALAŞ (sandık 2)
     const parca = d.tur === "sandik" ? 2 : 3;
     const lit = Math.max(0, Math.min(parca, d.durum - DURUM.acik));
@@ -338,10 +354,26 @@ class HaritaEkrani {
     const a = y.yol[i]!, c = y.yol[i + 1] ?? a;
     const k = f - i;
     this.karakterXY = [a[0] + (c[0] - a[0]) * k - 14, a[1] + (c[1] - a[1]) * k + 6];
+    if (t - this.sonToz > 110) { this.sonToz = t; ayakTozu(this.svg, this.karakterXY[0] + (c[0] < a[0] ? 3 : -3), this.karakterXY[1] - 1); }
     // sola yürürken ayna (13 § 2.2: sağ; sol = ayna)
     if (this.spriteKutu) this.spriteKutu.setAttribute("transform", c[0] < a[0] ? "translate(0 0) scale(-1 1)" : "");
     this.karakterYerlestir();
     if (u >= 1) this.yuruyusuBitir();
+  }
+
+  private sonToz = 0;
+  private kutlaOynadi = false;
+
+  /** Aşaması yükselen düğümlerde altın kırıntı + usta işi parıltısı (KUTLA, 13 § 3.4). */
+  private kutlaEfekti(): void {
+    for (const id of this.kutla) {
+      const d = this.bolge.dugumler.find((x) => x.id === id);
+      if (!d) continue;
+      const [x, y] = svgNoktasi(this.alan, this.svg, d.konum[0], d.konum[1]);
+      const renk = d.tur === "maden" ? kademeRengi(d.kademe ?? 1) : "#fcd35a";
+      kirintiPatlat(this.alan, x, y, ["#fcd35a", "#fff6d0", renk, "#e8762f"], { adet: 18, guc: 42 });
+      parilti(this.alan, x, y - 6, 3, 760);
+    }
   }
 
   private yuruyusuBitir(): void {

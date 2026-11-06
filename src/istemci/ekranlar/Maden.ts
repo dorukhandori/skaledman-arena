@@ -5,7 +5,8 @@ import { ipucuBas, ipucuSec } from "../bilgic/haritaIpucu.ts";
 import type { EkranBaglami } from "../main.ts";
 import { apiGet, apiPost, git, oku, sakla } from "../hesap.ts";
 import { ekranKok, el } from "./arayuz.ts";
-import { CEVHER_IKON, KARAKTER_KARE, karakterSayfasi, kareKonumu } from "./haritaVarlik.ts";
+import { CEVHER_IKON, KARAKTER_KARE, OCAK_AGZI, karakterSayfasi, kareKonumu } from "./haritaVarlik.ts";
+import { efektStili, halkaDalga, kirintiPatlat, merkez, parilti, sarsinti } from "./haritaEfekt.ts";
 import { Ses } from "../ses/Ses.ts";
 
 // Maden ekranı (docs/design/harita/07 § 4, 02 § 3): ortada damar + Kuşak halkası (1,4 sn tur, bronz isabet yayı %22),
@@ -30,6 +31,7 @@ interface Kaz {
 
 const STIL = `
 .mdn .kart { width:min(calc(620 * var(--p)), 100%); padding:calc(4 * var(--p)); }
+.mdn .md-govde { background:#0b0f18 var(--ocak) center / 100% 100% no-repeat; image-rendering:pixelated; padding:calc(4 * var(--p)); }
 .mdn .md-govde { position:relative; display:grid; grid-template-columns:calc(130 * var(--p)) 1fr calc(120 * var(--p)); gap:calc(6 * var(--p)); min-height:calc(190 * var(--p)); }
 .mdn .md-panel { padding:calc(4 * var(--p)) calc(6 * var(--p)); background:#11141f; box-shadow:inset 0 0 0 var(--p) var(--bronz-1); line-height:.9; align-self:start; }
 .mdn .md-panel b { color:var(--ink); font-weight:400; text-transform:uppercase; }
@@ -163,6 +165,8 @@ class MadenEkrani {
     const k = this.kart;
     k.innerHTML = "";
     const g = el("div", "md-govde", k);
+    g.style.setProperty("--ocak", `url(${OCAK_AGZI()})`);
+    efektStili();
     // sol: Madencilik paneli
     const p = el("div", "md-panel k-e16", g);
     p.dataset["ustalik"] = String(s.ustalik.seviye);
@@ -189,9 +193,14 @@ class MadenEkrani {
     };
     const tam = Math.PI * 2;
     // damar kayası (kademe renginde) + nadir çatlak
-    const kaya = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-    for (const [a, v] of Object.entries({ x: -22, y: -22, width: 44, height: 44, fill: kademe(s.kademe).renk.koyu, stroke: kademe(s.kademe).renk.ana, "stroke-width": 3 })) kaya.setAttribute(a, String(v));
+    // damar ışıması (kademe rengi, nabız) + düzensiz kaya (sekizgen)
+    const isik = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    for (const [a, v] of Object.entries({ r: 30, fill: kademe(s.kademe).renk.ana, opacity: 0.35, class: "ef-isima" })) isik.setAttribute(a, String(v));
+    svg.appendChild(isik);
+    const kaya = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    for (const [a, v] of Object.entries({ points: "-14,-25 12,-24 25,-11 24,13 13,25 -12,24 -25,12 -24,-13", fill: kademe(s.kademe).renk.koyu, stroke: kademe(s.kademe).renk.ana, "stroke-width": 3, "stroke-linejoin": "bevel" })) kaya.setAttribute(a, String(v));
     svg.appendChild(kaya);
+    this.damarSvg = svg;
     // damar: kodla çizilmiş cevher ikonu (A3), kademe numarası rozetle
     const cv = document.createElementNS("http://www.w3.org/2000/svg", "image");
     for (const [a, v] of Object.entries({ href: CEVHER_IKON(s.kademe), x: -16, y: -16, width: 32, height: 32, style: "image-rendering:pixelated" })) cv.setAttribute(a, String(v));
@@ -275,6 +284,7 @@ class MadenEkrani {
     const v = r.veri;
     Ses.cal(v.isabet ? "isabet" : "kazi-tik");
     queueMicrotask(() => this.kazAnim());
+    const vurusEfekti = () => this.vurusEfekti(v.basari, v.isabet, v.nadir, v.kademe);
     if (v.verim > 0) this.seansCevher.set(v.kademe, (this.seansCevher.get(v.kademe) ?? 0) + v.verim);
     s.sira = v.sira;
     s.kalan = v.kalan;
@@ -282,9 +292,25 @@ class MadenEkrani {
     s.ustalik = { ...s.ustalik, ...v.ustalik };
     s.vurus = { ...s.vurus, bugun: v.vurus.bugun, carpan: v.vurus.carpan, metin: v.vurus.metin };
     this.ciz();
+    vurusEfekti();
     this.ucusGoster(v.basari ? `+${v.verim} ◆${v.kademe}${v.isabet ? " İSABET" : ""}${v.nadir ? " NADİR" : ""}` : `ISKA +${v.tecrube}`, !v.basari);
     if (v.ustalik.atladi) { this.kart.querySelector(".md-cubuk")?.classList.add("atladi"); this.ucusGoster(`MADENCİLİK ${v.ustalik.seviye}`, false, 30); }
     if (v.yeniBasarimlar?.length) this.ucusGoster(`AÇILDI: ${v.yeniBasarimlar.map((x) => x.ad).join(", ")}`, false, 60);
+  }
+
+  private damarSvg: SVGSVGElement | null = null;
+  /** Vuruş efekti: kaya sarsılır, kademe renginde kırıntı; isabette bronz halka; nadirde usta işi parıltısı; ıskada toz. */
+  private vurusEfekti(basari: boolean, isabet: boolean, nadir: boolean, kd: number): void {
+    const g = this.kart.querySelector<HTMLElement>(".md-govde");
+    const svg = this.damarSvg;
+    if (!g || !svg?.isConnected) return;
+    const [x, y] = merkez(g, svg);
+    sarsinti(svg);
+    const r = kademe(kd).renk;
+    if (!basari) { kirintiPatlat(g, x, y + 10, ["#5a5e66", "#8c8a88", "#3a3e46"], { adet: 8, guc: 22, boy: 3, yukari: 4 }); return; }
+    kirintiPatlat(g, x, y, [r.ana, r.koyu, "#fff6d0", r.ana], { adet: isabet ? 18 : 12, guc: isabet ? 52 : 38, boy: 5 });
+    if (isabet) halkaDalga(g, x, y, "#FBBE88", 9);
+    if (nadir) { parilti(g, x - 18, y - 16, 3); parilti(g, x + 20, y + 4, 2, 520); }
   }
 
   private spriteEl: HTMLElement | null = null;

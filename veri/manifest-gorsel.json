@@ -862,11 +862,18 @@
   ]
  },
  "harita": {
-  "aciklama": "Harita/Maden/Ocak 2B varlıkları: araclar/sanat/harita-asset-uret.ts ile KODLA çizildi (pixel matrisleri + palet takası). Dış kaynak yok. Sanat hattı (Mac) gelince aynı yollar değişebilir.",
-  "kaynak": "kod (araclar/sanat/harita-asset-uret.ts)",
-  "lisans": "CC0-1.0",
+  "aciklama": "Harita/Maden/Ocak 2B varlıkları, sanat turu (docs/production/raporlar/HARITA-SANAT.md). Kodun beklediği yol ve boyutlar değişmedi (haritaVarlik.ts); zeminler (zemin/) yeni.",
+  "kaynak": "Gemini + Tripo + Blender (araclar/sanat/harita_gemini.py, harita_piksel.py, blender/karakter_render.py, harita_karakter.py)",
+  "yapayZekaNotu": "Yapay zekâ üretimi (sahip onaylı Mac sanat hattı): Gemini gemini-3.1-flash-image konsept/ham görsel, karakter için Tripo image-to-model v3.1 + Blender 5.2 kare render; piksele indirme, palet takası ve kontur kendi betiklerimiz. Mevcut bir serinin karakteri ya da tasarımı bilerek kullanılmadı. Ham dosyalar depo dışında (art-source/harita/).",
+  "lisans": "bizim (yapay zekâ çıktısı; hizmet koşulları: çıktı kullanıcıya ait, sahip doğrulayacak)",
   "tarih": "2026-11-06",
-  "toplamBayt": 32589,
+  "uretim": {
+   "geminiCagri": 41,
+   "geminiTahminiUSD": 1.845,
+   "tripoGorev": 5,
+   "tripoKredi": 170
+  },
+  "toplamBayt": 374950,
   "karakterKareleri": {
    "bekle": [
     0,
@@ -891,592 +898,799 @@
   },
   "dosyalar": [
    {
-    "ad": "dugum/dusman",
-    "dosya": "harita/dugum/dusman.png",
-    "olay": "Harita düğümü: DÜŞMAN (iki topaç çarpışıyor)",
-    "bayt": 192,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "dugum/patron",
-    "dosya": "harita/dugum/patron.png",
-    "olay": "Harita düğümü: PATRON (taçlı topaç)",
-    "bayt": 192,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "dugum/maden",
-    "dosya": "harita/dugum/maden.png",
-    "olay": "Harita düğümü: MADEN (kazma)",
-    "bayt": 179,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "dugum/sandik",
-    "dosya": "harita/dugum/sandik.png",
-    "olay": "Harita düğümü: SANDIK (kapalı)",
-    "bayt": 169,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "dugum/sandik-bos",
-    "dosya": "harita/dugum/sandik-bos.png",
-    "olay": "Harita düğümü: SANDIK (açık, boş)",
-    "bayt": 172,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "dugum/kilit",
-    "dosya": "harita/dugum/kilit.png",
-    "olay": "Düğüm durum katmanı: kilit",
-    "bayt": 163,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "maden/cevher-demir",
-    "dosya": "harita/maden/cevher-demir.png",
-    "olay": "Cevher K1 demir (gri kalıp + palet takası)",
-    "bayt": 189,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "maden/kulce-demir",
-    "dosya": "harita/maden/kulce-demir.png",
-    "olay": "Külçe K1 demir (gri kalıp + palet takası)",
-    "bayt": 172,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "maden/cevher-kaya",
-    "dosya": "harita/maden/cevher-kaya.png",
-    "olay": "Cevher K2 kaya (gri kalıp + palet takası)",
-    "bayt": 189,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "maden/kulce-kaya",
-    "dosya": "harita/maden/kulce-kaya.png",
-    "olay": "Külçe K2 kaya (gri kalıp + palet takası)",
-    "bayt": 172,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "maden/cevher-don",
-    "dosya": "harita/maden/cevher-don.png",
-    "olay": "Cevher K3 don (gri kalıp + palet takası)",
-    "bayt": 189,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "maden/kulce-don",
-    "dosya": "harita/maden/kulce-don.png",
-    "olay": "Külçe K3 don (gri kalıp + palet takası)",
-    "bayt": 172,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "maden/cevher-kor",
-    "dosya": "harita/maden/cevher-kor.png",
-    "olay": "Cevher K4 kor (gri kalıp + palet takası)",
-    "bayt": 189,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "maden/kulce-kor",
-    "dosya": "harita/maden/kulce-kor.png",
-    "olay": "Külçe K4 kor (gri kalıp + palet takası)",
-    "bayt": 172,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "maden/cevher-kasirga",
-    "dosya": "harita/maden/cevher-kasirga.png",
-    "olay": "Cevher K5 kasirga (gri kalıp + palet takası)",
-    "bayt": 189,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "maden/kulce-kasirga",
-    "dosya": "harita/maden/kulce-kasirga.png",
-    "olay": "Külçe K5 kasirga (gri kalıp + palet takası)",
-    "bayt": 172,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "maden/cevher-simsek",
-    "dosya": "harita/maden/cevher-simsek.png",
-    "olay": "Cevher K6 simsek (gri kalıp + palet takası)",
-    "bayt": 189,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "maden/kulce-simsek",
-    "dosya": "harita/maden/kulce-simsek.png",
-    "olay": "Külçe K6 simsek (gri kalıp + palet takası)",
-    "bayt": 172,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "maden/cevher-girdap",
-    "dosya": "harita/maden/cevher-girdap.png",
-    "olay": "Cevher K7 girdap (gri kalıp + palet takası)",
-    "bayt": 189,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "maden/kulce-girdap",
-    "dosya": "harita/maden/kulce-girdap.png",
-    "olay": "Külçe K7 girdap (gri kalıp + palet takası)",
-    "bayt": 172,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "maden/cevher-devir",
-    "dosya": "harita/maden/cevher-devir.png",
-    "olay": "Cevher K8 devir (gri kalıp + palet takası)",
-    "bayt": 189,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "maden/kulce-devir",
-    "dosya": "harita/maden/kulce-devir.png",
-    "olay": "Külçe K8 devir (gri kalıp + palet takası)",
-    "bayt": 172,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "ustalik/madencilik",
-    "dosya": "harita/ustalik/madencilik.png",
-    "olay": "Ustalık rozeti: Madencilik (kazma)",
-    "bayt": 179,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "ustalik/isleme",
-    "dosya": "harita/ustalik/isleme.png",
-    "olay": "Ustalık rozeti: İşleme (çekiç)",
-    "bayt": 168,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "arma/arma-cevher-demir",
-    "dosya": "harita/arma/arma-cevher-demir.png",
-    "olay": "Arma: demir cevheri (Ocak tarifi)",
-    "bayt": 203,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "arma/arma-cevher-kaya",
-    "dosya": "harita/arma/arma-cevher-kaya.png",
-    "olay": "Arma: kaya cevheri (Ocak tarifi)",
-    "bayt": 203,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "arma/arma-cevher-don",
-    "dosya": "harita/arma/arma-cevher-don.png",
-    "olay": "Arma: don cevheri (Ocak tarifi)",
-    "bayt": 203,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "arma/arma-cevher-kor",
-    "dosya": "harita/arma/arma-cevher-kor.png",
-    "olay": "Arma: kor cevheri (Ocak tarifi)",
-    "bayt": 203,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "arma/arma-cevher-kasirga",
-    "dosya": "harita/arma/arma-cevher-kasirga.png",
-    "olay": "Arma: kasirga cevheri (Ocak tarifi)",
-    "bayt": 203,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "arma/arma-cevher-simsek",
-    "dosya": "harita/arma/arma-cevher-simsek.png",
-    "olay": "Arma: simsek cevheri (Ocak tarifi)",
-    "bayt": 203,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "arma/arma-cevher-girdap",
-    "dosya": "harita/arma/arma-cevher-girdap.png",
-    "olay": "Arma: girdap cevheri (Ocak tarifi)",
-    "bayt": 203,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "arma/arma-cevher-devir",
-    "dosya": "harita/arma/arma-cevher-devir.png",
-    "olay": "Arma: devir cevheri (Ocak tarifi)",
-    "bayt": 203,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "arma/arma-kazma",
-    "dosya": "harita/arma/arma-kazma.png",
-    "olay": "Arma: kazma (Ocak Yamacı başarımı)",
-    "bayt": 213,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "arma/arma-ocak-yamaci",
-    "dosya": "harita/arma/arma-ocak-yamaci.png",
-    "olay": "Arma: ocak-yamaci (patron USTALAŞ)",
-    "bayt": 194,
-    "lisans": "CC0-1.0"
-   },
-   {
     "ad": "arma/arma-ayaz-gecidi",
     "dosya": "harita/arma/arma-ayaz-gecidi.png",
-    "olay": "Arma: ayaz-gecidi (patron USTALAŞ)",
-    "bayt": 185,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "arma/arma-kor-kraterleri",
-    "dosya": "harita/arma/arma-kor-kraterleri.png",
-    "olay": "Arma: kor-kraterleri (patron USTALAŞ)",
-    "bayt": 194,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "arma/arma-yel-sirti",
-    "dosya": "harita/arma/arma-yel-sirti.png",
-    "olay": "Arma: yel-sirti (patron USTALAŞ)",
-    "bayt": 189,
-    "lisans": "CC0-1.0"
+    "bayt": 318,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Arma: ayaz-gecidi (patron USTALAŞ; bölge motifi)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 7
    },
    {
     "ad": "arma/arma-cakim-yaylasi",
     "dosya": "harita/arma/arma-cakim-yaylasi.png",
-    "olay": "Arma: cakim-yaylasi (patron USTALAŞ)",
-    "bayt": 192,
-    "lisans": "CC0-1.0"
+    "bayt": 288,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Arma: cakim-yaylasi (patron USTALAŞ; bölge motifi)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 6
+   },
+   {
+    "ad": "arma/arma-cevher-demir",
+    "dosya": "harita/arma/arma-cevher-demir.png",
+    "bayt": 283,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Arma: demir cevheri (Ocak tarifi)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 6
+   },
+   {
+    "ad": "arma/arma-cevher-devir",
+    "dosya": "harita/arma/arma-cevher-devir.png",
+    "bayt": 345,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Arma: devir cevheri (Ocak tarifi)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 11
+   },
+   {
+    "ad": "arma/arma-cevher-don",
+    "dosya": "harita/arma/arma-cevher-don.png",
+    "bayt": 283,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Arma: don cevheri (Ocak tarifi)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 6
+   },
+   {
+    "ad": "arma/arma-cevher-girdap",
+    "dosya": "harita/arma/arma-cevher-girdap.png",
+    "bayt": 283,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Arma: girdap cevheri (Ocak tarifi)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 6
+   },
+   {
+    "ad": "arma/arma-cevher-kasirga",
+    "dosya": "harita/arma/arma-cevher-kasirga.png",
+    "bayt": 283,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Arma: kasirga cevheri (Ocak tarifi)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 6
+   },
+   {
+    "ad": "arma/arma-cevher-kaya",
+    "dosya": "harita/arma/arma-cevher-kaya.png",
+    "bayt": 283,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Arma: kaya cevheri (Ocak tarifi)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 6
+   },
+   {
+    "ad": "arma/arma-cevher-kor",
+    "dosya": "harita/arma/arma-cevher-kor.png",
+    "bayt": 283,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Arma: kor cevheri (Ocak tarifi)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 6
+   },
+   {
+    "ad": "arma/arma-cevher-simsek",
+    "dosya": "harita/arma/arma-cevher-simsek.png",
+    "bayt": 283,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Arma: simsek cevheri (Ocak tarifi)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 6
    },
    {
     "ad": "arma/arma-dip-magaralari",
     "dosya": "harita/arma/arma-dip-magaralari.png",
-    "olay": "Arma: dip-magaralari (patron USTALAŞ)",
-    "bayt": 185,
-    "lisans": "CC0-1.0"
+    "bayt": 342,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Arma: dip-magaralari (patron USTALAŞ; bölge motifi)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 8
    },
    {
     "ad": "arma/arma-dip",
     "dosya": "harita/arma/arma-dip.png",
+    "bayt": 283,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Arma: Dip (sezon 2 başarımı)",
-    "bayt": 203,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 6
    },
    {
-    "ad": "cerceve/cerceve-demir",
-    "dosya": "harita/cerceve/cerceve-demir.png",
-    "olay": "Çerçeve: demir (9-dilim, kenar 6)",
-    "bayt": 197,
-    "lisans": "CC0-1.0"
+    "ad": "arma/arma-kazma",
+    "dosya": "harita/arma/arma-kazma.png",
+    "bayt": 319,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Arma: kazma (Ocak Yamacı başarımı)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 8
    },
    {
-    "ad": "cerceve/cerceve-kaya",
-    "dosya": "harita/cerceve/cerceve-kaya.png",
-    "olay": "Çerçeve: kaya (9-dilim, kenar 6)",
-    "bayt": 197,
-    "lisans": "CC0-1.0"
+    "ad": "arma/arma-kor-kraterleri",
+    "dosya": "harita/arma/arma-kor-kraterleri.png",
+    "bayt": 288,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Arma: kor-kraterleri (patron USTALAŞ; bölge motifi)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 6
    },
    {
-    "ad": "cerceve/cerceve-don",
-    "dosya": "harita/cerceve/cerceve-don.png",
-    "olay": "Çerçeve: don (9-dilim, kenar 6)",
-    "bayt": 197,
-    "lisans": "CC0-1.0"
+    "ad": "arma/arma-ocak-yamaci",
+    "dosya": "harita/arma/arma-ocak-yamaci.png",
+    "bayt": 318,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Arma: ocak-yamaci (patron USTALAŞ; bölge motifi)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 8
    },
    {
-    "ad": "cerceve/cerceve-kor",
-    "dosya": "harita/cerceve/cerceve-kor.png",
-    "olay": "Çerçeve: kor (9-dilim, kenar 6)",
-    "bayt": 197,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "cerceve/cerceve-kasirga",
-    "dosya": "harita/cerceve/cerceve-kasirga.png",
-    "olay": "Çerçeve: kasirga (9-dilim, kenar 6)",
-    "bayt": 197,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "cerceve/cerceve-simsek",
-    "dosya": "harita/cerceve/cerceve-simsek.png",
-    "olay": "Çerçeve: simsek (9-dilim, kenar 6)",
-    "bayt": 197,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "cerceve/cerceve-girdap",
-    "dosya": "harita/cerceve/cerceve-girdap.png",
-    "olay": "Çerçeve: girdap (9-dilim, kenar 6)",
-    "bayt": 197,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "cerceve/cerceve-devir",
-    "dosya": "harita/cerceve/cerceve-devir.png",
-    "olay": "Çerçeve: devir (9-dilim, kenar 6)",
-    "bayt": 197,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "cerceve/cerceve-ocak-yamaci",
-    "dosya": "harita/cerceve/cerceve-ocak-yamaci.png",
-    "olay": "Çerçeve: ocak-yamaci (GÜMÜŞ rozet)",
-    "bayt": 170,
-    "lisans": "CC0-1.0"
+    "ad": "arma/arma-yel-sirti",
+    "dosya": "harita/arma/arma-yel-sirti.png",
+    "bayt": 291,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Arma: yel-sirti (patron USTALAŞ; bölge motifi)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 6
    },
    {
     "ad": "cerceve/cerceve-ayaz-gecidi",
     "dosya": "harita/cerceve/cerceve-ayaz-gecidi.png",
-    "olay": "Çerçeve: ayaz-gecidi (GÜMÜŞ rozet)",
-    "bayt": 170,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "cerceve/cerceve-kor-kraterleri",
-    "dosya": "harita/cerceve/cerceve-kor-kraterleri.png",
-    "olay": "Çerçeve: kor-kraterleri (GÜMÜŞ rozet)",
-    "bayt": 170,
-    "lisans": "CC0-1.0"
-   },
-   {
-    "ad": "cerceve/cerceve-yel-sirti",
-    "dosya": "harita/cerceve/cerceve-yel-sirti.png",
-    "olay": "Çerçeve: yel-sirti (GÜMÜŞ rozet)",
-    "bayt": 170,
-    "lisans": "CC0-1.0"
+    "bayt": 189,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Çerçeve: ayaz-gecidi (GÜMÜŞ rozet, oluklu)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 5
    },
    {
     "ad": "cerceve/cerceve-cakim-yaylasi",
     "dosya": "harita/cerceve/cerceve-cakim-yaylasi.png",
-    "olay": "Çerçeve: cakim-yaylasi (GÜMÜŞ rozet)",
-    "bayt": 170,
-    "lisans": "CC0-1.0"
+    "bayt": 189,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Çerçeve: cakim-yaylasi (GÜMÜŞ rozet, oluklu)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 5
+   },
+   {
+    "ad": "cerceve/cerceve-demir",
+    "dosya": "harita/cerceve/cerceve-demir.png",
+    "bayt": 230,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Çerçeve: demir (perçinli, 9-dilim kenar 6)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 7
+   },
+   {
+    "ad": "cerceve/cerceve-devir",
+    "dosya": "harita/cerceve/cerceve-devir.png",
+    "bayt": 268,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Çerçeve: devir (perçinli, 9-dilim kenar 6)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 12
    },
    {
     "ad": "cerceve/cerceve-dip-magaralari",
     "dosya": "harita/cerceve/cerceve-dip-magaralari.png",
-    "olay": "Çerçeve: dip-magaralari (GÜMÜŞ rozet)",
-    "bayt": 170,
-    "lisans": "CC0-1.0"
+    "bayt": 189,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Çerçeve: dip-magaralari (GÜMÜŞ rozet, oluklu)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 5
    },
    {
-    "ad": "cerceve/cerceve-krater",
-    "dosya": "harita/cerceve/cerceve-krater.png",
-    "olay": "Çerçeve: krater",
-    "bayt": 200,
-    "lisans": "CC0-1.0"
+    "ad": "cerceve/cerceve-don",
+    "dosya": "harita/cerceve/cerceve-don.png",
+    "bayt": 230,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Çerçeve: don (perçinli, 9-dilim kenar 6)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 7
    },
    {
-    "ad": "cerceve/cerceve-yildiz",
-    "dosya": "harita/cerceve/cerceve-yildiz.png",
-    "olay": "Çerçeve: yildiz",
-    "bayt": 182,
-    "lisans": "CC0-1.0"
+    "ad": "cerceve/cerceve-girdap",
+    "dosya": "harita/cerceve/cerceve-girdap.png",
+    "bayt": 230,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Çerçeve: girdap (perçinli, 9-dilim kenar 6)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 7
+   },
+   {
+    "ad": "cerceve/cerceve-kasirga",
+    "dosya": "harita/cerceve/cerceve-kasirga.png",
+    "bayt": 230,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Çerçeve: kasirga (perçinli, 9-dilim kenar 6)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 7
+   },
+   {
+    "ad": "cerceve/cerceve-kaya",
+    "dosya": "harita/cerceve/cerceve-kaya.png",
+    "bayt": 230,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Çerçeve: kaya (perçinli, 9-dilim kenar 6)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 7
    },
    {
     "ad": "cerceve/cerceve-koleksiyon",
     "dosya": "harita/cerceve/cerceve-koleksiyon.png",
+    "bayt": 272,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Çerçeve: koleksiyon",
-    "bayt": 197,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 12
+   },
+   {
+    "ad": "cerceve/cerceve-kor-kraterleri",
+    "dosya": "harita/cerceve/cerceve-kor-kraterleri.png",
+    "bayt": 189,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Çerçeve: kor-kraterleri (GÜMÜŞ rozet, oluklu)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 5
+   },
+   {
+    "ad": "cerceve/cerceve-kor",
+    "dosya": "harita/cerceve/cerceve-kor.png",
+    "bayt": 230,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Çerçeve: kor (perçinli, 9-dilim kenar 6)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 7
+   },
+   {
+    "ad": "cerceve/cerceve-krater",
+    "dosya": "harita/cerceve/cerceve-krater.png",
+    "bayt": 246,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Çerçeve: krater",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 5
+   },
+   {
+    "ad": "cerceve/cerceve-ocak-yamaci",
+    "dosya": "harita/cerceve/cerceve-ocak-yamaci.png",
+    "bayt": 189,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Çerçeve: ocak-yamaci (GÜMÜŞ rozet, oluklu)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 5
+   },
+   {
+    "ad": "cerceve/cerceve-simsek",
+    "dosya": "harita/cerceve/cerceve-simsek.png",
+    "bayt": 230,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Çerçeve: simsek (perçinli, 9-dilim kenar 6)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 7
    },
    {
     "ad": "cerceve/cerceve-usta-madenci",
     "dosya": "harita/cerceve/cerceve-usta-madenci.png",
-    "olay": "Çerçeve: usta-madenci",
-    "bayt": 192,
-    "lisans": "CC0-1.0"
+    "bayt": 215,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Çerçeve: usta madenci",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 6
    },
    {
     "ad": "cerceve/cerceve-usta-ocakci",
     "dosya": "harita/cerceve/cerceve-usta-ocakci.png",
-    "olay": "Çerçeve: usta-ocakci",
-    "bayt": 192,
-    "lisans": "CC0-1.0"
+    "bayt": 252,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Çerçeve: usta ocakçı",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 6
+   },
+   {
+    "ad": "cerceve/cerceve-yel-sirti",
+    "dosya": "harita/cerceve/cerceve-yel-sirti.png",
+    "bayt": 189,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Çerçeve: yel-sirti (GÜMÜŞ rozet, oluklu)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 5
+   },
+   {
+    "ad": "cerceve/cerceve-yildiz",
+    "dosya": "harita/cerceve/cerceve-yildiz.png",
+    "bayt": 215,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Çerçeve: yıldız (altın)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 6
+   },
+   {
+    "ad": "dugum/dusman",
+    "dosya": "harita/dugum/dusman.png",
+    "bayt": 210,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Harita düğümü: DÜŞMAN (iki topaç çarpışıyor)",
+    "kaynak": "Gemini gemini-3.1-flash-image -> anahtarla.py -> harita_piksel.py",
+    "renk": 15
+   },
+   {
+    "ad": "dugum/kilit",
+    "dosya": "harita/dugum/kilit.png",
+    "bayt": 222,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Düğüm durum katmanı: kilit",
+    "kaynak": "Gemini gemini-3.1-flash-image -> anahtarla.py -> harita_piksel.py",
+    "renk": 13
+   },
+   {
+    "ad": "dugum/maden",
+    "dosya": "harita/dugum/maden.png",
+    "bayt": 228,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Harita düğümü: MADEN (kaya + kazma)",
+    "kaynak": "Gemini gemini-3.1-flash-image -> anahtarla.py -> harita_piksel.py",
+    "renk": 16
+   },
+   {
+    "ad": "dugum/patron",
+    "dosya": "harita/dugum/patron.png",
+    "bayt": 225,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Harita düğümü: PATRON (taçlı ağır topaç)",
+    "kaynak": "Gemini gemini-3.1-flash-image -> anahtarla.py -> harita_piksel.py",
+    "renk": 12
+   },
+   {
+    "ad": "dugum/sandik-bos",
+    "dosya": "harita/dugum/sandik-bos.png",
+    "bayt": 229,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Harita düğümü: SANDIK (açık, boş)",
+    "kaynak": "Gemini gemini-3.1-flash-image -> anahtarla.py -> harita_piksel.py",
+    "renk": 12
+   },
+   {
+    "ad": "dugum/sandik",
+    "dosya": "harita/dugum/sandik.png",
+    "bayt": 231,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Harita düğümü: SANDIK (kapalı)",
+    "kaynak": "Gemini gemini-3.1-flash-image -> anahtarla.py -> harita_piksel.py",
+    "renk": 13
    },
    {
     "ad": "efekt/usta-isi",
     "dosya": "harita/efekt/usta-isi.png",
-    "olay": "Usta işi parıltısı (8 kare × 16×16)",
-    "bayt": 201,
-    "lisans": "CC0-1.0"
+    "bayt": 289,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Usta işi parıltısı (8 kare × 16×16, tek Gemini parıltısından ölçek dizisi)",
+    "kaynak": "Gemini gemini-3.1-flash-image -> anahtarla.py -> harita_piksel.py",
+    "renk": 3
    },
    {
     "ad": "karakter/govde-0-renk-0",
     "dosya": "harita/karakter/govde-0-renk-0.png",
+    "bayt": 2015,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Karakter sayfası: gövde 0, profil rengi 0 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
-    "bayt": 892,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini konsept -> Tripo image-to-model v3.1 -> Blender 5.2 (karakter_render.py, konuma göre iskelet) -> harita_karakter.py (16×24, <= 24 renk, yeşil giysi -> profil rengi)"
    },
    {
     "ad": "karakter/govde-0-renk-1",
     "dosya": "harita/karakter/govde-0-renk-1.png",
+    "bayt": 2015,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Karakter sayfası: gövde 0, profil rengi 1 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
-    "bayt": 892,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini konsept -> Tripo image-to-model v3.1 -> Blender 5.2 (karakter_render.py, konuma göre iskelet) -> harita_karakter.py (16×24, <= 24 renk, yeşil giysi -> profil rengi)"
    },
    {
     "ad": "karakter/govde-0-renk-2",
     "dosya": "harita/karakter/govde-0-renk-2.png",
+    "bayt": 2014,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Karakter sayfası: gövde 0, profil rengi 2 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
-    "bayt": 892,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini konsept -> Tripo image-to-model v3.1 -> Blender 5.2 (karakter_render.py, konuma göre iskelet) -> harita_karakter.py (16×24, <= 24 renk, yeşil giysi -> profil rengi)"
    },
    {
     "ad": "karakter/govde-0-renk-3",
     "dosya": "harita/karakter/govde-0-renk-3.png",
+    "bayt": 2015,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Karakter sayfası: gövde 0, profil rengi 3 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
-    "bayt": 892,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini konsept -> Tripo image-to-model v3.1 -> Blender 5.2 (karakter_render.py, konuma göre iskelet) -> harita_karakter.py (16×24, <= 24 renk, yeşil giysi -> profil rengi)"
    },
    {
     "ad": "karakter/govde-0-renk-4",
     "dosya": "harita/karakter/govde-0-renk-4.png",
+    "bayt": 2015,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Karakter sayfası: gövde 0, profil rengi 4 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
-    "bayt": 892,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini konsept -> Tripo image-to-model v3.1 -> Blender 5.2 (karakter_render.py, konuma göre iskelet) -> harita_karakter.py (16×24, <= 24 renk, yeşil giysi -> profil rengi)"
    },
    {
     "ad": "karakter/govde-0-renk-5",
     "dosya": "harita/karakter/govde-0-renk-5.png",
+    "bayt": 2015,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Karakter sayfası: gövde 0, profil rengi 5 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
-    "bayt": 892,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini konsept -> Tripo image-to-model v3.1 -> Blender 5.2 (karakter_render.py, konuma göre iskelet) -> harita_karakter.py (16×24, <= 24 renk, yeşil giysi -> profil rengi)"
    },
    {
     "ad": "karakter/govde-1-renk-0",
     "dosya": "harita/karakter/govde-1-renk-0.png",
+    "bayt": 2315,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Karakter sayfası: gövde 1, profil rengi 0 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
-    "bayt": 901,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini konsept -> Tripo image-to-model v3.1 -> Blender 5.2 (karakter_render.py, konuma göre iskelet) -> harita_karakter.py (16×24, <= 24 renk, yeşil giysi -> profil rengi)"
    },
    {
     "ad": "karakter/govde-1-renk-1",
     "dosya": "harita/karakter/govde-1-renk-1.png",
+    "bayt": 2315,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Karakter sayfası: gövde 1, profil rengi 1 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
-    "bayt": 901,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini konsept -> Tripo image-to-model v3.1 -> Blender 5.2 (karakter_render.py, konuma göre iskelet) -> harita_karakter.py (16×24, <= 24 renk, yeşil giysi -> profil rengi)"
    },
    {
     "ad": "karakter/govde-1-renk-2",
     "dosya": "harita/karakter/govde-1-renk-2.png",
+    "bayt": 2315,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Karakter sayfası: gövde 1, profil rengi 2 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
-    "bayt": 901,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini konsept -> Tripo image-to-model v3.1 -> Blender 5.2 (karakter_render.py, konuma göre iskelet) -> harita_karakter.py (16×24, <= 24 renk, yeşil giysi -> profil rengi)"
    },
    {
     "ad": "karakter/govde-1-renk-3",
     "dosya": "harita/karakter/govde-1-renk-3.png",
+    "bayt": 2315,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Karakter sayfası: gövde 1, profil rengi 3 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
-    "bayt": 901,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini konsept -> Tripo image-to-model v3.1 -> Blender 5.2 (karakter_render.py, konuma göre iskelet) -> harita_karakter.py (16×24, <= 24 renk, yeşil giysi -> profil rengi)"
    },
    {
     "ad": "karakter/govde-1-renk-4",
     "dosya": "harita/karakter/govde-1-renk-4.png",
+    "bayt": 2315,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Karakter sayfası: gövde 1, profil rengi 4 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
-    "bayt": 901,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini konsept -> Tripo image-to-model v3.1 -> Blender 5.2 (karakter_render.py, konuma göre iskelet) -> harita_karakter.py (16×24, <= 24 renk, yeşil giysi -> profil rengi)"
    },
    {
     "ad": "karakter/govde-1-renk-5",
     "dosya": "harita/karakter/govde-1-renk-5.png",
+    "bayt": 2315,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Karakter sayfası: gövde 1, profil rengi 5 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
-    "bayt": 901,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini konsept -> Tripo image-to-model v3.1 -> Blender 5.2 (karakter_render.py, konuma göre iskelet) -> harita_karakter.py (16×24, <= 24 renk, yeşil giysi -> profil rengi)"
    },
    {
     "ad": "karakter/govde-2-renk-0",
     "dosya": "harita/karakter/govde-2-renk-0.png",
+    "bayt": 2163,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Karakter sayfası: gövde 2, profil rengi 0 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
-    "bayt": 878,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini konsept -> Tripo image-to-model v3.1 -> Blender 5.2 (karakter_render.py, konuma göre iskelet) -> harita_karakter.py (16×24, <= 24 renk, yeşil giysi -> profil rengi)"
    },
    {
     "ad": "karakter/govde-2-renk-1",
     "dosya": "harita/karakter/govde-2-renk-1.png",
+    "bayt": 2163,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Karakter sayfası: gövde 2, profil rengi 1 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
-    "bayt": 878,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini konsept -> Tripo image-to-model v3.1 -> Blender 5.2 (karakter_render.py, konuma göre iskelet) -> harita_karakter.py (16×24, <= 24 renk, yeşil giysi -> profil rengi)"
    },
    {
     "ad": "karakter/govde-2-renk-2",
     "dosya": "harita/karakter/govde-2-renk-2.png",
+    "bayt": 2163,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Karakter sayfası: gövde 2, profil rengi 2 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
-    "bayt": 878,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini konsept -> Tripo image-to-model v3.1 -> Blender 5.2 (karakter_render.py, konuma göre iskelet) -> harita_karakter.py (16×24, <= 24 renk, yeşil giysi -> profil rengi)"
    },
    {
     "ad": "karakter/govde-2-renk-3",
     "dosya": "harita/karakter/govde-2-renk-3.png",
+    "bayt": 2163,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Karakter sayfası: gövde 2, profil rengi 3 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
-    "bayt": 878,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini konsept -> Tripo image-to-model v3.1 -> Blender 5.2 (karakter_render.py, konuma göre iskelet) -> harita_karakter.py (16×24, <= 24 renk, yeşil giysi -> profil rengi)"
    },
    {
     "ad": "karakter/govde-2-renk-4",
     "dosya": "harita/karakter/govde-2-renk-4.png",
+    "bayt": 2163,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Karakter sayfası: gövde 2, profil rengi 4 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
-    "bayt": 878,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini konsept -> Tripo image-to-model v3.1 -> Blender 5.2 (karakter_render.py, konuma göre iskelet) -> harita_karakter.py (16×24, <= 24 renk, yeşil giysi -> profil rengi)"
    },
    {
     "ad": "karakter/govde-2-renk-5",
     "dosya": "harita/karakter/govde-2-renk-5.png",
+    "bayt": 2163,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Karakter sayfası: gövde 2, profil rengi 5 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
-    "bayt": 878,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini konsept -> Tripo image-to-model v3.1 -> Blender 5.2 (karakter_render.py, konuma göre iskelet) -> harita_karakter.py (16×24, <= 24 renk, yeşil giysi -> profil rengi)"
    },
    {
     "ad": "karakter/govde-3-renk-0",
     "dosya": "harita/karakter/govde-3-renk-0.png",
+    "bayt": 2161,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Karakter sayfası: gövde 3, profil rengi 0 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
-    "bayt": 887,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini konsept -> Tripo image-to-model v3.1 -> Blender 5.2 (karakter_render.py, konuma göre iskelet) -> harita_karakter.py (16×24, <= 24 renk, yeşil giysi -> profil rengi)"
    },
    {
     "ad": "karakter/govde-3-renk-1",
     "dosya": "harita/karakter/govde-3-renk-1.png",
+    "bayt": 2161,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Karakter sayfası: gövde 3, profil rengi 1 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
-    "bayt": 887,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini konsept -> Tripo image-to-model v3.1 -> Blender 5.2 (karakter_render.py, konuma göre iskelet) -> harita_karakter.py (16×24, <= 24 renk, yeşil giysi -> profil rengi)"
    },
    {
     "ad": "karakter/govde-3-renk-2",
     "dosya": "harita/karakter/govde-3-renk-2.png",
+    "bayt": 2160,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Karakter sayfası: gövde 3, profil rengi 2 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
-    "bayt": 887,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini konsept -> Tripo image-to-model v3.1 -> Blender 5.2 (karakter_render.py, konuma göre iskelet) -> harita_karakter.py (16×24, <= 24 renk, yeşil giysi -> profil rengi)"
    },
    {
     "ad": "karakter/govde-3-renk-3",
     "dosya": "harita/karakter/govde-3-renk-3.png",
+    "bayt": 2161,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Karakter sayfası: gövde 3, profil rengi 3 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
-    "bayt": 887,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini konsept -> Tripo image-to-model v3.1 -> Blender 5.2 (karakter_render.py, konuma göre iskelet) -> harita_karakter.py (16×24, <= 24 renk, yeşil giysi -> profil rengi)"
    },
    {
     "ad": "karakter/govde-3-renk-4",
     "dosya": "harita/karakter/govde-3-renk-4.png",
+    "bayt": 2161,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Karakter sayfası: gövde 3, profil rengi 4 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
-    "bayt": 887,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini konsept -> Tripo image-to-model v3.1 -> Blender 5.2 (karakter_render.py, konuma göre iskelet) -> harita_karakter.py (16×24, <= 24 renk, yeşil giysi -> profil rengi)"
    },
    {
     "ad": "karakter/govde-3-renk-5",
     "dosya": "harita/karakter/govde-3-renk-5.png",
+    "bayt": 2161,
+    "lisans": "bizim (yapay zekâ çıktısı)",
     "olay": "Karakter sayfası: gövde 3, profil rengi 5 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
-    "bayt": 887,
-    "lisans": "CC0-1.0"
+    "kaynak": "Gemini konsept -> Tripo image-to-model v3.1 -> Blender 5.2 (karakter_render.py, konuma göre iskelet) -> harita_karakter.py (16×24, <= 24 renk, yeşil giysi -> profil rengi)"
+   },
+   {
+    "ad": "maden/cevher-demir",
+    "dosya": "harita/maden/cevher-demir.png",
+    "bayt": 216,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Cevher K1 demir (gri kalıp + palet takası)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 7
+   },
+   {
+    "ad": "maden/cevher-devir",
+    "dosya": "harita/maden/cevher-devir.png",
+    "bayt": 252,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Cevher K8 devir (gri kalıp + palet takası)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 12
+   },
+   {
+    "ad": "maden/cevher-don",
+    "dosya": "harita/maden/cevher-don.png",
+    "bayt": 216,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Cevher K3 don (gri kalıp + palet takası)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 7
+   },
+   {
+    "ad": "maden/cevher-girdap",
+    "dosya": "harita/maden/cevher-girdap.png",
+    "bayt": 216,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Cevher K7 girdap (gri kalıp + palet takası)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 7
+   },
+   {
+    "ad": "maden/cevher-kasirga",
+    "dosya": "harita/maden/cevher-kasirga.png",
+    "bayt": 216,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Cevher K5 kasirga (gri kalıp + palet takası)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 7
+   },
+   {
+    "ad": "maden/cevher-kaya",
+    "dosya": "harita/maden/cevher-kaya.png",
+    "bayt": 216,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Cevher K2 kaya (gri kalıp + palet takası)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 7
+   },
+   {
+    "ad": "maden/cevher-kor",
+    "dosya": "harita/maden/cevher-kor.png",
+    "bayt": 216,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Cevher K4 kor (gri kalıp + palet takası)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 7
+   },
+   {
+    "ad": "maden/cevher-simsek",
+    "dosya": "harita/maden/cevher-simsek.png",
+    "bayt": 216,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Cevher K6 simsek (gri kalıp + palet takası)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 7
+   },
+   {
+    "ad": "maden/kulce-demir",
+    "dosya": "harita/maden/kulce-demir.png",
+    "bayt": 194,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Külçe K1 demir (gri kalıp + palet takası)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 6
+   },
+   {
+    "ad": "maden/kulce-devir",
+    "dosya": "harita/maden/kulce-devir.png",
+    "bayt": 231,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Külçe K8 devir (gri kalıp + palet takası)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 11
+   },
+   {
+    "ad": "maden/kulce-don",
+    "dosya": "harita/maden/kulce-don.png",
+    "bayt": 194,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Külçe K3 don (gri kalıp + palet takası)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 6
+   },
+   {
+    "ad": "maden/kulce-girdap",
+    "dosya": "harita/maden/kulce-girdap.png",
+    "bayt": 194,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Külçe K7 girdap (gri kalıp + palet takası)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 6
+   },
+   {
+    "ad": "maden/kulce-kasirga",
+    "dosya": "harita/maden/kulce-kasirga.png",
+    "bayt": 194,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Külçe K5 kasirga (gri kalıp + palet takası)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 6
+   },
+   {
+    "ad": "maden/kulce-kaya",
+    "dosya": "harita/maden/kulce-kaya.png",
+    "bayt": 194,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Külçe K2 kaya (gri kalıp + palet takası)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 6
+   },
+   {
+    "ad": "maden/kulce-kor",
+    "dosya": "harita/maden/kulce-kor.png",
+    "bayt": 194,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Külçe K4 kor (gri kalıp + palet takası)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 6
+   },
+   {
+    "ad": "maden/kulce-simsek",
+    "dosya": "harita/maden/kulce-simsek.png",
+    "bayt": 194,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Külçe K6 simsek (gri kalıp + palet takası)",
+    "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
+    "renk": 6
+   },
+   {
+    "ad": "ustalik/isleme",
+    "dosya": "harita/ustalik/isleme.png",
+    "bayt": 218,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Ustalık rozeti: İşleme (çekiç + örs)",
+    "kaynak": "Gemini gemini-3.1-flash-image -> anahtarla.py -> harita_piksel.py",
+    "renk": 12
+   },
+   {
+    "ad": "ustalik/madencilik",
+    "dosya": "harita/ustalik/madencilik.png",
+    "bayt": 217,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Ustalık rozeti: Madencilik (kazma)",
+    "kaynak": "Gemini gemini-3.1-flash-image -> anahtarla.py -> harita_piksel.py",
+    "renk": 11
+   },
+   {
+    "ad": "zemin/ayaz-gecidi",
+    "dosya": "harita/zemin/ayaz-gecidi.png",
+    "bayt": 43759,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Bölge zemini: ayaz-gecidi",
+    "kaynak": "Gemini gemini-3.1-flash-image -> harita_piksel.py (kırp, BOX küçült, <= 48 renk)",
+    "renk": 48
+   },
+   {
+    "ad": "zemin/cakim-yaylasi",
+    "dosya": "harita/zemin/cakim-yaylasi.png",
+    "bayt": 36145,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Bölge zemini: cakim-yaylasi",
+    "kaynak": "Gemini gemini-3.1-flash-image -> harita_piksel.py (kırp, BOX küçült, <= 48 renk)",
+    "renk": 48
+   },
+   {
+    "ad": "zemin/dip-magaralari",
+    "dosya": "harita/zemin/dip-magaralari.png",
+    "bayt": 36065,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Bölge zemini: dip-magaralari",
+    "kaynak": "Gemini gemini-3.1-flash-image -> harita_piksel.py (kırp, BOX küçült, <= 48 renk)",
+    "renk": 48
+   },
+   {
+    "ad": "zemin/kor-kraterleri",
+    "dosya": "harita/zemin/kor-kraterleri.png",
+    "bayt": 60335,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Bölge zemini: kor-kraterleri",
+    "kaynak": "Gemini gemini-3.1-flash-image -> harita_piksel.py (kırp, BOX küçült, <= 48 renk)",
+    "renk": 48
+   },
+   {
+    "ad": "zemin/ocak-agzi",
+    "dosya": "harita/zemin/ocak-agzi.png",
+    "bayt": 54538,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Maden ekranı: ocak ağzı kaya çerçevesi",
+    "kaynak": "Gemini gemini-3.1-flash-image -> harita_piksel.py (kırp, BOX küçült, <= 48 renk)",
+    "renk": 48
+   },
+   {
+    "ad": "zemin/ocak-yamaci",
+    "dosya": "harita/zemin/ocak-yamaci.png",
+    "bayt": 34566,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Bölge zemini: ocak-yamaci",
+    "kaynak": "Gemini gemini-3.1-flash-image -> harita_piksel.py (kırp, BOX küçült, <= 48 renk)",
+    "renk": 48
+   },
+   {
+    "ad": "zemin/yel-sirti",
+    "dosya": "harita/zemin/yel-sirti.png",
+    "bayt": 43213,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Bölge zemini: yel-sirti",
+    "kaynak": "Gemini gemini-3.1-flash-image -> harita_piksel.py (kırp, BOX küçült, <= 48 renk)",
+    "renk": 48
    }
   ]
  }

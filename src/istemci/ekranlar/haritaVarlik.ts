@@ -12,6 +12,9 @@ export const KULCE_IKON = (k: number): string => `${taban()}maden/kulce-${kid(k)
 export const USTALIK_IKON = (tur: "madencilik" | "isleme"): string => `${taban()}ustalik/${tur}.png`;
 export const GORUNUM_IKON = (id: string): string => `${taban()}${id.startsWith("cerceve-") ? "cerceve" : "arma"}/${id}.png`;
 export const USTA_PARILTI = (): string => `${taban()}efekt/usta-isi.png`;
+/** Bölge zemini (480×200, harita SVG'sinde y 18'den) ve Maden ekranının ocak ağzı (480×270). */
+export const BOLGE_ZEMIN = (bolgeId: string): string => `${taban()}zemin/${bolgeId}.png`;
+export const OCAK_AGZI = (): string => `${taban()}zemin/ocak-agzi.png`;
 
 /** Karakter sayfası: 9×3 hücre (16×24). Profil rengi sırası `RENKLER` (rotalar.ts) ile aynı. */
 export const PROFIL_RENKLERI = ["#f4cf47", "#e3350d", "#2fb8e8", "#7fe3a0", "#c58bff", "#f2a33a"];

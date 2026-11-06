@@ -1,4 +1,5 @@
 import { ELEMENT_CARKI, type ElementAdi } from "../../paylasilan/kurallar/ayar.ts";
+import { karakterSayfasi } from "./haritaVarlik.ts";
 import type { EkranBaglami } from "../main.ts";
 import { BakimHatasi, HESAP_HATA, apiGet, apiIstek, apiPost, git } from "../hesap.ts";
 import { ELEMENT_RENK } from "../oyun/renkler.ts";
@@ -166,8 +167,10 @@ export function baslat(b: EkranBaglami): void {
     el("label", "", kart, "Karakter");
     radyoGrubu(kart, "Karakter", ["0", "1", "2", "3"] as const, (v, d) => {
       const n = Number(v);
-      d.innerHTML = `<svg width="22" height="30" viewBox="-11 -26 22 30" aria-hidden="true"><rect x="${n === 2 ? -4 : -3}" y="-24" width="${n === 2 ? 8 : 6}" height="6" fill="#e9c9a0"/><rect x="${n === 1 ? -6 : -5}" y="-18" width="${n === 1 ? 12 : 10}" height="${n === 3 ? 10 : 9}" fill="currentColor"/><rect x="-4" y="-9" width="3" height="9" fill="#2a2f3a"/><rect x="1" y="-9" width="3" height="9" fill="#2a2f3a"/></svg>`;
-      d.style.color = renk;
+      // karakter sayfasının BEKLE karesi (16×24, ×2; public/harita/karakter, sanat turu)
+      const sp = el("span", "", d);
+      sp.setAttribute("aria-hidden", "true");
+      sp.style.cssText = `display:inline-block;width:32px;height:48px;background:url(${karakterSayfasi(n, renk)}) 0 0 / 288px 144px no-repeat;image-rendering:pixelated`;
       d.dataset["karakter"] = v;
       d.setAttribute("aria-label", `Karakter gövdesi ${n + 1}`);
     }, (v) => { karakter = Number(v); }, String(Math.max(0, Math.min(3, karakter))) as "0" | "1" | "2" | "3");
