@@ -18,7 +18,7 @@
 | S-12 | Günde 10 sayılan harita maçı ve 40/60 vuruş sayıları | Tablo E'ye göre yeterli (bot ÷ tutkulu 1,08) | 02 § 6, 06 |
 | S-13 | Harita maçı Çekirdek XP versin mi? | Evet, hızlı maç tablosu, günlük 10 sayılan maçla sınırlı | 01 § 5, 00 G-5 |
 | S-14 | Kademe/element sırası (Kaya → Don → Kor → Kasırga → Şimşek → Girdap → Devir) | Maden lore'u + çark sırası | 02 § 2, 01 § 1, harita.json |
-| S-15 | Cila maç sprite'ında da görünsün mü (yoksa yalnız Atölye/menü)? | Evet, yalnız metal paleti; köken ışığı/kıvılcım aynı | 03 § 2, 10 § 3.4 |
+| S-15 | (kalktı: cila yerine malzeme biçimi, 12 § 3) Malzeme biçimi maç sprite'ında da görünsün mü? | Evet, yalnız metal paleti; köken ışığı/kıvılcım aynı | 12 § 3, 10 § 3.4 |
 | S-16 | Roadmap konumu | Kick'ten önce, ilk test gecesinden sonra (ekranlar); sunucu dilimleri test gecesi hazırlığıyla paralel | 09 § 4, roadmap |
 | S-17 | Bölge adları ve patron adları (OCAK USTASI…) | Taslak adlar; sahip onayı | harita.json |
 | S-18 | Cevher lore adları (Dağ Bakırı, Kırağı Gümüşü, Köz Demiri, Savruk Kuvars, Çakmak Taşı, Çevren İncisi, Devir Taşı) | Taslak; yalnız Dünya sayfası | madenler.json, 02 § 2 |
