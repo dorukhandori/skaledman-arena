@@ -3,6 +3,8 @@
 // kendi üretimimiz (CC0, veri/manifest-gorsel.json `harita`). Palet takası (10 § 2): bir gri kalıp → 8 kademe rengi.
 // Çalıştır: npm run harita:asset → public/harita/** (+ docs/production/raporlar/ekran/HARITA-ASSET-kontakt.png)
 // Sanat hattı (Mac, Gemini/Tripo) gelirse aynı yollara daha iyi çizim konur; kod yolları değişmez.
+// 2026-11-06: sanat turu geldi (harita_gemini.py, harita_piksel.py, harita_karakter.py). Bu betik üzerine yazar; yalnız
+// `--yer-tutucu` ile çalışır (docs/production/raporlar/HARITA-SANAT.md).
 import { mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import sharp from "sharp";
 
@@ -299,6 +301,10 @@ function karakterKare(t: Tuval, ox: number, oy: number, govde: number, renk: str
 }
 
 async function ana(): Promise<void> {
+  if (!process.argv.includes("--yer-tutucu")) {
+    console.error("public/harita/** artık sanat hattından geliyor; yer tutucuya dönmek için: npm run harita:asset -- --yer-tutucu");
+    process.exit(2);
+  }
   // A1 + kilit
   for (const [ad, d] of Object.entries(DUGUM)) {
     const t = new Tuval(13, 13);

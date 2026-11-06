@@ -17,3 +17,17 @@ Ham dosyalar `art-source/` (depo dışı, `.gitignore`); oyuna giren çıktı `p
 | Topaç parçaları | `topac-mac.ts` (+ `blender/topac_glb_render.py`) | Tripo GLB'yi eksene çevirir, 360/n dilimden simetrileştirir, `topac-uret.ts` pişiricisiyle biçim B şeritleri, Atölye GLB'si (`public/topac/model/`), 48/24 ikon, kontakt levha; `bicimB` ve `glb` listelerini günceller. Parça ayarı dosyadaki `MAC` tablosunda. Kayıt `docs/art/topac-uretim-kaydi.md` | yok |
 
 Topaç parçası için öneri: 2B ikon (Atölye/Market) adım 1-2 yeterli; üstten bakış maç sprite'ı kod ile döndüğü için tek kare üstten görünüm (`topac-pixel-plani.md`) adım 1-2, katmanlı 3B patlatılmış görünüm gerekiyorsa 3-5.
+
+## Harita / Maden / Ocak sanat turu (2026-11-06)
+
+| Adım | Betik | Ne yapar |
+|---|---|---|
+| 1 | `harita_gemini.py <hp1\|hp2\|hpk\|hp3\|hpb\|id> [--varyant b]` | Gemini ham görseller → `art-source/harita/ham/`; kayıt `art-source/harita/manifest.jsonl` |
+| 2 | `harita_piksel.py [ikon\|kalip\|zemin]` | Alfa (`anahtarla.py`), piksele indirme (ham paletinden medyan kesim + BOX), 1 px `#05050A` kontur, gri kalıp → kademe/bölge rampası, paletli PNG (`harita_png.py`). Varyant seçimi `art-source/harita/secim.json` |
+| 3 | `tripo_model.mjs --alan harita karakter-0 …` | 4 karakter modeli (40 kredi/model) |
+| 4 | `blender/karakter_render.py -- <glb> <klasör> [kontrol]` | Konuma göre iskelet (kol kapsülü, bacak, baş), 27 poz, 3/4 sağa bakan ortografik kamera, KAZ'da ilkel kazma |
+| 5 | `harita_karakter.py` | 16×24 hücre, 9×3 sayfa, ≤ 24 renk, yeşil giysi → 6 profil rengi |
+| 6 | `harita_manifest.py` | `veri/manifest-gorsel.json` `harita` bloğu |
+
+`harita-asset-uret.ts` (kodla yer tutucu) artık yalnız `--yer-tutucu` ile çalışır.
+
