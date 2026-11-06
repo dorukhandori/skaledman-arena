@@ -16,13 +16,26 @@ export interface OyuncuSatiri {
   arma: string | null; renk: string | null; destek_kanali: string | null; elo: number; olusturma: number;
   /** D6 */
   aktif_takim: number; ad_degisim: number;
+  /** göç 5 (harita): vitrin JSON, profil çerçevesi, karakter gövdesi 0–3, haritadaki konum */
+  vitrin?: string | null; cerceve?: string | null; karakter?: number; harita_konum?: string | null;
 }
 export interface CekirdekSatiri {
   id: number; oyuncu_id: number; tanim_id: string; seviye: number; tecrube: number; kararma: number; omur: number | null; yon: string;
   /** D6 Çekirdek Günlüğü defteri */
   mac_sayisi: number; galibiyet: number; kriz_galibiyet: number; en_uzun_donus_sn: number; edinme: number;
 }
-export interface ParcaSatiri { id: number; oyuncu_id: number; tanim_id: string; edinme: number }
+export interface ParcaSatiri {
+  id: number; oyuncu_id: number; tanim_id: string; edinme: number;
+  /** göç 5 (12 § 4): NULL = Market biçimi, 1–8 üretim kademesi; yapımcı imzası, seri, Usta işi */
+  malzeme?: number | null; yapimci_id?: number | null; yapimci_ad?: string | null; seri?: number | null; uretim?: number | null; usta?: number;
+}
+export interface DugumSatiri { dugum_id: string; durum: number; yildiz: number; ilk_tamam: number | null; basarili_vurus: number }
+export interface SeansSatiri {
+  id: string; oyuncu_id: number; dugum_id: string; gun: number; baslangic: number; vurus_bas: number; faz_ms: number; sira: number;
+  kapasite: number; nadir_sira: number | null; bitti: number;
+}
+export interface GunlukSatiri { vurus: number; seri: number; iska: number }
+export interface IslemeSatiri { id: number; tur: string; tarif_id: string | null; girdi: string; cikti: string; usta: number; ref: string; zaman: number }
 export interface TakimTaslagi { takimNo: number; ad: string; yuvalar: TaslakTopac[] }
 export interface TakimYuvasi extends SahipUye { cekirdekId: number; tecrube: number; omur: number | null }
 export interface KayitliTakim { takimNo: number; ad: string; yuvalar: (TakimYuvasi | null)[] }
@@ -298,6 +311,10 @@ export class Depo {
       db.prepare("DELETE FROM altin_defteri WHERE oyuncu_id = ?").run(id);
       db.prepare("DELETE FROM basarim WHERE oyuncu_id = ?").run(id);
       db.prepare("DELETE FROM basarim_kume WHERE oyuncu_id = ?").run(id);
+      // göç 5 (harita/maden/Ocak; 08 § 3): açık DELETE deseni sürer (maden_vurus seansla cascade); seri_sayac kalır
+      for (const t of ["harita_dugum", "maden_gunluk", "maden_seans", "cevher", "ustalik", "isleme_defteri", "gorunum_sahip", "bolge_rozet"]) {
+        db.prepare(`DELETE FROM ${t} WHERE oyuncu_id = ?`).run(id);
+      }
       db.prepare("DELETE FROM oyuncu WHERE id = ?").run(id);
       return true;
     });
@@ -394,6 +411,221 @@ export class Depo {
   /** Sahip olunan farklı katalog tanımı sayısı (Çekirdek + parça; Koleksiyoncu). */
   parcaCesidi(oyuncuId: number): number {
     return (this.db.prepare("SELECT COUNT(*) n FROM (SELECT tanim_id FROM cekirdek WHERE oyuncu_id = ? UNION SELECT tanim_id FROM parca WHERE oyuncu_id = ?)").get(oyuncuId, oyuncuId) as { n: number }).n;
+  }
+
+  // ---- göç 5: harita / maden / Ocak (docs/design/harita/08 § 3, 12 § 10, 13 § 4.1) ----
+  dugumDurumlari(oyuncuId: number): DugumSatiri[] {
+    return this.db.prepare("SELECT dugum_id, durum, yildiz, ilk_tamam, basarili_vurus FROM harita_dugum WHERE oyuncu_id = ? ORDER BY dugum_id").all(oyuncuId) as DugumSatiri[];
+  }
+
+  dugumSatiri(oyuncuId: number, dugumId: string): DugumSatiri | null {
+    return (this.db.prepare("SELECT dugum_id, durum, yildiz, ilk_tamam, basarili_vurus FROM harita_dugum WHERE oyuncu_id = ? AND dugum_id = ?").get(oyuncuId, dugumId) as DugumSatiri | undefined) ?? null;
+  }
+
+  /** Düğüm yaz (upsert): durum yalnız yükselir, yıldız maskesi birleşir, ilk tamam ilk kez yazılır. */
+  dugumYaz(oyuncuId: number, dugumId: string, d: { durum: number; yildiz?: number; ilkTamam?: number | null; basariliVurusEk?: number }): void {
+    this.db.prepare(`INSERT INTO harita_dugum (oyuncu_id, dugum_id, durum, yildiz, ilk_tamam, basarili_vurus) VALUES (?, ?, ?, ?, ?, ?)
+      ON CONFLICT (oyuncu_id, dugum_id) DO UPDATE SET durum = MAX(durum, excluded.durum), yildiz = yildiz | excluded.yildiz,
+        ilk_tamam = COALESCE(ilk_tamam, excluded.ilk_tamam), basarili_vurus = basarili_vurus + excluded.basarili_vurus`)
+      .run(oyuncuId, dugumId, d.durum, d.yildiz ?? 0, d.ilkTamam ?? null, d.basariliVurusEk ?? 0);
+  }
+
+  haritaKonumYaz(oyuncuId: number, dugumId: string | null): void {
+    this.db.prepare("UPDATE oyuncu SET harita_konum = ? WHERE id = ?").run(dugumId, oyuncuId);
+  }
+
+  karakterYaz(oyuncuId: number, karakter: number): void {
+    this.db.prepare("UPDATE oyuncu SET karakter = ? WHERE id = ?").run(karakter, oyuncuId);
+  }
+
+  cerceveYaz(oyuncuId: number, cerceve: string | null): void {
+    this.db.prepare("UPDATE oyuncu SET cerceve = ? WHERE id = ?").run(cerceve, oyuncuId);
+  }
+
+  armaYaz(oyuncuId: number, arma: string): void {
+    this.db.prepare("UPDATE oyuncu SET arma = ? WHERE id = ?").run(arma, oyuncuId);
+  }
+
+  vitrinYaz(oyuncuId: number, vitrin: readonly string[]): void {
+    this.db.prepare("UPDATE oyuncu SET vitrin = ? WHERE id = ?").run(JSON.stringify(vitrin), oyuncuId);
+  }
+
+  /** Cevher ve külçe (kademe 1–8 dizileri). */
+  cevherler(oyuncuId: number): { cevher: number[]; kulce: number[] } {
+    const cevher = [0, 0, 0, 0, 0, 0, 0, 0];
+    const kulce = [0, 0, 0, 0, 0, 0, 0, 0];
+    for (const r of this.db.prepare("SELECT kademe, cevher, kulce FROM cevher WHERE oyuncu_id = ?").all(oyuncuId) as { kademe: number; cevher: number; kulce: number }[]) {
+      cevher[r.kademe - 1] = r.cevher;
+      kulce[r.kademe - 1] = r.kulce;
+    }
+    return { cevher, kulce };
+  }
+
+  /** Cevher/külçe değiştir (CHECK eksiye düşürmez: yetersizse SQLite hatası; çağıran önce denetler). */
+  cevherEkle(oyuncuId: number, kademe: number, cevher: number, kulce = 0): void {
+    this.db.prepare(`INSERT INTO cevher (oyuncu_id, kademe, cevher, kulce) VALUES (?, ?, ?, ?)
+      ON CONFLICT (oyuncu_id, kademe) DO UPDATE SET cevher = cevher + excluded.cevher, kulce = kulce + excluded.kulce`).run(oyuncuId, kademe, cevher, kulce);
+  }
+
+  /** Ustalık tecrübesi (×100). */
+  ustaliklar(oyuncuId: number): { madencilik: number; isleme: number } {
+    const r = { madencilik: 0, isleme: 0 };
+    for (const x of this.db.prepare("SELECT tur, tecrube_x100 FROM ustalik WHERE oyuncu_id = ?").all(oyuncuId) as { tur: "madencilik" | "isleme"; tecrube_x100: number }[]) r[x.tur] = x.tecrube_x100;
+    return r;
+  }
+
+  ustalikYaz(oyuncuId: number, tur: "madencilik" | "isleme", tecrubeX100: number): void {
+    this.db.prepare(`INSERT INTO ustalik (oyuncu_id, tur, tecrube_x100) VALUES (?, ?, ?)
+      ON CONFLICT (oyuncu_id, tur) DO UPDATE SET tecrube_x100 = excluded.tecrube_x100`).run(oyuncuId, tur, Math.max(0, Math.round(tecrubeX100)));
+  }
+
+  /** Günlük kazı satırı (dugum '*' = günün toplamı + isabet serisi + ardışık ıska). */
+  madenGunluk(oyuncuId: number, gun: number, dugumId: string): GunlukSatiri {
+    return (this.db.prepare("SELECT vurus, seri, iska FROM maden_gunluk WHERE oyuncu_id = ? AND gun = ? AND dugum_id = ?").get(oyuncuId, gun, dugumId) as GunlukSatiri | undefined) ?? { vurus: 0, seri: 0, iska: 0 };
+  }
+
+  madenGunlukYaz(oyuncuId: number, gun: number, dugumId: string, g: GunlukSatiri): void {
+    this.db.prepare(`INSERT INTO maden_gunluk (oyuncu_id, gun, dugum_id, vurus, seri, iska) VALUES (?, ?, ?, ?, ?, ?)
+      ON CONFLICT (oyuncu_id, gun, dugum_id) DO UPDATE SET vurus = excluded.vurus, seri = excluded.seri, iska = excluded.iska`).run(oyuncuId, gun, dugumId, g.vurus, g.seri, g.iska);
+  }
+
+  /** Bugün düğüm başına atılan vuruş. */
+  madenGunlukler(oyuncuId: number, gun: number): Record<string, number> {
+    const r: Record<string, number> = {};
+    for (const x of this.db.prepare("SELECT dugum_id, vurus FROM maden_gunluk WHERE oyuncu_id = ? AND gun = ?").all(oyuncuId, gun) as { dugum_id: string; vurus: number }[]) r[x.dugum_id] = x.vurus;
+    return r;
+  }
+
+  seansAc(s: Omit<SeansSatiri, "bitti">): void {
+    this.db.prepare("UPDATE maden_seans SET bitti = 1 WHERE oyuncu_id = ? AND bitti = 0").run(s.oyuncu_id);
+    this.db.prepare(`INSERT INTO maden_seans (id, oyuncu_id, dugum_id, gun, baslangic, vurus_bas, faz_ms, sira, kapasite, nadir_sira, bitti)
+      VALUES (@id, @oyuncu_id, @dugum_id, @gun, @baslangic, @vurus_bas, @faz_ms, @sira, @kapasite, @nadir_sira, 0)`).run(s);
+  }
+
+  seans(id: string): SeansSatiri | null {
+    return (this.db.prepare("SELECT * FROM maden_seans WHERE id = ?").get(id) as SeansSatiri | undefined) ?? null;
+  }
+
+  acikSeans(oyuncuId: number): SeansSatiri | null {
+    return (this.db.prepare("SELECT * FROM maden_seans WHERE oyuncu_id = ? AND bitti = 0 ORDER BY baslangic DESC LIMIT 1").get(oyuncuId) as SeansSatiri | undefined) ?? null;
+  }
+
+  seansIlerle(id: string, sira: number, vurusBas: number, fazMs: number): void {
+    this.db.prepare("UPDATE maden_seans SET sira = ?, vurus_bas = ?, faz_ms = ? WHERE id = ?").run(sira, vurusBas, fazMs, id);
+  }
+
+  seansBitir(id: string): void {
+    this.db.prepare("UPDATE maden_seans SET bitti = 1 WHERE id = ?").run(id);
+  }
+
+  vurusYaz(v: { seans_id: string; sira: number; kademe: number; basari: number; isabet: number; isabet_ms: number | null; sunucu_ms: number; verim: number; tecrube: number; zaman: number }): void {
+    this.db.prepare(`INSERT OR IGNORE INTO maden_vurus (seans_id, sira, kademe, basari, isabet, isabet_ms, sunucu_ms, verim, tecrube, zaman)
+      VALUES (@seans_id, @sira, @kademe, @basari, @isabet, @isabet_ms, @sunucu_ms, @verim, @tecrube, @zaman)`).run(v);
+  }
+
+  seansVuruslari(seansId: string): { kademe: number; basari: number; verim: number; tecrube: number }[] {
+    return this.db.prepare("SELECT kademe, basari, verim, tecrube FROM maden_vurus WHERE seans_id = ? ORDER BY sira").all(seansId) as { kademe: number; basari: number; verim: number; tecrube: number }[];
+  }
+
+  /** Telemetri temizliği (A7): `oncesi` ms'den eski vuruş satırları ve biten seanslar. Dönen: silinen vuruş. */
+  madenTelemetriTemizle(oncesi: number): number {
+    const n = this.db.prepare("DELETE FROM maden_vurus WHERE zaman < ?").run(oncesi).changes;
+    this.db.prepare("DELETE FROM maden_seans WHERE baslangic < ? AND id NOT IN (SELECT DISTINCT seans_id FROM maden_vurus)").run(oncesi);
+    return n;
+  }
+
+  islemeRef(ref: string): IslemeSatiri | null {
+    return (this.db.prepare("SELECT * FROM isleme_defteri WHERE ref = ?").get(ref) as IslemeSatiri | undefined) ?? null;
+  }
+
+  islemeYaz(oyuncuId: number, s: { tur: string; tarif_id: string | null; girdi: unknown; cikti: unknown; usta: boolean; ref: string; zaman: number }): void {
+    this.db.prepare("INSERT INTO isleme_defteri (oyuncu_id, tur, tarif_id, girdi, cikti, usta, ref, zaman) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+      .run(oyuncuId, s.tur, s.tarif_id, JSON.stringify(s.girdi), JSON.stringify(s.cikti), s.usta ? 1 : 0, s.ref, s.zaman);
+  }
+
+  /** Son 7 gün (ms) eritmeyle üretilen külçe toplamı (Market "~N gün"). */
+  sonKulceUretimi(oyuncuId: number, sonra: number): number {
+    const satirlar = this.db.prepare("SELECT cikti FROM isleme_defteri WHERE oyuncu_id = ? AND tur = 'erit' AND zaman >= ?").all(oyuncuId, sonra) as { cikti: string }[];
+    let t = 0;
+    for (const s of satirlar) t += Number((JSON.parse(s.cikti) as { kulce?: number }).kulce ?? 0);
+    return t;
+  }
+
+  gorunumler(oyuncuId: number): { gorunum_id: string; usta: number; edinme: number }[] {
+    return this.db.prepare("SELECT gorunum_id, usta, edinme FROM gorunum_sahip WHERE oyuncu_id = ? ORDER BY edinme, gorunum_id").all(oyuncuId) as { gorunum_id: string; usta: number; edinme: number }[];
+  }
+
+  /** Görünüm ver (yeniden dövmede Usta işi yükselir, düşmez). Dönen: yeni mi. */
+  gorunumVer(oyuncuId: number, gorunumId: string, usta: boolean, simdi: number): boolean {
+    const once = this.db.prepare("SELECT usta FROM gorunum_sahip WHERE oyuncu_id = ? AND gorunum_id = ?").get(oyuncuId, gorunumId) as { usta: number } | undefined;
+    this.db.prepare(`INSERT INTO gorunum_sahip (oyuncu_id, gorunum_id, usta, edinme) VALUES (?, ?, ?, ?)
+      ON CONFLICT (oyuncu_id, gorunum_id) DO UPDATE SET usta = MAX(usta, excluded.usta)`).run(oyuncuId, gorunumId, usta ? 1 : 0, simdi);
+    return !once;
+  }
+
+  /** (tanım, malzeme) başına sunucu geneli artan seri numarası (işlem içinde çağrılır; geri kullanılmaz). */
+  sonrakiSeri(tanimId: string, malzeme: number): number {
+    this.db.prepare(`INSERT INTO seri_sayac (tanim_id, malzeme, son) VALUES (?, ?, 1)
+      ON CONFLICT (tanim_id, malzeme) DO UPDATE SET son = son + 1`).run(tanimId, malzeme);
+    return (this.db.prepare("SELECT son FROM seri_sayac WHERE tanim_id = ? AND malzeme = ?").get(tanimId, malzeme) as { son: number }).son;
+  }
+
+  /** Üretilmiş parça/Çekirdek (12 § 4): malzeme, yapımcı imzası, seri, Usta işi. Çekirdek Lv.1, Yapay ömür 30. */
+  uretilmisParcaVer(oyuncuId: number, tanimId: string, u: { malzeme: number; yapimciAd: string; seri: number; usta: boolean; simdi: number }): { tur: string; id: number } {
+    const p = parcaBul(tanimId);
+    if (p.tur === "cekirdek") {
+      const omur = p.koken === "yapay" ? ILERLEME.yapayOmur : null;
+      const yon = p.katki.yon === "sol" ? "sol" : "sag";
+      const id = Number(this.db.prepare(`INSERT INTO cekirdek (oyuncu_id, tanim_id, seviye, tecrube, kararma, omur, yon, edinme, malzeme, yapimci_id, yapimci_ad, seri, uretim, usta)
+        VALUES (?, ?, 1, 0, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(oyuncuId, tanimId, omur, yon, u.simdi, u.malzeme, oyuncuId, u.yapimciAd, u.seri, u.simdi, u.usta ? 1 : 0).lastInsertRowid);
+      return { tur: "cekirdek", id };
+    }
+    const id = Number(this.db.prepare(`INSERT INTO parca (oyuncu_id, tanim_id, edinme, malzeme, yapimci_id, yapimci_ad, seri, uretim, usta)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(oyuncuId, tanimId, u.simdi, u.malzeme, oyuncuId, u.yapimciAd, u.seri, u.simdi, u.usta ? 1 : 0).lastInsertRowid);
+    return { tur: p.tur, id };
+  }
+
+  /** Örneği sil (parça eritme; takımda olmadığı çağıranda denetlenir). */
+  ornekSil(oyuncuId: number, tur: "parca" | "cekirdek", id: number): boolean {
+    if (tur === "cekirdek") {
+      this.db.prepare("DELETE FROM cekirdek_xp WHERE cekirdek_id = ?").run(id);
+      return this.db.prepare("DELETE FROM cekirdek WHERE id = ? AND oyuncu_id = ?").run(id, oyuncuId).changes > 0;
+    }
+    return this.db.prepare("DELETE FROM parca WHERE id = ? AND oyuncu_id = ?").run(id, oyuncuId).changes > 0;
+  }
+
+  /** Örnek herhangi bir takım yuvasında mı. */
+  takimdaMi(oyuncuId: number, tur: "parca" | "cekirdek", id: number): boolean {
+    const r = (tur === "cekirdek"
+      ? this.db.prepare("SELECT COUNT(*) n FROM takim WHERE oyuncu_id = ? AND cekirdek_id = ?").get(oyuncuId, id)
+      : this.db.prepare("SELECT COUNT(*) n FROM takim WHERE oyuncu_id = ? AND (govde_id = ? OR disk_id = ? OR uc_id = ?)").get(oyuncuId, id, id, id)) as { n: number };
+    return r.n > 0;
+  }
+
+  bolgeRozetleri(oyuncuId: number): Record<string, number> {
+    const r: Record<string, number> = {};
+    for (const x of this.db.prepare("SELECT bolge_id, rozet FROM bolge_rozet WHERE oyuncu_id = ?").all(oyuncuId) as { bolge_id: string; rozet: number }[]) r[x.bolge_id] = x.rozet;
+    return r;
+  }
+
+  /** Rozet yaz (yalnız yükselir). Dönen: önceki rozet. */
+  bolgeRozetYaz(oyuncuId: number, bolgeId: string, rozet: number, simdi: number): number {
+    const once = (this.db.prepare("SELECT rozet FROM bolge_rozet WHERE oyuncu_id = ? AND bolge_id = ?").get(oyuncuId, bolgeId) as { rozet: number } | undefined)?.rozet ?? 0;
+    if (rozet > once) {
+      this.db.prepare(`INSERT INTO bolge_rozet (oyuncu_id, bolge_id, rozet, zaman) VALUES (?, ?, ?, ?)
+        ON CONFLICT (oyuncu_id, bolge_id) DO UPDATE SET rozet = excluded.rozet, zaman = excluded.zaman`).run(oyuncuId, bolgeId, rozet, simdi);
+    }
+    return once;
+  }
+
+  /** Harita maçı satırına düğüm ve yıldız maskesi. */
+  macHaritaYaz(macId: string, dugumId: string, yildiz: number): void {
+    this.db.prepare("UPDATE mac SET dugum_id = ?, yildiz = ? WHERE id = ?").run(dugumId, yildiz, macId);
+  }
+
+  /** Bugünkü sayılan harita maçı sayısı (iptal hariç). */
+  gunlukHaritaMaci(oyuncuId: number, gun: number): number {
+    return (this.db.prepare("SELECT COUNT(*) n FROM mac WHERE gun = ? AND mod = 'harita' AND a = ? AND bitis_nedeni <> 'iptal'").get(gun, oyuncuId) as { n: number }).n;
   }
 }
 

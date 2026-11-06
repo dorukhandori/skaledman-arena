@@ -18,7 +18,7 @@ export interface EnvanterCekirdegi { id: number; tanimId: string; devreDisi: boo
 export interface EnvanterParcasi { id: number; tanimId: string }
 export interface Envanter { cekirdekler: readonly EnvanterCekirdegi[]; parcalar: readonly EnvanterParcasi[] }
 
-export type TakimHataKodu = "bicim" | "sahipDegil" | "yanlisTur" | "ayniCekirdek" | "parcaTekrar" | "parcaEksik" | "cekirdekYok";
+export type TakimHataKodu = "bicim" | "sahipDegil" | "yanlisTur" | "ayniCekirdek" | "parcaTekrar" | "tanimTekrar" | "parcaEksik" | "cekirdekYok";
 export interface TakimHatasi { kod: TakimHataKodu; yuva: number; tur: YuvaTuru }
 
 export interface TakimDegerlendirmesi {
@@ -49,6 +49,8 @@ export function takimDegerlendir(t: readonly TaslakTopac[], env: Envanter): Taki
   const gorulenParca = new Set<number>();
   const gorulenCekirdekId = new Set<number>();
   const gorulenCekirdekTanim = new Set<string>();
+  // harita 12 § 4: takımda aynı parça tanımından en çok bir örnek (craft biçimleri kompozisyonu değiştirmesin)
+  const gorulenParcaTanim = new Set<string>();
   const durum: TakimDegerlendirmesi["durum"] = [];
   for (let k = 0; k < 3; k++) {
     const y = t[k]!;
@@ -73,7 +75,9 @@ export function takimDegerlendir(t: readonly TaslakTopac[], env: Envanter): Taki
         try { tanim = parcaBul(p.tanimId); } catch { tanim = null; }
         if (!tanim || tanim.tur !== tur) { hatalar.push({ kod: "yanlisTur", yuva: k, tur }); continue; }
         if (gorulenParca.has(id)) hatalar.push({ kod: "parcaTekrar", yuva: k, tur });
+        else if (gorulenParcaTanim.has(p.tanimId)) hatalar.push({ kod: "tanimTekrar", yuva: k, tur });
         gorulenParca.add(id);
+        gorulenParcaTanim.add(p.tanimId);
       }
     }
     durum.push(y.cekirdek === null ? "bos" : devreDisi ? "devreDisi" : "sahip");
@@ -124,6 +128,7 @@ export function takimHataMetni(h: TakimHatasi): string {
   switch (h.kod) {
     case "ayniCekirdek": return "Takımda 3 farklı Çekirdek olmalı. Aynı Çekirdek iki topaçta olamaz.";
     case "parcaTekrar": return "Bir parça aynı anda tek topaçta olur.";
+    case "tanimTekrar": return "Takımda aynı parçadan yalnız bir tane olur.";
     case "parcaEksik": return `${n} ${YUVA_AD[h.tur]} eksik. Envanterden bir ${YUVA_AD[h.tur]} tak.`;
     case "cekirdekYok": return `${n} Çekirdek yok. Önce bir Çekirdek tak.`;
     case "sahipDegil": return `${n} sende olmayan bir ${YUVA_AD[h.tur]} var.`;

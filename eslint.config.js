@@ -118,4 +118,18 @@ export default tseslint.config(
       "no-restricted-imports": ["error", YASAK_ICE_AKTARIMLAR],
     },
   },
+  // Harita G-1 (docs/design/harita/08 § 9): sim harita/maden/Ustalık/Ocak kurallarını ve harita verisini OKUYAMAZ
+  // (Ustalık, malzeme, karakter maça girmez). Aynı kuralın tam listesi (düz yapılandırmada kural seçenekleri birleşmez).
+  {
+    files: ["src/paylasilan/sim/**/*.ts"],
+    rules: {
+      "no-restricted-imports": ["error", {
+        paths: YASAK_ICE_AKTARIMLAR.paths,
+        patterns: [
+          ...YASAK_ICE_AKTARIMLAR.patterns,
+          { group: ["**/kurallar/harita*", "**/kurallar/maden*", "**/kurallar/ustalik*", "**/kurallar/ocak*", "**/veri/harita*"], message: "G-0: sim harita/maden/Ustalık/Ocak verisine bağımlı olamaz (güç eşit)." },
+        ],
+      }],
+    },
+  },
 );

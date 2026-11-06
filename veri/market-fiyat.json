@@ -1,0 +1,26 @@
+{
+ "surum": 1,
+ "not": "SAPMA (2026-11-06, sahip): kilitsiz 15 parça ücretsiz; kilitli katmanlar çarpanlı",
+ "kilitsizUcretsiz": true,
+ "katman": {
+  "baslangic": 0,
+  "standart": 2500,
+  "nadir": 12000,
+  "hizip": 32000,
+  "karanlik": 48000
+ },
+ "eski": {
+  "baslangic": 100,
+  "standart": 500,
+  "nadir": 2000,
+  "hizip": 4000,
+  "karanlik": 6000
+ },
+ "carpan": {
+  "baslangic": 0,
+  "standart": 5,
+  "nadir": 6,
+  "hizip": 8,
+  "karanlik": 8
+ }
+}

@@ -138,6 +138,120 @@ export const GOCLER: readonly string[] = [
   CREATE INDEX mac_a ON mac(a);
   CREATE INDEX mac_b ON mac(b);
   `,
+  // 5 (Harita / Maden / Ocak; docs/design/harita/08 § 3 + 12 § 10 + 13 § 4.1). Yalnız ekleme. Düğüm durumu:
+  // 0 kilitli · 1 açık · 2 KEŞFET · 3 TEMİZLE · 4 USTALAŞ. Tecrübe ×100 tam sayı. Malzeme NULL = Market biçimi.
+  `
+  CREATE TABLE harita_dugum (
+    oyuncu_id INTEGER NOT NULL REFERENCES oyuncu(id) ON DELETE CASCADE,
+    dugum_id TEXT NOT NULL,
+    durum INTEGER NOT NULL CHECK (durum BETWEEN 0 AND 4),
+    yildiz INTEGER NOT NULL DEFAULT 0,
+    ilk_tamam INTEGER,
+    basarili_vurus INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (oyuncu_id, dugum_id)
+  );
+  CREATE TABLE maden_gunluk (
+    oyuncu_id INTEGER NOT NULL REFERENCES oyuncu(id) ON DELETE CASCADE,
+    gun INTEGER NOT NULL,
+    dugum_id TEXT NOT NULL,
+    vurus INTEGER NOT NULL DEFAULT 0,
+    seri INTEGER NOT NULL DEFAULT 0,
+    iska INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (oyuncu_id, gun, dugum_id)
+  );
+  CREATE TABLE maden_seans (
+    id TEXT PRIMARY KEY,
+    oyuncu_id INTEGER NOT NULL REFERENCES oyuncu(id) ON DELETE CASCADE,
+    dugum_id TEXT NOT NULL,
+    gun INTEGER NOT NULL,
+    baslangic INTEGER NOT NULL,
+    vurus_bas INTEGER NOT NULL,
+    faz_ms INTEGER NOT NULL,
+    sira INTEGER NOT NULL DEFAULT 0,
+    kapasite INTEGER NOT NULL,
+    nadir_sira INTEGER,
+    bitti INTEGER NOT NULL DEFAULT 0
+  );
+  CREATE INDEX maden_seans_oyuncu ON maden_seans(oyuncu_id);
+  CREATE TABLE maden_vurus (
+    seans_id TEXT NOT NULL REFERENCES maden_seans(id) ON DELETE CASCADE,
+    sira INTEGER NOT NULL,
+    kademe INTEGER NOT NULL,
+    basari INTEGER NOT NULL,
+    isabet INTEGER NOT NULL,
+    isabet_ms INTEGER,
+    sunucu_ms INTEGER NOT NULL,
+    verim INTEGER NOT NULL,
+    tecrube INTEGER NOT NULL,
+    zaman INTEGER NOT NULL,
+    PRIMARY KEY (seans_id, sira)
+  );
+  CREATE INDEX maden_vurus_zaman ON maden_vurus(zaman);
+  CREATE TABLE cevher (
+    oyuncu_id INTEGER NOT NULL REFERENCES oyuncu(id) ON DELETE CASCADE,
+    kademe INTEGER NOT NULL CHECK (kademe BETWEEN 1 AND 8),
+    cevher INTEGER NOT NULL DEFAULT 0 CHECK (cevher >= 0),
+    kulce INTEGER NOT NULL DEFAULT 0 CHECK (kulce >= 0),
+    PRIMARY KEY (oyuncu_id, kademe)
+  );
+  CREATE TABLE ustalik (
+    oyuncu_id INTEGER NOT NULL REFERENCES oyuncu(id) ON DELETE CASCADE,
+    tur TEXT NOT NULL CHECK (tur IN ('madencilik', 'isleme')),
+    tecrube_x100 INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (oyuncu_id, tur)
+  );
+  CREATE TABLE isleme_defteri (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    oyuncu_id INTEGER NOT NULL REFERENCES oyuncu(id) ON DELETE CASCADE,
+    tur TEXT NOT NULL,
+    tarif_id TEXT,
+    girdi TEXT NOT NULL,
+    cikti TEXT NOT NULL,
+    usta INTEGER NOT NULL DEFAULT 0,
+    ref TEXT NOT NULL UNIQUE,
+    zaman INTEGER NOT NULL
+  );
+  CREATE INDEX isleme_oyuncu ON isleme_defteri(oyuncu_id);
+  CREATE TABLE gorunum_sahip (
+    oyuncu_id INTEGER NOT NULL REFERENCES oyuncu(id) ON DELETE CASCADE,
+    gorunum_id TEXT NOT NULL,
+    usta INTEGER NOT NULL DEFAULT 0,
+    edinme INTEGER NOT NULL,
+    PRIMARY KEY (oyuncu_id, gorunum_id)
+  );
+  ALTER TABLE parca ADD COLUMN malzeme INTEGER;
+  ALTER TABLE parca ADD COLUMN yapimci_id INTEGER;
+  ALTER TABLE parca ADD COLUMN yapimci_ad TEXT;
+  ALTER TABLE parca ADD COLUMN seri INTEGER;
+  ALTER TABLE parca ADD COLUMN uretim INTEGER;
+  ALTER TABLE parca ADD COLUMN usta INTEGER NOT NULL DEFAULT 0;
+  ALTER TABLE cekirdek ADD COLUMN malzeme INTEGER;
+  ALTER TABLE cekirdek ADD COLUMN yapimci_id INTEGER;
+  ALTER TABLE cekirdek ADD COLUMN yapimci_ad TEXT;
+  ALTER TABLE cekirdek ADD COLUMN seri INTEGER;
+  ALTER TABLE cekirdek ADD COLUMN uretim INTEGER;
+  ALTER TABLE cekirdek ADD COLUMN usta INTEGER NOT NULL DEFAULT 0;
+  CREATE TABLE seri_sayac (
+    tanim_id TEXT NOT NULL,
+    malzeme INTEGER NOT NULL,
+    son INTEGER NOT NULL,
+    PRIMARY KEY (tanim_id, malzeme)
+  );
+  ALTER TABLE oyuncu ADD COLUMN vitrin TEXT;
+  ALTER TABLE oyuncu ADD COLUMN cerceve TEXT;
+  ALTER TABLE oyuncu ADD COLUMN karakter INTEGER NOT NULL DEFAULT 0;
+  ALTER TABLE oyuncu ADD COLUMN harita_konum TEXT;
+  ALTER TABLE mac ADD COLUMN dugum_id TEXT;
+  ALTER TABLE mac ADD COLUMN yildiz INTEGER;
+  CREATE INDEX mac_dugum ON mac(dugum_id);
+  CREATE TABLE bolge_rozet (
+    oyuncu_id INTEGER NOT NULL REFERENCES oyuncu(id) ON DELETE CASCADE,
+    bolge_id TEXT NOT NULL,
+    rozet INTEGER NOT NULL CHECK (rozet BETWEEN 1 AND 3),
+    zaman INTEGER NOT NULL,
+    PRIMARY KEY (oyuncu_id, bolge_id)
+  );
+  `,
 ];
 
 /** Göçleri uygula; dönen: uygulanan göç sayısı. */

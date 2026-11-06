@@ -1,0 +1,2597 @@
+{
+ "surum": 1,
+ "gun": "04:00 TRT",
+ "bolgeler": [
+  {
+   "id": "ocak-yamaci",
+   "no": 1,
+   "ad": "OCAK YAMACI",
+   "element": "kaya",
+   "ilkSurum": true,
+   "dugumler": [
+    {
+     "id": "b1-01",
+     "tur": "dusman",
+     "konum": [
+      40,
+      188
+     ],
+     "komsu": [
+      "b1-02"
+     ],
+     "zorluk": 1,
+     "botKip": "kukla",
+     "botSeviye": 1,
+     "takim": [
+      [
+       "kaya-maden",
+       "kalkan-govde",
+       "agir-disk",
+       "igne-uc"
+      ],
+      [
+       "girdap-maden",
+       "halka-govde",
+       "alcak-disk",
+       "top-uc"
+      ],
+      [
+       "kor-goktasi",
+       "ok-govde",
+       "hafif-disk",
+       "duz-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "temiz",
+      "hizli"
+     ],
+     "odul": {
+      "altinYildiz": 50,
+      "cevherYildiz": {
+       "kademe": 1,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 1,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b1-02",
+     "tur": "maden",
+     "konum": [
+      92,
+      160
+     ],
+     "komsu": [
+      "b1-03",
+      "b1-04"
+     ],
+     "kademe": 1,
+     "kapasite": 6,
+     "nadir": {
+      "kademe": 2,
+      "olasilik": 0.1
+     }
+    },
+    {
+     "id": "b1-03",
+     "tur": "dusman",
+     "konum": [
+      150,
+      110
+     ],
+     "komsu": [
+      "b1-05"
+     ],
+     "zorluk": 1,
+     "botKip": "kukla",
+     "botSeviye": 1,
+     "takim": [
+      [
+       "kaya-maden",
+       "kalkan-govde",
+       "agir-disk",
+       "igne-uc"
+      ],
+      [
+       "girdap-maden",
+       "halka-govde",
+       "alcak-disk",
+       "top-uc"
+      ],
+      [
+       "kor-goktasi",
+       "ok-govde",
+       "hafif-disk",
+       "duz-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "yetenekBitis",
+      "hizli"
+     ],
+     "odul": {
+      "altinYildiz": 50,
+      "cevherYildiz": {
+       "kademe": 1,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 1,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b1-04",
+     "tur": "sandik",
+     "konum": [
+      160,
+      190
+     ],
+     "komsu": [
+      "b1-06"
+     ],
+     "odul": {
+      "altin": 150,
+      "cevher": {
+       "kademe": 1,
+       "adet": 6
+      }
+     }
+    },
+    {
+     "id": "b1-05",
+     "tur": "maden",
+     "konum": [
+      215,
+      80
+     ],
+     "komsu": [
+      "b1-07"
+     ],
+     "kademe": 1,
+     "kapasite": 6,
+     "nadir": {
+      "kademe": 2,
+      "olasilik": 0.1
+     }
+    },
+    {
+     "id": "b1-06",
+     "tur": "dusman",
+     "konum": [
+      228,
+      180
+     ],
+     "komsu": [
+      "b1-07"
+     ],
+     "zorluk": 2,
+     "botKip": "dolas",
+     "botSeviye": 2,
+     "takim": [
+      [
+       "kaya-maden",
+       "kalkan-govde",
+       "agir-disk",
+       "igne-uc"
+      ],
+      [
+       "girdap-maden",
+       "halka-govde",
+       "alcak-disk",
+       "top-uc"
+      ],
+      [
+       "kor-goktasi",
+       "ok-govde",
+       "hafif-disk",
+       "duz-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "ringOut",
+      "hizli"
+     ],
+     "odul": {
+      "altinYildiz": 50,
+      "cevherYildiz": {
+       "kademe": 1,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 1,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b1-07",
+     "tur": "dusman",
+     "konum": [
+      285,
+      140
+     ],
+     "komsu": [
+      "b1-08",
+      "b1-09"
+     ],
+     "zorluk": 2,
+     "botKip": "dolas",
+     "botSeviye": 2,
+     "takim": [
+      [
+       "kaya-maden",
+       "kalkan-govde",
+       "agir-disk",
+       "igne-uc"
+      ],
+      [
+       "girdap-maden",
+       "halka-govde",
+       "alcak-disk",
+       "top-uc"
+      ],
+      [
+       "kor-goktasi",
+       "ok-govde",
+       "hafif-disk",
+       "duz-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "ringOut",
+      "temiz"
+     ],
+     "odul": {
+      "altinYildiz": 50,
+      "cevherYildiz": {
+       "kademe": 1,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 1,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b1-08",
+     "tur": "maden",
+     "konum": [
+      335,
+      80
+     ],
+     "komsu": [
+      "b1-10"
+     ],
+     "kademe": 2,
+     "kapasite": 6,
+     "nadir": {
+      "kademe": 3,
+      "olasilik": 0.1
+     }
+    },
+    {
+     "id": "b1-09",
+     "tur": "dusman",
+     "konum": [
+      345,
+      188
+     ],
+     "komsu": [
+      "b1-10"
+     ],
+     "zorluk": 3,
+     "botKip": "kenar",
+     "botSeviye": 2,
+     "takim": [
+      [
+       "kaya-maden",
+       "kalkan-govde",
+       "agir-disk",
+       "igne-uc"
+      ],
+      [
+       "girdap-maden",
+       "halka-govde",
+       "alcak-disk",
+       "top-uc"
+      ],
+      [
+       "kor-goktasi",
+       "ok-govde",
+       "hafif-disk",
+       "duz-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "durma",
+      "hizli"
+     ],
+     "odul": {
+      "altinYildiz": 50,
+      "cevherYildiz": {
+       "kademe": 1,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 1,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b1-10",
+     "tur": "sandik",
+     "konum": [
+      392,
+      140
+     ],
+     "komsu": [
+      "b1-11"
+     ],
+     "odul": {
+      "altin": 150,
+      "cevher": {
+       "kademe": 1,
+       "adet": 6
+      }
+     }
+    },
+    {
+     "id": "b1-11",
+     "tur": "patron",
+     "konum": [
+      440,
+      95
+     ],
+     "komsu": [
+      "b1-12"
+     ],
+     "sonrakiBolge": "ayaz-gecidi",
+     "zorluk": 4,
+     "botKip": "dayaniklilik",
+     "botSeviye": 3,
+     "takim": [
+      [
+       "kaya-maden",
+       "kalkan-govde",
+       "agir-disk",
+       "igne-uc"
+      ],
+      [
+       "girdap-maden",
+       "halka-govde",
+       "alcak-disk",
+       "top-uc"
+      ],
+      [
+       "kor-goktasi",
+       "ok-govde",
+       "hafif-disk",
+       "duz-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "durma",
+      "hizli"
+     ],
+     "odul": {
+      "altinIlk": 500,
+      "kulceIlk": {
+       "kademe": 2,
+       "adet": 3
+      },
+      "cevherYildiz": {
+       "kademe": 2,
+       "adet": 2
+      },
+      "altinYildiz": 100,
+      "tekrar": {
+       "cevher": {
+        "kademe": 2,
+        "adet": 2
+       }
+      }
+     },
+     "ad": "OCAK USTASI"
+    },
+    {
+     "id": "b1-12",
+     "tur": "maden",
+     "konum": [
+      440,
+      188
+     ],
+     "komsu": [],
+     "kademe": 2,
+     "kapasite": 8,
+     "nadir": {
+      "kademe": 3,
+      "olasilik": 0.15
+     }
+    }
+   ]
+  },
+  {
+   "id": "ayaz-gecidi",
+   "no": 2,
+   "ad": "AYAZ GEÇİDİ",
+   "element": "don",
+   "ilkSurum": true,
+   "dugumler": [
+    {
+     "id": "b2-01",
+     "tur": "dusman",
+     "konum": [
+      40,
+      188
+     ],
+     "komsu": [
+      "b2-02"
+     ],
+     "zorluk": 2,
+     "botKip": "dolas",
+     "botSeviye": 2,
+     "takim": [
+      [
+       "sabir-tasi",
+       "ayaz-govde",
+       "alcak-disk",
+       "top-uc"
+      ],
+      [
+       "kaya-maden",
+       "kalkan-govde",
+       "agir-disk",
+       "igne-uc"
+      ],
+      [
+       "kasirga-yapay",
+       "savrulan-govde",
+       "denge-disk",
+       "dengeli-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "temiz",
+      "hizli"
+     ],
+     "odul": {
+      "altinYildiz": 75,
+      "cevherYildiz": {
+       "kademe": 2,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 2,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b2-02",
+     "tur": "maden",
+     "konum": [
+      92,
+      160
+     ],
+     "komsu": [
+      "b2-03",
+      "b2-04"
+     ],
+     "kademe": 2,
+     "kapasite": 6,
+     "nadir": {
+      "kademe": 3,
+      "olasilik": 0.1
+     }
+    },
+    {
+     "id": "b2-03",
+     "tur": "dusman",
+     "konum": [
+      150,
+      110
+     ],
+     "komsu": [
+      "b2-05"
+     ],
+     "zorluk": 2,
+     "botKip": "dolas",
+     "botSeviye": 2,
+     "takim": [
+      [
+       "sabir-tasi",
+       "ayaz-govde",
+       "alcak-disk",
+       "top-uc"
+      ],
+      [
+       "kaya-maden",
+       "kalkan-govde",
+       "agir-disk",
+       "igne-uc"
+      ],
+      [
+       "kasirga-yapay",
+       "savrulan-govde",
+       "denge-disk",
+       "dengeli-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "ringOut",
+      "hizli"
+     ],
+     "odul": {
+      "altinYildiz": 75,
+      "cevherYildiz": {
+       "kademe": 2,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 2,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b2-04",
+     "tur": "sandik",
+     "konum": [
+      160,
+      190
+     ],
+     "komsu": [
+      "b2-06"
+     ],
+     "odul": {
+      "altin": 300,
+      "cevher": {
+       "kademe": 2,
+       "adet": 6
+      }
+     }
+    },
+    {
+     "id": "b2-05",
+     "tur": "maden",
+     "konum": [
+      215,
+      80
+     ],
+     "komsu": [
+      "b2-07"
+     ],
+     "kademe": 2,
+     "kapasite": 6,
+     "nadir": {
+      "kademe": 3,
+      "olasilik": 0.1
+     }
+    },
+    {
+     "id": "b2-06",
+     "tur": "dusman",
+     "konum": [
+      228,
+      180
+     ],
+     "komsu": [
+      "b2-07"
+     ],
+     "zorluk": 3,
+     "botKip": "kenar",
+     "botSeviye": 2,
+     "takim": [
+      [
+       "sabir-tasi",
+       "ayaz-govde",
+       "alcak-disk",
+       "top-uc"
+      ],
+      [
+       "kaya-maden",
+       "kalkan-govde",
+       "agir-disk",
+       "igne-uc"
+      ],
+      [
+       "kasirga-yapay",
+       "savrulan-govde",
+       "denge-disk",
+       "dengeli-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "ringOut",
+      "temiz"
+     ],
+     "odul": {
+      "altinYildiz": 75,
+      "cevherYildiz": {
+       "kademe": 2,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 2,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b2-07",
+     "tur": "dusman",
+     "konum": [
+      285,
+      140
+     ],
+     "komsu": [
+      "b2-08",
+      "b2-09"
+     ],
+     "zorluk": 3,
+     "botKip": "kenar",
+     "botSeviye": 2,
+     "takim": [
+      [
+       "sabir-tasi",
+       "ayaz-govde",
+       "alcak-disk",
+       "top-uc"
+      ],
+      [
+       "kaya-maden",
+       "kalkan-govde",
+       "agir-disk",
+       "igne-uc"
+      ],
+      [
+       "kasirga-yapay",
+       "savrulan-govde",
+       "denge-disk",
+       "dengeli-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "durma",
+      "hizli"
+     ],
+     "odul": {
+      "altinYildiz": 75,
+      "cevherYildiz": {
+       "kademe": 2,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 2,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b2-08",
+     "tur": "maden",
+     "konum": [
+      335,
+      80
+     ],
+     "komsu": [
+      "b2-10"
+     ],
+     "kademe": 3,
+     "kapasite": 6,
+     "nadir": {
+      "kademe": 4,
+      "olasilik": 0.1
+     }
+    },
+    {
+     "id": "b2-09",
+     "tur": "dusman",
+     "konum": [
+      345,
+      188
+     ],
+     "komsu": [
+      "b2-10"
+     ],
+     "zorluk": 3,
+     "botKip": "kenar",
+     "botSeviye": 2,
+     "takim": [
+      [
+       "sabir-tasi",
+       "ayaz-govde",
+       "alcak-disk",
+       "top-uc"
+      ],
+      [
+       "kaya-maden",
+       "kalkan-govde",
+       "agir-disk",
+       "igne-uc"
+      ],
+      [
+       "kasirga-yapay",
+       "savrulan-govde",
+       "denge-disk",
+       "dengeli-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "parcalanma",
+      "temiz"
+     ],
+     "odul": {
+      "altinYildiz": 75,
+      "cevherYildiz": {
+       "kademe": 2,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 2,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b2-10",
+     "tur": "sandik",
+     "konum": [
+      392,
+      140
+     ],
+     "komsu": [
+      "b2-11"
+     ],
+     "odul": {
+      "altin": 300,
+      "cevher": {
+       "kademe": 2,
+       "adet": 6
+      }
+     }
+    },
+    {
+     "id": "b2-11",
+     "tur": "patron",
+     "konum": [
+      440,
+      95
+     ],
+     "komsu": [
+      "b2-12"
+     ],
+     "sonrakiBolge": "kor-kraterleri",
+     "zorluk": 5,
+     "botKip": "dayaniklilik",
+     "botSeviye": 3,
+     "takim": [
+      [
+       "sabir-tasi",
+       "ayaz-govde",
+       "alcak-disk",
+       "top-uc"
+      ],
+      [
+       "kaya-maden",
+       "kalkan-govde",
+       "agir-disk",
+       "igne-uc"
+      ],
+      [
+       "kasirga-yapay",
+       "savrulan-govde",
+       "denge-disk",
+       "dengeli-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "parcalanma",
+      "temiz"
+     ],
+     "odul": {
+      "altinIlk": 750,
+      "kulceIlk": {
+       "kademe": 3,
+       "adet": 3
+      },
+      "cevherYildiz": {
+       "kademe": 3,
+       "adet": 2
+      },
+      "altinYildiz": 150,
+      "tekrar": {
+       "cevher": {
+        "kademe": 3,
+        "adet": 2
+       }
+      }
+     },
+     "ad": "AYAZ USTASI"
+    },
+    {
+     "id": "b2-12",
+     "tur": "maden",
+     "konum": [
+      440,
+      188
+     ],
+     "komsu": [],
+     "kademe": 3,
+     "kapasite": 8,
+     "nadir": {
+      "kademe": 4,
+      "olasilik": 0.15
+     }
+    }
+   ]
+  },
+  {
+   "id": "kor-kraterleri",
+   "no": 3,
+   "ad": "KOR KRATERLERİ",
+   "element": "kor",
+   "ilkSurum": true,
+   "dugumler": [
+    {
+     "id": "b3-01",
+     "tur": "dusman",
+     "konum": [
+      40,
+      188
+     ],
+     "komsu": [
+      "b3-02"
+     ],
+     "zorluk": 2,
+     "botKip": "dolas",
+     "botSeviye": 2,
+     "takim": [
+      [
+       "kor-goktasi",
+       "ok-govde",
+       "hafif-disk",
+       "duz-uc"
+      ],
+      [
+       "kor-kalbi",
+       "dusurucu-govde",
+       "hafif-disk",
+       "kusak-ucu"
+      ],
+      [
+       "girdap-maden",
+       "halka-govde",
+       "parlak-disk",
+       "top-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "temiz",
+      "hizli"
+     ],
+     "odul": {
+      "altinYildiz": 100,
+      "cevherYildiz": {
+       "kademe": 3,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 3,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b3-02",
+     "tur": "maden",
+     "konum": [
+      92,
+      160
+     ],
+     "komsu": [
+      "b3-03",
+      "b3-04"
+     ],
+     "kademe": 3,
+     "kapasite": 6,
+     "nadir": {
+      "kademe": 4,
+      "olasilik": 0.1
+     }
+    },
+    {
+     "id": "b3-03",
+     "tur": "dusman",
+     "konum": [
+      150,
+      110
+     ],
+     "komsu": [
+      "b3-05"
+     ],
+     "zorluk": 3,
+     "botKip": "kenar",
+     "botSeviye": 2,
+     "takim": [
+      [
+       "kor-goktasi",
+       "ok-govde",
+       "hafif-disk",
+       "duz-uc"
+      ],
+      [
+       "kor-kalbi",
+       "dusurucu-govde",
+       "hafif-disk",
+       "kusak-ucu"
+      ],
+      [
+       "girdap-maden",
+       "halka-govde",
+       "parlak-disk",
+       "top-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "ringOut",
+      "temiz"
+     ],
+     "odul": {
+      "altinYildiz": 100,
+      "cevherYildiz": {
+       "kademe": 3,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 3,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b3-04",
+     "tur": "sandik",
+     "konum": [
+      160,
+      190
+     ],
+     "komsu": [
+      "b3-06"
+     ],
+     "odul": {
+      "altin": 450,
+      "cevher": {
+       "kademe": 3,
+       "adet": 6
+      }
+     }
+    },
+    {
+     "id": "b3-05",
+     "tur": "maden",
+     "konum": [
+      215,
+      80
+     ],
+     "komsu": [
+      "b3-07"
+     ],
+     "kademe": 3,
+     "kapasite": 6,
+     "nadir": {
+      "kademe": 4,
+      "olasilik": 0.1
+     }
+    },
+    {
+     "id": "b3-06",
+     "tur": "dusman",
+     "konum": [
+      228,
+      180
+     ],
+     "komsu": [
+      "b3-07"
+     ],
+     "zorluk": 3,
+     "botKip": "kenar",
+     "botSeviye": 2,
+     "takim": [
+      [
+       "kor-goktasi",
+       "ok-govde",
+       "hafif-disk",
+       "duz-uc"
+      ],
+      [
+       "kor-kalbi",
+       "dusurucu-govde",
+       "hafif-disk",
+       "kusak-ucu"
+      ],
+      [
+       "girdap-maden",
+       "halka-govde",
+       "parlak-disk",
+       "top-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "durma",
+      "hizli"
+     ],
+     "odul": {
+      "altinYildiz": 100,
+      "cevherYildiz": {
+       "kademe": 3,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 3,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b3-07",
+     "tur": "dusman",
+     "konum": [
+      285,
+      140
+     ],
+     "komsu": [
+      "b3-08",
+      "b3-09"
+     ],
+     "zorluk": 4,
+     "botKip": "dayaniklilik",
+     "botSeviye": 3,
+     "takim": [
+      [
+       "kor-goktasi",
+       "ok-govde",
+       "hafif-disk",
+       "duz-uc"
+      ],
+      [
+       "kor-kalbi",
+       "dusurucu-govde",
+       "hafif-disk",
+       "kusak-ucu"
+      ],
+      [
+       "girdap-maden",
+       "halka-govde",
+       "parlak-disk",
+       "top-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "parcalanma",
+      "temiz"
+     ],
+     "odul": {
+      "altinYildiz": 100,
+      "cevherYildiz": {
+       "kademe": 3,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 3,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b3-08",
+     "tur": "maden",
+     "konum": [
+      335,
+      80
+     ],
+     "komsu": [
+      "b3-10"
+     ],
+     "kademe": 4,
+     "kapasite": 6,
+     "nadir": {
+      "kademe": 5,
+      "olasilik": 0.1
+     }
+    },
+    {
+     "id": "b3-09",
+     "tur": "dusman",
+     "konum": [
+      345,
+      188
+     ],
+     "komsu": [
+      "b3-10"
+     ],
+     "zorluk": 4,
+     "botKip": "dayaniklilik",
+     "botSeviye": 3,
+     "takim": [
+      [
+       "kor-goktasi",
+       "ok-govde",
+       "hafif-disk",
+       "duz-uc"
+      ],
+      [
+       "kor-kalbi",
+       "dusurucu-govde",
+       "hafif-disk",
+       "kusak-ucu"
+      ],
+      [
+       "girdap-maden",
+       "halka-govde",
+       "parlak-disk",
+       "top-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "yetenekBitis",
+      "hizli"
+     ],
+     "odul": {
+      "altinYildiz": 100,
+      "cevherYildiz": {
+       "kademe": 3,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 3,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b3-10",
+     "tur": "sandik",
+     "konum": [
+      392,
+      140
+     ],
+     "komsu": [
+      "b3-11"
+     ],
+     "odul": {
+      "altin": 450,
+      "cevher": {
+       "kademe": 3,
+       "adet": 6
+      }
+     }
+    },
+    {
+     "id": "b3-11",
+     "tur": "patron",
+     "konum": [
+      440,
+      95
+     ],
+     "komsu": [
+      "b3-12"
+     ],
+     "sonrakiBolge": "yel-sirti",
+     "zorluk": 5,
+     "botKip": "dayaniklilik",
+     "botSeviye": 3,
+     "takim": [
+      [
+       "kor-goktasi",
+       "ok-govde",
+       "hafif-disk",
+       "duz-uc"
+      ],
+      [
+       "kor-kalbi",
+       "dusurucu-govde",
+       "hafif-disk",
+       "kusak-ucu"
+      ],
+      [
+       "girdap-maden",
+       "halka-govde",
+       "parlak-disk",
+       "top-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "yetenekBitis",
+      "hizli"
+     ],
+     "odul": {
+      "altinIlk": 1000,
+      "kulceIlk": {
+       "kademe": 4,
+       "adet": 3
+      },
+      "cevherYildiz": {
+       "kademe": 4,
+       "adet": 2
+      },
+      "altinYildiz": 200,
+      "tekrar": {
+       "cevher": {
+        "kademe": 4,
+        "adet": 2
+       }
+      }
+     },
+     "ad": "KRATER USTASI"
+    },
+    {
+     "id": "b3-12",
+     "tur": "maden",
+     "konum": [
+      440,
+      188
+     ],
+     "komsu": [],
+     "kademe": 4,
+     "kapasite": 8,
+     "nadir": {
+      "kademe": 5,
+      "olasilik": 0.15
+     }
+    }
+   ]
+  },
+  {
+   "id": "yel-sirti",
+   "no": 4,
+   "ad": "YEL SIRTI",
+   "element": "kasirga",
+   "ilkSurum": false,
+   "dugumler": [
+    {
+     "id": "b4-01",
+     "tur": "dusman",
+     "konum": [
+      40,
+      188
+     ],
+     "komsu": [
+      "b4-02"
+     ],
+     "zorluk": 3,
+     "botKip": "kenar",
+     "botSeviye": 2,
+     "takim": [
+      [
+       "kasirga-yapay",
+       "savrulan-govde",
+       "denge-disk",
+       "dengeli-uc"
+      ],
+      [
+       "girdap-maden",
+       "izli-govde",
+       "denge-disk",
+       "kusak-ucu"
+      ],
+      [
+       "kaya-maden",
+       "kalkan-govde",
+       "agir-disk",
+       "igne-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "temiz",
+      "hizli"
+     ],
+     "odul": {
+      "altinYildiz": 125,
+      "cevherYildiz": {
+       "kademe": 4,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 4,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b4-02",
+     "tur": "maden",
+     "konum": [
+      92,
+      160
+     ],
+     "komsu": [
+      "b4-03",
+      "b4-04"
+     ],
+     "kademe": 4,
+     "kapasite": 6,
+     "nadir": {
+      "kademe": 5,
+      "olasilik": 0.1
+     }
+    },
+    {
+     "id": "b4-03",
+     "tur": "dusman",
+     "konum": [
+      150,
+      110
+     ],
+     "komsu": [
+      "b4-05"
+     ],
+     "zorluk": 3,
+     "botKip": "kenar",
+     "botSeviye": 2,
+     "takim": [
+      [
+       "kasirga-yapay",
+       "savrulan-govde",
+       "denge-disk",
+       "dengeli-uc"
+      ],
+      [
+       "girdap-maden",
+       "izli-govde",
+       "denge-disk",
+       "kusak-ucu"
+      ],
+      [
+       "kaya-maden",
+       "kalkan-govde",
+       "agir-disk",
+       "igne-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "durma",
+      "hizli"
+     ],
+     "odul": {
+      "altinYildiz": 125,
+      "cevherYildiz": {
+       "kademe": 4,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 4,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b4-04",
+     "tur": "sandik",
+     "konum": [
+      160,
+      190
+     ],
+     "komsu": [
+      "b4-06"
+     ],
+     "odul": {
+      "altin": 600,
+      "cevher": {
+       "kademe": 4,
+       "adet": 6
+      }
+     }
+    },
+    {
+     "id": "b4-05",
+     "tur": "maden",
+     "konum": [
+      215,
+      80
+     ],
+     "komsu": [
+      "b4-07"
+     ],
+     "kademe": 4,
+     "kapasite": 6,
+     "nadir": {
+      "kademe": 5,
+      "olasilik": 0.1
+     }
+    },
+    {
+     "id": "b4-06",
+     "tur": "dusman",
+     "konum": [
+      228,
+      180
+     ],
+     "komsu": [
+      "b4-07"
+     ],
+     "zorluk": 4,
+     "botKip": "dayaniklilik",
+     "botSeviye": 3,
+     "takim": [
+      [
+       "kasirga-yapay",
+       "savrulan-govde",
+       "denge-disk",
+       "dengeli-uc"
+      ],
+      [
+       "girdap-maden",
+       "izli-govde",
+       "denge-disk",
+       "kusak-ucu"
+      ],
+      [
+       "kaya-maden",
+       "kalkan-govde",
+       "agir-disk",
+       "igne-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "parcalanma",
+      "temiz"
+     ],
+     "odul": {
+      "altinYildiz": 125,
+      "cevherYildiz": {
+       "kademe": 4,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 4,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b4-07",
+     "tur": "dusman",
+     "konum": [
+      285,
+      140
+     ],
+     "komsu": [
+      "b4-08",
+      "b4-09"
+     ],
+     "zorluk": 4,
+     "botKip": "dayaniklilik",
+     "botSeviye": 3,
+     "takim": [
+      [
+       "kasirga-yapay",
+       "savrulan-govde",
+       "denge-disk",
+       "dengeli-uc"
+      ],
+      [
+       "girdap-maden",
+       "izli-govde",
+       "denge-disk",
+       "kusak-ucu"
+      ],
+      [
+       "kaya-maden",
+       "kalkan-govde",
+       "agir-disk",
+       "igne-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "yetenekBitis",
+      "hizli"
+     ],
+     "odul": {
+      "altinYildiz": 125,
+      "cevherYildiz": {
+       "kademe": 4,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 4,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b4-08",
+     "tur": "maden",
+     "konum": [
+      335,
+      80
+     ],
+     "komsu": [
+      "b4-10"
+     ],
+     "kademe": 5,
+     "kapasite": 6,
+     "nadir": {
+      "kademe": 6,
+      "olasilik": 0.1
+     }
+    },
+    {
+     "id": "b4-09",
+     "tur": "dusman",
+     "konum": [
+      345,
+      188
+     ],
+     "komsu": [
+      "b4-10"
+     ],
+     "zorluk": 4,
+     "botKip": "dayaniklilik",
+     "botSeviye": 3,
+     "takim": [
+      [
+       "kasirga-yapay",
+       "savrulan-govde",
+       "denge-disk",
+       "dengeli-uc"
+      ],
+      [
+       "girdap-maden",
+       "izli-govde",
+       "denge-disk",
+       "kusak-ucu"
+      ],
+      [
+       "kaya-maden",
+       "kalkan-govde",
+       "agir-disk",
+       "igne-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "ringOut",
+      "hizli"
+     ],
+     "odul": {
+      "altinYildiz": 125,
+      "cevherYildiz": {
+       "kademe": 4,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 4,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b4-10",
+     "tur": "sandik",
+     "konum": [
+      392,
+      140
+     ],
+     "komsu": [
+      "b4-11"
+     ],
+     "odul": {
+      "altin": 600,
+      "cevher": {
+       "kademe": 4,
+       "adet": 6
+      }
+     }
+    },
+    {
+     "id": "b4-11",
+     "tur": "patron",
+     "konum": [
+      440,
+      95
+     ],
+     "komsu": [
+      "b4-12"
+     ],
+     "sonrakiBolge": "cakim-yaylasi",
+     "zorluk": 5,
+     "botKip": "dayaniklilik",
+     "botSeviye": 3,
+     "takim": [
+      [
+       "kasirga-yapay",
+       "savrulan-govde",
+       "denge-disk",
+       "dengeli-uc"
+      ],
+      [
+       "girdap-maden",
+       "izli-govde",
+       "denge-disk",
+       "kusak-ucu"
+      ],
+      [
+       "kaya-maden",
+       "kalkan-govde",
+       "agir-disk",
+       "igne-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "ringOut",
+      "hizli"
+     ],
+     "odul": {
+      "altinIlk": 1250,
+      "kulceIlk": {
+       "kademe": 5,
+       "adet": 3
+      },
+      "cevherYildiz": {
+       "kademe": 5,
+       "adet": 2
+      },
+      "altinYildiz": 250,
+      "tekrar": {
+       "cevher": {
+        "kademe": 5,
+        "adet": 2
+       }
+      }
+     },
+     "ad": "YEL USTASI"
+    },
+    {
+     "id": "b4-12",
+     "tur": "maden",
+     "konum": [
+      440,
+      188
+     ],
+     "komsu": [],
+     "kademe": 5,
+     "kapasite": 8,
+     "nadir": {
+      "kademe": 6,
+      "olasilik": 0.15
+     }
+    }
+   ]
+  },
+  {
+   "id": "cakim-yaylasi",
+   "no": 5,
+   "ad": "ÇAKIM YAYLASI",
+   "element": "simsek",
+   "ilkSurum": false,
+   "dugumler": [
+    {
+     "id": "b5-01",
+     "tur": "dusman",
+     "konum": [
+      40,
+      188
+     ],
+     "komsu": [
+      "b5-02"
+     ],
+     "zorluk": 3,
+     "botKip": "kenar",
+     "botSeviye": 2,
+     "takim": [
+      [
+       "simsek-goktasi",
+       "sivri-govde",
+       "hafif-disk",
+       "duz-uc"
+      ],
+      [
+       "kor-kalbi",
+       "dusurucu-govde",
+       "hafif-disk",
+       "kusak-ucu"
+      ],
+      [
+       "sabir-tasi",
+       "ayaz-govde",
+       "alcak-disk",
+       "top-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "temiz",
+      "hizli"
+     ],
+     "odul": {
+      "altinYildiz": 150,
+      "cevherYildiz": {
+       "kademe": 5,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 5,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b5-02",
+     "tur": "maden",
+     "konum": [
+      92,
+      160
+     ],
+     "komsu": [
+      "b5-03",
+      "b5-04"
+     ],
+     "kademe": 5,
+     "kapasite": 6,
+     "nadir": {
+      "kademe": 6,
+      "olasilik": 0.1
+     }
+    },
+    {
+     "id": "b5-03",
+     "tur": "dusman",
+     "konum": [
+      150,
+      110
+     ],
+     "komsu": [
+      "b5-05"
+     ],
+     "zorluk": 4,
+     "botKip": "dayaniklilik",
+     "botSeviye": 3,
+     "takim": [
+      [
+       "simsek-goktasi",
+       "sivri-govde",
+       "hafif-disk",
+       "duz-uc"
+      ],
+      [
+       "kor-kalbi",
+       "dusurucu-govde",
+       "hafif-disk",
+       "kusak-ucu"
+      ],
+      [
+       "sabir-tasi",
+       "ayaz-govde",
+       "alcak-disk",
+       "top-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "parcalanma",
+      "temiz"
+     ],
+     "odul": {
+      "altinYildiz": 150,
+      "cevherYildiz": {
+       "kademe": 5,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 5,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b5-04",
+     "tur": "sandik",
+     "konum": [
+      160,
+      190
+     ],
+     "komsu": [
+      "b5-06"
+     ],
+     "odul": {
+      "altin": 750,
+      "cevher": {
+       "kademe": 5,
+       "adet": 6
+      }
+     }
+    },
+    {
+     "id": "b5-05",
+     "tur": "maden",
+     "konum": [
+      215,
+      80
+     ],
+     "komsu": [
+      "b5-07"
+     ],
+     "kademe": 5,
+     "kapasite": 6,
+     "nadir": {
+      "kademe": 6,
+      "olasilik": 0.1
+     }
+    },
+    {
+     "id": "b5-06",
+     "tur": "dusman",
+     "konum": [
+      228,
+      180
+     ],
+     "komsu": [
+      "b5-07"
+     ],
+     "zorluk": 4,
+     "botKip": "dayaniklilik",
+     "botSeviye": 3,
+     "takim": [
+      [
+       "simsek-goktasi",
+       "sivri-govde",
+       "hafif-disk",
+       "duz-uc"
+      ],
+      [
+       "kor-kalbi",
+       "dusurucu-govde",
+       "hafif-disk",
+       "kusak-ucu"
+      ],
+      [
+       "sabir-tasi",
+       "ayaz-govde",
+       "alcak-disk",
+       "top-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "yetenekBitis",
+      "hizli"
+     ],
+     "odul": {
+      "altinYildiz": 150,
+      "cevherYildiz": {
+       "kademe": 5,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 5,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b5-07",
+     "tur": "dusman",
+     "konum": [
+      285,
+      140
+     ],
+     "komsu": [
+      "b5-08",
+      "b5-09"
+     ],
+     "zorluk": 4,
+     "botKip": "dayaniklilik",
+     "botSeviye": 3,
+     "takim": [
+      [
+       "simsek-goktasi",
+       "sivri-govde",
+       "hafif-disk",
+       "duz-uc"
+      ],
+      [
+       "kor-kalbi",
+       "dusurucu-govde",
+       "hafif-disk",
+       "kusak-ucu"
+      ],
+      [
+       "sabir-tasi",
+       "ayaz-govde",
+       "alcak-disk",
+       "top-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "ringOut",
+      "hizli"
+     ],
+     "odul": {
+      "altinYildiz": 150,
+      "cevherYildiz": {
+       "kademe": 5,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 5,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b5-08",
+     "tur": "maden",
+     "konum": [
+      335,
+      80
+     ],
+     "komsu": [
+      "b5-10"
+     ],
+     "kademe": 6,
+     "kapasite": 6,
+     "nadir": {
+      "kademe": 7,
+      "olasilik": 0.1
+     }
+    },
+    {
+     "id": "b5-09",
+     "tur": "dusman",
+     "konum": [
+      345,
+      188
+     ],
+     "komsu": [
+      "b5-10"
+     ],
+     "zorluk": 5,
+     "botKip": "dayaniklilik",
+     "botSeviye": 3,
+     "takim": [
+      [
+       "simsek-goktasi",
+       "sivri-govde",
+       "hafif-disk",
+       "duz-uc"
+      ],
+      [
+       "kor-kalbi",
+       "dusurucu-govde",
+       "hafif-disk",
+       "kusak-ucu"
+      ],
+      [
+       "sabir-tasi",
+       "ayaz-govde",
+       "alcak-disk",
+       "top-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "ringOut",
+      "temiz"
+     ],
+     "odul": {
+      "altinYildiz": 150,
+      "cevherYildiz": {
+       "kademe": 5,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 5,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b5-10",
+     "tur": "sandik",
+     "konum": [
+      392,
+      140
+     ],
+     "komsu": [
+      "b5-11"
+     ],
+     "odul": {
+      "altin": 750,
+      "cevher": {
+       "kademe": 5,
+       "adet": 6
+      }
+     }
+    },
+    {
+     "id": "b5-11",
+     "tur": "patron",
+     "konum": [
+      440,
+      95
+     ],
+     "komsu": [
+      "b5-12"
+     ],
+     "sonrakiBolge": "dip-magaralari",
+     "zorluk": 5,
+     "botKip": "dayaniklilik",
+     "botSeviye": 3,
+     "takim": [
+      [
+       "simsek-goktasi",
+       "sivri-govde",
+       "hafif-disk",
+       "duz-uc"
+      ],
+      [
+       "kor-kalbi",
+       "dusurucu-govde",
+       "hafif-disk",
+       "kusak-ucu"
+      ],
+      [
+       "sabir-tasi",
+       "ayaz-govde",
+       "alcak-disk",
+       "top-uc"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "ringOut",
+      "temiz"
+     ],
+     "odul": {
+      "altinIlk": 1500,
+      "kulceIlk": {
+       "kademe": 6,
+       "adet": 3
+      },
+      "cevherYildiz": {
+       "kademe": 6,
+       "adet": 2
+      },
+      "altinYildiz": 300,
+      "tekrar": {
+       "cevher": {
+        "kademe": 6,
+        "adet": 2
+       }
+      }
+     },
+     "ad": "ÇAKIM USTASI"
+    },
+    {
+     "id": "b5-12",
+     "tur": "maden",
+     "konum": [
+      440,
+      188
+     ],
+     "komsu": [],
+     "kademe": 6,
+     "kapasite": 8,
+     "nadir": {
+      "kademe": 7,
+      "olasilik": 0.15
+     }
+    }
+   ]
+  },
+  {
+   "id": "dip-magaralari",
+   "no": 6,
+   "ad": "DİP MAĞARALARI",
+   "element": "girdap",
+   "ilkSurum": false,
+   "dugumler": [
+    {
+     "id": "b6-01",
+     "tur": "dusman",
+     "konum": [
+      40,
+      188
+     ],
+     "komsu": [
+      "b6-02"
+     ],
+     "zorluk": 4,
+     "botKip": "dayaniklilik",
+     "botSeviye": 3,
+     "takim": [
+      [
+       "girdap-maden",
+       "halka-govde",
+       "parlak-disk",
+       "top-uc"
+      ],
+      [
+       "sabir-tasi",
+       "ayaz-govde",
+       "alcak-disk",
+       "top-uc"
+      ],
+      [
+       "kor-kalbi",
+       "dusurucu-govde",
+       "hafif-disk",
+       "kusak-ucu"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "temiz",
+      "hizli"
+     ],
+     "odul": {
+      "altinYildiz": 175,
+      "cevherYildiz": {
+       "kademe": 6,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 6,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b6-02",
+     "tur": "maden",
+     "konum": [
+      92,
+      160
+     ],
+     "komsu": [
+      "b6-03",
+      "b6-04"
+     ],
+     "kademe": 6,
+     "kapasite": 6,
+     "nadir": {
+      "kademe": 7,
+      "olasilik": 0.1
+     }
+    },
+    {
+     "id": "b6-03",
+     "tur": "dusman",
+     "konum": [
+      150,
+      110
+     ],
+     "komsu": [
+      "b6-05"
+     ],
+     "zorluk": 4,
+     "botKip": "dayaniklilik",
+     "botSeviye": 3,
+     "takim": [
+      [
+       "girdap-maden",
+       "halka-govde",
+       "parlak-disk",
+       "top-uc"
+      ],
+      [
+       "sabir-tasi",
+       "ayaz-govde",
+       "alcak-disk",
+       "top-uc"
+      ],
+      [
+       "kor-kalbi",
+       "dusurucu-govde",
+       "hafif-disk",
+       "kusak-ucu"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "yetenekBitis",
+      "hizli"
+     ],
+     "odul": {
+      "altinYildiz": 175,
+      "cevherYildiz": {
+       "kademe": 6,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 6,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b6-04",
+     "tur": "sandik",
+     "konum": [
+      160,
+      190
+     ],
+     "komsu": [
+      "b6-06"
+     ],
+     "odul": {
+      "altin": 900,
+      "cevher": {
+       "kademe": 6,
+       "adet": 6
+      }
+     }
+    },
+    {
+     "id": "b6-05",
+     "tur": "maden",
+     "konum": [
+      215,
+      80
+     ],
+     "komsu": [
+      "b6-07"
+     ],
+     "kademe": 6,
+     "kapasite": 6,
+     "nadir": {
+      "kademe": 7,
+      "olasilik": 0.1
+     }
+    },
+    {
+     "id": "b6-06",
+     "tur": "dusman",
+     "konum": [
+      228,
+      180
+     ],
+     "komsu": [
+      "b6-07"
+     ],
+     "zorluk": 4,
+     "botKip": "dayaniklilik",
+     "botSeviye": 3,
+     "takim": [
+      [
+       "girdap-maden",
+       "halka-govde",
+       "parlak-disk",
+       "top-uc"
+      ],
+      [
+       "sabir-tasi",
+       "ayaz-govde",
+       "alcak-disk",
+       "top-uc"
+      ],
+      [
+       "kor-kalbi",
+       "dusurucu-govde",
+       "hafif-disk",
+       "kusak-ucu"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "ringOut",
+      "hizli"
+     ],
+     "odul": {
+      "altinYildiz": 175,
+      "cevherYildiz": {
+       "kademe": 6,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 6,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b6-07",
+     "tur": "dusman",
+     "konum": [
+      285,
+      140
+     ],
+     "komsu": [
+      "b6-08",
+      "b6-09"
+     ],
+     "zorluk": 5,
+     "botKip": "dayaniklilik",
+     "botSeviye": 3,
+     "takim": [
+      [
+       "girdap-maden",
+       "halka-govde",
+       "parlak-disk",
+       "top-uc"
+      ],
+      [
+       "sabir-tasi",
+       "ayaz-govde",
+       "alcak-disk",
+       "top-uc"
+      ],
+      [
+       "kor-kalbi",
+       "dusurucu-govde",
+       "hafif-disk",
+       "kusak-ucu"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "ringOut",
+      "temiz"
+     ],
+     "odul": {
+      "altinYildiz": 175,
+      "cevherYildiz": {
+       "kademe": 6,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 6,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b6-08",
+     "tur": "maden",
+     "konum": [
+      335,
+      80
+     ],
+     "komsu": [
+      "b6-10"
+     ],
+     "kademe": 7,
+     "kapasite": 6,
+     "nadir": {
+      "kademe": 8,
+      "olasilik": 0.1
+     }
+    },
+    {
+     "id": "b6-09",
+     "tur": "dusman",
+     "konum": [
+      345,
+      188
+     ],
+     "komsu": [
+      "b6-10"
+     ],
+     "zorluk": 5,
+     "botKip": "dayaniklilik",
+     "botSeviye": 3,
+     "takim": [
+      [
+       "girdap-maden",
+       "halka-govde",
+       "parlak-disk",
+       "top-uc"
+      ],
+      [
+       "sabir-tasi",
+       "ayaz-govde",
+       "alcak-disk",
+       "top-uc"
+      ],
+      [
+       "kor-kalbi",
+       "dusurucu-govde",
+       "hafif-disk",
+       "kusak-ucu"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "durma",
+      "hizli"
+     ],
+     "odul": {
+      "altinYildiz": 175,
+      "cevherYildiz": {
+       "kademe": 6,
+       "adet": 2
+      },
+      "tekrar": {
+       "cevher": {
+        "kademe": 6,
+        "adet": 2
+       }
+      }
+     }
+    },
+    {
+     "id": "b6-10",
+     "tur": "sandik",
+     "konum": [
+      392,
+      140
+     ],
+     "komsu": [
+      "b6-11"
+     ],
+     "odul": {
+      "altin": 900,
+      "cevher": {
+       "kademe": 6,
+       "adet": 6
+      }
+     }
+    },
+    {
+     "id": "b6-11",
+     "tur": "patron",
+     "konum": [
+      440,
+      95
+     ],
+     "komsu": [
+      "b6-12"
+     ],
+     "zorluk": 5,
+     "botKip": "dayaniklilik",
+     "botSeviye": 3,
+     "takim": [
+      [
+       "girdap-maden",
+       "halka-govde",
+       "parlak-disk",
+       "top-uc"
+      ],
+      [
+       "sabir-tasi",
+       "ayaz-govde",
+       "alcak-disk",
+       "top-uc"
+      ],
+      [
+       "kor-kalbi",
+       "dusurucu-govde",
+       "hafif-disk",
+       "kusak-ucu"
+      ]
+     ],
+     "yildiz": [
+      "kazan",
+      "durma",
+      "hizli"
+     ],
+     "odul": {
+      "altinIlk": 1750,
+      "kulceIlk": {
+       "kademe": 7,
+       "adet": 3
+      },
+      "cevherYildiz": {
+       "kademe": 7,
+       "adet": 2
+      },
+      "altinYildiz": 350,
+      "tekrar": {
+       "cevher": {
+        "kademe": 7,
+        "adet": 2
+       }
+      }
+     },
+     "ad": "DİP USTASI"
+    },
+    {
+     "id": "b6-12",
+     "tur": "maden",
+     "konum": [
+      440,
+      188
+     ],
+     "komsu": [],
+     "kademe": 7,
+     "kapasite": 8,
+     "nadir": {
+      "kademe": 8,
+      "olasilik": 0.35
+     }
+    }
+   ]
+  }
+ ]
+}
