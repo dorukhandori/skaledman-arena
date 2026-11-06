@@ -31,6 +31,8 @@ import { parca3bIkonEl } from "./pikselTopac.ts";
 import { ikonlariYukselt } from "../atolye3d/ikonOnbellek.ts";
 import { DokunmatikKontrol } from "../oyun/DokunmatikKontrol.ts";
 import { yuvaYetenegi } from "../../paylasilan/sim/yetenek.ts";
+import { DURUM } from "../../paylasilan/kurallar/harita.ts";
+import { ipucuBas, ipucuSec } from "../bilgic/haritaIpucu.ts";
 import { dokunmatikMi } from "../mobil/cihaz.ts";
 import { tamEkranDegistir, tamEkranVar, uyanikTut } from "../mobil/kabuk.ts";
 
@@ -158,6 +160,7 @@ html[data-dokunmatik] .ms .oduller { height:164px; }
 .ms .hrt .yz.dolu { color:var(--gold, #fcd35a); }
 .ms .hrt .yz.yeni { text-decoration:underline; }
 .ms .hrt .hodul { color:var(--ink, #fff); }
+.ms .hrt .hipucu { color:var(--turuncu, #e8762f); }
 .ms .hrt .hasama, .ms .hrt .hacilan { color:var(--turuncu, #e8762f); text-transform:uppercase; }
 `;
 
@@ -1132,6 +1135,8 @@ export class MacEkrani {
     for (const c of h.cevher) parcalar.push(`+${c.adet} ${KADEME_AD[c.kademe - 1]!.toUpperCase()}`);
     for (const c of h.kulce) parcalar.push(`+${c.adet} ${KADEME_AD[c.kademe - 1]!.toUpperCase()} KÜLÇESİ`);
     if (h.rozetAltini) parcalar.push(`ROZET +${h.rozetAltini} ALTIN`);
+    // ilk eksik yıldızlı galibiyet (TEMİZLE'ye ulaşmış, yıldızların hepsi değil): Pergel bir kez
+    if (!h.gecersiz && h.asama >= DURUM.temizle && h.sartlar.some((_, i) => (h.yildiz & (1 << i)) === 0)) ipucuBas(hp, "hipucu", ipucuSec((this.b.ben?.girisli ? this.b.ben.oyuncu.id : null), "yildiz-sart"));
     el("div", "hodul", hp, h.gecersiz ? (BASARIM_SAYILMADI[h.gecersiz] ?? "Bu maç sayılmadı.") : parcalar.length ? parcalar.join(" · ") : "Bu maçta ödül yok.");
     const as = ["", "", "KEŞFET", "TEMİZLE", "USTALAŞ"];
     if (h.asama > h.asamaOnce) el("div", "hasama", hp, `DÜĞÜM: ${as[h.asama] ?? ""}`);

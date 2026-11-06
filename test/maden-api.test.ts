@@ -181,3 +181,22 @@ describe("H-H6: isabet halkası gecikmede adil (N3: 150 ms tek yön + 20 ms jitt
     expect(sahteKabul).toBe(0);
   });
 });
+
+describe("A7 telemetri raporu (insan incelemesi; otomatik ceza yok)", () => {
+  it("mükemmel isabet + sabit ritim raporlanır; insan benzeri ritim raporlanmaz", async () => {
+    const { madenSupheliRaporu } = await import("../src/sunucu/oyuncu/madenRapor.ts");
+    const d = yeni();
+    const yaz = (oyuncu: number, isabet: (i: number) => number, aralik: (i: number) => number) => {
+      const sid = `00000000-0000-4000-8000-${String(oyuncu).padStart(12, "0")}`;
+      d.seansAc({ id: sid, oyuncu_id: oyuncu, dugum_id: "b1-02", gun: 100, baslangic: T0, vurus_bas: T0, faz_ms: 0, sira: 0, kapasite: 8, nadir_sira: null });
+      for (let i = 0; i < 24; i++) d.vurusYaz({ seans_id: sid, sira: i, kademe: 1, basari: 1, isabet: isabet(i), isabet_ms: 700, sunucu_ms: aralik(i), verim: 3, tecrube: 1000, zaman: T0 + i * 800 });
+    };
+    const bot = kur(d);
+    const insan = kur(d);
+    yaz(bot, () => 1, (i) => 800 + (i % 2 ? 3 : -3));
+    yaz(insan, (i) => (i % 3 ? 1 : 0), (i) => 750 + ((i * 97) % 400));
+    const r = madenSupheliRaporu(d, T0 - 1);
+    expect(r.map((x) => x.oyuncuId)).toStrictEqual([bot]);
+    expect(r[0]).toMatchObject({ vurus: 24, isabetOrani: 1, aralikOrtMs: 800 });
+  });
+});

@@ -113,7 +113,7 @@ export const GirdiSema = schema({
 
 
 // ---- D8 seyirci odası (ux § 5): oyuncu oturum kimliği, ack, bilet yok; yalnız görünüm ----
-export interface IzleOyuncuS { ad: string; takimId: string; bagli: boolean; bot: boolean }
+export interface IzleOyuncuS { ad: string; takimId: string; bagli: boolean; bot: boolean; malzeme: string }
 export interface IzleS {
   faz: number; kod: string; macNo: number; dunyaVar: boolean; seyirci: number; kopan: number; donma: number; donmaKalan: number;
   sonVar: boolean; sonPuan0: number; sonPuan1: number; sonAd0: string; sonAd1: string; sonKazanan: number;
@@ -124,6 +124,8 @@ export const IzleOyuncuSema = schema({
   takimId: t.string().default(""),
   bagli: t.boolean().default(false),
   bot: t.boolean().default(false),
+  /** kozmetik malzeme kodu (12 hane; oyuncu şemasıyla aynı, güç etkisi yok) */
+  malzeme: t.string().default(""),
 } as any, "IzleOyuncu") as unknown as Sinif<IzleOyuncuS>;
 export const IzleSema = schema({
   /** ODA_FAZI; yayına bağlı oda yoksa bekliyor (0) ve `kod` boş */

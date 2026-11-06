@@ -91,6 +91,7 @@ export class IzleOdasi extends Room<{ state: IzleS }> implements IzleHedefi {
         if (h.takimId !== p.takimId) h.takimId = p.takimId;
         if (h.bagli !== p.bagli) h.bagli = p.bagli;
         if (h.bot !== p.bot) h.bot = p.bot;
+        if (h.malzeme !== p.malzeme) h.malzeme = p.malzeme;
       });
       if (g.dunya) dunyayiYaz(s.dunya, g.dunya);
       s.dunyaVar = !!g.dunya;

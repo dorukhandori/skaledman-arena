@@ -1,7 +1,9 @@
 import { MADENLER } from "../../paylasilan/veri/harita.ts";
 import { BANT_METNI, type BantEtiketi } from "../../paylasilan/kurallar/ustalik.ts";
 import type { EkranBaglami } from "../main.ts";
-import { apiGet, apiPost, git, oku, sakla } from "../hesap.ts";
+import { apiGet, apiPost, git } from "../hesap.ts";
+import { type Ipucu } from "../bilgic/ipuclari.ts";
+import { ipucuBas, ipucuSec } from "../bilgic/haritaIpucu.ts";
 import { cuzdanYaz, ekranKok, el } from "./arayuz.ts";
 import { Ses } from "../ses/Ses.ts";
 import { CEVHER_IKON, GORUNUM_IKON, USTALIK_IKON } from "./haritaVarlik.ts";
@@ -80,6 +82,8 @@ class OcakEkrani {
   private secim: Secim = { tur: "erit" };
   private sonuc: { metin: string; usta: boolean; parca?: UretilenG; gorunum?: string } | null = null;
   private mesaj = "";
+  /** bu ziyaretin Pergel ipucu (bir kez; 07 § 10) */
+  private ipucu: Ipucu | null | undefined;
   private mesgul = false;
 
   constructor(private b: EkranBaglami, private o: OcakG) {
@@ -118,7 +122,10 @@ class OcakEkrani {
     cubuk("⛏ MADENCİLİK", o.ustalik.madencilik).dataset["madencilik"] = String(o.ustalik.madencilik.seviye);
     cubuk("⚒ İŞLEME", o.ustalik.isleme).dataset["isleme"] = String(o.ustalik.isleme.seviye);
     el("span", "", u, `KOLEKSİYON ${o.koleksiyonDegeri}`);
-    if (!oku("devran.ocakIpucu.v1")) { el("div", "ipucu k-e16", kart, "Önce ERİT: cevher külçe olur. Sonra DÖV ya da parça ÜRET."); sakla("devran.ocakIpucu.v1", "1"); }
+    // ilk ziyaret: ERİT/DÖV; sonra seçili kademede alt kademe külçesi isteyen tarif görününce alaşım
+    const alasim = o.tarifler.some((t) => t.kademe === this.kademe && t.durum !== "gizli" && (t.girdi ?? []).some((x) => x.kademe < t.kademe));
+    if (!this.ipucu) this.ipucu = ipucuSec((this.b.ben?.girisli ? this.b.ben.oyuncu.id : null), "ocak-ilk", ...(alasim ? ["ocak-alasim" as const] : []));
+    ipucuBas(kart, "ipucu k-e16", this.ipucu);
     const g = el("div", "oc-govde", kart);
     // sol: cevher listesi
     const l = el("div", "oc-liste k-e16", g);

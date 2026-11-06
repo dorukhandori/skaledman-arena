@@ -127,7 +127,7 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
   private izleKaynagi = (): IzleGorunumu => {
     const s = this.state;
     const oyuncular: IzleGorunumu["oyuncular"] = [];
-    for (let i = 0; i < s.oyuncular.length; i++) { const p = s.oyuncular.at(i)!; oyuncular.push({ ad: p.ad, takimId: p.takimId, bagli: p.bagli, bot: p.bot }); }
+    for (let i = 0; i < s.oyuncular.length; i++) { const p = s.oyuncular.at(i)!; oyuncular.push({ ad: p.ad, takimId: p.takimId, bagli: p.bagli, bot: p.bot, malzeme: p.malzeme }); }
     return { faz: s.faz, kod: s.kod, macNo: s.macNo, kopan: s.kopan, donma: s.donma, donmaKalan: s.donmaKalan, oyuncular, dunya: s.dunyaVar && this.yon ? this.yon.dunya : null };
   };
 

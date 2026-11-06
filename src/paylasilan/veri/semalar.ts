@@ -190,7 +190,9 @@ export type Basarim = z.infer<typeof BasarimSema>;
 // Pergel ipucu kataloğu (docs/ux/bilgic-pergel.md § 4). `oncelik` küçük = önce; `hedef` gezinti ipucunun bağlı olduğu öğe.
 export const IpucuSema = z.object({
   id: z.string().regex(/^[a-z0-9-]{1,40}$/),
-  kosul: z.enum(["ilk-ziyaret", "takim-eksik", "odunc", "ruh-ozel", "ulti-kilit", "ulti-acik", "ring-out", "element-cark", "zitlik", "lab", "market-acildi", "stamina"]),
+  kosul: z.enum(["ilk-ziyaret", "takim-eksik", "odunc", "ruh-ozel", "ulti-kilit", "ulti-acik", "ring-out", "element-cark", "zitlik", "lab", "market-acildi", "stamina",
+    // harita / maden / ocak ekranlarının bir kezlik ipuçları (istemci/bilgic/haritaIpucu.ts; Atölye balonu seçmez)
+    "harita-ilk", "harita-dal", "yildiz-sart", "maden-ilk", "maden-ustalik", "maden-ogretmez", "ocak-ilk", "ocak-alasim"]),
   ifade: z.enum(["anlatiyor", "aslinda", "sevinc"]),
   metin: z.string().min(1).max(160),
   oncelik: z.number().int(),

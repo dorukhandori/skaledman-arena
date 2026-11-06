@@ -14,7 +14,7 @@ export interface IzleGorunumu {
   kopan: number;
   donma: number;
   donmaKalan: number;
-  oyuncular: { ad: string; takimId: string; bagli: boolean; bot: boolean }[];
+  oyuncular: { ad: string; takimId: string; bagli: boolean; bot: boolean; malzeme: string }[];
   dunya: Dunya | null;
 }
 

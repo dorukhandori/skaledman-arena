@@ -5,6 +5,8 @@ import type { EkranBaglami } from "../main.ts";
 import { BakimHatasi, apiGet, apiPost, git, oku, sakla } from "../hesap.ts";
 import { ELEMENT_RENK, renkCss } from "../oyun/renkler.ts";
 import { bakimKatmani, cuzdanYaz, ekranKok, el } from "./arayuz.ts";
+import { type Ipucu } from "../bilgic/ipuclari.ts";
+import { ipucuBas, ipucuSec } from "../bilgic/haritaIpucu.ts";
 import { CEVHER_IKON, DUGUM_IKON, KARAKTER_KARE, KILIT_IKON, type KarakterAnim, animKaresi, karakterSayfasi, kareKonumu } from "./haritaVarlik.ts";
 
 // Harita ekranı (docs/design/harita/07 § 2–3, 13): bölge başına sabit kamera düğüm haritası (480×270 mantıksal ızgara,
@@ -62,7 +64,6 @@ html[data-telefon] .hr .hr-plaka button, html[data-telefon] .hr .hr-serit button
 const TUR_HARF: Record<DugumG["tur"], string> = { dusman: "D", patron: "P", maden: "M", sandik: "S" };
 const TUR_AD: Record<DugumG["tur"], string> = { dusman: "DÜŞMAN", patron: "PATRON", maden: "MADEN", sandik: "SANDIK" };
 const ESKI_ASAMA = "devran.haritaAsama.v1";
-const ILK_IPUCU = "devran.haritaIpucu.v1";
 const BOLGE_ANAHTAR = "devran.haritaBolge.v1";
 const PROFIL_RENK = ["#f4cf47", "#e3350d", "#2fb8e8", "#7fe3a0", "#c58bff", "#f2a33a"];
 
@@ -106,6 +107,8 @@ class HaritaEkrani {
   private yuruyus: { yol: [number, number][]; bas: number; sure: number; bitis: () => void } | null = null;
   private miniProfil = false;
   private mesaj = "";
+  /** bu ziyaretin Pergel ipucu (bir kez; 07 § 10) */
+  private ipucu: Ipucu | null | undefined;
   private kutla: Set<string> = new Set();
 
   constructor(private b: EkranBaglami, private h: HaritaG) {
@@ -436,7 +439,12 @@ class HaritaEkrani {
     const sol = el("div", "sol", s);
     const sag = el("div", "sag", s);
     const ben = this.b.ben?.girisli ? this.b.ben : null;
-    if (!oku(ILK_IPUCU)) { el("div", "ipucu", sol, "Bota karşı oyna, cevher kaz: açık düğüme dokun."); sakla(ILK_IPUCU, "1"); }
+    if (this.ipucu === undefined) {
+      // dallanma: bölgede oynanmamış iki açık düğüm aynı anda
+      const dal = this.bolge.dugumler.filter((x) => x.durum === DURUM.acik && (x.tur === "dusman" || x.tur === "patron")).length >= 2;
+      this.ipucu = ipucuSec(ben?.oyuncu.id, "harita-ilk", ...(dal ? ["harita-dal" as const] : []));
+    }
+    ipucuBas(sol, "ipucu", this.ipucu);
     if (this.miniProfil && ben) {
       el("b", "", sol, `${ben.oyuncu.ad}${ben.oyuncu.arma ? ` · ${ben.oyuncu.arma.toUpperCase()}` : ""}`);
       el("div", "s2", sol, `⛏ ${ben.ustalik?.madencilik ?? 0} · ⚒ ${ben.ustalik?.isleme ?? 0} · ${this.bolge.ad} %${this.bolge.ilerleme.yuzde}`);
@@ -467,6 +475,7 @@ class HaritaEkrani {
       el("b", "", sol, `${d.ad ?? "MADEN"} · ${d.kademeAd} (${d.kademe}) · ${d.asama}${d.ustaDamar ? " · USTA DAMAR" : ""}`);
       const U = ben?.ustalik?.madencilik ?? 0;
       satir(U < (d.esik ?? 0) ? `USTALIK ${d.esik} GEREKİR` : `USTALIK ${U} · EŞİK ${d.esik}`);
+      if (U < (d.esik ?? 0) && !this.ipucu) { this.ipucu = ipucuSec(ben?.oyuncu.id, "maden-ustalik"); ipucuBas(sol, "ipucu", this.ipucu); }
       satir(`BUGÜN ${d.kalanVurus}/${d.kapasite} · BAŞARILI ${d.basariliVurus}/30`, "s3");
     } else {
       el("b", "", sol, `SANDIK · ${d.asama}`);

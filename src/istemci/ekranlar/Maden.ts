@@ -1,5 +1,7 @@
 import { MADENLER } from "../../paylasilan/veri/harita.ts";
 import { BANT_METNI, type BantEtiketi } from "../../paylasilan/kurallar/ustalik.ts";
+import { type Ipucu } from "../bilgic/ipuclari.ts";
+import { ipucuBas, ipucuSec } from "../bilgic/haritaIpucu.ts";
 import type { EkranBaglami } from "../main.ts";
 import { apiGet, apiPost, git, oku, sakla } from "../hesap.ts";
 import { ekranKok, el } from "./arayuz.ts";
@@ -41,6 +43,7 @@ const STIL = `
 @keyframes md-ucus { to { transform:translate(-50%, -40px); opacity:0; } }
 .mdn .md-alt { display:flex; justify-content:center; align-items:center; gap:calc(8 * var(--p)); margin-top:calc(4 * var(--p)); }
 .mdn .md-alt button.ana { min-width:calc(140 * var(--p)); min-height:max(64px, calc(32 * var(--p))); }
+.mdn .md-ipucu { color:var(--turuncu, #e8762f); max-width:calc(150 * var(--p)); }
 .mdn .md-bant { background:#3b2c0c; color:#f7d83a; padding:calc(2 * var(--p)) calc(6 * var(--p)); text-align:center; text-transform:uppercase; }
 .mdn .md-satir { text-transform:uppercase; color:var(--ink); }
 .mdn .md-satir.nadir { color:#fcd35a; }
@@ -75,6 +78,8 @@ class MadenEkrani {
   private ucuz: SVGCircleElement | null = null;
   private halkaAcik = oku(ISABET_HALKASI) !== "0";
   private bitti = false;
+  /** bu ziyaretin Pergel ipucu (bir kez; 07 § 4, § 10) */
+  private ipucu: Ipucu | null | undefined;
 
   constructor(private b: EkranBaglami, private dugum: string) {}
 
@@ -146,6 +151,7 @@ class MadenEkrani {
       ustalik: `USTALIK ${gerekli ?? ""} GEREKİR`, bitti: "BU DAMAR BUGÜN BİTTİ · 04:00'TE DOLAR", uzak: "ÖNCE DAMARA YÜRÜ", kilitli: "DAMAR KİLİTLİ", kapali: "HARİTA KAPALI", yok: "DAMAR YOK",
     };
     el("div", "md-satir", this.kart, m[h] ?? "BAĞLANTI YOK · TEKRAR DENE").setAttribute("role", "alert");
+    if (h === "ustalik") ipucuBas(this.kart, "md-satir md-ipucu", ipucuSec((this.b.ben?.girisli ? this.b.ben.oyuncu.id : null), "maden-ustalik"));
     const alt = el("div", "md-alt", this.kart);
     const d = el("button", "k-dugme ana", alt, "HARİTA");
     d.dataset["eylem"] = "harita";
@@ -165,6 +171,8 @@ class MadenEkrani {
     el("i", "", c).style.width = `${Math.round(s.ustalik.ilerleme * 100)}%`;
     el("div", "", p, BANT_METNI[s.ustalik.bant]);
     el("div", "", p, `BAŞARI %${Math.round(s.ustalik.basari * 100)}`);
+    if (!this.ipucu) this.ipucu = ipucuSec((this.b.ben?.girisli ? this.b.ben.oyuncu.id : null), "maden-ilk", ...(s.ustalik.bant === "ogretmez" ? ["maden-ogretmez" as const] : []));
+    ipucuBas(p, "md-ipucu", this.ipucu);
     // orta: damar + halka
     const o = el("div", "md-orta", g);
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");

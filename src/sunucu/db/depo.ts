@@ -541,6 +541,12 @@ export class Depo {
     return n;
   }
 
+  /** A7 telemetri: `sonra` ms'den beri oyuncu × gün başına vuruş satırları (sunucu_ms = önceki vuruştan geçen süre). */
+  madenTelemetri(sonra: number): { oyuncu_id: number; gun: number; isabet: number; sunucu_ms: number; zaman: number }[] {
+    return this.db.prepare(`SELECT s.oyuncu_id, s.gun, v.isabet, v.sunucu_ms, v.zaman FROM maden_vurus v JOIN maden_seans s ON s.id = v.seans_id
+      WHERE v.zaman >= ? ORDER BY s.oyuncu_id, s.gun, v.zaman`).all(sonra) as { oyuncu_id: number; gun: number; isabet: number; sunucu_ms: number; zaman: number }[];
+  }
+
   islemeRef(ref: string): IslemeSatiri | null {
     return (this.db.prepare("SELECT * FROM isleme_defteri WHERE ref = ?").get(ref) as IslemeSatiri | undefined) ?? null;
   }

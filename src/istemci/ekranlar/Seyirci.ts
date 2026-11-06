@@ -114,7 +114,7 @@ class SeyirciEkrani {
     for (let i = 0; i < 2; i++) this.gorselYenile(d, i);
     this.hud?.yokEt();
     const s = this.ag.durum!;
-    this.hud = new SeyirciHud(this.b.ustYazi, [s.oyuncular.at(0)?.ad ?? "", s.oyuncular.at(1)?.ad ?? ""], this.ag.seviyeler);
+    this.hud = new SeyirciHud(this.b.ustYazi, [s.oyuncular.at(0)?.ad ?? "", s.oyuncular.at(1)?.ad ?? ""], this.ag.seviyeler, [s.oyuncular.at(0)?.malzeme ?? "", s.oyuncular.at(1)?.malzeme ?? ""]);
     this.b.ustYazi.appendChild(this.ust);
     this.onceki = d.topaclar.map((t) => ({ x: t.x, z: t.z }));
   }

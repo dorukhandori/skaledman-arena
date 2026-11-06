@@ -1,0 +1,30 @@
+{
+ "not": "Otomatik oynanış (oyuncu topacı paylaşılan bot ?oto=dolas). İnsan play pass değil.",
+ "hesap": "Harita wirvn",
+ "hazirlik": [
+  201,
+  200,
+  201,
+  200
+ ],
+ "erit": "3 KÜLÇE · 1 CÜRUF · AÇILDI: İlk Külçe",
+ "ilkParca": {
+  "metin": "DEMİR DÜZ UÇ · YAPAN: HARİTA WİRVN · NO. 0004 · 06.11.2026",
+  "sureSn": 5
+ },
+ "atolyeBicim": [
+  "K1"
+ ],
+ "market": {
+  "ucretsiz": true
+ },
+ "konsolHatalari": [],
+ "ekranlar": [
+  "docs/production/raporlar/ekran/HARITA-KUCUK-atolye-ocak-dugmesi.png",
+  "docs/production/raporlar/ekran/HARITA-KUCUK-ocak-ilk.png",
+  "docs/production/raporlar/ekran/HARITA-KUCUK-ocak-erit.png",
+  "docs/production/raporlar/ekran/HARITA-KUCUK-ocak-parca-uretildi.png",
+  "docs/production/raporlar/ekran/HARITA-KUCUK-atolye-bicim.png",
+  "docs/production/raporlar/ekran/HARITA-KUCUK-market-ucretsiz.png"
+ ]
+}

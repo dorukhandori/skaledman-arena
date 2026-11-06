@@ -4,6 +4,7 @@ import { MAC_ADIM } from "../../paylasilan/sim/mac.ts";
 import { staminaOrani } from "../../paylasilan/sim/topac.ts";
 import { TAKIM_ULTI_KART, elenmemisKart } from "../../paylasilan/sim/yetenek.ts";
 import { CEKIRDEKLER, DISKLER, GOVDELER, UCLAR } from "../../paylasilan/veri/katalog.ts";
+import { MADENLER } from "../../paylasilan/veri/harita.ts";
 import { YETENEK_SIM } from "../../paylasilan/veri/yetenekSablon.ts";
 import { elementSvg } from "./elementSimge.ts";
 import { BITIS_AD, catlakSvg, sinifOran } from "./MacHud.ts";
@@ -67,6 +68,8 @@ const STIL = `
 .sh .kart.aktif { height:36px; border:3px solid #f4cf47; padding:1px 5px; }
 .sh .kart.aktif .alt { display:block; padding-right:10px; }
 .sh .kart.aktif::after { content:"▲"; position:absolute; right:4px; bottom:1px; font-size:9px; color:#f4cf47; }
+/* harita kozmetiği: parça kartında 4 malzeme karesi [Çekirdek, Gövde, Disk, Uç]; tümü Market ise hiç yok */
+.sh .kart .mz { display:flex; gap:2px; flex:none; } .sh .kart .mz i { width:6px; height:6px; box-shadow:inset 0 0 0 1px #050d10; }
 .sh .kart.elendi { opacity:.45; } .sh .kart.elendi .ust span.ca { text-decoration:line-through; text-decoration-thickness:2px; }
 `;
 
@@ -99,7 +102,7 @@ export class SeyirciHud {
   /** son gösterilen bant metni (test) */
   bantMetni = "";
 
-  constructor(ust: HTMLElement, private adlar: [string, string], private seviyeler: [readonly number[] | null, readonly number[] | null]) {
+  constructor(ust: HTMLElement, private adlar: [string, string], private seviyeler: [readonly number[] | null, readonly number[] | null], malzemeler: [string, string] = ["", ""]) {
     this.stil.textContent = STIL;
     document.head.appendChild(this.stil);
     this.paneller = [this.panel("sol"), this.panel("sag")];
@@ -113,6 +116,12 @@ export class SeyirciHud {
         const ustS = el("div", "ust", kok);
         const ik = el("span", "", ustS);
         const ca = el("span", "ca", ustS);
+        const mz = (malzemeler[i] ?? "").slice(k * 4, k * 4 + 4);
+        if (/[1-8]/.test(mz)) {
+          const s = el("span", "mz", ustS);
+          s.dataset["malzeme"] = mz;
+          for (const c of mz) { const q = el("i", "", s); q.style.background = c === "0" ? "transparent" : MADENLER.find((m) => m.kademe === Number(c))?.renk.ana ?? "#888"; }
+        }
         const lv = el("span", "lv", ustS);
         const alt = el("div", "alt", kok);
         this.kartlar[i]!.push({ kok, ik, ca, lv, alt });

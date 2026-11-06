@@ -12,7 +12,7 @@ import { sunucuAdresi } from "./Baglanti.ts";
 // görüntülerinden 100 ms geriden ara değerlenir (rakip modeliyle aynı); geri kalan her şey son sunucu durumundan.
 // Olaylar anında (efekt/HUD/ses). Bağlantı düşerse 3 sn arayla yeniden katılır (seyircinin koltuğu yok).
 
-export interface IzleOyuncu { ad: string; takimId: string; bagli: boolean; bot: boolean }
+export interface IzleOyuncu { ad: string; takimId: string; bagli: boolean; bot: boolean; malzeme?: string }
 export interface IzleDurumu {
   faz: number; kod: string; macNo: number; dunyaVar: boolean; seyirci: number; kopan: number; donma: number; donmaKalan: number;
   sonVar: boolean; sonPuan0: number; sonPuan1: number; sonAd0: string; sonAd1: string; sonKazanan: number;

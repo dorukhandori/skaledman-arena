@@ -68,6 +68,9 @@ export function zitCiftVarMi(elementler: readonly string[]): boolean {
   return i.some((a) => i.includes((a + 3) % n));
 }
 
+/** Harita / Maden / Ocak ekranlarının kendi ipuçları (bilgic/haritaIpucu.ts); Atölye balonu hiç seçmez. */
+const EKRAN_IPUCU = /^(harita-|maden-|ocak-|yildiz-sart$)/;
+
 export function kosulSagli(kosul: Ipucu["kosul"], d: AtolyeDurumu): boolean {
   switch (kosul) {
     case "ilk-ziyaret": return d.ziyaret <= 1;
@@ -82,6 +85,9 @@ export function kosulSagli(kosul: Ipucu["kosul"], d: AtolyeDurumu): boolean {
     case "stamina": return d.ziyaret <= 3;
     case "lab": return d.labVar === true;
     case "ruh-ozel": return true;
+    // harita ekranlarının kendi ipuçları: Atölye Pergel balonu bunları seçmez
+    case "harita-ilk": case "harita-dal": case "yildiz-sart": case "maden-ilk": case "maden-ustalik":
+    case "maden-ogretmez": case "ocak-ilk": case "ocak-alasim": return false;
   }
 }
 
@@ -104,7 +110,7 @@ export function sorSec(liste: readonly Ipucu[], d: AtolyeDurumu, goruldu: Readon
   const uygun = liste.filter((x) => kosulSagli(x.kosul, d) && x.id !== hariç).sort(oncelikSirasi);
   const yeni = uygun.find((x) => !goruldu.has(x.id));
   if (yeni) return yeni;
-  const havuz = uygun.length ? uygun : liste.filter((x) => x.id !== hariç);
+  const havuz = uygun.length ? uygun : liste.filter((x) => x.id !== hariç && !EKRAN_IPUCU.test(x.kosul));
   if (!havuz.length) return null;
   return havuz[Math.min(havuz.length - 1, Math.floor(rastgele() * havuz.length))] ?? null;
 }

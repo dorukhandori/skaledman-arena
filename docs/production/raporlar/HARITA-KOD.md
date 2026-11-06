@@ -32,10 +32,15 @@
 - Harita/karakter yer tutucusu SVG (Pixi tuvali açılmadan).
 - Sezon 2 takımlarında yinelenen Çekirdek düzeltildi; dövme parça tariflerinin alaşım kademesi formüle göre düzeltildi.
 
+## Ek: küçük işler (sahip seçimi "Kalan küçük işler")
+- **Seyirci (OBS) malzeme rozetleri:** `IzleOyuncu.malzeme` (12 hane, oyuncu şemasıyla aynı) seyirci odasına yansır; `SeyirciHud` parça kartında 4 kare [Ç, G, D, U]. Tümü Market olan kartta rozet yok. Tarayıcıda doğrulandı (HUD modülü, kod `1200…` → yalnız ilk kartta 4 kare; sayfa hatası 0).
+- **Pergel ipuçları veriye taşındı:** `veri/ipuclari.json` +8 (`harita-ilk`, `harita-dal`, `yildiz-sart`, `maden-ilk`, `maden-ustalik`, `maden-ogretmez`, `ocak-ilk`, `ocak-alasim`; metinler 07 § 4/§ 10). `IpucuSema.kosul` genişledi. Ekranlar kendi ipucu satırında her birini **bir kez** gösterir (`bilgic/haritaIpucu.ts`; görülenler Pergel kaydına yazılır, Pergel "kapalı" ise hiç). Atölye balonu bunları seçmez (test). Eski `devran.haritaIpucu.v1` / `devran.ocakIpucu.v1` anahtarları kalktı (varsaydım: önceden görenler ipucunu bir kez daha görür, zararsız).
+- **A7 telemetri raporu:** `npm run maden:rapor` (yalnız okur, son 30 gün): bir günde ≥ 20 vuruş, isabet ≥ %98 ve vuruş aralığı sapması < 20 ms olan oyuncu-günleri. Otomatik ceza yok; insan incelemesi. Test: sabit ritimli bot raporlanır, insan benzeri ritim raporlanmaz.
+- Not: `h:akis` bu oturumda üç kez çalıştı; otomatik bot b1-01 maçını üçünde de kaybetti (değişiklikler geri alınmışken de), bu yüzden maden adımı koşmadı. Harita ve Ocak ipucu ekranları görüldü (`HARITA-KUCUK-harita-ilk.png`, `HARITA-KUCUK-ocak-ilk.png`), konsol hatası 0.
+
 ## Kalan işler
 - **Sanat hattı (10):** ikonlar, harita zeminleri, karakter atlası (BEKLE/YÜRÜ/KAZ/DÖVÜŞE GİR/KUTLA), damar/külçe, malzeme paletleri, arma/çerçeve görselleri; profilde dövülen arma gösterimi.
-- Seyirci (OBS) kartında malzeme rozetleri; maç HUD ad satırı odak metni.
-- Pergel ipuçlarının `veri/ipuclari.json`'a taşınması (şema koşul enum'u genişler).
-- A7 otomatik telemetri raporu (isabet ≥ %98 + düşük varyans).
+- **Sanat hattı (Mac):** kod ile çizilen yer tutucular (`npm run harita:asset`) Gemini/Tripo/Blender çıktılarıyla değişecek.
+- Maç HUD ad satırı odak metni.
 - H-H4 bot turnuvası (düğüm zorlukları) ve H-H5 (dövme parça bayrağı) ayrı dilimler; sezon 2 bölgeleri 4–6, K5–K8.
 - İnsan play pass (H-H7: ilk 5 dk, isabetin fark edilmesi).

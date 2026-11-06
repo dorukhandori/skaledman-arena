@@ -107,6 +107,78 @@
    "oncelik": 90,
    "otomatik": true,
    "hedef": null
+  },
+  {
+   "id": "harita-ilk",
+   "kosul": "harita-ilk",
+   "ifade": "anlatiyor",
+   "metin": "Noktaya dokun, alttaki düğmeye bas. **Yıldızlar** ek ödül verir.",
+   "oncelik": 110,
+   "otomatik": false,
+   "hedef": null
+  },
+  {
+   "id": "harita-dal",
+   "kosul": "harita-dal",
+   "ifade": "aslinda",
+   "metin": "İki yol da ileride buluşur. Diğerine sonra dönebilirsin.",
+   "oncelik": 111,
+   "otomatik": false,
+   "hedef": null
+  },
+  {
+   "id": "yildiz-sart",
+   "kosul": "yildiz-sart",
+   "ifade": "aslinda",
+   "metin": "Eksik yıldız için düğümü tekrar oyna; ödül bir kez daha gelir.",
+   "oncelik": 112,
+   "otomatik": false,
+   "hedef": null
+  },
+  {
+   "id": "maden-ilk",
+   "kosul": "maden-ilk",
+   "ifade": "anlatiyor",
+   "metin": "Işık bronz yaydayken bas: **İSABET** +1 cevher.",
+   "oncelik": 113,
+   "otomatik": false,
+   "hedef": null
+  },
+  {
+   "id": "maden-ustalik",
+   "kosul": "maden-ustalik",
+   "ifade": "aslinda",
+   "metin": "Damar kilitli mi? **Madencilik** yükselince açılır; ileri bölgelerdeki damarlar daha çok öğretir.",
+   "oncelik": 114,
+   "otomatik": false,
+   "hedef": null
+  },
+  {
+   "id": "maden-ogretmez",
+   "kosul": "maden-ogretmez",
+   "ifade": "aslinda",
+   "metin": "Bu damar artık sana bir şey öğretmiyor. Bir sonraki bölgeye bak.",
+   "oncelik": 115,
+   "otomatik": false,
+   "hedef": null
+  },
+  {
+   "id": "ocak-ilk",
+   "kosul": "ocak-ilk",
+   "ifade": "anlatiyor",
+   "metin": "Önce **ERİT**: cevher külçe olur. Sonra **DÖV** ya da parça **ÜRET**.",
+   "oncelik": 116,
+   "otomatik": false,
+   "hedef": null
+  },
+  {
+   "id": "ocak-alasim",
+   "kosul": "ocak-alasim",
+   "ifade": "aslinda",
+   "metin": "Her tarif bir **alt kademenin** külçesini de ister.",
+   "oncelik": 117,
+   "otomatik": false,
+   "hedef": null
   }
  ]
 }

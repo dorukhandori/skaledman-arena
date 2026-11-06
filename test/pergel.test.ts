@@ -6,7 +6,16 @@ const taban: AtolyeDurumu = { ziyaret: 5, takimEksik: 0, oduncVar: false, seviye
 const bos = new Set<string>();
 
 describe("Pergel ipucu seçimi", () => {
-  it("katalog zod'dan geçer ve 12 ipucu içerir", () => { expect(IPUCLARI.length).toBe(12); });
+  it("katalog zod'dan geçer ve 12 Atölye + 8 harita ipucu içerir", () => { expect(IPUCLARI.length).toBe(20); });
+  it("harita ipuçları Atölye balonunda hiç seçilmez (kendi ekranlarında bir kez)", () => {
+    const harita = IPUCLARI.filter((x) => x.id.startsWith("harita-") || x.id.startsWith("maden-") || x.id.startsWith("ocak-") || x.id === "yildiz-sart");
+    expect(harita.map((x) => x.id).sort()).toStrictEqual(["harita-dal", "harita-ilk", "maden-ilk", "maden-ogretmez", "maden-ustalik", "ocak-alasim", "ocak-ilk", "yildiz-sart"]);
+    for (const x of harita) expect(x.otomatik).toBe(false);
+    expect(sorSec(harita, { ...taban, ziyaret: 1 }, bos, () => 0)).toBeNull();
+    const hepsi = new Set(IPUCLARI.map((x) => x.id));
+    for (const r of [0, 0.5, 0.99]) expect(harita.map((x) => x.id)).not.toContain(sorSec(IPUCLARI, taban, hepsi, () => r)?.id);
+    expect(otomatikSec(IPUCLARI, { ...taban, ziyaret: 1 }, new Set(IPUCLARI.filter((x) => !harita.includes(x)).map((x) => x.id)))).toBeNull();
+  });
   it("ilk ziyarette ilk-ziyaret, ikincide (takım eksik) takim-eksik gelir; görülen bir daha gelmez", () => {
     const d1 = { ...taban, ziyaret: 1, takimEksik: 2 };
     expect(otomatikSec(IPUCLARI, d1, bos)?.id).toBe("ilk-ziyaret");
