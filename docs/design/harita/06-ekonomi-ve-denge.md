@@ -1,6 +1,7 @@
 # 06 · Ekonomi ve denge: kaynak/gider, sayılar, simülasyon, hipotezler
 
 **Şapka:** `@ledger` · **Bağlı:** [`02`](02-maden-sistemi.md), [`03`](03-atolye-isleme.md), [`04`](04-ustalik-sistemi.md), [`01`](01-harita-ve-dugumler.md) § 4–5. Mevcut ekonomi: `docs/design/tuning.md` § 14–17, ledger #14, #18, #25.
+**Güncelleme (2026-11-06, ikinci tur):** parça üretimi ve pahalı Market ([`12`](12-parca-uretimi-ve-market.md)), araştırma bulguları ([`11`](11-arastirma-craft-market-ilerleme.md)): başarı eğrisi fark 0–25'e yayıldı (eğim 0,018), 3 ardışık ıskadan sonra garanti başarı, 1–40 vuruş "DİNÇ VURUŞ" adıyla, 61+ vuruş cevher 0 / tecrübe ×0,1 (kilit yok; damar kapasitesi sert sınır), cila kalktı. Tablolar A–F yeniden koşuldu (fark ≤ 1 gün; ham çıktı `sim-cikti-*.md`); yeni Tablo G § 7.5.
 **Durum:** ilk tuning. Sayılar Monte Carlo ile **iç tutarlılık** için doğrulandı; insan verisiyle ölçülmedi (ledger "Kalan riskler" § 1 ile aynı uyarı).
 
 ## 1. Kaynak ve gider modeli
@@ -36,11 +37,11 @@ Yeni başarımlar ─► Altın (v1 toplam 6 600)
 |---|---|---|
 | Kademe eşikleri | 0 / 10 / 25 / 40 / 55 / 70 / 82 / 92 | 02 § 2 |
 | Verim (başarılı vuruş) | 3 / 3 / 2 / 2 / 2 / 1 / 1 / 1; isabet +1 | 02 § 2–3 |
-| Başarı | `sınırla(0,5 + 0,025·(U−E), 0,5, 0,95)` | 02 § 4 |
+| Başarı | `sınırla(0,5 + 0,018·(U−E), 0,5, 0,95)` (fark 25'te %95); 3 ardışık ıskadan sonra garanti | 02 § 4, 11 § 5 |
 | Tecrübe | kazı 10 / 5; eritme 4×oran; dövme 30/50/80/150; bant 1 / 0,5 / 0,1 (fark 0–14 / 15–29 / ≥30) | 04 § 3–4 |
 | Eğri | `adim(L) = yuvarla(20 + 1,2L + 0,03L²)`; 100'e 17 791 | 04 § 3 |
 | Damar | 6 vuruş (Derin 8); nadir yuva %10 (Derin %15; B6 Derin Devir %35) | 02 § 5 |
-| Günlük vuruş | 1–40 tam, 41–60 yarım, 61+ kapalı | 02 § 6 |
+| Günlük vuruş | 1–40 "dinç" tam, 41–60 yarım, 61+ cevher 0 + tecrübe ×0,1; düğüm başına ≤ 8 | 02 § 6, 11 § 5.1 |
 | Harita maçı | günde 10 sayılan maç (tekrar ödülü + başarım sayacı + Çekirdek XP) | 01 § 5 |
 | Düşman yıldızı (ilk) | Altın `50 + 25(n−1)` / yıldız; cevher K=n × 2 / yıldız | 01 § 4 |
 | Patron (ilk) | Altın `500 + 250(n−1)`; 3 külçe K=n+1; yıldız başı `100 + 50(n−1)` Altın + 2 cevher K=n+1 | 01 § 4 |
@@ -51,8 +52,8 @@ Yeni başarımlar ─► Altın (v1 toplam 6 600)
 | Usta işi | `sınırla((U − tarifEşik − 10)/100, 0, 0,25)` | 03 § 5 |
 
 **Harita tek seferlik Altın (ilk sürüm, bölge 1–3, tüm yıldızlar):** Bölge 1: 750 (düşman) + 800 (patron) + 300 (sandık) = **1 850**; Bölge 2: 1 125 + 1 200 + 600 = **2 925**; Bölge 3: 1 500 + 1 600 + 900 = **4 000**. Toplam **8 775** (mevcut 46 başarımın 22 100'ünün %40'ı).
-**Dövme Altın gideri:** ilk sürüm 11 tarif = **6 600**; tam (23 kozmetik) **24 800** + 6 dövme parça **9 000**.
-**Yeni başarım Altını:** ilk sürüm 16 başarım = **6 600** (05 § 2): harita başarımları dövme işçiliğini tam karşılar; maden döngüsü Altın ekonomisini net şişirmez.
+**Dövme Altın gideri:** ilk sürüm 8 kozmetik tarif = **3 000**; tam 16 kozmetik **10 800** + 6 dövme parça **9 000**. **Parça üretimi işçiliği** (12 § 2): 0 / 100 / 300 / 600 / 1 000 Altın (katman); 12 kilitli parça en düşük malzemeyle 6 600, her yeni biçim yine işçilik öder (sürekli gider).
+**Yeni başarım Altını:** ilk sürüm 22 başarım = **9 100** (05 § 2): kozmetik + kilitli parça işçiliği (3 000 + 6 600 = 9 600) ile dengede; maden döngüsü Altın ekonomisini net şişirmez. **Market SAPMA** (12 § 5): kilitsiz 15 parça 0, Standart ×5 (2 500), Nadir ×6 (12 000), Hizip ×8 (32 000), Karanlık ×8 (48 000; araştırma tavanı ×12 ve `T_market ≤ 75 gün` sınırı için ×8'de tutuldu).
 
 ## 4. Altın etkisi (T5)
 
@@ -172,6 +173,24 @@ Harita maçları hızlı maçın **günlük maç numarasına da sayılır** (aza
 3. **İlk sürüm içeriği aktif oyuncuda ≈ 13 gün** (Tablo F, cila-4 gün 13). Bu ilk sürüm için yeterli; R4 "artan cevher" riski sezon 2'ye kadar kabul (99 S-6).
 4. **Gündelik oyuncu Bölge 3'e 14 günde ulaşamıyor** (%7): kabul; harita bitirmek zorunlu değil. Sahip daha hızlı isterse ilk değiştirilecek kaldıraç düşman zorluğu (H-H4), Ustalık değil.
 5. **İşleme Madencilikten 1–2 gün önde** (Tablo B): eritme tecrübesi bol. Sorun değil: eritme cevher ister, cevher Madencilik ister; İşleme kendi başına koşamaz.
+
+### 7.5 Tablo G: craft ile Market (12 § 7)
+
+Kilit 8. günde açılır, birikimler sıfırlanır; Market tarafı o günden sonraki bütün Altını biriktirir (iyimser). p50 gün, 300 koşu, 60 gün ufku. Ham: [`sim-cikti-craft.md`](sim-cikti-craft.md).
+
+| Profil | Standart Çekirdek (2 500) | Nadir Gövde (12 000) | Hizip Gövde (32 000) | Karanlık Uç (48 000) |
+|---|---|---|---|---|
+| gündelik | 2 / 4 (×2) | 2 / 17 (×8,5) | 12 / > 53 | 48 / > 53 |
+| aktif | 1 / 3 (×3) | 2 / 13 (×6,5) | 3 / 33 (×11) | 20 / 49 (×2,5) |
+| tutkulu | 1 / 2 (×2) | 1 / 8 (×8) | 2 / 19 (×9,5) | 16 / 29 (×1,8) |
+
+**Okuma:** Nadir ve Hizip'te craft hedef bandında (×5–×11). Standart'ta iki yol da kısa (≤ 4 gün): fark önemsiz. Karanlık'ta craft, K4 (Kor) ve İşleme 60 eşiğine bağlı olduğundan ilerleme sınırlı (ilk sürümde Karanlık zaten K-10'a bağlı kapalı). Gündelik oyuncu için Hizip Market'i ≈ 64 gün (≤ 75 gün tavanı, 11 § 3). **Sınama (H-H8):** sim'de Nadir/Hizip için `T_market / T_craft ≥ 5` (aktif, tutkulu); hiçbir ilk sürüm parçasında aktif `T_market > 75 gün` olmaz.
+
+### 7.6 Ek hipotez
+| # | Hipotez | Kabul | Durum |
+|---|---|---|---|
+| **H-H8** | Craft ana yol, Market dürüst kısayol | Tablo G oranları; ilk craft ≤ 15 dk (e2e) | sim kısmı **geçti**; e2e açık (H7) |
+| **H-H9** | Prestij yeterli itki (araştırma § 9 riski) | 2. haftada aktif oyuncuların ≥ %30'u en az bir parça üretir (telemetri) | açık (insan) |
 
 ## 8. G-0 sınaması (bu belge)
 Ekonomide hiçbir akış maç gücüne çıkmaz. Altın'ın yeni kaynağı (harita, başarım) yeni gideriyle (dövme işçiliği) dengeli; Market parça fiyatları değişmez; Market kilitleri maden ürünüyle açılmaz.

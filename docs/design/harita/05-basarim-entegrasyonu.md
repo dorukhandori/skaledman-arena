@@ -4,7 +4,7 @@
 
 ## 1. İki yol
 1. **Mevcut başarımlar haritada ilerler** (sahibin isteği: "üzerinden bizim achievementları da ilerletebildiğimiz"): harita maçı yeni bir özet modu (`harita`) olur; başarım başına bir alan (`haritaZorlukMin`) hangi başarımın hangi zorluktaki düğümde sayıldığını söyler (§ 3).
-2. **Yeni başarımlar**: harita, maden ve Ocak için 23 başarım (16 ilk sürüm + 7 sezon 2), aynı JSON biçiminde (§ 2).
+2. **Yeni başarımlar**: harita, maden, Ocak ve parça üretimi için **29** başarım (22 ilk sürüm + 7 sezon 2), aynı JSON biçiminde (§ 2, § 2.3).
 
 Sekme sayısı **6'da kalır** (referans 05, sadelik § 2.4): yeni başarımlar mevcut **YOL**, **GÖSTERİ** ve gizli sekmelerine dağılır. Yedinci "HARİTA" sekmesi alternatifi 99 S-4'te.
 
@@ -36,8 +36,21 @@ Sekme sayısı **6'da kalır** (referans 05, sadelik § 2.4): yeni başarımlar 
 | 22 | `devir-tasi` | Devir Taşı | (gizli) | `cevherKazildi` | `{kademe: 8}` | 1 500 | — | ✔ | sezon 2 |
 | 23 | `tam-defter` | Tam Defter | Yol | `cevherCesidi` | 8 | 800 | — | | sezon 2 |
 
-**Ödül dengesi:** ilk sürüm 16 başarım = **6 600 Altın** (= ilk sürüm dövme işçiliği toplamı, 06 § 3); sezon 2 = 8 400. Zorluk etiketi mevcut kurala göre Altından türer (Kolay 100 · Orta 300 · Zor 800 · Efsane 1 500). Yeni başarımların hiçbiri Market parçası açmaz (G-6): yalnız Altın, görünüm ve "Ocak" özelliği.
+**Ödül dengesi:** yukarıdaki 16 ilk sürüm başarımı 6 600 Altın, parça üretimi başarımları 2 500 (§ 2.0); toplam **9 100**; sezon 2 = 8 400. Gider tarafı: kozmetik işçilik 3 000 + parça işçiliği (12 kilitli parça en düşük malzemeyle 6 600; tekrar biçimlerle sınırsız) (06 § 3). Zorluk etiketi mevcut kurala göre Altından türer (Kolay 100 · Orta 300 · Zor 800 · Efsane 1 500). Yeni başarımların hiçbiri Market parçası açmaz (G-6): yalnız Altın, görünüm ve "Ocak" özelliği.
 **Neden "Madenci 25 / 50"** ilk sürümde: Tablo A'ya göre aktif oyuncu 25'e 5. günde, 50'ye ≈ 14. günde ulaşır; ilk sürüm tavanında (K4) ulaşılabilir son anlamlı eşik 50'dir.
+
+### 2.0 Parça üretimi başarımları (güncelleme, 12 § 9)
+
+| # | Kimlik | Ad | Sekme | Olay (yeni) | Sayı / koşul | Altın | Açtığı |
+|---|---|---|---|---|---|---|---|
+| 24 | `ilk-parca` | İlk Parça | Yol | `parcaUret` | 1 | 100 | — |
+| 25 | `vitrin` | Vitrin | Yol | `vitrinDolu` | 3 yuva | 100 | — |
+| 26 | `tam-takim` | Tam Takım | Gösteri | `malzemeTopac` | bir topacın 4 parçası aynı kademede üretilmiş | 500 | — |
+| 27 | `malzeme-defteri` | Malzeme Defteri | Gösteri | `tanimKademeCesidi` | aynı parçanın 4 farklı kademede biçimi | 500 | — |
+| 28 | `usta-parca` | Usta Parça | Gösteri | `ustaIsi` `{tur: parca}` | 1 | 500 | — |
+| 29 | `degerli-koleksiyon` | Değerli Koleksiyon | Gösteri | `koleksiyonDegeri` | değer puanı 5 000 | 800 | görünüm `cerceve-koleksiyon` |
+
+İlk sürüm yeni başarım Altını: 6 600 + 2 500 = **9 100**. Hiçbiri parça vermez ya da kilit açmaz.
 
 ### 2.1 Taslak JSON (biçim `veri/basarimlar.json` ile birebir; ilk üç örnek, tamamı taslak dosyada)
 

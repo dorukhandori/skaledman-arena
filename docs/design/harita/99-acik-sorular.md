@@ -22,3 +22,10 @@
 | S-16 | Roadmap konumu | Kick'ten önce, ilk test gecesinden sonra (ekranlar); sunucu dilimleri test gecesi hazırlığıyla paralel | 09 § 4, roadmap |
 | S-17 | Bölge adları ve patron adları (OCAK USTASI…) | Taslak adlar; sahip onayı | harita.json |
 | S-18 | Cevher lore adları (Dağ Bakırı, Kırağı Gümüşü, Köz Demiri, Savruk Kuvars, Çakmak Taşı, Çevren İncisi, Devir Taşı) | Taslak; yalnız Dünya sayfası | madenler.json, 02 § 2 |
+| S-19 | Malzeme kademesi küçük yan-grade versin mi (ör. bir eksende ±%2)? | **Hayır**: güç eşit; kıymet = görünüm, ad, rozet, yapımcı imzası, seri no, vitrin, ses (12 § 1.1) | 12, 06 (bant testi gerekir), 08 (takım kodu) |
+| S-20 | Market fiyat çarpanı | Kilitsiz 15 parça 0; Standart ×5, Nadir ×6, Hizip ×8, Karanlık ×8 (araştırma aralığı ×4–×12, `T_market ≤ 75 gün`) | 12 § 5, 06 Tablo G, `market-fiyat.json` |
+| S-21 | Oyuncular arası takas / pazar | **Kapalı** (bot/RMT riski; değer tek oyunculu prestij) | 12 § 4, 08 |
+| S-22 | "Market'te hiç parça satma, yalnız craft" | **Hayır**: pahalı kısayol kalsın (gündelik oyuncunun Ustalığı yetmeyen parça için tek yolu) | 12 § 5.3 |
+| S-23 | Craft süresi / günlük sınır | Gerçek zamanlı bekleme yok; sınır yalnız günlük 40 dinç + 20 yarım vuruş; 61+ kilit değil, verimsiz | 02 § 6, 11 § 5.1 |
+| S-24 | Kullanılmayan dinç vuruş ertesi güne taşınsın mı (en çok 80)? | **Hayır** (S2 sadelik); araştırma "seyrek oyuncuyu korur" diyor | 02 § 6, 11 § 5.1 |
+| S-25 | Usta damgası çerçevesi Ustalık 82+, "USTA" mührü 100 (araştırma önerisi) | Evet, yalnız görünüm | 12 § 3, 10 |

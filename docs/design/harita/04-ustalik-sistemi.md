@@ -50,7 +50,8 @@ Sonuç: Madencilik ilk sürümde (tavan K4, eşik 40) fiilen ≈ 55–60'ta yava
 | Kazı, başarısız | 5 | bant × günlük |
 | Eritme partisi, başarılı | 4 × oran (4:1 → 16, 3:1 → 12) | bant (`U − E_K`) |
 | Eritme partisi, başarısız | yarısı | bant |
-| Dövme: arma / çerçeve / cila / parça | 30 / 50 / 80 / 150 | bant (`U − tarif eşiği`) |
+| Dövme: arma / çerçeve / dövme parça (yan-grade) | 30 / 50 / 150 | bant (`U − tarif eşiği`) |
+| Parça üretimi (12): Başlangıç / Standart / Nadir / Hizip / Karanlık | 20 / 40 / 70 / 110 / 160 | bant (`U − (E_K + katman eki)`); tekrarlanabilir (her üretim) |
 
 Eritme 3:1'e geçince parti başı tecrübe düşer (16 → 12) ama aynı cevherden daha çok külçe çıkar: usta "daha az öğrenir, daha çok üretir". Dövme tecrübesi her tarifte **bir kez** (tarifler tek seferlik ürünlerdir, 03 § 4); bu yüzden İşleme'nin ana kaynağı eritmedir.
 
@@ -76,18 +77,18 @@ Eritme 3:1'e geçince parti başı tecrübe düşer (16 → 12) ama aynı cevher
 
 Bu tablo 02, 03 ve 06 ile aynı olmalıdır (kaynak JSON'lar):
 
-| K | Cevher | Madencilik eşiği (kazı) | İşleme eşiği (eritme) | 3:1 eritme | Arma eşiği | Çerçeve eşiği | Cila eşiği | Dövme parça eşiği |
+| K | Cevher | Madencilik eşiği (kazı) | İşleme eşiği (eritme) | 3:1 eritme | Arma eşiği | Çerçeve eşiği | Parça üretimi eşiği (Başl. / Std. / Nadir / Hizip / Karanlık) | Dövme parça eşiği |
 |---|---|---|---|---|---|---|---|---|
-| 1 | Demir | 0 | 0 | 20 | 0 | 5 | — | — |
-| 2 | Kaya | 10 | 10 | 30 | 10 | 15 | 20 | 25 |
-| 3 | Don | 25 | 25 | 45 | 25 | 30 | 35 | 40 |
-| 4 | Kor | 40 | 40 | 60 | 40 | 45 | 50 | 55 |
-| 5 | Kasırga | 55 | 55 | 75 | 55 | 60 | 65 | 70 |
-| 6 | Şimşek | 70 | 70 | 90 | 70 | 75 | 80 | 85 |
-| 7 | Girdap | 82 | 82 | 102 (yok) | 82 | 87 | 92 | 97 |
-| 8 | Devir Taşı | 92 | 92 | 112 (yok) | 92 | 97 | 100 (kırpılmış) | — |
+| 1 | Demir | 0 | 0 | 20 | 0 | 5 | 0 / 5 / — / — / — | — |
+| 2 | Kaya | 10 | 10 | 30 | 10 | 15 | 10 / 15 / 20 / — / — | 25 |
+| 3 | Don | 25 | 25 | 45 | 25 | 30 | 25 / 30 / 35 / 40 / — | 40 |
+| 4 | Kor | 40 | 40 | 60 | 40 | 45 | 40 / 45 / 50 / 55 / 60 | 55 |
+| 5 | Kasırga | 55 | 55 | 75 | 55 | 60 | 55 / 60 / 65 / 70 / 75 | 70 |
+| 6 | Şimşek | 70 | 70 | 90 | 70 | 75 | 70 / 75 / 80 / 85 / 90 | 85 |
+| 7 | Girdap | 82 | 82 | 102 (yok) | 82 | 87 | 82 / 87 / 92 / 97 / 100 | 97 |
+| 8 | Devir Taşı | 92 | 92 | 112 (yok) | 92 | 97 | 92 / 97 / 100 / 100 / 100 | — |
 
-**Not (tutarlılık):** K7 ve K8'de 3:1 eritme ulaşılamaz (tavan 100): üst kademeler bilerek pahalı kalır. Tarif eşiği `min(100, E + ek)` ile kırpılır; Devir cilası 92 + 10 = 102 → **100** (`tarifler.json`'da öyle).
+**Not (tutarlılık):** K7 ve K8'de 3:1 eritme ulaşılamaz (tavan 100): üst kademeler bilerek pahalı kalır. Tarif eşiği `min(100, E + ek)` ile kırpılır (ör. Devir Taşı Hizip parça 92 + 15 → 100). Cila kalktı (12 § 3).
 
 ## 8. Zamanlama hedefleri (06 sim sonucu, p50 gün)
 
@@ -100,4 +101,4 @@ Bu tablo 02, 03 ve 06 ile aynı olmalıdır (kaynak JSON'lar):
 Hedef aralıklar (06 § 2) bu değerlerle karşılanıyor; ilk sürüm içeriği (K1–K4) aktif oyuncuda ≈ 10–13 günde biter, sezon 2 içeriği ≈ 2 ay sürer.
 
 ## 9. G-0 sınaması (bu belge)
-Ustalık yalnız (a) hangi damarın kazılacağını, (b) hangi cevherin eritileceğini, (c) hangi kozmetik tarifin yapılacağını belirler. Maç, Elo, eşleştirme, Enerji, XP, parça `katki` değerleri Ustalık okumaz; HUD ve lobi Ustalık göstermez.
+Ustalık yalnız (a) hangi damarın kazılacağını, (b) hangi cevherin eritileceğini, (c) hangi kozmetik tarifin ve hangi **malzeme biçiminde** parça üretileceğini belirler. Maç, Elo, eşleştirme, Enerji, XP, parça `katki` değerleri Ustalık okumaz; HUD ve lobi Ustalık göstermez.

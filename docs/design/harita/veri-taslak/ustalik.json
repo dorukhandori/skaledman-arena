@@ -131,7 +131,7 @@
  ],
  "basari": {
   "taban": 0.5,
-  "egim": 0.025,
+  "egim": 0.018,
   "tavan": 0.95
  },
  "madencilik": {
@@ -150,13 +150,22 @@
  "gunluk": {
   "vurusTam": 40,
   "vurusYarim": 60,
+  "tavanSonrasiTecrube": 0.1,
+  "tavanSonrasiCevher": 0,
+  "dugumGunlukTavan": 8,
   "haritaMaciSayilan": 10,
-  "gunBaslangicSaat": "04:00 TRT"
+  "gunBaslangicSaat": "04:00 TRT",
+  "ad": "DİNÇ VURUŞ"
  },
  "isabet": {
   "periyotMs": 1400,
   "pencereOran": 0.22,
   "toleransMs": 150,
   "verimEk": 1
- }
+ },
+ "sanssizlikKorumasi": {
+  "ardisikIska": 3,
+  "not": "3 ardışık ıskadan sonraki vuruş başarılı; sunucu sayacı, gösterilmez"
+ },
+ "vurusAraligiMs": 700
 }

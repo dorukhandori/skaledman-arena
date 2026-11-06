@@ -1,6 +1,6 @@
 {
  "surum": 1,
- "not": "Taslak: H1'de veri/basarimlar.json'a eklenir (46 + 23 = 69).",
+ "not": "Taslak: H5'te veri/basarimlar.json'a eklenir (46 + 29 = 75).",
  "basarimlar": [
   {
    "id": "ilk-adim",
@@ -417,6 +417,106 @@
    "acilanOzellik": [],
    "gizli": false,
    "ilkSurum": false
+  },
+  {
+   "id": "ilk-parca",
+   "ad": "İlk Parça",
+   "kategori": "yol",
+   "sart": {
+    "olay": "parcaUret",
+    "sayi": 1,
+    "kosul": {}
+   },
+   "odulAltin": 100,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "vitrin",
+   "ad": "Vitrin",
+   "kategori": "yol",
+   "sart": {
+    "olay": "vitrinDolu",
+    "sayi": 3,
+    "kosul": {}
+   },
+   "odulAltin": 100,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "tam-takim",
+   "ad": "Tam Takım",
+   "kategori": "gosteri",
+   "sart": {
+    "olay": "malzemeTopac",
+    "sayi": 1,
+    "kosul": {}
+   },
+   "odulAltin": 500,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "malzeme-defteri",
+   "ad": "Malzeme Defteri",
+   "kategori": "gosteri",
+   "sart": {
+    "olay": "tanimKademeCesidi",
+    "sayi": 4,
+    "kosul": {}
+   },
+   "odulAltin": 500,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "usta-parca",
+   "ad": "Usta Parça",
+   "kategori": "gosteri",
+   "sart": {
+    "olay": "ustaIsi",
+    "sayi": 1,
+    "kosul": {
+     "tur": "parca"
+    }
+   },
+   "odulAltin": 500,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "degerli-koleksiyon",
+   "ad": "Değerli Koleksiyon",
+   "kategori": "gosteri",
+   "sart": {
+    "olay": "koleksiyonDegeri",
+    "sayi": 5000,
+    "kosul": {}
+   },
+   "odulAltin": 800,
+   "acilanParcalar": [],
+   "acilanGorunum": [
+    "cerceve-koleksiyon"
+   ],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
   }
  ]
 }

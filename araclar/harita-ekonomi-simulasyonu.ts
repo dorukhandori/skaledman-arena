@@ -28,7 +28,8 @@ interface Tarif {
   id: string; tur: string; kademe: number; girdi: { kademe: number; kulce: number }[]; altin: number; esik: number;
   ilkSurum: boolean;
 }
-interface Tarifler { eritme: { oranTaban: number; oranUsta: number; ustaFarki: number; basarisizKayip: number }; ustaIsi: { farkTaban: number; bolen: number; tavan: number }; tarifler: Tarif[] }
+interface ParcaUretim { katmanMinKademe: Record<string, number>; katmanKulce: Record<string, number>; turCarpan: Record<string, number>; katmanIscilik: Record<string, number>; katmanEsikEk: Record<string, number>; xpParca: Record<string, number> }
+interface Tarifler { parcaUretim: ParcaUretim; marketFiyat: { yeni: Record<string, number>; eski: Record<string, number> }; eritme: { oranTaban: number; oranUsta: number; ustaFarki: number; basarisizKayip: number }; ustaIsi: { farkTaban: number; bolen: number; tavan: number }; tarifler: Tarif[] }
 interface Adet { kademe: number; adet: number }
 interface Dugum {
   id: string; tur: "dusman" | "maden" | "sandik" | "patron"; komsu: string[]; sonrakiBolge?: string;
@@ -92,12 +93,14 @@ const PROFILLER: Profil[] = [
   { ad: "bot çiftliği (sınırsız deneme)", mac: 60, vurus: 1000, isabet: 1.0, beceri: 0.8, digerAltin: 0, yildizBeceri: 0.8 },
 ];
 
-interface Ayar { azalan: boolean; tavan: boolean }
+interface Hedef { katman: string; tur: string; baslangic: number }
+interface Ayar { azalan: boolean; tavan: boolean; hedef?: Hedef }
 
 interface Sonuc {
   madenEsikGunu: Map<number, number>; islemeEsikGunu: Map<number, number>; bolgeGunu: Map<number, number>;
   ilkTarifGunu: Map<string, number>; Umaden: number; Uisleme: number; cevherToplam: number; kulceToplam: number;
   haritaAltin: number; dovmeAltin: number; xpMadenToplam: number; vurusToplam: number; macToplam: number;
+  craftGunu?: number; marketGunu?: number;
 }
 
 function kos(p: Profil, tohum: number, ayar: Ayar): Sonuc {
@@ -114,6 +117,8 @@ function kos(p: Profil, tohum: number, ayar: Ayar): Sonuc {
   const cevher = new Array<number>(9).fill(0);
   const kulce = new Array<number>(9).fill(0);
   const sahip = new Set<string>();
+  let altinKum = 0;
+  let iskaSerisi = 0;
   let xpM = 0, xpI = 0, altin = 0, haritaAltin = 0, dovmeAltin = 0, cevherToplam = 0, kulceToplam = 0, vurusToplam = 0, macToplam = 0;
   const s: Sonuc = {
     madenEsikGunu: new Map(), islemeEsikGunu: new Map(), bolgeGunu: new Map(), ilkTarifGunu: new Map(),
@@ -134,7 +139,7 @@ function kos(p: Profil, tohum: number, ayar: Ayar): Sonuc {
       const sonraki = bolgeNo.get(id)! + 1;
       if (dugum.has(ilkDugum(sonraki))) acik.add(ilkDugum(sonraki));
     }
-    if (d.tur === "sandik" && d.odul) { altin += d.odul.altin ?? 0; haritaAltin += d.odul.altin ?? 0; ekle(d.odul.cevher); }
+    if (d.tur === "sandik" && d.odul) { altin += d.odul.altin ?? 0; haritaAltin += d.odul.altin ?? 0; altinKum += d.odul.altin ?? 0; ekle(d.odul.cevher); }
   };
   // açılan maden ve sandıkları ziyaret et (maden: görülünce TAMAM; Ustalık ilerlemeyi kilitlemez)
   const ziyaret = (gun: number): void => {
@@ -149,7 +154,8 @@ function kos(p: Profil, tohum: number, ayar: Ayar): Sonuc {
   };
 
   for (let gun = 1; gun <= GUN; gun++) {
-    altin += p.digerAltin;
+    if (ayar.hedef && gun === ayar.hedef.baslangic) { altinKum = 0; altin = 0; cevher.fill(0); kulce.fill(0); }
+    altin += p.digerAltin; altinKum += p.digerAltin;
     // --- harita maçları ---
     let sayilan = 0;
     for (let m = 0; m < p.mac; m++) {
@@ -171,16 +177,16 @@ function kos(p: Profil, tohum: number, ayar: Ayar): Sonuc {
       if (tekrar) {
         sayilan++;
         const a = kazan ? 50 : 30;
-        altin += a; haritaAltin += a;
+        altin += a; haritaAltin += a; altinKum += a;
         if (kazan) ekle(d.odul?.tekrar?.cevher);
         continue;
       }
-      if (!kazan) { sayilan++; altin += 30; haritaAltin += 30; continue; }
+      if (!kazan) { sayilan++; altin += 30; haritaAltin += 30; altinKum += 30; continue; }
       let yildiz = 1;
       for (let y = 1; y < (d.yildiz?.length ?? 1); y++) if (r() < p.yildizBeceri) yildiz++;
       const o = d.odul ?? {};
       const a = (o.altinIlk ?? 0) + (o.altinYildiz ?? 0) * yildiz;
-      altin += a; haritaAltin += a;
+      altin += a; haritaAltin += a; altinKum += a;
       ekle(o.cevherYildiz, yildiz);
       if (o.kulceIlk) { kulce[Math.min(o.kulceIlk.kademe, kademeTavan)]! += o.kulceIlk.adet; kulceToplam += o.kulceIlk.adet; }
       tamamla(d.id, gun);
@@ -222,12 +228,14 @@ function kos(p: Profil, tohum: number, ayar: Ayar): Sonuc {
       const E = esik(kd);
       const b = bant(U - E);
       vurusToplam++;
-      if (r() < basariSansi(U, E)) {
+      if (iskaSerisi >= 3 || r() < basariSansi(U, E)) {
+        iskaSerisi = 0;
         const isabet = r() < p.isabet ? UST.isabet.verimEk : 0;
         const ver = Math.max(1, Math.floor((MADEN[kd - 1]!.verim + isabet) * carpan));
         cevher[kd]! += ver; cevherToplam += ver;
         xpM += UST.madencilik.xpBasari * b * carpan;
       } else {
+        iskaSerisi++;
         xpM += UST.madencilik.xpBasarisiz * b * carpan;
       }
     }
@@ -250,8 +258,23 @@ function kos(p: Profil, tohum: number, ayar: Ayar): Sonuc {
         }
       }
     }
+    // --- hedef parça (craft) ---
+    if (ayar.hedef && gun >= ayar.hedef.baslangic && s.craftGunu === undefined) {
+      const P = TAR.parcaUretim, h = ayar.hedef;
+      const gerek = Math.ceil(P.katmanKulce[h.katman]! * P.turCarpan[h.tur]!);
+      const U = seviye(xpI);
+      for (let k = P.katmanMinKademe[h.katman]!; k <= kademeTavan; k++) {
+        if (U >= esik(k) + P.katmanEsikEk[h.katman]! && kulce[k]! >= gerek && altin >= P.katmanIscilik[h.katman]!) {
+          kulce[k]! -= gerek; altin -= P.katmanIscilik[h.katman]!; s.craftGunu = gun - h.baslangic + 1;
+          xpI += P.xpParca[h.katman]! * bant(U - esik(k) - P.katmanEsikEk[h.katman]!);
+          break;
+        }
+      }
+    }
+    if (ayar.hedef && gun >= ayar.hedef.baslangic && s.marketGunu === undefined && altinKum >= TAR.marketFiyat.yeni[ayar.hedef.katman]!) s.marketGunu = gun - ayar.hedef.baslangic + 1;
     // --- dövme: en ucuz, sahip olunmayan, karşılanabilir tarif ---
     for (;;) {
+      if (ayar.hedef && gun >= ayar.hedef.baslangic && s.craftGunu === undefined) break;
       const U = seviye(xpI);
       const t = tarifler.filter((x) => !sahip.has(x.id) && U >= x.esik && x.altin <= altin && x.girdi.every((g) => kulce[g.kademe]! >= g.kulce))
         .sort((a, b) => a.altin - b.altin)[0];
@@ -352,6 +375,29 @@ for (const [ad, l] of sonuclar) {
     const g = l.map((s) => s.ilkTarifGunu.get(k));
     return g.filter((x) => x !== undefined).length < l.length / 2 ? "—" : String(yuzde(g.map((x) => x ?? 999), 0.5));
   }).join(" | ")} |`);
+}
+// ---------- Tablo G: craft ile Market (parça edinme günü) ----------
+const HEDEF_TURLER: Omit<Hedef, "baslangic">[] = [
+  { katman: "standart", tur: "cekirdek" }, { katman: "nadir", tur: "govde" }, { katman: "hizip", tur: "govde" }, { katman: "karanlik", tur: "uc" },
+];
+const BASLANGIC = Number(arg("hedefGun", SENARYO === "tam" ? "21" : "8"));
+yaz("");
+yaz(`**Tablo G: kilidi açılan bir parçayı edinme süresi (gün): craft ile / Market'ten** (p50; ${BASLANGIC}. günde kilit açılır ve birikim sıfırdan başlar; Market = o günden sonraki bütün Altın biriktirilirse; \`—\` = süre içinde yok)`);
+yaz("");
+yaz(`| Profil | ${HEDEF_TURLER.map((h) => `${h.katman} ${h.tur} (${TAR.marketFiyat.yeni[h.katman]} Altın)`).join(" | ")} |`);
+yaz(`|---|${HEDEF_TURLER.map(() => "---").join("|")}|`);
+for (const p of PROFILLER.slice(0, 3)) {
+  const hucre = HEDEF_TURLER.map((h0) => {
+    const h: Hedef = { ...h0, baslangic: BASLANGIC };
+    const l: Sonuc[] = [];
+    for (let i = 1; i <= Math.min(KOSU, 200); i++) l.push(kos(p, i * 104729 + h.katman.length, { azalan: true, tavan: true, hedef: h }));
+    const c = l.map((x) => x.craftGunu ?? 999), m = l.map((x) => x.marketGunu ?? 999);
+    const f = (v: number): string => (v >= 999 ? "—" : String(v));
+    const cp = yuzde(c, 0.5), mp = yuzde(m, 0.5);
+    const oranMetni = cp < 999 && mp < 999 ? ` (×${(mp / cp).toFixed(1)})` : mp >= 999 && cp < 999 ? ` (Market > ${GUN - BASLANGIC + 1} gün)` : "";
+    return `${f(cp)} / ${f(mp)}${oranMetni}`;
+  });
+  yaz(`| ${p.ad} | ${hucre.join(" | ")} |`);
 }
 const metin = satirlar.join("\n");
 console.log(metin);

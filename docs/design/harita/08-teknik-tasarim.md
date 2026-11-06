@@ -110,7 +110,17 @@ CREATE TABLE gorunum_sahip (
   edinme      INTEGER NOT NULL,
   PRIMARY KEY (oyuncu_id, gorunum_id)
 );
-ALTER TABLE parca ADD COLUMN cila TEXT;        -- NULL ya da kademe kimliği ('kaya'…)
+ALTER TABLE parca ADD COLUMN malzeme INTEGER;    -- NULL = Market biçimi, 1–8 = üretim kademesi (12)
+ALTER TABLE parca ADD COLUMN yapimci_id INTEGER;  -- üreten oyuncu (takas yok: = oyuncu_id)
+ALTER TABLE parca ADD COLUMN yapimci_ad TEXT;     -- üretim anındaki ad
+ALTER TABLE parca ADD COLUMN seri INTEGER;        -- (tanim, malzeme) başına sunucu geneli sıra
+ALTER TABLE parca ADD COLUMN uretim INTEGER;      -- ms
+ALTER TABLE parca ADD COLUMN usta INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE cekirdek ADD COLUMN malzeme INTEGER;  -- üretilmiş Çekirdek (aynı alanlar)
+ALTER TABLE cekirdek ADD COLUMN yapimci_ad TEXT;
+ALTER TABLE cekirdek ADD COLUMN seri INTEGER;
+CREATE TABLE seri_sayac (tanim_id TEXT NOT NULL, malzeme INTEGER NOT NULL, son INTEGER NOT NULL, PRIMARY KEY (tanim_id, malzeme));
+ALTER TABLE oyuncu ADD COLUMN vitrin TEXT;        -- JSON: en çok 3 parça örneği kimliği
 ALTER TABLE oyuncu ADD COLUMN cerceve TEXT;    -- profil çerçevesi (arma zaten var)
 ALTER TABLE mac ADD COLUMN dugum_id TEXT;
 ALTER TABLE mac ADD COLUMN yildiz INTEGER;     -- bu maçta kazanılan yıldız maskesi
@@ -134,7 +144,10 @@ CREATE INDEX mac_dugum ON mac(dugum_id);
 | `GET /api/ocak` | — | `{cevher:[8], kulce:[8], ustalik, tarifler[{id, tur, kademe, girdi, altin, esik, durum: acik·ustalik·eksik·sahip·gizli, ustaIsiSansi}], gorunumler[], cilalar[]}` |
 | `POST /api/ocak/erit` | `{kademe, parti: 1..20, ref}` | 200 `{sonuc:{kulce, curuf, geri}, cevher, kulce, ustalik, yeniBasarimlar}` · 409 `ustalik·yetersiz` · 200 aynı `ref` için önceki sonuç (idempotent) |
 | `POST /api/ocak/dov` | `{tarif, ref, yeniden?: boolean}` | 201 `{cikti, usta, bakiye, kulce, ustalik, yeniBasarimlar}` · 402 `altin` · 409 `ustalik·eksik·sahip·bayrak` |
-| `PATCH /api/parca/:id/cila` | `{cila: kimlik \| null}` | 200 · 403 `sahipDegil` (cila) · 404 · 400 `tur` (yalnız Gövde/Disk) |
+| `POST /api/ocak/parca` | `{tanim, kademe, ref}` | 201 `{parca:{id, tanim, malzeme, seri, yapimciAd, usta, deger}, bakiye, kulce, ustalik, yeniBasarimlar}` · 403 `kilitli` (Market kilidi) · 409 `ustalik·eksik·kademe` · 402 `altin` |
+| `POST /api/ocak/parca-erit` | `{parcaId, ref}` | 200 `{kulce}` · 409 `takimda·marketBicimi` |
+| `PATCH /api/vitrin` | `{parcalar: [id] (≤3)}` | 200 · 403 `sahipDegil` |
+| `GET /api/market` | (mevcut) | + ürün başına `craft:{kademe, kulce, iscilik, gun, tahmini, hazir, ustalikEksik}`; fiyat SAPMA ile `veri/parcalar.json` |
 | `POST /api/profil` | (mevcut) + `cerceve?` | 200 · 403 `sahipDegil` |
 | `GET /api/ben` | — | (mevcut) + `harita:{acik}`, `ocakAcik`, `ustalik:{madencilik, isleme}`, `cerceve` |
 
@@ -162,7 +175,8 @@ Veri testi (`test/harita-veri.test.ts`): her `komsu` var olan düğüm; her böl
 | `MOD` | `["oda", "hizli", "antrenman", "harita"]` |
 | `KatilmaSema` | `+ dugum: DugumKimlik.optional()`; `mod === "harita"` ise zorunlu (`superRefine`) |
 | `PROTOKOL_SURUMU` | **6 → 7** (mod enum'u ve katılma şeması değişti; eski istemci "sürüm" hatasıyla sayfayı yeniler) |
-| `KATALOG_OZETI` | `harita.json` ve diğer maden JSON'ları **girmez** (sim'i etkilemez). Dövme parçalar `parcalar.json`'a eklendiğinde (bayrak açılırken) özet doğal olarak değişir |
+| Malzeme (12 § 10) | Oda şemasında üye başına `malzeme` (4 × uint8, 0 = Market), takım kodu ve sim **değişmez**; seyirci aynı alanı okur. Hash testi: aynı tohum + farklı malzeme → aynı hash |
+| `KATALOG_OZETI` | `harita.json` ve diğer maden JSON'ları **girmez** (sim'i etkilemez). Market fiyat SAPMA'sı `parcalar.json` `fiyat` alanını değiştirir → özet **değişir** (fiyat alanı da JSON'da); bu yüzden H4'te ya fiyat ayrı dosyaya (`veri/market-fiyat.json`, özete girmez) taşınır ya da özet yalnız sim alanlarından hesaplanır. Varsayılan: **ayrı dosya** (eski istemci gereksiz yere reddedilmez). Dövme parçalar `parcalar.json`'a eklendiğinde (bayrak açılırken) özet doğal olarak değişir |
 | `MacOdasi` harita akışı | `onAuth`: bilet zorunlu (misafir yok). `onJoin`: sunucu `harita_dugum` durumunu okur; düğüm AÇIK ve DÜŞMAN/PATRON değilse 4110 `dugum`. Oda tek oyunculu: hızlı maçtaki bot yolu hemen (`botIste` beklemesi yok); `mac.bot = 1`, `mac.mod = "harita"`, `mac.dugum_id` |
 | `MacKurulumu` (sunucu, sim dışı) | `+ botKipleri?: [BotKipi \| null, BotKipi \| null]`; varsa `botKipi(i)` tip eşlemesi yerine onu döndürür. Bot takımı `harita.json` `takim` → mevcut `takimKoduYaz` (üye `seviye = botSeviye`) |
 | Maç sonu | `macSonuKaydet` dalı: mod `harita` → (a) `macAltini` yerine harita ödülü (01 § 4–5), (b) yıldız maskesi `harita.ts` `yildizlar(ozet, sartlar)`, (c) düğüm TAMAM + komşular AÇIK + patron → sonraki bölge, (d) `MacOzeti.mod = "harita"`, `dugumZorluk`, `haritaSayilan`, (e) Çekirdek XP hızlı maç tablosu (sayılansa), Yapay ömrü −1. Tek işlem, `mac.id` idempotent (mevcut) |
@@ -207,7 +221,7 @@ kaz(seans, sira, isabetMs):
 | `veri/ustalik.json` | `{surum, turler[], seviyeTavan, kumulatif[101], ogrenmeBandi[], basari{taban, egim, tavan}, madencilik{xpBasari, xpBasarisiz}, isleme{xpEritme, xpDovme{}}, gunluk{vurusTam, vurusYarim, haritaMaciSayilan}, isabet{periyotMs, pencereOran, toleransMs, verimEk}}` | [`veri-taslak/ustalik.json`](veri-taslak/ustalik.json) |
 | `veri/tarifler.json` | `{surum, eritme{oranTaban, oranUsta, ustaFarki, basarisizKayip}, ustaIsi{}, yenidenDov{}, tarifler[{id, tur: arma·cerceve·cila·parca, kademe, girdi[{kademe, kulce}], altin, esik, cikti{gorunum\|cila\|parca}, ilkSurum, bayrak?}]}` | [`veri-taslak/tarifler.json`](veri-taslak/tarifler.json) (29 tarif) |
 | `veri/harita.json` | `{surum, gun, bolgeler[{id, no, ad, element, ilkSurum, dugumler[Dugum]}]}` | [`veri-taslak/harita.json`](veri-taslak/harita.json) (6 bölge × 12 düğüm) |
-| `veri/basarimlar.json` | mevcut + 23 başarım + isteğe bağlı `haritaZorlukMin` alanı | [`veri-taslak/basarimlar-harita.json`](veri-taslak/basarimlar-harita.json), 05 § 3 tablosu |
+| `veri/basarimlar.json` | mevcut + 29 başarım + isteğe bağlı `haritaZorlukMin` alanı | [`veri-taslak/basarimlar-harita.json`](veri-taslak/basarimlar-harita.json), 05 § 3 tablosu |
 | `veri/parcalar.json` | `KatmanSema` + `"dovme"`; 3 dövme parça (bayrak kapalıyken katalogda değil: ayrı dosya `veri/parcalar-dovme.json`, bayrak açılınca birleştirilir) | 03 § 4.3 |
 | `veri/ipuclari.json` | 9 yeni ipucu (07 § 4, § 10) | |
 | tuning.md | § 22 "Harita, maden, işleme" (özet tablo + bu klasöre bağlantı) | |

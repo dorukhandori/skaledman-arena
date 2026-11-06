@@ -43,7 +43,7 @@ H1 veri + saf kurallar ──► H2 harita maçı (sunucu+oda) ──► H3 kaz�
 - **Bağımlılık:** H1 (H3 olmadan test verisiyle). **Risk:** düşük. **Büyüklük:** orta (≈ 1 tur).
 
 ### H5 · Başarımlar
-- **Kapsam:** 23 başarım `veri/basarimlar.json`'a; olay sözlüğü (05 § 2.2); `haritaZorlukMin` alanı ve `macKapisi` dalı; şart metinleri (`sartMetni`); maç dışı olay girişi; "AÇILDI" kartı verisi.
+- **Kapsam:** 29 başarım `veri/basarimlar.json`'a; olay sözlüğü (05 § 2.2); `haritaZorlukMin` alanı ve `macKapisi` dalı; şart metinleri (`sartMetni`); maç dışı olay girişi; "AÇILDI" kartı verisi.
 - **Kabul:** 05 § 3 tablosundaki her satır için "sayılır / sayılmaz" testi (zorluk 1'de yalnız `takim-ultisi`); yeni başarımların idempotent ödülü; `/api/basarimlar` 69 kayıt; sekme sayısı 6.
 - **Bağımlılık:** H2–H4. **Risk:** düşük. **Büyüklük:** küçük-orta.
 
@@ -67,8 +67,15 @@ H1 veri + saf kurallar ──► H2 harita maçı (sunucu+oda) ──► H3 kaz�
 - **Dövme parçaları bayrağı:** H-H5 bot turnuvası geçerse ayrı küçük dilim (veri taşıma + katalog özeti).
 - **Sezon 2:** bölge 4–6, K5–K8, 7 başarım (veri işi + sanat).
 
+## 2b. Güncelleme (2026-11-06, ikinci tur): parça üretimi, pahalı Market, araştırma ölçütleri
+- **H1** + `veri/market-fiyat.json` (SAPMA fiyatları; Market kodu fiyatı buradan okur), `parcaUretim` tablosu, göç 5'e `parca`/`cekirdek` malzeme alanları + `seri_sayac` + `oyuncu.vitrin`, takım kuralı "aynı tanım tek".
+- **H4** = Ocak + **parça üretimi** (`POST /api/ocak/parca`, `parca-erit`, `vitrin`) + Market `craft` alanı ("~N gün"); cila uçları yok.
+- **H2**: oda şemasında üye `malzeme` (kozmetik), `PROTOKOL_SURUMU` 7; hash testi (malzeme farkı → aynı hash).
+- **H7**: Ocak'ta PARÇA ızgarası, Atölye biçim yığını, Market craft satırı, Profil vitrini, maç/seyirci rozetleri.
+- **Araştırma sınama kriterleri** (11 § 10) dilimlere: 1, 15 → H4/H8 (sim + Market metni) · 2 → H4 (`market.test` tekdüzelik, kilitsiz 0) · 3 → H7 (ilk parça ≤ 15 dk e2e) · 4, 5, 6, 7, 8, 9, 10 → H3 (`maden.test`, `ustalik.test`; 0,7 sn ve düğüm başına 9. vuruş reddi) · 11 → H7 (dinç sayaç her zaman görünür; metin lint "ceza/yasak" yok) · 12 → H1/H4 (`harita-guc.test.ts`) · 13 → H4 (eşzamanlı 100 dövme, seri çakışmaz) · 14 → H2 (sandık içeriği sabit, olasılık yok).
+
 ## 3. Tahmini toplam
-H1–H8: **≈ 8–10 kodlama turu** (bir tur = birkaç saatlik ajan oturumu; varsayım, ölçüm değil). Veri + sunucu (H1–H5) ≈ 4–5 tur, ekranlar ve cila (H6–H8) ≈ 4–5 tur. Sanat hattı ayrı (10 § 6).
+H1–H8: **≈ 9–11 kodlama turu** (parça üretimi ve Market eki ≈ +1) (bir tur = birkaç saatlik ajan oturumu; varsayım, ölçüm değil). Veri + sunucu (H1–H5) ≈ 4–5 tur, ekranlar ve cila (H6–H8) ≈ 4–5 tur. Sanat hattı ayrı (10 § 6).
 
 ## 4. Roadmap konumu (öneri)
 **Kick'ten ÖNCE, ilk test gecesinden SONRA (ekranlar için).** Gerekçe: (1) Kick sahibin kararıyla askıda; Harita Kick'e bağlı değil (ad + şifre hesaplarıyla çalışır). (2) Harita hesap ister; test gecesi hesap akışını ve temel maç hissini doğrular, Harita o zemine kurulmalı. (3) H1–H5 (sunucu) test gecesi hazırlığıyla paralel yürüyebilir: farklı dosyalar. (4) Ekranlar menü P1 düzeltmelerinden sonra (aynı ekran dosyaları). Kick askıda kalır; sahip "Kick'e başla" derse Harita onunla çakışmaz (farklı modüller).

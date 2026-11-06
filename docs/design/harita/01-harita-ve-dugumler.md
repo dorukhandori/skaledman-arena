@@ -96,6 +96,8 @@ Maçlar arasında hiçbir şey taşınmaz (stamina, hasar, Yapay ömrü hariç):
 | SANDIK | `150·n` | 6 cevher K=n | tek sefer |
 | MADEN | — | 02 § 2–5 | |
 
+**Kademe → parça (12 § 2, § 9):** Bölge 1 Demir/Kaya ile Başlangıç, Standart ve Nadir parçalar; Bölge 2 Don ile Hizip; Bölge 3 Kor ile Karanlık parçalar üretilebilir hâle gelir.
+
 Bölge 1 tam yıldızla tek seferlik toplam: **1 850 Altın**, 42 Demir + 6 Kaya cevheri + 3 Kaya külçesi (06 § 3).
 
 ## 5. Tekrar oynanabilirlik ve yenilenme
@@ -118,7 +120,7 @@ Bölge 1 tam yıldızla tek seferlik toplam: **1 850 Altın**, 42 Demir + 6 Kaya
 | Günlük damar kullanımı, nadir yuva | Gün boyu; ertesi gün sıfır | `maden_gunluk` |
 | Cevher ve külçe | Evet | `cevher` |
 | Ustalık | Evet, sıfırlanmaz | `ustalik` |
-| Kozmetik ürünler, cila | Evet | `gorunum_sahip`, `parca.cila` |
+| Kozmetik ürünler, üretilmiş parçalar (malzeme, yapımcı, seri) | Evet | `gorunum_sahip`, `parca` (12 § 4) |
 | Açık kazı seansı | 5 dk; kopmada kaybolur (vuruşlar zaten yazılmıştır) | `maden_seans` |
 | Harita maçı | Normal maç satırı + `dugum_id` | `mac` |
 
@@ -148,7 +150,9 @@ Bölge 1 tam yıldızla tek seferlik toplam: **1 850 Altın**, 42 Demir + 6 Kaya
 | 3:45 | Haritaya dönüş: iki yol açık (03 DÜŞMAN, 04 SANDIK). SANDIK'a dokunur: AÇ → 150 Altın + 6 Demir | Dallanma |
 | 4:00–5:00 | Atölye › OCAK: Demir satırı "12 CEVHER", ana düğme **ERİT** → "3 KÜLÇE"; tek tarif görünür: "DEMİR ARMASI · 5 KÜLÇE · 100 ALTIN" (henüz 3 külçe: eksik gösterilir) | Ocak döngüsü; bir sonraki hedef |
 
-Ölçüt: ilk 5 dakikada bir galibiyet, bir kazı, bir eritme (H-H7).
+**5:00–15:00 (güncelleme, 12 § 8):** Ocak'ta tarif listesinin başında **DEMİR DÜZ UÇ · 3 KÜLÇE**; DÖV → "YAPAN: <ad> · NO. …" kartı → ATÖLYE'DE TAK. İlk üretilmiş parça; başarım "İlk Parça".
+
+Ölçüt: ilk 5 dakikada bir galibiyet, bir kazı, bir eritme (H-H7); ilk 15 dakikada ilk üretilmiş parça (H-H8).
 
 ## 9. Bölge 1 "Ocak Yamacı": düğüm tablosu
 

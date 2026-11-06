@@ -14,12 +14,14 @@
 | 02 | [`02-maden-sistemi.md`](02-maden-sistemi.md) | 8 kademe cevher, kazı etkileşimi, başarı formülü, günlük sınır, anti-bot |
 | 03 | [`03-atolye-isleme.md`](03-atolye-isleme.md) | Ocak: eritme → dövme, tarifler, Usta işi, arbitraj kapatma |
 | 04 | [`04-ustalik-sistemi.md`](04-ustalik-sistemi.md) | Madencilik ve İşleme Ustalığı (0–100), eğri, öğrenme bandı |
-| 05 | [`05-basarim-entegrasyonu.md`](05-basarim-entegrasyonu.md) | 23 yeni başarım (taslak JSON), mevcut 46'dan haritada sayılanlar |
+| 05 | [`05-basarim-entegrasyonu.md`](05-basarim-entegrasyonu.md) | 29 yeni başarım (taslak JSON), mevcut 46'dan haritada sayılanlar |
 | 06 | [`06-ekonomi-ve-denge.md`](06-ekonomi-ve-denge.md) | Kaynak/gider, Monte Carlo sonuçları, hipotezler H-H1…H-H7, güç yok kanıtı |
 | 07 | [`07-ux-ekranlar.md`](07-ux-ekranlar.md) | Harita, düğüm şeridi, Maden, Ocak, Sonuç eki, Ustalık; ASCII wireframe, mobil |
 | 08 | [`08-teknik-tasarim.md`](08-teknik-tasarim.md) | Sunucu modeli, göç 5, REST/Colyseus, zod, veri dosyaları, test, gizlilik |
 | 09 | [`09-uygulama-dilimleri.md`](09-uygulama-dilimleri.md) | H1…H8 kod dilimleri, kabul ölçütleri, sıra |
 | 10 | [`10-stil-ve-asset-plani.md`](10-stil-ve-asset-plani.md) | EN SONA bırakılan sanat ve ses planı (yalnız plan) |
+| 11 | [`11-arastirma-craft-market-ilerleme.md`](11-arastirma-craft-market-ilerleme.md) | İnternet araştırması: UO, OSRS, Albion, PoE, Warframe…; bulgu → karar tablosu |
+| 12 | [`12-parca-uretimi-ve-market.md`](12-parca-uretimi-ve-market.md) | **Madenden parça üretimi**, malzeme kademesi (kıymet = prestij), **pahalı Market** (SAPMA), arbitraj kanıtı |
 | 99 | [`99-acik-sorular.md`](99-acik-sorular.md) | Sahibe kalan kararlar, her birinin varsayılanı |
 | veri | [`veri-taslak/`](veri-taslak/) | `madenler.json`, `ustalik.json`, `tarifler.json`, `harita.json`: tek sayı kaynağı (H1'de `veri/`'ye taşınır) |
 | sim | `araclar/harita-ekonomi-simulasyonu.ts`, çıktılar [`sim-cikti-v1.md`](sim-cikti-v1.md), [`sim-cikti-tam.md`](sim-cikti-tam.md) | Sayıların Monte Carlo doğrulaması |
@@ -38,11 +40,12 @@ Bu kural ledger #25'in ("parça seviyesi YOK, güç satın alma riski sıfır") 
 | # | Alt kural | Nasıl sınanır |
 |---|---|---|
 | G-1 | Ustalık sim'e girmez: `Dunya`, `TakimUyesi`, hash alanları ve `veri/parcalar.json` `katki` değerleri Ustalık okumaz | Lint kapısı: `src/paylasilan/sim/**` `kurallar/harita*`, `kurallar/maden*`, `kurallar/ustalik*` içe aktaramaz; altın hash'ler değişmez (08 § 9) |
-| G-2 | Kozmetik ürün (arma, çerçeve, cila, Usta işi) `katki` değiştirmez; cila yalnız Gövde/Disk **metal paletini** değiştirir, köken ışığı ve element kıvılcımı aynı kalır (okunurluk, 00-lore § 2.4) | Birim test: cilalı ve cilasız parçanın `topacParametreleri` çıktısı bit bit aynı |
+| G-2 | Kozmetik ürün (arma, çerçeve, Usta işi) ve **parçanın malzeme biçimi** (12) `katki` değiştirmez; malzeme yalnız Gövde/Disk/Uç **metal paletini** değiştirir, köken ışığı ve element kıvılcımı aynı kalır (okunurluk, 00-lore § 2.4) | Birim test: cilalı ve cilasız parçanın `topacParametreleri` çıktısı bit bit aynı |
 | G-3 | Dövme parçalar (Dağ Diski, Kırağı Ucu, Köz Gövde…) **yan-grade**: aynı parça bütçesinde, mevcut aralıklarda (tuning § 13) | Bayrak `dovmeParcalari` **kapalı başlar**; bot turnuvası her build'e karşı %35–65 bandını geçince açılır (06 H-H5) |
 | G-4 | Ustalık, cevher ya da külçe maç eşleştirmesine, Elo'ya, Enerji'ye, XP çarpanına girmez | Kod incelemesi + `macSonu` testleri (08 § 9) |
 | G-5 | Harita maçının Çekirdek XP'si hızlı maçla aynı tabloyu izler ve günlük 10 maç sayılır; harita "XP çiftliği" değildir | 06 Tablo E, sunucu testi |
-| G-6 | Hiçbir maden ürünü Market kilidini açmaz: **"para parça alır, başarım parçayı var eder"** (03 § 0) bozulmaz | Market kuralı `market.ts` maden ürününü tanımaz |
+| G-6 | Hiçbir maden ürünü Market kilidini açmaz: **"para parça alır, başarım parçayı var eder"** (03 § 0) bozulmaz; kilitli parça craft ile de **kilit açılmadan** üretilemez (12 § 1) | Market ve Ocak kuralı aynı kilit durumunu okur |
+| G-7 | Kilitsiz 15 parça ücretsizdir; yeni oyuncu ilk gün rekabetçi takım kurar; craft ve pahalı Market yalnız **çeşit ve prestij** verir | Market API testi (fiyat 0) |
 
 Mekaniğin her belgesinde bu kural ayrıca sınanır (her belgenin "G-0 sınaması" satırı).
 
@@ -78,7 +81,7 @@ Misafir (hesapsız) oyuncu Harita'yı görmez; Antrenman ve oda maçı aynen aç
             └────────────────►  ATÖLYE › OCAK                        │
                                ERİT (cevher → külçe, İşleme Ust.)    │
                                DÖV  (külçe + Altın → arma/çerçeve/   │
-                                     cila; Usta işi şansı)           │
+                                     PARÇA (malzeme biçimi); Usta işi│
                                       │                              │
                                       ▼                              │
                        Profil/Atölye'de kimlik ── yeni düğüm açılır ─┘

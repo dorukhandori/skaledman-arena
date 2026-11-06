@@ -148,7 +148,7 @@ Atölye'nin blueprint dili (referans 03): lacivert ızgara, ince bronz çizgiler
 │ │ ◆4 KOR  USTALIK 40  🔒   │ │ TARİF                                     │   │
 │ │ ◆? ???                   │ │ ▣ DON ARMASI   3 DON + 2 KAYA · 300  ✓EŞİK│   │
 │ │                          │ │ ▣ DON ÇERÇEVE  6 DON + 4 KAYA · 600 İŞL.30│   │
-│ │                          │ │ ▣ DON CİLASI  10 DON + 6 KAYA ·1200 İŞL.35│   │
+│ │                          │ │ ▣ PARÇA ▸ DÜŞÜRÜCÜ GÖVDE 25 DON · 600 İŞL.40│
 │ └──────────────────────────┘ └──────────────────────────────────────────┘   │
 │                                                            ┌──────────────┐ │
 │  (seçili tarif yoksa ana düğme ERİT; tarif seçiliyse DÖV)  │     ERİT     │ │
@@ -164,7 +164,21 @@ Atölye'nin blueprint dili (referans 03): lacivert ızgara, ince bronz çizgiler
 | DÖV | Tarif seçilince ana düğme DÖV; ≥ 1 000 Altın onay modalı (sadelik S-2 kuralı ≥ 100 Altın modalı Market'e özgü; Ocak'ta 1 000) |
 | Sonuç kartı | Ürün ikonu büyük, "ARMA AÇILDI · PROFİLDE KULLAN" + Usta işi ise bronz parıltı ve "USTA İŞİ" |
 | Usta işi | Sahip olunan tarifte ikincil düğme "YENİDEN DÖV · %12" |
-| Cila uygulama | Ocak'ta değil; Atölye'de parça seçiliyken "CİLA ▾" (03 § 8) |
+| Parça üretimi | Seçili kademenin altında **PARÇA** grubu: kilidi açık ve bu kademeyle üretilebilen parçalar (Uç/Disk/Gövde/Çekirdek sekmeli mini ızgara, ≤ 12 hücre); hücre: ikon + külçe + Altın; kilitli parça görünmez (Market'teki gibi "???" yok, S2). Sonuç kartı: ad (malzeme ön adı), YAPAN, NO., tarih; ana düğme ATÖLYE'DE TAK |
+
+## 5b. Market kartı ve Atölye biçim seçimi (güncelleme, 12 § 5)
+
+```
+┌──────────────── seçili ürün şeridi (Market) ─────────────────┐
+│ ▣ DÜŞÜRÜCÜ GÖVDE                      32 000 ALTIN            │
+│   CRAFT: 25 DON KÜLÇESİ · ~3 GÜN      [ OCAK'A GİT ]   SATIN AL│
+└──────────────────────────────────────────────────────────────┘
+```
+- Ücretsiz parça: fiyat rozeti **"ÜCRETSİZ"**, ana düğme AL.
+- Craft satırı üç hâl: "~N GÜN" · "İŞLEME 40 GEREKİR" · "HAZIR" (ikincil düğme OCAK'A GİT). Karanlık desen yok (geri sayım, sahte indirim yok).
+- Atölye envanterinde aynı tanımın biçimleri tek kart + "×3"; dokununca biçim şeridi (DEMİR · KOR ✦ · MARKET); yuvaya takılan biçimin rozeti patlatılmış görünümde parça etiketinin yanında.
+- Profil › **VİTRİN**: 3 yuva; dokun → üretilmiş parçalar listesi (değer puanına göre).
+- Maç ad satırı ve seyirci kartı: topacın altında malzeme rozetleri (4 küçük kare, Market = boş); odakta "KOR DÜŞÜRÜCÜ · YAPAN AYLA No. 7".
 
 ## 6. Sonuç ekranı eki (harita maçı)
 

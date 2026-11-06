@@ -2,6 +2,8 @@
 
 **Bağlı:** [`02`](02-maden-sistemi.md) (cevher), [`04`](04-ustalik-sistemi.md) (İşleme Ustalığı), [`06`](06-ekonomi-ve-denge.md) (sayılar), [`07`](07-ux-ekranlar.md) § 5 (Ocak ekranı), [`08`](08-teknik-tasarim.md) § 4 (uçlar). Sayılar: [`veri-taslak/tarifler.json`](veri-taslak/tarifler.json). Mevcut: `03-oyuncu-yolculugu.md` § 2–3, tuning § 17, ledger #14.
 
+> **Güncelleme (2026-11-06, ikinci tur):** Sahibin isteğiyle madenler **parça üretiminin** girdisidir ve Market parçaları çok pahalıdır; ayrıntı [`12-parca-uretimi-ve-market.md`](12-parca-uretimi-ve-market.md). Bu belgede "cila" kalktı (yerini parçanın **malzeme biçimi** aldı); aşağıdaki tablolar güncellendi.
+
 ## 1. Ocak nedir, nerededir
 
 **Ocak**, Atölye'nin alt ekranıdır (sahibin isteği: "atölyede işleyebildiğimiz"). Atölye ana üs kalır (menü kararı S-1); alt şerit **MARKET · BAŞARIMLAR · OCAK · GÜNLÜK · PROFİL** olur. OCAK yalnız "İlk Kazı" başarımından sonra görünür (kademeli açılma). Ocak ekranı ◄ ile Atölye'ye döner.
@@ -21,7 +23,7 @@ Neden iki adım (S2 sınaması): tek adım (cevher + Altın → ürün) daha sad
 |---|---|---|---|
 | **ARMA** | Profil arması (kademe renginde cevher motifi) | Profil kartı, lobi ad satırı, sonuç plakası | Yok |
 | **ÇERÇEVE** | Profil ve takım kartı çerçevesi (kademe malzemesi: demir, bakır, buz gümüşü…) | Profil, Lobi takım kartları, Atölye takım sütunu | Yok |
-| **CİLA** | Gövde ve Disk **metal paleti** takası (palet-takası hattı, `araclar/sanat/palet-takasi.ts`); bir kez dövülür, sahip olunan her Gövde/Disk'e ayrı ayrı uygulanır/kaldırılır | Atölye 3B görünüm, maç sprite'ı | **Yok:** köken ışığı, element kıvılcımı, stamina halkası, dönüş izi **değişmez** (okunurluk kuralı, 00-lore § 2.4); `katki` aynı (G-2) |
+| **PARÇA (malzeme biçimi)** | Kilidi açık her katalog parçası, seçilen kademenin külçesinden; malzeme rengi, ad, rozet, yapımcı imzası, seri no (12) | Envanter, Atölye 3B, maç, seyirci | **Yok:** `katki` bit bit aynı; köken ışığı/element kıvılcımı değişmez (G-2) |
 | **DÖVME PARÇA** | Yalnız dövmeyle elde edilen yeni yan-grade parça (§ 4.3) | Envanter | Yan-grade; **bayrak `dovmeParcalari` kapalı başlar** (G-3, H-H5) |
 | (Usta işi) | Yukarıdakilerin parlak varyantı (§ 5) | Aynı yerler + ince parıltı | Yok |
 
@@ -49,11 +51,10 @@ Neden iki adım (S2 sınaması): tek adım (cevher + Altın → ürün) daha sad
 |---|---|---|---|---|---|
 | ARMA K | 3 × K + 2 × (K−1); K1: 5 × K1 | 100 · K | E_K | 30 | `arma-cevher-<kademe>` |
 | ÇERÇEVE K | 6 × K + 4 × (K−1); K1: 10 × K1 | 200 · K | E_K + 5 | 50 | `cerceve-<kademe>` |
-| CİLA K (K ≥ 2) | 10 × K + 6 × (K−1) | 400 · K | E_K + 10 (en çok 100) | 80 | `cila: <kademe>` |
 
 Alt kademe külçesinin her tarifte istenmesi (**alaşım**) eski cevherleri değerli tutar (UO'daki alaşım hissi) ve "artan cevher" riskini (R4) azaltır.
 
-### 4.2 İlk sürüm tarif listesi (11 tarif, K1–K4)
+### 4.2 İlk sürüm kozmetik tarif listesi (8 tarif, K1–K4; parça tarifleri 12 § 2)
 
 | # | Tarif | Girdi | Altın | Eşik |
 |---|---|---|---|---|
@@ -61,16 +62,13 @@ Alt kademe külçesinin her tarifte istenmesi (**alaşım**) eski cevherleri de�
 | 2 | DEMİR ÇERÇEVE | 10 Demir külçesi | 200 | 5 |
 | 3 | KAYA ARMASI | 3 Kaya + 2 Demir | 200 | 10 |
 | 4 | KAYA ÇERÇEVE | 6 Kaya + 4 Demir | 400 | 15 |
-| 5 | KAYA CİLASI | 10 Kaya + 6 Demir | 800 | 20 |
 | 6 | DON ARMASI | 3 Don + 2 Kaya | 300 | 25 |
 | 7 | DON ÇERÇEVE | 6 Don + 4 Kaya | 600 | 30 |
-| 8 | DON CİLASI | 10 Don + 6 Kaya | 1 200 | 35 |
 | 9 | KOR ARMASI | 3 Kor + 2 Don | 400 | 40 |
 | 10 | KOR ÇERÇEVE | 6 Kor + 4 Don | 800 | 45 |
-| 11 | KOR CİLASI | 10 Kor + 6 Don | 1 600 | 50 |
-| | **Toplam** | 108 külçe | **6 600** | |
+| | **Toplam (8 kozmetik)** | 60 külçe | **3 000** | |
 
-Sezon 2 (K5–K8): 12 kozmetik tarif daha (Kasırga, Şimşek, Girdap, Devir; arma + çerçeve + cila), toplam 23 kozmetik; Altın 24 800 (06 § 3).
+Sezon 2 (K5–K8): 8 kozmetik tarif daha (arma + çerçeve), toplam 16 kozmetik; Altın 10 800. Parça tarifleri katalog parçası sayısı kadardır (12 § 2).
 
 ### 4.3 Dövme parçalar (yan-grade, bayraklı)
 
@@ -123,7 +121,7 @@ Fark 10'un altındaysa %0; fark 20'de %10; 35 ve üstünde %25 tavan. Usta işi,
 
 ## 8. Atölye ekranına etkisi (referans 03 ile uyum)
 - Atölye ana ekranı **değişmez** (envanter, patlatılmış topaç, çubuklar, takım). Tek fark: alt şeritte OCAK.
-- Envanterde cilalı parçanın kartında küçük kademe renkli köşe (kalkan rozetinin karşı köşesi); parça seçiliyken alt şeritte ikincil düğme "CİLA ▾" (sahip olunan cilalar + "YOK").
+- Envanterde üretilmiş parçanın kartında kademe rozeti; aynı tanımın biçimleri yığın kartı (12 § 4).
 - Ocak ekranı Atölye'nin blueprint dilinde (lacivert ızgara, ince bronz çizgiler): yeni "yer" değil, Atölye'nin bir masası (menü kuralı 5.1/5: bir ekran, bir yer). Wireframe 07 § 5.
 
 ## 9. G-0 sınaması (bu belge)

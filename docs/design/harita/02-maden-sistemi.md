@@ -30,6 +30,8 @@
 
 **Neden bu sıra:** Maden kökeninin lore'u (00-lore § 2.4: "yerin derininden, eski ocaklardan") Kaya'yı ilk element yapar; başlangıç Çekirdeklerinden Kaya Maden zaten ilk üçte. Sonraki elementler çark sırasını izler (Kaya → Don → Kor → Kasırga → Şimşek → Girdap, 00-lore § 3.2). **Element kademesi güç sırası değildir**: Girdap cevheri Kor cevherinden "daha iyi" bir şey vermez, yalnız daha zor bulunan bir **görünüm** verir (G-0). Kademe 8 "Devir Taşı" altı elemente bölünmeden önceki dönüşün kırıntısıdır (00-lore § 2.2); renk dili yanardöner, ayrı bir element rengi değildir.
 
+**Kademe → üretilebilen parça (güncelleme, 12 § 2):** K1 Demir: Başlangıç ve Standart · K2 Kaya: + Nadir · K3 Don: + Hizip · K4 Kor: + Karanlık · K5–K8: aynı parçaların daha kıymetli biçimleri (güç eşit). Üst kademe her zaman alt katman parçayı da üretir.
+
 **Renk erişilebilirliği:** Kademe hiçbir zaman yalnız renkle okunmaz: her ikon sol üstte kademe numarası rozeti taşır (1–8) ve elementli kademelerde element simgesi (`elementSimge.ts`) vardır (sadelik S-11, İ-3).
 
 ## 3. Kazı nasıl yapılır (etkileşim kararı)
@@ -59,12 +61,13 @@
 U = Madencilik Ustalığı (0–100, tam sayı seviye)
 E = damar kademesinin eşiği (§ 2)
 U < E  → kazılamaz (damar kilitli: "USTALIK E GEREKİR")
-başarı = sınırla(0,50 + 0,025 · (U − E), 0,50, 0,95)
+başarı = sınırla(0,50 + 0,018 · (U − E), 0,50, 0,95)      (fark 25'te %95; araştırma 11 § 5.2)
+şanssızlık koruması: 3 ardışık ıskadan sonraki vuruş başarılıdır (sunucu sayacı, gösterilmez)
 ```
 
-| U − E | 0 | 4 | 8 | 12 | 16 | ≥ 18 |
+| U − E | 0 | 5 | 10 | 15 | 20 | ≥ 25 |
 |---|---|---|---|---|---|---|
-| Başarı | %50 | %60 | %70 | %80 | %90 | %95 |
+| Başarı | %50 | %59 | %68 | %77 | %86 | %95 |
 
 - **Başarılı vuruş:** cevher = `verim(K)` (+1 isabet), günlük çarpanla (§ 6); tecrübe `10 × bant × günlük çarpan`.
 - **Başarısız vuruş:** cevher yok; tecrübe `5 × bant × günlük çarpan`. Damar kapasitesinden yine düşer.
@@ -89,9 +92,9 @@ Nadir yuva tohumu sunucu sırrı + oyuncu + gün + düğümden üretilir (istemc
 
 | Günün vuruşu (tüm damarlar toplamı) | Verim | Tecrübe | Gerekçe |
 |---|---|---|---|
-| 1–40 | ×1,0 | ×1,0 | Aktif oyuncunun doğal günü (≈ 7 damar × 6) |
+| 1–40 (**DİNÇ VURUŞ**) | ×1,0 | ×1,0 | Aktif oyuncunun doğal günü (≈ 7 damar × 6). Ekranda ceza değil bonus olarak sayılır: "DİNÇ 12/40" |
 | 41–60 | ×0,5 (aşağı yuvarla, başarıda en az 1) | ×0,5 | Tutkulu oyuncu ilerler, bot avantajı küçülür |
-| 61+ | — | — | **Kazı kapanır**: "BUGÜNLÜK KAZI BİTTİ · 04:00'TE YENİLENİR" |
+| 61+ | cevher 0 | ×0,1 | Kazı **kilitlenmez** (araştırma 11 § 5.1: kilit öfke üretir), ama verim yok; damar kapasitesi (≤ 8/düğüm/gün) sert sınırdır. Metin: "DİNÇ VURUŞLAR BİTTİ · 04:00'TE YENİLENİR" |
 
 Ledger #18'deki maç Altını eşiğine (15 / 30) benzer iki basamak. Sayaç günlük, sunucuda (`maden_gunluk`), gün 04:00 TRT. Harita maçları bu sayaca girmez (ayrı sayaç: günlük 10 sayılan harita maçı, 01 § 5).
 
