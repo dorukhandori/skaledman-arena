@@ -8,7 +8,7 @@ DNS `cloudflared tunnel --config /etc/cloudflared/devran.yml route dns <id> devr
 ## Mimari
 - **Port 2568** (2567'yi VPS'te WyrmWar tutuyor). Port yapı sırasında gömülür: `SUNUCU_PORT` ortam değişkeni `vite.config.ts` içinde okunur,
   `deploy/kur.sh` varsayılan 2568 ile derler ve çıktıyı doğrular. Birim dosyasındaki `PORT=` yalnız bilgi amaçlıdır; sunucu gömülü portu dinler.
-- Not: `colyseus/vite` üretim girişi `server.listen(<port>)` ile tüm arayüzlere bağlanır; dış erişimi birim dosyasındaki `IPAddressDeny=any` + `IPAddressAllow=localhost` keser (ve VPS güvenlik duvarında port kapalı tutulur; 2026-11-06'da dışarıdan kapalı olduğu doğrulandı).
+- Bağlanma adresi: `vite.config.ts` içindeki `hostBagla()` derlenen girişe `listen(<port>, process.env.HOST)` yazar; birim dosyasındaki `Environment=HOST=127.0.0.1` ile sunucu yalnız yerel arayüzü dinler (2026-11-06 yerelde `lsof` ile doğrulandı). `IPAddressDeny=any` + `IPAddressAllow=localhost` ve kapalı güvenlik duvarı ikinci kat olarak kalır.
 - Tek Node 22 süreci (`dist/server/server.mjs`, `vite build --app` çıktısı): Colyseus 0.18 + istemci dosyaları
   (`serveClient`). Dışarı açılan port yok.
 - Dış erişim **Cloudflare Tunnel**, tünel adı `devran`, alan adı `devran.ovarlak.games`.
@@ -26,18 +26,22 @@ curl http://127.0.0.1:2567/api/saglik
 ```
 
 ## Cloudflare Tunnel (`devran`)
+Tuzak: `cloudflared tunnel route dns` ve `cloudflared service install` varsayılan `/etc/cloudflared/config.yml`'yi okur; VPS'te o
+dosya başka bir projenin (tradebot) tüneline aittir. Devran için **ayrı yapılandırma** ve tünel kimliği kullanılır:
 ```bash
 cloudflared tunnel login
-cloudflared tunnel create devran
-cloudflared tunnel route dns devran <alan-adı>
-# /etc/cloudflared/config.yml
-#   tunnel: devran
+cloudflared tunnel create devran                      # çıktıdaki <tünel-id>'yi not et
+# /etc/cloudflared/devran.yml
+#   tunnel: <tünel-id>
 #   credentials-file: /root/.cloudflared/<tünel-id>.json
 #   ingress:
 #     - hostname: <alan-adı>
-#       service: http://127.0.0.1:2567
+#       service: http://127.0.0.1:2568
 #     - service: http_status:404
-sudo cloudflared service install && sudo systemctl enable --now cloudflared
+cloudflared tunnel --config /etc/cloudflared/devran.yml route dns <tünel-id> <alan-adı>
+# ayrı systemd birimi (cloudflared-devran.service):
+#   ExecStart=/usr/bin/cloudflared --no-autoupdate --config /etc/cloudflared/devran.yml tunnel run <tünel-id>
+sudo systemctl enable --now cloudflared-devran
 ```
 WebSocket tünelden geçer (Cloudflare varsayılanı açık). Access: Zero Trust › Access › Applications › Self-hosted,
 `<alan-adı>`, politika: davetli e-postalar.

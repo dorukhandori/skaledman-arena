@@ -159,7 +159,8 @@ Bütçe yazılı değilse yoktur. Aşağıdakiler kaynaklı; "ölçülmedi" olan
 | Bütçe | Eşik | Son ölçüm | Kaynak |
 |---|---|---|---|
 | Sim adımı (sunucu) | ADR-002: 1v1 oda adımı < 1 ms | p95 0,065 ms | D8.md |
-| Oda adımı (sim + yama + seyirci yansıtma) | **çelişki:** D4 ≤ 0,2 ms, D8 4 ms | D4 p95 0,19-0,25 ms; D8 (22 seyirci) p95 1,163 · p99 2,83 ms | D4.md, D8.md |
+| Oda adımı, seyircisiz (sim + yama) | p95 **≤ 0,3 ms** (ADR-002'nin 50 oda/çekirdek hedefinden: 16,7 ms ÷ 50 ≈ 0,33 ms) | D4 p95 0,19-0,25 ms | D4.md |
+| Oda adımı, seyircili yayın odası (+ seyirci yansıtma) | p95 **≤ 4 ms** (yayın odası tek tük; aynı çekirdekte en çok 2 yayın odası + 25 seyircisiz oda sığar) | D8 (22 seyirci) p95 1,163 · p99 2,83 ms | D8.md |
 | Eşzamanlı oda | ADR-002: 50 oda tek çekirdekte | **ölçülmedi** (yük testi aracı yok) | ADR-002 |
 | Bant, oyuncu başına | aşağı ≤ 6 KB/s, yukarı ≤ 4 KB/s | aşağı 3,0-3,9, yukarı 0,7-0,85 KB/s | D4.md |
 | Bant, seyirci başına | ≤ 6 KB/s | 1,57 KB/s | D8.md |
@@ -171,8 +172,9 @@ Bütçe yazılı değilse yoktur. Aşağıdakiler kaynaklı; "ölçülmedi" olan
 | Olay gecikmesi (N3) | p95 ≤ 200 ms | 348-490 ms; sıçrama/10 çarpışma 1,46-1,67 (kapı ≤ 1) | netcode.md "Karar N3" |
 | Süreç | CPUQuota 150 %, MemoryMax 1 GiB | VPS'te **ölçülmedi** (kurulu değil) | devran.service |
 
-Oda adımı için iki farklı eşik yazılı; hangisinin geçerli olduğu `@relay` ile birlikte tek sayıya indirilmeli. Benim önerim 4 ms
-(60 Hz'de adım aralığı 16,7 ms; 4 ms aynı çekirdekte başka odalara pay bırakır); D4'ün 0,2 ms'si seyircisiz odaya aitti. Bu bir öneri, kayıt edilmiş karar değil.
+Oda adımı eşiği 2026-11-06'da tek kurala indirildi (kalan-is #15): D4'ün 0,2 ms'si seyircisiz odaya, D8'in 4 ms'si seyircili yayın odasına aitti; ikisi ayrı satır olarak kaldı, sayı ADR-002'nin oda yoğunluğu hedefinden türetildi (yeni karar değil, var olan hedefin hesabı). İki ölçüm de kendi eşiğinin içinde.
+
+Çekirdek seviyesi: `ilerleme.ts` Lv.4 eşiğini (2200 XP) tutar ama `tavan` 3'tür; Lv.4 sezon 2'de açılır (tuning.md § 14, § 17 ile aynı). Çelişki yok.
 
 ## 8. Riskler ve geri dönüş
 

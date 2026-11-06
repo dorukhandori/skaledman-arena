@@ -31,7 +31,7 @@ cd "$HEDEF"
 # better-sqlite3 yerel modül: Node 22 için önceden derlenmiş ikili indirilir (yoksa derlemek için build-essential gerekir)
 sudo -u devran npm ci --no-audit --no-fund
 sudo -u devran env SUNUCU_PORT="$SUNUCU_PORT" npm run build
-grep -q "listen($SUNUCU_PORT)" dist/server/server.mjs || { echo "[kur] HATA: derlenen sunucu $SUNUCU_PORT portunu dinlemiyor"; exit 1; }
+grep -qE "listen\($SUNUCU_PORT[,)]" dist/server/server.mjs || { echo "[kur] HATA: derlenen sunucu $SUNUCU_PORT portunu dinlemiyor"; exit 1; }
 test -f dist/server/server.mjs
 
 install -m 644 "$HEDEF/deploy/devran.service" /etc/systemd/system/devran.service

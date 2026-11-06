@@ -1,5 +1,22 @@
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import { colyseus } from "colyseus/vite";
+
+/**
+ * Üretim girişi `listen(port)` ile bütün arayüzlere bağlanıyordu (kalan-is #12): `HOST` ortam değişkeni (systemd
+ * `Environment=HOST=127.0.0.1`) okunsun diye colyseus/vite'ın sanal girişindeki çağrıya ikinci argüman eklenir.
+ * `HOST` yoksa `undefined` = önceki davranış (bütün arayüzler). Yalnız derlenen sunucuyu etkiler; geliştirme aynı.
+ */
+export function hostBagla(): Plugin {
+  return {
+    name: "devran-host-bagla",
+    enforce: "post",
+    transform(code, id) {
+      if (!id.includes("virtual:colyseus-server-entry")) return null;
+      const yeni = code.replace(/\b(server|gameServer)\.listen\((\d+)\)/g, "$1.listen($2, process.env.HOST || undefined)");
+      return yeni === code ? null : { code: yeni, map: null };
+    },
+  };
+}
 
 // Tek vite süreci: istemci + Colyseus sunucusu (docs/tech/mimari.md § 1, K-9).
 // Üretim: `vite build --app` → dist/client + dist/server/server.mjs
@@ -12,6 +29,7 @@ export default defineConfig({
       port: Number(process.env.SUNUCU_PORT ?? 2567),
       serveClient: true,
     }),
+    hostBagla(),
   ],
   server: {
     port: 5173,
