@@ -1,4 +1,5 @@
 import { type GorunumDurumu, KATMAN_ETIKET, KATMAN_SIRASI, type KatmanTuru, gorunumOlay, ilkDurum, tusIsler } from "./durum.ts";
+import { telefonMu } from "../mobil/cihaz.ts";
 import type { Boya } from "./palet.ts";
 import type { Cizer, KatmanKonumlari, TopacKurulumu } from "./tipler.ts";
 import { Yedek2B } from "./Yedek2B.ts";
@@ -103,7 +104,7 @@ export class AtolyeSahnesi {
     this.geri.dataset["eylem"] = "odak-geri";
     this.geri.hidden = true;
     this.geri.addEventListener("click", () => this.olayIsle({ tur: "geri" }));
-    this.birlestir = el("button", "k-dugme kucuk", arac, "Birleştir");
+    this.birlestir = el("button", "k-dugme kucuk", arac, telefonMu() ? "Topla" : "Birleştir");
     this.birlestir.type = "button";
     this.birlestir.dataset["eylem"] = "birlestir";
     this.birlestir.title = "Birleştir / ayır (B)";
@@ -323,7 +324,7 @@ export class AtolyeSahnesi {
     const odakMi = d.mod === "odak";
     this.geri.hidden = !odakMi;
     const birlesik = d.mod === "birlesik" || (odakMi && d.donus === "birlesik");
-    this.birlestir.textContent = birlesik ? "Ayır" : "Birleştir";
+    this.birlestir.textContent = birlesik ? "Ayır" : telefonMu() ? "Topla" : "Birleştir"; // telefonda dar kenar: kısa ad (tam ad title/aria)
     this.birlestir.setAttribute("aria-pressed", String(birlesik));
     for (const t of KATMAN_SIRASI) this.katmanEl[t].dugme.setAttribute("aria-pressed", String(odakMi && d.odak === t));
     if (once.odak !== d.odak || once.mod !== d.mod) {

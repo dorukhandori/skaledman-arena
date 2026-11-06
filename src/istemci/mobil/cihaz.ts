@@ -15,6 +15,11 @@ export function dokunmatikMi(): boolean {
   } catch { return false; }
 }
 
+/** MOBIL-2: telefon düzeni (dokunmatik ve o = 1) etkin mi; `olcekUygula` `html[data-telefon]` işaretini kurar. */
+export function telefonMu(): boolean {
+  return typeof document !== "undefined" && document.documentElement.dataset["telefon"] === "1";
+}
+
 /** iOS / iPadOS Safari (Fullscreen API yok; "Ana Ekrana Ekle" ipucu). */
 export function iosMu(ua = typeof navigator === "undefined" ? "" : navigator.userAgent, dokunNoktasi = typeof navigator === "undefined" ? 0 : navigator.maxTouchPoints): boolean {
   return /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && dokunNoktasi > 1);

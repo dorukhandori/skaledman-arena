@@ -33,7 +33,9 @@ html[data-dokunmatik] .k-zemin .k-dugme, html[data-dokunmatik] .k-zemin button.s
 html[data-dokunmatik] .k-zemin .kart a:not(.k-dugme) { display: inline-flex; align-items: center; min-height: 44px; }
 /* lento (26 px şerit) içindekiler: görsel boy aynı, görünmez isabet payı ≥ 48 px (lento düzeni bozulmaz) */
 html[data-dokunmatik] .k-lento .k-dugme { min-height: 0; min-width: 0; }
-html[data-dokunmatik] .k-geri, html[data-dokunmatik] .k-lento .k-dugme, html[data-dokunmatik] .k-cuzdan, html[data-dokunmatik] .g3-etiket { position: relative; }
+html[data-dokunmatik] .k-geri, html[data-dokunmatik] .k-lento .k-dugme, html[data-dokunmatik] .k-cuzdan { position: relative; }
+/* 3B etiketi mutlak konumlu kalır (MOBIL-2: göreli konum etiketleri akışa sokup katman hizasından kaydırıyordu); ::after isabet payına yine ata olur */
+html[data-dokunmatik] .g3-etiket { position: absolute; }
 html[data-dokunmatik] .g3-etiket::after, html[data-dokunmatik] .dk-pay::after {
   content: ""; position: absolute; left: 50%; top: 50%; width: max(100%, 48px); height: max(100%, 48px); transform: translate(-50%, -50%);
   background: none; display: block;
@@ -50,14 +52,6 @@ html[data-dokunmatik] .pergel .p-rozet { min-width: 44px; min-height: 44px; }
 html[data-dokunmatik] .k-tus { display: none !important; }
 
 /* ---- telefon (o = 1) ekran düzeltmeleri: mantıksal alan 667–932 × 375–430 ---- */
-/* Atölye: alt şerit 44+ px düğmeler taşır → kart altı payı; Takım sütunu genişler; ▲▼ yalnız seçili topaçta, 44 px */
-html[data-telefon] .at .kart.at-kart { padding-bottom: 66px; }
-html[data-telefon] .at .uc3 { grid-template-columns: 236px minmax(0, 1fr) 124px 124px; }
-html[data-telefon] .at .sekmeler button { letter-spacing: 0; }
-html[data-telefon] .at .tkart { grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "b b" "ik mini" "ok ok"; }
-html[data-telefon] .at .tkart:not([aria-selected=true]) .ok { display: none; }
-html[data-telefon] .at .tkart .ok { justify-content: center; gap: 6px; }
-html[data-telefon] .at .tkart .ok button { width: 44px; height: 44px; min-width: 44px; font-size: 18px; }
 /* Oyna / Lobi: mod sütunu yazı ×1,5'e göre */
 html[data-telefon] .lobi .lb-govde { grid-template-columns: 170px 1fr; }
 /* Takım seçimi: oyuncu adları ×1,5 yazıda yan sütuna sığsın */

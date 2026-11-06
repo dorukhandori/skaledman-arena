@@ -19,7 +19,7 @@ import { parcaPikselIkonu, pikselTopac } from "./pikselTopac.ts";
 import { pergelKur } from "../bilgic/Pergel.ts";
 import { ikonCizeriBagla } from "../atolye3d/ikonOnbellek.ts";
 import { sonMacDurumu } from "../bilgic/secim.ts";
-import { dokunmatikMi } from "../mobil/cihaz.ts";
+import { dokunmatikMi, telefonMu } from "../mobil/cihaz.ts";
 
 // Atölye (D6, US-2.1; ux § 3.2 ana ekran) · ATOLYE3D: referans 03'ün birebir düzeni (docs/design/beyblade/gorunum/03-atolye.jpg).
 // Sol: parça ızgarası (4 ikonlu sekme ÇEKİRDEK / GÖVDE / DİSK / UÇ, 4 sütunlu ikon ızgarası, takılı parça turuncu çerçeve;
@@ -275,6 +275,8 @@ class AtolyeEkrani {
   private takimAdi = "";
   private secili = 0;
   private sekme: YuvaTuru = "uc";
+  /** MOBIL-2 telefon: sağ panel parça ızgarası mı, değerler mi (masaüstünde hep "parca") */
+  private gorunum: "parca" | "deger" = "parca";
   private filtre: Filtre = { element: "", koken: "", tip: "", sahiplik: "hepsi" };
   private onceki: CubukOzeti | null = null;
   private uyari = "";
@@ -419,6 +421,7 @@ class AtolyeEkrani {
     const tanim = (y: (typeof yv)[number]) => y.cekirdek?.tanimId ?? y.oduncCekirdek;
     pergelKur({
       kok,
+      yer: telefonMu() ? this.kart.querySelector<HTMLElement>(".alt-serit") ?? undefined : undefined,
       oyuncuId: v.oyuncu.id,
       durum: {
         takimEksik: yv.filter((y) => y.durum === "bos" || y.durum === "eksik").length,
@@ -465,7 +468,7 @@ class AtolyeEkrani {
     const bs = el("button", "k-dugme", serit, "Başarımlar");
     bs.dataset["eylem"] = "basarimlar";
     bs.addEventListener("click", () => git("basarimlar"));
-    this.dene = el("button", "k-dugme", serit, "Dene · 30 sn");
+    this.dene = el("button", "k-dugme", serit, telefonMu() ? "Dene" : "Dene · 30 sn");
     this.dene.dataset["eylem"] = "dene";
     this.dene.title = "30 sn Antrenman: sonuç sayılmaz, Altın ve tecrübe yok.";
     this.dene.addEventListener("click", () => this.dene_(oku("devran.deneBot.v1") ?? "kukla"));
@@ -551,7 +554,8 @@ class AtolyeEkrani {
 
   private odakDegisti(t: KatmanTuru | null): void {
     this.odakKatman = t;
-    if (t && t !== this.sekme) { this.sekme = t; this.solCiz(); }
+    if (t && telefonMu()) { this.sekme = t; this.gorunum = "deger"; this.solCiz(); } // parça kartı değerler panelinde görünür
+    else if (t && t !== this.sekme) { this.sekme = t; this.solCiz(); }
     this.cubukCiz();
   }
 
@@ -579,17 +583,18 @@ class AtolyeEkrani {
     YUVA_TURLERI.forEach((t, k) => {
       const d = el("button", "", sk);
       d.setAttribute("role", "tab");
-      d.setAttribute("aria-selected", String(t === this.sekme));
+      d.setAttribute("aria-selected", String(t === this.sekme && this.gorunum === "parca"));
       d.tabIndex = t === this.sekme ? 0 : -1;
       d.dataset["sekme"] = t;
       d.dataset["odak"] = `sekme-${t}`;
       d.dataset["k"] = "yok";
+      d.setAttribute("aria-label", YUVA_AD[t]);
       // sekme ikonu: seçili topaçtaki parça (yoksa türün ilk parçası)
       const ornek = PARCALAR.parcalar.find((p) => p.id === kur[t]) ?? PARCALAR.parcalar.find((p) => p.tur === t);
       const ik = el("span", "sk-ik", d);
       if (ornek) ik.appendChild(this.parcaIkonu(ornek, false, 16));
       el("span", "", d, YUVA_AD[t]);
-      d.addEventListener("click", () => { this.sekme = t; this.solCiz(); });
+      d.addEventListener("click", () => { this.sekme = t; this.gorunum = "parca"; this.solCiz(); });
       d.addEventListener("keydown", (e) => {
         const y = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
         if (!y) return;
@@ -599,6 +604,20 @@ class AtolyeEkrani {
         (this.sol.querySelector(`[data-sekme=${this.sekme}]`) as HTMLElement | null)?.focus();
       });
     });
+    // MOBIL-2 telefon: beşinci sekme "Değer" (6 çubuk + notlar sağ panelde parçaların yerine geçer; ayrı sütun yok)
+    this.kart.querySelector<HTMLElement>(".uc3")!.dataset["gorunum"] = this.gorunum;
+    if (telefonMu()) {
+      const dv = el("button", "", sk);
+      dv.setAttribute("role", "tab");
+      dv.setAttribute("aria-selected", String(this.gorunum === "deger"));
+      dv.setAttribute("aria-label", "Değerler");
+      dv.dataset["sekme"] = "deger";
+      dv.dataset["odak"] = "sekme-deger";
+      dv.dataset["k"] = "yok";
+      el("span", "sk-ik sk-deger", dv).innerHTML = `<svg viewBox="0 0 16 12" width="16" height="12" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M1 7h3v5H1zM6 3h3v9H6zM11 0h3v12h-3z"/></svg>`;
+      el("span", "", dv, "Değer");
+      dv.addEventListener("click", () => { this.gorunum = "deger"; this.solCiz(); });
+    }
     // dört filtre tek "Filtre" düğmesinin arkasında (ikinci kat); etkin filtre sayısı düğmede
     const etkin = (["element", "koken", "tip"] as const).filter((x) => this.filtre[x]).length + (this.filtre.sahiplik !== "hepsi" ? 1 : 0);
     const fs = el("div", "filtre-satir", s);
@@ -1062,7 +1081,8 @@ class AtolyeEkrani {
       const yazi = el("span", "yazi", kart);
       const bas = el("b", "", yazi);
       if (cTanim) { const e = el("span", "k-el", bas); e.dataset["el"] = cekirdekBul(cTanim).element; e.setAttribute("aria-hidden", "true"); }
-      bas.appendChild(document.createTextNode(`${k + 1}. ${cTanim ? cekirdekBul(cTanim).ad : "Boş"}`));
+      el("span", "no", bas, `${k + 1}. `);
+      el("span", "tad", bas, cTanim ? cekirdekBul(cTanim).ad : "Boş");
       const yeniYetenek = y.cekirdek && gorulen[y.cekirdek.id] !== undefined && y.cekirdek.seviye > gorulen[y.cekirdek.id]!;
       if (yeniYetenek) { const r = el("span", "rozetY", bas, "Yeni yetenek açıldı"); r.dataset["yeniYetenek"] = "1"; }
       const alt = y.durum === "odunc" ? "Ödünç · Lv.1" : y.durum === "devreDisi" ? "Ömrü bitti · maçta ödünç" : y.durum === "bos" ? "Yuva boş" : y.durum === "eksik" ? "Parça eksik" : `Lv.${y.seviye}${y.cekirdek?.omur !== null && y.cekirdek?.omur !== undefined ? ` · ömür ${y.cekirdek.omur}` : ""}`;

@@ -63,6 +63,8 @@ const STIL = `
 export interface PergelGirdi {
   /** Pergel'in ekleneceği ekran kökü (ekran değişince birlikte gider) */
   kok: HTMLElement;
+  /** MOBIL-2: rozetin DOM'da duracağı yer (varsayılan `kok`; telefonda Atölye alt şeridi). Dinleyiciler `kok`ta kalır. */
+  yer?: HTMLElement;
   oyuncuId: number;
   /** Ziyaret sayısı hariç durum; Pergel ziyareti kendisi sayar */
   durum: Omit<AtolyeDurumu, "ziyaret">;
@@ -85,8 +87,9 @@ export function pergelKur(g: PergelGirdi): () => void {
   let sonId: string | undefined;
   const zamanlar = new Set<number>();
 
-  const st = el("style"); st.textContent = STIL; g.kok.appendChild(st);
-  const kap = el("div", "pergel", g.kok);
+  const yer = g.yer ?? g.kok;
+  const st = el("style"); st.textContent = STIL; yer.appendChild(st);
+  const kap = el("div", "pergel", yer);
   const rozet = el("button", "p-rozet", kap);
   rozet.type = "button";
   rozet.setAttribute("aria-label", "Pergel'e sor (H)");
