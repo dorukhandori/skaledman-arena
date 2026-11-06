@@ -299,8 +299,8 @@
       "b1-10"
      ],
      "zorluk": 3,
-     "botKip": "kenar",
-     "botSeviye": 2,
+     "botKip": "dolas",
+     "botSeviye": 3,
      "takim": [
       [
        "kaya-maden",
@@ -370,8 +370,8 @@
      ],
      "sonrakiBolge": "ayaz-gecidi",
      "zorluk": 4,
-     "botKip": "dayaniklilik",
-     "botSeviye": 3,
+     "botKip": "kenar",
+     "botSeviye": 2,
      "takim": [
       [
        "kaya-maden",
@@ -609,8 +609,8 @@
       "b2-07"
      ],
      "zorluk": 3,
-     "botKip": "kenar",
-     "botSeviye": 2,
+     "botKip": "dolas",
+     "botSeviye": 3,
      "takim": [
       [
        "sabir-tasi",
@@ -662,8 +662,8 @@
       "b2-09"
      ],
      "zorluk": 3,
-     "botKip": "kenar",
-     "botSeviye": 2,
+     "botKip": "dolas",
+     "botSeviye": 3,
      "takim": [
       [
        "sabir-tasi",
@@ -731,8 +731,8 @@
       "b2-10"
      ],
      "zorluk": 3,
-     "botKip": "kenar",
-     "botSeviye": 2,
+     "botKip": "dolas",
+     "botSeviye": 3,
      "takim": [
       [
        "sabir-tasi",
@@ -802,7 +802,7 @@
      ],
      "sonrakiBolge": "kor-kraterleri",
      "zorluk": 5,
-     "botKip": "dayaniklilik",
+     "botKip": "kenar",
      "botSeviye": 3,
      "takim": [
       [
@@ -954,8 +954,8 @@
       "b3-05"
      ],
      "zorluk": 3,
-     "botKip": "kenar",
-     "botSeviye": 2,
+     "botKip": "dolas",
+     "botSeviye": 3,
      "takim": [
       [
        "kor-goktasi",
@@ -1041,8 +1041,8 @@
       "b3-07"
      ],
      "zorluk": 3,
-     "botKip": "kenar",
-     "botSeviye": 2,
+     "botKip": "dolas",
+     "botSeviye": 3,
      "takim": [
       [
        "kor-goktasi",
@@ -1094,8 +1094,8 @@
       "b3-09"
      ],
      "zorluk": 4,
-     "botKip": "dayaniklilik",
-     "botSeviye": 3,
+     "botKip": "kenar",
+     "botSeviye": 2,
      "takim": [
       [
        "kor-goktasi",
@@ -1163,8 +1163,8 @@
       "b3-10"
      ],
      "zorluk": 4,
-     "botKip": "dayaniklilik",
-     "botSeviye": 3,
+     "botKip": "kenar",
+     "botSeviye": 2,
      "takim": [
       [
        "kor-goktasi",
@@ -1234,7 +1234,7 @@
      ],
      "sonrakiBolge": "yel-sirti",
      "zorluk": 5,
-     "botKip": "dayaniklilik",
+     "botKip": "kenar",
      "botSeviye": 3,
      "takim": [
       [
@@ -1316,8 +1316,8 @@
       "b4-02"
      ],
      "zorluk": 3,
-     "botKip": "kenar",
-     "botSeviye": 2,
+     "botKip": "dolas",
+     "botSeviye": 3,
      "takim": [
       [
        "kasirga-yapay",
@@ -1386,8 +1386,8 @@
       "b4-05"
      ],
      "zorluk": 3,
-     "botKip": "kenar",
-     "botSeviye": 2,
+     "botKip": "dolas",
+     "botSeviye": 3,
      "takim": [
       [
        "kasirga-yapay",
@@ -1473,8 +1473,8 @@
       "b4-07"
      ],
      "zorluk": 4,
-     "botKip": "dayaniklilik",
-     "botSeviye": 3,
+     "botKip": "kenar",
+     "botSeviye": 2,
      "takim": [
       [
        "kasirga-yapay",
@@ -1526,8 +1526,8 @@
       "b4-09"
      ],
      "zorluk": 4,
-     "botKip": "dayaniklilik",
-     "botSeviye": 3,
+     "botKip": "kenar",
+     "botSeviye": 2,
      "takim": [
       [
        "kasirga-yapay",
@@ -1595,8 +1595,8 @@
       "b4-10"
      ],
      "zorluk": 4,
-     "botKip": "dayaniklilik",
-     "botSeviye": 3,
+     "botKip": "kenar",
+     "botSeviye": 2,
      "takim": [
       [
        "kasirga-yapay",
@@ -1666,7 +1666,7 @@
      ],
      "sonrakiBolge": "cakim-yaylasi",
      "zorluk": 5,
-     "botKip": "dayaniklilik",
+     "botKip": "kenar",
      "botSeviye": 3,
      "takim": [
       [
@@ -1684,8 +1684,8 @@
       [
        "kaya-maden",
        "kalkan-govde",
-       "agir-disk",
-       "igne-uc"
+       "alcak-disk",
+       "dengeli-uc"
       ]
      ],
      "yildiz": [
@@ -1748,8 +1748,8 @@
       "b5-02"
      ],
      "zorluk": 3,
-     "botKip": "kenar",
-     "botSeviye": 2,
+     "botKip": "dolas",
+     "botSeviye": 3,
      "takim": [
       [
        "simsek-goktasi",
@@ -1818,8 +1818,8 @@
       "b5-05"
      ],
      "zorluk": 4,
-     "botKip": "dayaniklilik",
-     "botSeviye": 3,
+     "botKip": "kenar",
+     "botSeviye": 2,
      "takim": [
       [
        "simsek-goktasi",
@@ -1905,8 +1905,8 @@
       "b5-07"
      ],
      "zorluk": 4,
-     "botKip": "dayaniklilik",
-     "botSeviye": 3,
+     "botKip": "kenar",
+     "botSeviye": 2,
      "takim": [
       [
        "simsek-goktasi",
@@ -1958,8 +1958,8 @@
       "b5-09"
      ],
      "zorluk": 4,
-     "botKip": "dayaniklilik",
-     "botSeviye": 3,
+     "botKip": "kenar",
+     "botSeviye": 2,
      "takim": [
       [
        "simsek-goktasi",
@@ -2027,7 +2027,7 @@
       "b5-10"
      ],
      "zorluk": 5,
-     "botKip": "dayaniklilik",
+     "botKip": "kenar",
      "botSeviye": 3,
      "takim": [
       [
@@ -2098,7 +2098,7 @@
      ],
      "sonrakiBolge": "dip-magaralari",
      "zorluk": 5,
-     "botKip": "dayaniklilik",
+     "botKip": "kenar",
      "botSeviye": 3,
      "takim": [
       [
@@ -2180,8 +2180,8 @@
       "b6-02"
      ],
      "zorluk": 4,
-     "botKip": "dayaniklilik",
-     "botSeviye": 3,
+     "botKip": "kenar",
+     "botSeviye": 2,
      "takim": [
       [
        "girdap-maden",
@@ -2250,8 +2250,8 @@
       "b6-05"
      ],
      "zorluk": 4,
-     "botKip": "dayaniklilik",
-     "botSeviye": 3,
+     "botKip": "kenar",
+     "botSeviye": 2,
      "takim": [
       [
        "girdap-maden",
@@ -2337,8 +2337,8 @@
       "b6-07"
      ],
      "zorluk": 4,
-     "botKip": "dayaniklilik",
-     "botSeviye": 3,
+     "botKip": "kenar",
+     "botSeviye": 2,
      "takim": [
       [
        "girdap-maden",
@@ -2390,7 +2390,7 @@
       "b6-09"
      ],
      "zorluk": 5,
-     "botKip": "dayaniklilik",
+     "botKip": "kenar",
      "botSeviye": 3,
      "takim": [
       [
@@ -2459,7 +2459,7 @@
       "b6-10"
      ],
      "zorluk": 5,
-     "botKip": "dayaniklilik",
+     "botKip": "kenar",
      "botSeviye": 3,
      "takim": [
       [
@@ -2529,7 +2529,7 @@
       "b6-12"
      ],
      "zorluk": 5,
-     "botKip": "dayaniklilik",
+     "botKip": "kenar",
      "botSeviye": 3,
      "takim": [
       [

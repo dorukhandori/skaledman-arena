@@ -1,0 +1,51 @@
+{
+ "surum": 1,
+ "not": "Dövme parçalar (docs/design/harita/03 § 4.3, 08 § 7). Bayrak `dovmeParcalari` kapalıyken katalogda (parcalar.json) DEĞİL; bayrak açılınca parcalar.json'a taşınır. Sayılar 03 § 4.3 taslak katkısı; H-H5 turnuvası: araclar/dovme-parca-turnuvasi.ts. Sezon 2 parçaları (savruk-ucu, cakim-diski, cevren-govde) sayısız olduğu için yok.",
+ "parcalar": [
+  {
+   "id": "dag-diski",
+   "ad": "Dağ Diski",
+   "tur": "disk",
+   "element": null,
+   "yukseklik": 50,
+   "tipEgilimi": "kale",
+   "katki": { "kutle": 17, "saldiri": 0, "savunma": 8, "staminaHavuzu": 15, "erime": 0.0, "desen": null, "burstEsik": 9, "yon": null },
+   "katman": "dovme",
+   "fiyat": null,
+   "kilit": "dovme",
+   "gorunum": "acik",
+   "set": null,
+   "aciklama": "Alçak ve sert; Ağır Disk'ten az kalıcı, darbeyi daha iyi karşılar."
+  },
+  {
+   "id": "kiragi-ucu",
+   "ad": "Kırağı Ucu",
+   "tur": "uc",
+   "element": null,
+   "uc": { "ivme": 500, "vSurus": 180, "surtunme": 0.6, "esneklik": 0.5, "kCakilma": 1.2, "dashMaliyet": 16, "sikiDonusCarpani": 0.7, "ringOutHizi": 250 },
+   "tipEgilimi": "dayanikli",
+   "katki": { "kutle": 3, "saldiri": 0, "savunma": 0, "staminaHavuzu": 0, "erime": 4.8, "desen": "merkezci", "burstEsik": 1, "yon": null },
+   "katman": "dovme",
+   "fiyat": null,
+   "kilit": "dovme",
+   "gorunum": "acik",
+   "set": null,
+   "aciklama": "Kaygan kale: İğne kadar ağır değil, Top kadar kaçmaz."
+  },
+  {
+   "id": "koz-govde",
+   "ad": "Köz Gövde",
+   "tur": "govde",
+   "element": "kor",
+   "kanat": 4,
+   "tipEgilimi": "saldirgan",
+   "katki": { "kutle": 20, "saldiri": 56, "savunma": 34, "staminaHavuzu": 45, "erime": 0.0, "desen": null, "burstEsik": 0, "yon": null },
+   "katman": "dovme",
+   "fiyat": null,
+   "kilit": "dovme",
+   "gorunum": "acik",
+   "set": null,
+   "aciklama": "Ağır saldırgan; tek vuruşta değil uzun alışverişte kazanır."
+  }
+ ]
+}

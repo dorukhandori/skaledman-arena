@@ -67,9 +67,11 @@ Zorluk → bot eşlemesi (her bölgenin tek takımı vardır: üç tip, bölge e
 |---|---|---|---|---|
 | 1 | `kukla` | Lv.1 | Bölge takımı | %85+ |
 | 2 | `dolas` | Lv.2 | Bölge takımı | %70–80 |
-| 3 | `kenar` | Lv.2 | Bölge takımı | %60–70 |
-| 4 | `dayaniklilik` | Lv.3 | Bölge takımı | %50–60 |
-| 5 | `dayaniklilik` | Lv.3 | Bölge takımı (Kor, Şimşek, Girdap bölgelerinde hizip parçalı) | %40–55 |
+| 3 | `dolas` | Lv.3 | Bölge takımı | %60–70 |
+| 4 | `kenar` | Lv.2 | Bölge takımı | %50–60 |
+| 5 | `kenar` | Lv.3 | Bölge takımı (Kor, Şimşek, Girdap bölgelerinde hizip parçalı); **istisna b4-11:** bir üye `kaya-maden + kalkan-govde + alcak-disk + dengeli-uc` | %40–55 |
+
+H-H4 bot turnuvası (2026-11-06, `npm run harita:zorluk`, `raporlar/HARITA-DENGE.md`) ile ayarlandı: eski eşlemedeki `dayaniklilik` kipi Lv.1'de bile vekil oyuncuyu %20–42'de tutuyordu, haritadan çıktı; Bölge 4 patronu %61–63 ile kolay kaldığı için takımında bir üye değişti. Ölçüm botla; insan doğrulaması H-H7 test gecesinde.
 
 ### 3.2 Yıldız şartları (sunucu, maç özeti)
 

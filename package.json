@@ -33,7 +33,8 @@
     "topac:uret": "tsx araclar/sanat/topac-uret.ts",
     "h:akis": "tsx araclar/h-akis.ts",
     "harita:asset": "tsx araclar/sanat/harita-asset-uret.ts",
-    "maden:rapor": "tsx araclar/maden-rapor.ts"
+    "maden:rapor": "tsx araclar/maden-rapor.ts",
+    "harita:zorluk": "tsx araclar/harita-zorluk-turnuvasi.ts"
   },
   "dependencies": {
     "@colyseus/monitor": "0.18.7",

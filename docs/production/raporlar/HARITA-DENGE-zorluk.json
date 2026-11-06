@@ -1,0 +1,960 @@
+{
+ "n": 200,
+ "tohumTabani": 1,
+ "vekilKip": "kenar",
+ "vekilTakim": "hazir",
+ "bant": {
+  "dusman": [
+   0.55,
+   0.8
+  ],
+  "patron": [
+   0.4,
+   0.6
+  ]
+ },
+ "zorlukHedef": {
+  "1": [
+   0.85,
+   1
+  ],
+  "2": [
+   0.7,
+   0.8
+  ],
+  "3": [
+   0.6,
+   0.7
+  ],
+  "4": [
+   0.5,
+   0.6
+  ],
+  "5": [
+   0.4,
+   0.55
+  ]
+ },
+ "bolgeler": [
+  {
+   "bolge": 1,
+   "ad": "OCAK YAMACI",
+   "ilkSurum": true,
+   "dusmanOrt": 0.7689999999999999,
+   "patron": 0.56,
+   "dusmanBantta": true,
+   "patronBantta": true
+  },
+  {
+   "bolge": 2,
+   "ad": "AYAZ GEÇİDİ",
+   "ilkSurum": true,
+   "dusmanOrt": 0.5780000000000001,
+   "patron": 0.38,
+   "dusmanBantta": true,
+   "patronBantta": false
+  },
+  {
+   "bolge": 3,
+   "ad": "KOR KRATERLERİ",
+   "ilkSurum": true,
+   "dusmanOrt": 0.663,
+   "patron": 0.605,
+   "dusmanBantta": true,
+   "patronBantta": false
+  },
+  {
+   "bolge": 4,
+   "ad": "YEL SIRTI",
+   "ilkSurum": false,
+   "dusmanOrt": 0.741,
+   "patron": 0.42,
+   "dusmanBantta": true,
+   "patronBantta": true
+  },
+  {
+   "bolge": 5,
+   "ad": "ÇAKIM YAYLASI",
+   "ilkSurum": false,
+   "dusmanOrt": 0.567,
+   "patron": 0.485,
+   "dusmanBantta": true,
+   "patronBantta": true
+  },
+  {
+   "bolge": 6,
+   "ad": "DİP MAĞARALARI",
+   "ilkSurum": false,
+   "dusmanOrt": 0.554,
+   "patron": 0.555,
+   "dusmanBantta": true,
+   "patronBantta": true
+  }
+ ],
+ "dugumler": [
+  {
+   "id": "b1-01",
+   "bolge": 1,
+   "tur": "dusman",
+   "zorluk": 1,
+   "botKip": "kukla",
+   "botSeviye": 1,
+   "n": 200,
+   "oyuncuKazanma": 0.95,
+   "puanFarki": 2.235,
+   "sureMedyan": 80.08333333333333,
+   "bitis": {
+    "durma": 307,
+    "ringOut": 150,
+    "parcalanma": 10,
+    "berabere": 5,
+    "toplam": 472
+   },
+   "setBasina": {
+    "takim-1": 0.9850746268656716,
+    "takim-2": 0.9402985074626866,
+    "takim-3": 0.9242424242424242
+   }
+  },
+  {
+   "id": "b1-03",
+   "bolge": 1,
+   "tur": "dusman",
+   "zorluk": 1,
+   "botKip": "kukla",
+   "botSeviye": 1,
+   "n": 200,
+   "oyuncuKazanma": 0.975,
+   "puanFarki": 2.295,
+   "sureMedyan": 80.66666666666667,
+   "bitis": {
+    "durma": 309,
+    "ringOut": 137,
+    "parcalanma": 10,
+    "berabere": 6,
+    "toplam": 462
+   },
+   "setBasina": {
+    "takim-1": 0.9850746268656716,
+    "takim-2": 0.9850746268656716,
+    "takim-3": 0.9545454545454546
+   }
+  },
+  {
+   "id": "b1-06",
+   "bolge": 1,
+   "tur": "dusman",
+   "zorluk": 2,
+   "botKip": "dolas",
+   "botSeviye": 2,
+   "n": 200,
+   "oyuncuKazanma": 0.645,
+   "puanFarki": 0.635,
+   "sureMedyan": 63.4,
+   "bitis": {
+    "durma": 283,
+    "ringOut": 243,
+    "parcalanma": 6,
+    "berabere": 32,
+    "toplam": 564
+   },
+   "setBasina": {
+    "takim-1": 0.6716417910447762,
+    "takim-2": 0.6417910447761194,
+    "takim-3": 0.6212121212121212
+   }
+  },
+  {
+   "id": "b1-07",
+   "bolge": 1,
+   "tur": "dusman",
+   "zorluk": 2,
+   "botKip": "dolas",
+   "botSeviye": 2,
+   "n": 200,
+   "oyuncuKazanma": 0.68,
+   "puanFarki": 0.88,
+   "sureMedyan": 63.233333333333334,
+   "bitis": {
+    "durma": 276,
+    "ringOut": 245,
+    "parcalanma": 7,
+    "berabere": 35,
+    "toplam": 563
+   },
+   "setBasina": {
+    "takim-1": 0.7313432835820896,
+    "takim-2": 0.582089552238806,
+    "takim-3": 0.7272727272727273
+   }
+  },
+  {
+   "id": "b1-09",
+   "bolge": 1,
+   "tur": "dusman",
+   "zorluk": 3,
+   "botKip": "dolas",
+   "botSeviye": 3,
+   "n": 200,
+   "oyuncuKazanma": 0.595,
+   "puanFarki": 0.505,
+   "sureMedyan": 63.68333333333333,
+   "bitis": {
+    "durma": 303,
+    "ringOut": 239,
+    "parcalanma": 6,
+    "berabere": 32,
+    "toplam": 580
+   },
+   "setBasina": {
+    "takim-1": 0.5671641791044776,
+    "takim-2": 0.417910447761194,
+    "takim-3": 0.803030303030303
+   }
+  },
+  {
+   "id": "b1-11",
+   "bolge": 1,
+   "tur": "patron",
+   "zorluk": 4,
+   "botKip": "kenar",
+   "botSeviye": 2,
+   "n": 200,
+   "oyuncuKazanma": 0.56,
+   "puanFarki": 0.31,
+   "sureMedyan": 62.28333333333333,
+   "bitis": {
+    "durma": 278,
+    "ringOut": 250,
+    "parcalanma": 9,
+    "berabere": 34,
+    "toplam": 571
+   },
+   "setBasina": {
+    "takim-1": 0.7014925373134329,
+    "takim-2": 0.43283582089552236,
+    "takim-3": 0.5454545454545454
+   }
+  },
+  {
+   "id": "b2-01",
+   "bolge": 2,
+   "tur": "dusman",
+   "zorluk": 2,
+   "botKip": "dolas",
+   "botSeviye": 2,
+   "n": 200,
+   "oyuncuKazanma": 0.69,
+   "puanFarki": 1.055,
+   "sureMedyan": 68.13333333333334,
+   "bitis": {
+    "durma": 309,
+    "ringOut": 242,
+    "parcalanma": 1,
+    "berabere": 13,
+    "toplam": 565
+   },
+   "setBasina": {
+    "takim-1": 0.7761194029850746,
+    "takim-2": 0.5671641791044776,
+    "takim-3": 0.7272727272727273
+   }
+  },
+  {
+   "id": "b2-03",
+   "bolge": 2,
+   "tur": "dusman",
+   "zorluk": 2,
+   "botKip": "dolas",
+   "botSeviye": 2,
+   "n": 200,
+   "oyuncuKazanma": 0.64,
+   "puanFarki": 0.67,
+   "sureMedyan": 68.45,
+   "bitis": {
+    "durma": 322,
+    "ringOut": 236,
+    "parcalanma": 0,
+    "berabere": 19,
+    "toplam": 577
+   },
+   "setBasina": {
+    "takim-1": 0.746268656716418,
+    "takim-2": 0.44776119402985076,
+    "takim-3": 0.7272727272727273
+   }
+  },
+  {
+   "id": "b2-06",
+   "bolge": 2,
+   "tur": "dusman",
+   "zorluk": 3,
+   "botKip": "dolas",
+   "botSeviye": 3,
+   "n": 200,
+   "oyuncuKazanma": 0.52,
+   "puanFarki": 0.04,
+   "sureMedyan": 66.25,
+   "bitis": {
+    "durma": 282,
+    "ringOut": 265,
+    "parcalanma": 2,
+    "berabere": 12,
+    "toplam": 561
+   },
+   "setBasina": {
+    "takim-1": 0.6567164179104478,
+    "takim-2": 0.26865671641791045,
+    "takim-3": 0.6363636363636364
+   }
+  },
+  {
+   "id": "b2-07",
+   "bolge": 2,
+   "tur": "dusman",
+   "zorluk": 3,
+   "botKip": "dolas",
+   "botSeviye": 3,
+   "n": 200,
+   "oyuncuKazanma": 0.55,
+   "puanFarki": 0.32,
+   "sureMedyan": 67.25,
+   "bitis": {
+    "durma": 322,
+    "ringOut": 232,
+    "parcalanma": 2,
+    "berabere": 19,
+    "toplam": 575
+   },
+   "setBasina": {
+    "takim-1": 0.6716417910447762,
+    "takim-2": 0.2537313432835821,
+    "takim-3": 0.7272727272727273
+   }
+  },
+  {
+   "id": "b2-09",
+   "bolge": 2,
+   "tur": "dusman",
+   "zorluk": 3,
+   "botKip": "dolas",
+   "botSeviye": 3,
+   "n": 200,
+   "oyuncuKazanma": 0.49,
+   "puanFarki": 0.02,
+   "sureMedyan": 66.9,
+   "bitis": {
+    "durma": 326,
+    "ringOut": 218,
+    "parcalanma": 2,
+    "berabere": 23,
+    "toplam": 569
+   },
+   "setBasina": {
+    "takim-1": 0.582089552238806,
+    "takim-2": 0.2835820895522388,
+    "takim-3": 0.6060606060606061
+   }
+  },
+  {
+   "id": "b2-11",
+   "bolge": 2,
+   "tur": "patron",
+   "zorluk": 5,
+   "botKip": "kenar",
+   "botSeviye": 3,
+   "n": 200,
+   "oyuncuKazanma": 0.38,
+   "puanFarki": -0.515,
+   "sureMedyan": 64.96666666666667,
+   "bitis": {
+    "durma": 293,
+    "ringOut": 260,
+    "parcalanma": 1,
+    "berabere": 22,
+    "toplam": 576
+   },
+   "setBasina": {
+    "takim-1": 0.34328358208955223,
+    "takim-2": 0.2537313432835821,
+    "takim-3": 0.5454545454545454
+   }
+  },
+  {
+   "id": "b3-01",
+   "bolge": 3,
+   "tur": "dusman",
+   "zorluk": 2,
+   "botKip": "dolas",
+   "botSeviye": 2,
+   "n": 200,
+   "oyuncuKazanma": 0.715,
+   "puanFarki": 1.07,
+   "sureMedyan": 57.75,
+   "bitis": {
+    "durma": 272,
+    "ringOut": 263,
+    "parcalanma": 15,
+    "berabere": 41,
+    "toplam": 591
+   },
+   "setBasina": {
+    "takim-1": 0.8507462686567164,
+    "takim-2": 0.5970149253731343,
+    "takim-3": 0.696969696969697
+   }
+  },
+  {
+   "id": "b3-03",
+   "bolge": 3,
+   "tur": "dusman",
+   "zorluk": 3,
+   "botKip": "dolas",
+   "botSeviye": 3,
+   "n": 200,
+   "oyuncuKazanma": 0.66,
+   "puanFarki": 0.82,
+   "sureMedyan": 56.25,
+   "bitis": {
+    "durma": 274,
+    "ringOut": 275,
+    "parcalanma": 10,
+    "berabere": 31,
+    "toplam": 590
+   },
+   "setBasina": {
+    "takim-1": 0.7611940298507462,
+    "takim-2": 0.6268656716417911,
+    "takim-3": 0.5909090909090909
+   }
+  },
+  {
+   "id": "b3-06",
+   "bolge": 3,
+   "tur": "dusman",
+   "zorluk": 3,
+   "botKip": "dolas",
+   "botSeviye": 3,
+   "n": 200,
+   "oyuncuKazanma": 0.62,
+   "puanFarki": 0.675,
+   "sureMedyan": 55.55,
+   "bitis": {
+    "durma": 267,
+    "ringOut": 267,
+    "parcalanma": 10,
+    "berabere": 39,
+    "toplam": 583
+   },
+   "setBasina": {
+    "takim-1": 0.6865671641791045,
+    "takim-2": 0.582089552238806,
+    "takim-3": 0.5909090909090909
+   }
+  },
+  {
+   "id": "b3-07",
+   "bolge": 3,
+   "tur": "dusman",
+   "zorluk": 4,
+   "botKip": "kenar",
+   "botSeviye": 2,
+   "n": 200,
+   "oyuncuKazanma": 0.665,
+   "puanFarki": 0.775,
+   "sureMedyan": 53.88333333333333,
+   "bitis": {
+    "durma": 253,
+    "ringOut": 292,
+    "parcalanma": 10,
+    "berabere": 31,
+    "toplam": 586
+   },
+   "setBasina": {
+    "takim-1": 0.8805970149253731,
+    "takim-2": 0.5970149253731343,
+    "takim-3": 0.5151515151515151
+   }
+  },
+  {
+   "id": "b3-09",
+   "bolge": 3,
+   "tur": "dusman",
+   "zorluk": 4,
+   "botKip": "kenar",
+   "botSeviye": 2,
+   "n": 200,
+   "oyuncuKazanma": 0.655,
+   "puanFarki": 0.745,
+   "sureMedyan": 54.25,
+   "bitis": {
+    "durma": 283,
+    "ringOut": 265,
+    "parcalanma": 12,
+    "berabere": 36,
+    "toplam": 596
+   },
+   "setBasina": {
+    "takim-1": 0.8656716417910447,
+    "takim-2": 0.5671641791044776,
+    "takim-3": 0.5303030303030303
+   }
+  },
+  {
+   "id": "b3-11",
+   "bolge": 3,
+   "tur": "patron",
+   "zorluk": 5,
+   "botKip": "kenar",
+   "botSeviye": 3,
+   "n": 200,
+   "oyuncuKazanma": 0.605,
+   "puanFarki": 0.6,
+   "sureMedyan": 55.266666666666666,
+   "bitis": {
+    "durma": 262,
+    "ringOut": 275,
+    "parcalanma": 17,
+    "berabere": 33,
+    "toplam": 587
+   },
+   "setBasina": {
+    "takim-1": 0.6716417910447762,
+    "takim-2": 0.4925373134328358,
+    "takim-3": 0.6515151515151515
+   }
+  },
+  {
+   "id": "b4-01",
+   "bolge": 4,
+   "tur": "dusman",
+   "zorluk": 3,
+   "botKip": "dolas",
+   "botSeviye": 3,
+   "n": 200,
+   "oyuncuKazanma": 0.76,
+   "puanFarki": 1.16,
+   "sureMedyan": 64.18333333333334,
+   "bitis": {
+    "durma": 352,
+    "ringOut": 205,
+    "parcalanma": 4,
+    "berabere": 23,
+    "toplam": 584
+   },
+   "setBasina": {
+    "takim-1": 0.8507462686567164,
+    "takim-2": 0.7014925373134329,
+    "takim-3": 0.7272727272727273
+   }
+  },
+  {
+   "id": "b4-03",
+   "bolge": 4,
+   "tur": "dusman",
+   "zorluk": 3,
+   "botKip": "dolas",
+   "botSeviye": 3,
+   "n": 200,
+   "oyuncuKazanma": 0.725,
+   "puanFarki": 0.96,
+   "sureMedyan": 63.68333333333333,
+   "bitis": {
+    "durma": 350,
+    "ringOut": 199,
+    "parcalanma": 2,
+    "berabere": 27,
+    "toplam": 578
+   },
+   "setBasina": {
+    "takim-1": 0.8208955223880597,
+    "takim-2": 0.5970149253731343,
+    "takim-3": 0.7575757575757576
+   }
+  },
+  {
+   "id": "b4-06",
+   "bolge": 4,
+   "tur": "dusman",
+   "zorluk": 4,
+   "botKip": "kenar",
+   "botSeviye": 2,
+   "n": 200,
+   "oyuncuKazanma": 0.75,
+   "puanFarki": 1.185,
+   "sureMedyan": 64.51666666666667,
+   "bitis": {
+    "durma": 351,
+    "ringOut": 199,
+    "parcalanma": 8,
+    "berabere": 28,
+    "toplam": 586
+   },
+   "setBasina": {
+    "takim-1": 0.8805970149253731,
+    "takim-2": 0.582089552238806,
+    "takim-3": 0.7878787878787878
+   }
+  },
+  {
+   "id": "b4-07",
+   "bolge": 4,
+   "tur": "dusman",
+   "zorluk": 4,
+   "botKip": "kenar",
+   "botSeviye": 2,
+   "n": 200,
+   "oyuncuKazanma": 0.725,
+   "puanFarki": 0.94,
+   "sureMedyan": 66.23333333333333,
+   "bitis": {
+    "durma": 360,
+    "ringOut": 194,
+    "parcalanma": 3,
+    "berabere": 31,
+    "toplam": 588
+   },
+   "setBasina": {
+    "takim-1": 0.835820895522388,
+    "takim-2": 0.5223880597014925,
+    "takim-3": 0.8181818181818182
+   }
+  },
+  {
+   "id": "b4-09",
+   "bolge": 4,
+   "tur": "dusman",
+   "zorluk": 4,
+   "botKip": "kenar",
+   "botSeviye": 2,
+   "n": 200,
+   "oyuncuKazanma": 0.745,
+   "puanFarki": 1.02,
+   "sureMedyan": 65.95,
+   "bitis": {
+    "durma": 360,
+    "ringOut": 191,
+    "parcalanma": 4,
+    "berabere": 35,
+    "toplam": 590
+   },
+   "setBasina": {
+    "takim-1": 0.8656716417910447,
+    "takim-2": 0.6417910447761194,
+    "takim-3": 0.7272727272727273
+   }
+  },
+  {
+   "id": "b4-11",
+   "bolge": 4,
+   "tur": "patron",
+   "zorluk": 5,
+   "botKip": "kenar",
+   "botSeviye": 3,
+   "n": 200,
+   "oyuncuKazanma": 0.42,
+   "puanFarki": -0.485,
+   "sureMedyan": 64.88333333333334,
+   "bitis": {
+    "durma": 305,
+    "ringOut": 258,
+    "parcalanma": 2,
+    "berabere": 18,
+    "toplam": 583
+   },
+   "setBasina": {
+    "takim-1": 0.5223880597014925,
+    "takim-2": 0.2537313432835821,
+    "takim-3": 0.48484848484848486
+   }
+  },
+  {
+   "id": "b5-01",
+   "bolge": 5,
+   "tur": "dusman",
+   "zorluk": 3,
+   "botKip": "dolas",
+   "botSeviye": 3,
+   "n": 200,
+   "oyuncuKazanma": 0.58,
+   "puanFarki": 0.405,
+   "sureMedyan": 55.43333333333333,
+   "bitis": {
+    "durma": 299,
+    "ringOut": 256,
+    "parcalanma": 12,
+    "berabere": 29,
+    "toplam": 596
+   },
+   "setBasina": {
+    "takim-1": 0.6865671641791045,
+    "takim-2": 0.5373134328358209,
+    "takim-3": 0.5151515151515151
+   }
+  },
+  {
+   "id": "b5-03",
+   "bolge": 5,
+   "tur": "dusman",
+   "zorluk": 4,
+   "botKip": "kenar",
+   "botSeviye": 2,
+   "n": 200,
+   "oyuncuKazanma": 0.57,
+   "puanFarki": 0.34,
+   "sureMedyan": 54.15,
+   "bitis": {
+    "durma": 286,
+    "ringOut": 270,
+    "parcalanma": 14,
+    "berabere": 33,
+    "toplam": 603
+   },
+   "setBasina": {
+    "takim-1": 0.7014925373134329,
+    "takim-2": 0.5074626865671642,
+    "takim-3": 0.5
+   }
+  },
+  {
+   "id": "b5-06",
+   "bolge": 5,
+   "tur": "dusman",
+   "zorluk": 4,
+   "botKip": "kenar",
+   "botSeviye": 2,
+   "n": 200,
+   "oyuncuKazanma": 0.62,
+   "puanFarki": 0.47,
+   "sureMedyan": 54.31666666666667,
+   "bitis": {
+    "durma": 286,
+    "ringOut": 272,
+    "parcalanma": 13,
+    "berabere": 27,
+    "toplam": 598
+   },
+   "setBasina": {
+    "takim-1": 0.7014925373134329,
+    "takim-2": 0.6417910447761194,
+    "takim-3": 0.5151515151515151
+   }
+  },
+  {
+   "id": "b5-07",
+   "bolge": 5,
+   "tur": "dusman",
+   "zorluk": 4,
+   "botKip": "kenar",
+   "botSeviye": 2,
+   "n": 200,
+   "oyuncuKazanma": 0.6,
+   "puanFarki": 0.39,
+   "sureMedyan": 56.483333333333334,
+   "bitis": {
+    "durma": 296,
+    "ringOut": 259,
+    "parcalanma": 14,
+    "berabere": 37,
+    "toplam": 606
+   },
+   "setBasina": {
+    "takim-1": 0.7313432835820896,
+    "takim-2": 0.5074626865671642,
+    "takim-3": 0.5606060606060606
+   }
+  },
+  {
+   "id": "b5-09",
+   "bolge": 5,
+   "tur": "dusman",
+   "zorluk": 5,
+   "botKip": "kenar",
+   "botSeviye": 3,
+   "n": 200,
+   "oyuncuKazanma": 0.465,
+   "puanFarki": -0.19,
+   "sureMedyan": 53.266666666666666,
+   "bitis": {
+    "durma": 290,
+    "ringOut": 288,
+    "parcalanma": 8,
+    "berabere": 28,
+    "toplam": 614
+   },
+   "setBasina": {
+    "takim-1": 0.6119402985074627,
+    "takim-2": 0.31343283582089554,
+    "takim-3": 0.4696969696969697
+   }
+  },
+  {
+   "id": "b5-11",
+   "bolge": 5,
+   "tur": "patron",
+   "zorluk": 5,
+   "botKip": "kenar",
+   "botSeviye": 3,
+   "n": 200,
+   "oyuncuKazanma": 0.485,
+   "puanFarki": -0.095,
+   "sureMedyan": 55.03333333333333,
+   "bitis": {
+    "durma": 301,
+    "ringOut": 260,
+    "parcalanma": 14,
+    "berabere": 24,
+    "toplam": 599
+   },
+   "setBasina": {
+    "takim-1": 0.6865671641791045,
+    "takim-2": 0.3283582089552239,
+    "takim-3": 0.4393939393939394
+   }
+  },
+  {
+   "id": "b6-01",
+   "bolge": 6,
+   "tur": "dusman",
+   "zorluk": 4,
+   "botKip": "kenar",
+   "botSeviye": 2,
+   "n": 200,
+   "oyuncuKazanma": 0.475,
+   "puanFarki": -0.035,
+   "sureMedyan": 58.36666666666667,
+   "bitis": {
+    "durma": 171,
+    "ringOut": 341,
+    "parcalanma": 11,
+    "berabere": 14,
+    "toplam": 537
+   },
+   "setBasina": {
+    "takim-1": 0.44776119402985076,
+    "takim-2": 0.373134328358209,
+    "takim-3": 0.6060606060606061
+   }
+  },
+  {
+   "id": "b6-03",
+   "bolge": 6,
+   "tur": "dusman",
+   "zorluk": 4,
+   "botKip": "kenar",
+   "botSeviye": 2,
+   "n": 200,
+   "oyuncuKazanma": 0.59,
+   "puanFarki": 0.585,
+   "sureMedyan": 59.333333333333336,
+   "bitis": {
+    "durma": 147,
+    "ringOut": 366,
+    "parcalanma": 12,
+    "berabere": 7,
+    "toplam": 532
+   },
+   "setBasina": {
+    "takim-1": 0.5970149253731343,
+    "takim-2": 0.5522388059701493,
+    "takim-3": 0.6212121212121212
+   }
+  },
+  {
+   "id": "b6-06",
+   "bolge": 6,
+   "tur": "dusman",
+   "zorluk": 4,
+   "botKip": "kenar",
+   "botSeviye": 2,
+   "n": 200,
+   "oyuncuKazanma": 0.64,
+   "puanFarki": 0.94,
+   "sureMedyan": 58.916666666666664,
+   "bitis": {
+    "durma": 184,
+    "ringOut": 341,
+    "parcalanma": 10,
+    "berabere": 13,
+    "toplam": 548
+   },
+   "setBasina": {
+    "takim-1": 0.6716417910447762,
+    "takim-2": 0.5522388059701493,
+    "takim-3": 0.696969696969697
+   }
+  },
+  {
+   "id": "b6-07",
+   "bolge": 6,
+   "tur": "dusman",
+   "zorluk": 5,
+   "botKip": "kenar",
+   "botSeviye": 3,
+   "n": 200,
+   "oyuncuKazanma": 0.515,
+   "puanFarki": 0.3,
+   "sureMedyan": 57.35,
+   "bitis": {
+    "durma": 170,
+    "ringOut": 342,
+    "parcalanma": 16,
+    "berabere": 15,
+    "toplam": 543
+   },
+   "setBasina": {
+    "takim-1": 0.5373134328358209,
+    "takim-2": 0.4925373134328358,
+    "takim-3": 0.5151515151515151
+   }
+  },
+  {
+   "id": "b6-09",
+   "bolge": 6,
+   "tur": "dusman",
+   "zorluk": 5,
+   "botKip": "kenar",
+   "botSeviye": 3,
+   "n": 200,
+   "oyuncuKazanma": 0.55,
+   "puanFarki": 0.46,
+   "sureMedyan": 60.083333333333336,
+   "bitis": {
+    "durma": 172,
+    "ringOut": 330,
+    "parcalanma": 18,
+    "berabere": 16,
+    "toplam": 536
+   },
+   "setBasina": {
+    "takim-1": 0.47761194029850745,
+    "takim-2": 0.5223880597014925,
+    "takim-3": 0.6515151515151515
+   }
+  },
+  {
+   "id": "b6-11",
+   "bolge": 6,
+   "tur": "patron",
+   "zorluk": 5,
+   "botKip": "kenar",
+   "botSeviye": 3,
+   "n": 200,
+   "oyuncuKazanma": 0.555,
+   "puanFarki": 0.51,
+   "sureMedyan": 56.483333333333334,
+   "bitis": {
+    "durma": 180,
+    "ringOut": 336,
+    "parcalanma": 14,
+    "berabere": 20,
+    "toplam": 550
+   },
+   "setBasina": {
+    "takim-1": 0.5373134328358209,
+    "takim-2": 0.5373134328358209,
+    "takim-3": 0.5909090909090909
+   }
+  }
+ ]
+}

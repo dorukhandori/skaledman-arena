@@ -1,0 +1,57 @@
+{
+ "amac": "H-H4 patron doğrulaması: bağımsız tohum tabanı (11), n=600; vekil kenar + BASLANGIC_TAKIMLARI",
+ "bant": [
+  0.4,
+  0.6
+ ],
+ "patronlar": [
+  {
+   "id": "b1-11",
+   "botKip": "kenar",
+   "botSeviye": 2,
+   "n": 600,
+   "tohumTabani": 11,
+   "oyuncuKazanma": 0.508
+  },
+  {
+   "id": "b2-11",
+   "botKip": "kenar",
+   "botSeviye": 3,
+   "n": 600,
+   "tohumTabani": 11,
+   "oyuncuKazanma": 0.42200000000000004
+  },
+  {
+   "id": "b3-11",
+   "botKip": "kenar",
+   "botSeviye": 3,
+   "n": 600,
+   "tohumTabani": 11,
+   "oyuncuKazanma": 0.588
+  },
+  {
+   "id": "b4-11",
+   "botKip": "kenar",
+   "botSeviye": 3,
+   "n": 600,
+   "tohumTabani": 11,
+   "oyuncuKazanma": 0.47
+  },
+  {
+   "id": "b5-11",
+   "botKip": "kenar",
+   "botSeviye": 3,
+   "n": 600,
+   "tohumTabani": 11,
+   "oyuncuKazanma": 0.5379999999999999
+  },
+  {
+   "id": "b6-11",
+   "botKip": "kenar",
+   "botSeviye": 3,
+   "n": 600,
+   "tohumTabani": 11,
+   "oyuncuKazanma": 0.473
+  }
+ ]
+}

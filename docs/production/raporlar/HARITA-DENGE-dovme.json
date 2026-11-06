@@ -1,0 +1,1610 @@
+{
+ "n": 1000,
+ "tohumlar": [
+  1,
+  2,
+  3
+ ],
+ "bant": {
+  "kazanma": [
+   0.35,
+   0.65
+  ],
+  "ringOutPuan": 0.03
+ },
+ "buildler": [
+  {
+   "ad": "S",
+   "ev": "S",
+   "parca": null,
+   "tip": "saldirgan",
+   "hucreler": [
+    {
+     "rakip": "S",
+     "kaz": 1511.5,
+     "n": 3000,
+     "ringOut": 1080,
+     "durma": 833,
+     "parcalanma": 258,
+     "tur": 3000
+    },
+    {
+     "rakip": "K",
+     "kaz": 2249,
+     "n": 3000,
+     "ringOut": 179,
+     "durma": 2145,
+     "parcalanma": 6,
+     "tur": 3000
+    },
+    {
+     "rakip": "D",
+     "kaz": 1479,
+     "n": 3000,
+     "ringOut": 544,
+     "durma": 859,
+     "parcalanma": 1307,
+     "tur": 3000
+    },
+    {
+     "rakip": "B",
+     "kaz": 1119,
+     "n": 3000,
+     "ringOut": 1483,
+     "durma": 853,
+     "parcalanma": 74,
+     "tur": 3000
+    }
+   ],
+   "kazanma": 0.529875,
+   "ringOutPayi": 0.2738333333333333
+  },
+  {
+   "ad": "K",
+   "ev": "K",
+   "parca": null,
+   "tip": "kale",
+   "hucreler": [
+    {
+     "rakip": "S",
+     "kaz": 788.5,
+     "n": 3000,
+     "ringOut": 214,
+     "durma": 2079,
+     "parcalanma": 8,
+     "tur": 3000
+    },
+    {
+     "rakip": "K",
+     "kaz": 1524.5,
+     "n": 3000,
+     "ringOut": 0,
+     "durma": 2475,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "D",
+     "kaz": 1,
+     "n": 3000,
+     "ringOut": 0,
+     "durma": 2998,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "B",
+     "kaz": 439,
+     "n": 3000,
+     "ringOut": 272,
+     "durma": 2250,
+     "parcalanma": 0,
+     "tur": 3000
+    }
+   ],
+   "kazanma": 0.22941666666666666,
+   "ringOutPayi": 0.0405
+  },
+  {
+   "ad": "D",
+   "ev": "D",
+   "parca": null,
+   "tip": "dayanikli",
+   "hucreler": [
+    {
+     "rakip": "S",
+     "kaz": 1532,
+     "n": 3000,
+     "ringOut": 516,
+     "durma": 855,
+     "parcalanma": 1309,
+     "tur": 3000
+    },
+    {
+     "rakip": "K",
+     "kaz": 2998,
+     "n": 3000,
+     "ringOut": 2,
+     "durma": 2998,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "D",
+     "kaz": 1497.5,
+     "n": 3000,
+     "ringOut": 0,
+     "durma": 0,
+     "parcalanma": 319,
+     "tur": 3000
+    },
+    {
+     "rakip": "B",
+     "kaz": 1502.5,
+     "n": 3000,
+     "ringOut": 1159,
+     "durma": 1026,
+     "parcalanma": 546,
+     "tur": 3000
+    }
+   ],
+   "kazanma": 0.6275,
+   "ringOutPayi": 0.13975
+  },
+  {
+   "ad": "B",
+   "ev": "B",
+   "parca": null,
+   "tip": "denge",
+   "hucreler": [
+    {
+     "rakip": "S",
+     "kaz": 1834.5,
+     "n": 3000,
+     "ringOut": 1500,
+     "durma": 769,
+     "parcalanma": 84,
+     "tur": 3000
+    },
+    {
+     "rakip": "K",
+     "kaz": 2525,
+     "n": 3000,
+     "ringOut": 260,
+     "durma": 2212,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "D",
+     "kaz": 1458.5,
+     "n": 3000,
+     "ringOut": 1070,
+     "durma": 1140,
+     "parcalanma": 537,
+     "tur": 3000
+    },
+    {
+     "rakip": "B",
+     "kaz": 1482.5,
+     "n": 3000,
+     "ringOut": 1909,
+     "durma": 717,
+     "parcalanma": 3,
+     "tur": 3000
+    }
+   ],
+   "kazanma": 0.608375,
+   "ringOutPayi": 0.3949166666666667
+  },
+  {
+   "ad": "dag-diski@S",
+   "ev": "S",
+   "parca": "dag-diski",
+   "tip": "saldirgan",
+   "hucreler": [
+    {
+     "rakip": "S",
+     "kaz": 2192.5,
+     "n": 3000,
+     "ringOut": 1152,
+     "durma": 979,
+     "parcalanma": 182,
+     "tur": 3000
+    },
+    {
+     "rakip": "K",
+     "kaz": 2524,
+     "n": 3000,
+     "ringOut": 115,
+     "durma": 2293,
+     "parcalanma": 24,
+     "tur": 3000
+    },
+    {
+     "rakip": "D",
+     "kaz": 1677,
+     "n": 3000,
+     "ringOut": 334,
+     "durma": 907,
+     "parcalanma": 1381,
+     "tur": 3000
+    },
+    {
+     "rakip": "B",
+     "kaz": 1778,
+     "n": 3000,
+     "ringOut": 1447,
+     "durma": 897,
+     "parcalanma": 76,
+     "tur": 3000
+    }
+   ],
+   "kazanma": 0.6809583333333333,
+   "ringOutPayi": 0.254
+  },
+  {
+   "ad": "dag-diski@K",
+   "ev": "K",
+   "parca": "dag-diski",
+   "tip": "kale",
+   "hucreler": [
+    {
+     "rakip": "S",
+     "kaz": 744.5,
+     "n": 3000,
+     "ringOut": 215,
+     "durma": 2114,
+     "parcalanma": 10,
+     "tur": 3000
+    },
+    {
+     "rakip": "K",
+     "kaz": 1341.5,
+     "n": 3000,
+     "ringOut": 0,
+     "durma": 2495,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "D",
+     "kaz": 1.5,
+     "n": 3000,
+     "ringOut": 1,
+     "durma": 2998,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "B",
+     "kaz": 440.5,
+     "n": 3000,
+     "ringOut": 287,
+     "durma": 2252,
+     "parcalanma": 0,
+     "tur": 3000
+    }
+   ],
+   "kazanma": 0.21066666666666667,
+   "ringOutPayi": 0.041916666666666665
+  },
+  {
+   "ad": "dag-diski@D",
+   "ev": "D",
+   "parca": "dag-diski",
+   "tip": "denge",
+   "hucreler": [
+    {
+     "rakip": "S",
+     "kaz": 2566.5,
+     "n": 3000,
+     "ringOut": 1592,
+     "durma": 1240,
+     "parcalanma": 9,
+     "tur": 3000
+    },
+    {
+     "rakip": "K",
+     "kaz": 2936,
+     "n": 3000,
+     "ringOut": 43,
+     "durma": 2917,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "D",
+     "kaz": 1639,
+     "n": 3000,
+     "ringOut": 665,
+     "durma": 816,
+     "parcalanma": 893,
+     "tur": 3000
+    },
+    {
+     "rakip": "B",
+     "kaz": 1922.5,
+     "n": 3000,
+     "ringOut": 1850,
+     "durma": 1064,
+     "parcalanma": 1,
+     "tur": 3000
+    }
+   ],
+   "kazanma": 0.7553333333333333,
+   "ringOutPayi": 0.3458333333333333
+  },
+  {
+   "ad": "dag-diski@B",
+   "ev": "B",
+   "parca": "dag-diski",
+   "tip": "denge",
+   "hucreler": [
+    {
+     "rakip": "S",
+     "kaz": 2286,
+     "n": 3000,
+     "ringOut": 1507,
+     "durma": 853,
+     "parcalanma": 36,
+     "tur": 3000
+    },
+    {
+     "rakip": "K",
+     "kaz": 2680,
+     "n": 3000,
+     "ringOut": 237,
+     "durma": 2333,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "D",
+     "kaz": 1596.5,
+     "n": 3000,
+     "ringOut": 1042,
+     "durma": 1098,
+     "parcalanma": 557,
+     "tur": 3000
+    },
+    {
+     "rakip": "B",
+     "kaz": 1847.5,
+     "n": 3000,
+     "ringOut": 1891,
+     "durma": 664,
+     "parcalanma": 4,
+     "tur": 3000
+    }
+   ],
+   "kazanma": 0.7008333333333333,
+   "ringOutPayi": 0.38975
+  },
+  {
+   "ad": "kiragi-ucu@S",
+   "ev": "S",
+   "parca": "kiragi-ucu",
+   "tip": "saldirgan",
+   "hucreler": [
+    {
+     "rakip": "S",
+     "kaz": 1355,
+     "n": 3000,
+     "ringOut": 600,
+     "durma": 1112,
+     "parcalanma": 154,
+     "tur": 3000
+    },
+    {
+     "rakip": "K",
+     "kaz": 2415.5,
+     "n": 3000,
+     "ringOut": 88,
+     "durma": 1999,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "D",
+     "kaz": 2125,
+     "n": 3000,
+     "ringOut": 197,
+     "durma": 531,
+     "parcalanma": 1838,
+     "tur": 3000
+    },
+    {
+     "rakip": "B",
+     "kaz": 1110.5,
+     "n": 3000,
+     "ringOut": 1165,
+     "durma": 920,
+     "parcalanma": 18,
+     "tur": 3000
+    }
+   ],
+   "kazanma": 0.5838333333333333,
+   "ringOutPayi": 0.17083333333333334
+  },
+  {
+   "ad": "kiragi-ucu@K",
+   "ev": "K",
+   "parca": "kiragi-ucu",
+   "tip": "kale",
+   "hucreler": [
+    {
+     "rakip": "S",
+     "kaz": 2241,
+     "n": 3000,
+     "ringOut": 1228,
+     "durma": 1210,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "K",
+     "kaz": 2824.5,
+     "n": 3000,
+     "ringOut": 0,
+     "durma": 2665,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "D",
+     "kaz": 470,
+     "n": 3000,
+     "ringOut": 433,
+     "durma": 2495,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "B",
+     "kaz": 1978,
+     "n": 3000,
+     "ringOut": 1701,
+     "durma": 923,
+     "parcalanma": 0,
+     "tur": 3000
+    }
+   ],
+   "kazanma": 0.626125,
+   "ringOutPayi": 0.2801666666666667
+  },
+  {
+   "ad": "kiragi-ucu@D",
+   "ev": "D",
+   "parca": "kiragi-ucu",
+   "tip": "dayanikli",
+   "hucreler": [
+    {
+     "rakip": "S",
+     "kaz": 1289.5,
+     "n": 3000,
+     "ringOut": 362,
+     "durma": 714,
+     "parcalanma": 1543,
+     "tur": 3000
+    },
+    {
+     "rakip": "K",
+     "kaz": 2995.5,
+     "n": 3000,
+     "ringOut": 0,
+     "durma": 2991,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "D",
+     "kaz": 1442.5,
+     "n": 3000,
+     "ringOut": 0,
+     "durma": 0,
+     "parcalanma": 311,
+     "tur": 3000
+    },
+    {
+     "rakip": "B",
+     "kaz": 1331,
+     "n": 3000,
+     "ringOut": 959,
+     "durma": 880,
+     "parcalanma": 817,
+     "tur": 3000
+    }
+   ],
+   "kazanma": 0.5882083333333333,
+   "ringOutPayi": 0.11008333333333334
+  },
+  {
+   "ad": "kiragi-ucu@B",
+   "ev": "B",
+   "parca": "kiragi-ucu",
+   "tip": "denge",
+   "hucreler": [
+    {
+     "rakip": "S",
+     "kaz": 2234.5,
+     "n": 3000,
+     "ringOut": 1441,
+     "durma": 801,
+     "parcalanma": 93,
+     "tur": 3000
+    },
+    {
+     "rakip": "K",
+     "kaz": 2701.5,
+     "n": 3000,
+     "ringOut": 245,
+     "durma": 2288,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "D",
+     "kaz": 1787,
+     "n": 3000,
+     "ringOut": 915,
+     "durma": 928,
+     "parcalanma": 719,
+     "tur": 3000
+    },
+    {
+     "rakip": "B",
+     "kaz": 1874,
+     "n": 3000,
+     "ringOut": 1790,
+     "durma": 738,
+     "parcalanma": 2,
+     "tur": 3000
+    }
+   ],
+   "kazanma": 0.7164166666666667,
+   "ringOutPayi": 0.36591666666666667
+  },
+  {
+   "ad": "koz-govde@S",
+   "ev": "S",
+   "parca": "koz-govde",
+   "tip": "saldirgan",
+   "hucreler": [
+    {
+     "rakip": "S",
+     "kaz": 1988,
+     "n": 3000,
+     "ringOut": 1134,
+     "durma": 900,
+     "parcalanma": 192,
+     "tur": 3000
+    },
+    {
+     "rakip": "K",
+     "kaz": 2388,
+     "n": 3000,
+     "ringOut": 134,
+     "durma": 2187,
+     "parcalanma": 5,
+     "tur": 3000
+    },
+    {
+     "rakip": "D",
+     "kaz": 1513,
+     "n": 3000,
+     "ringOut": 386,
+     "durma": 1014,
+     "parcalanma": 1240,
+     "tur": 3000
+    },
+    {
+     "rakip": "B",
+     "kaz": 1588,
+     "n": 3000,
+     "ringOut": 1512,
+     "durma": 818,
+     "parcalanma": 62,
+     "tur": 3000
+    }
+   ],
+   "kazanma": 0.6230833333333333,
+   "ringOutPayi": 0.2638333333333333
+  },
+  {
+   "ad": "koz-govde@K",
+   "ev": "K",
+   "parca": "koz-govde",
+   "tip": "denge",
+   "hucreler": [
+    {
+     "rakip": "S",
+     "kaz": 1100,
+     "n": 3000,
+     "ringOut": 227,
+     "durma": 1584,
+     "parcalanma": 7,
+     "tur": 3000
+    },
+    {
+     "rakip": "K",
+     "kaz": 2571,
+     "n": 3000,
+     "ringOut": 0,
+     "durma": 2256,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "D",
+     "kaz": 389.5,
+     "n": 3000,
+     "ringOut": 2,
+     "durma": 2450,
+     "parcalanma": 227,
+     "tur": 3000
+    },
+    {
+     "rakip": "B",
+     "kaz": 786,
+     "n": 3000,
+     "ringOut": 249,
+     "durma": 1827,
+     "parcalanma": 2,
+     "tur": 3000
+    }
+   ],
+   "kazanma": 0.403875,
+   "ringOutPayi": 0.03983333333333333
+  },
+  {
+   "ad": "koz-govde@D",
+   "ev": "D",
+   "parca": "koz-govde",
+   "tip": "denge",
+   "hucreler": [
+    {
+     "rakip": "S",
+     "kaz": 2273.5,
+     "n": 3000,
+     "ringOut": 1292,
+     "durma": 1180,
+     "parcalanma": 181,
+     "tur": 3000
+    },
+    {
+     "rakip": "K",
+     "kaz": 2876.5,
+     "n": 3000,
+     "ringOut": 87,
+     "durma": 2846,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "D",
+     "kaz": 2609,
+     "n": 3000,
+     "ringOut": 163,
+     "durma": 125,
+     "parcalanma": 2442,
+     "tur": 3000
+    },
+    {
+     "rakip": "B",
+     "kaz": 1580,
+     "n": 3000,
+     "ringOut": 1761,
+     "durma": 1073,
+     "parcalanma": 20,
+     "tur": 3000
+    }
+   ],
+   "kazanma": 0.77825,
+   "ringOutPayi": 0.27525
+  },
+  {
+   "ad": "koz-govde@B",
+   "ev": "B",
+   "parca": "koz-govde",
+   "tip": "saldirgan",
+   "hucreler": [
+    {
+     "rakip": "S",
+     "kaz": 1647.5,
+     "n": 3000,
+     "ringOut": 1218,
+     "durma": 942,
+     "parcalanma": 55,
+     "tur": 3000
+    },
+    {
+     "rakip": "K",
+     "kaz": 2106.5,
+     "n": 3000,
+     "ringOut": 260,
+     "durma": 1863,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "D",
+     "kaz": 1726,
+     "n": 3000,
+     "ringOut": 617,
+     "durma": 987,
+     "parcalanma": 1050,
+     "tur": 3000
+    },
+    {
+     "rakip": "B",
+     "kaz": 1262,
+     "n": 3000,
+     "ringOut": 1503,
+     "durma": 872,
+     "parcalanma": 9,
+     "tur": 3000
+    }
+   ],
+   "kazanma": 0.5618333333333333,
+   "ringOutPayi": 0.29983333333333334
+  },
+  {
+   "ad": "agir-disk@S",
+   "ev": "S",
+   "parca": null,
+   "es": "dag-diski",
+   "tip": "saldirgan",
+   "hucreler": [
+    {
+     "rakip": "S",
+     "kaz": 2223,
+     "n": 3000,
+     "ringOut": 1196,
+     "durma": 929,
+     "parcalanma": 161,
+     "tur": 3000
+    },
+    {
+     "rakip": "K",
+     "kaz": 2484.5,
+     "n": 3000,
+     "ringOut": 112,
+     "durma": 2223,
+     "parcalanma": 18,
+     "tur": 3000
+    },
+    {
+     "rakip": "D",
+     "kaz": 1730.5,
+     "n": 3000,
+     "ringOut": 341,
+     "durma": 872,
+     "parcalanma": 1412,
+     "tur": 3000
+    },
+    {
+     "rakip": "B",
+     "kaz": 1778.5,
+     "n": 3000,
+     "ringOut": 1451,
+     "durma": 851,
+     "parcalanma": 77,
+     "tur": 3000
+    }
+   ],
+   "kazanma": 0.6847083333333334,
+   "ringOutPayi": 0.25833333333333336
+  },
+  {
+   "ad": "agir-disk@D",
+   "ev": "D",
+   "parca": null,
+   "es": "dag-diski",
+   "tip": "denge",
+   "hucreler": [
+    {
+     "rakip": "S",
+     "kaz": 2577,
+     "n": 3000,
+     "ringOut": 1648,
+     "durma": 1160,
+     "parcalanma": 6,
+     "tur": 3000
+    },
+    {
+     "rakip": "K",
+     "kaz": 2948.5,
+     "n": 3000,
+     "ringOut": 37,
+     "durma": 2934,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "D",
+     "kaz": 1706.5,
+     "n": 3000,
+     "ringOut": 720,
+     "durma": 852,
+     "parcalanma": 869,
+     "tur": 3000
+    },
+    {
+     "rakip": "B",
+     "kaz": 1949,
+     "n": 3000,
+     "ringOut": 1891,
+     "durma": 1024,
+     "parcalanma": 1,
+     "tur": 3000
+    }
+   ],
+   "kazanma": 0.7650833333333333,
+   "ringOutPayi": 0.358
+  },
+  {
+   "ad": "agir-disk@B",
+   "ev": "B",
+   "parca": null,
+   "es": "dag-diski",
+   "tip": "denge",
+   "hucreler": [
+    {
+     "rakip": "S",
+     "kaz": 2336.5,
+     "n": 3000,
+     "ringOut": 1543,
+     "durma": 857,
+     "parcalanma": 23,
+     "tur": 3000
+    },
+    {
+     "rakip": "K",
+     "kaz": 2699.5,
+     "n": 3000,
+     "ringOut": 234,
+     "durma": 2369,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "D",
+     "kaz": 1655,
+     "n": 3000,
+     "ringOut": 997,
+     "durma": 1066,
+     "parcalanma": 591,
+     "tur": 3000
+    },
+    {
+     "rakip": "B",
+     "kaz": 1915.5,
+     "n": 3000,
+     "ringOut": 1868,
+     "durma": 687,
+     "parcalanma": 2,
+     "tur": 3000
+    }
+   ],
+   "kazanma": 0.7172083333333333,
+   "ringOutPayi": 0.3868333333333333
+  },
+  {
+   "ad": "top-uc@S",
+   "ev": "S",
+   "parca": null,
+   "es": "kiragi-ucu",
+   "tip": "saldirgan",
+   "hucreler": [
+    {
+     "rakip": "S",
+     "kaz": 1367.5,
+     "n": 3000,
+     "ringOut": 1275,
+     "durma": 816,
+     "parcalanma": 136,
+     "tur": 3000
+    },
+    {
+     "rakip": "K",
+     "kaz": 2365,
+     "n": 3000,
+     "ringOut": 257,
+     "durma": 2227,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "D",
+     "kaz": 2241.5,
+     "n": 3000,
+     "ringOut": 438,
+     "durma": 235,
+     "parcalanma": 2110,
+     "tur": 3000
+    },
+    {
+     "rakip": "B",
+     "kaz": 904,
+     "n": 3000,
+     "ringOut": 1776,
+     "durma": 692,
+     "parcalanma": 18,
+     "tur": 3000
+    }
+   ],
+   "kazanma": 0.5731666666666667,
+   "ringOutPayi": 0.31216666666666665
+  },
+  {
+   "ad": "top-uc@K",
+   "ev": "K",
+   "parca": null,
+   "es": "kiragi-ucu",
+   "tip": "kale",
+   "hucreler": [
+    {
+     "rakip": "S",
+     "kaz": 2453,
+     "n": 3000,
+     "ringOut": 1554,
+     "durma": 1087,
+     "parcalanma": 1,
+     "tur": 3000
+    },
+    {
+     "rakip": "K",
+     "kaz": 2868.5,
+     "n": 3000,
+     "ringOut": 16,
+     "durma": 2775,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "D",
+     "kaz": 685.5,
+     "n": 3000,
+     "ringOut": 752,
+     "durma": 2213,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "B",
+     "kaz": 2035.5,
+     "n": 3000,
+     "ringOut": 1930,
+     "durma": 869,
+     "parcalanma": 0,
+     "tur": 3000
+    }
+   ],
+   "kazanma": 0.6702083333333333,
+   "ringOutPayi": 0.35433333333333333
+  },
+  {
+   "ad": "top-uc@B",
+   "ev": "B",
+   "parca": null,
+   "es": "kiragi-ucu",
+   "tip": "denge",
+   "hucreler": [
+    {
+     "rakip": "S",
+     "kaz": 2079.5,
+     "n": 3000,
+     "ringOut": 1880,
+     "durma": 701,
+     "parcalanma": 52,
+     "tur": 3000
+    },
+    {
+     "rakip": "K",
+     "kaz": 2613,
+     "n": 3000,
+     "ringOut": 362,
+     "durma": 2360,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "D",
+     "kaz": 1672.5,
+     "n": 3000,
+     "ringOut": 1331,
+     "durma": 487,
+     "parcalanma": 881,
+     "tur": 3000
+    },
+    {
+     "rakip": "B",
+     "kaz": 1548.5,
+     "n": 3000,
+     "ringOut": 2251,
+     "durma": 540,
+     "parcalanma": 2,
+     "tur": 3000
+    }
+   ],
+   "kazanma": 0.6594583333333334,
+   "ringOutPayi": 0.48533333333333334
+  },
+  {
+   "ad": "ok-govde@K",
+   "ev": "K",
+   "parca": null,
+   "es": "koz-govde",
+   "tip": "saldirgan",
+   "hucreler": [
+    {
+     "rakip": "S",
+     "kaz": 1041,
+     "n": 3000,
+     "ringOut": 152,
+     "durma": 1636,
+     "parcalanma": 18,
+     "tur": 3000
+    },
+    {
+     "rakip": "K",
+     "kaz": 2600,
+     "n": 3000,
+     "ringOut": 0,
+     "durma": 2294,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "D",
+     "kaz": 499.5,
+     "n": 3000,
+     "ringOut": 0,
+     "durma": 2342,
+     "parcalanma": 341,
+     "tur": 3000
+    },
+    {
+     "rakip": "B",
+     "kaz": 685.5,
+     "n": 3000,
+     "ringOut": 233,
+     "durma": 1840,
+     "parcalanma": 0,
+     "tur": 3000
+    }
+   ],
+   "kazanma": 0.4021666666666667,
+   "ringOutPayi": 0.03208333333333333
+  },
+  {
+   "ad": "ok-govde@D",
+   "ev": "D",
+   "parca": null,
+   "es": "koz-govde",
+   "tip": "denge",
+   "hucreler": [
+    {
+     "rakip": "S",
+     "kaz": 1732.5,
+     "n": 3000,
+     "ringOut": 1287,
+     "durma": 1002,
+     "parcalanma": 312,
+     "tur": 3000
+    },
+    {
+     "rakip": "K",
+     "kaz": 2782.5,
+     "n": 3000,
+     "ringOut": 189,
+     "durma": 2760,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "D",
+     "kaz": 2643,
+     "n": 3000,
+     "ringOut": 212,
+     "durma": 52,
+     "parcalanma": 2556,
+     "tur": 3000
+    },
+    {
+     "rakip": "B",
+     "kaz": 1147,
+     "n": 3000,
+     "ringOut": 1912,
+     "durma": 895,
+     "parcalanma": 45,
+     "tur": 3000
+    }
+   ],
+   "kazanma": 0.6920833333333334,
+   "ringOutPayi": 0.3
+  },
+  {
+   "ad": "ok-govde@B",
+   "ev": "B",
+   "parca": null,
+   "es": "koz-govde",
+   "tip": "saldirgan",
+   "hucreler": [
+    {
+     "rakip": "S",
+     "kaz": 1282,
+     "n": 3000,
+     "ringOut": 1164,
+     "durma": 1055,
+     "parcalanma": 77,
+     "tur": 3000
+    },
+    {
+     "rakip": "K",
+     "kaz": 2020.5,
+     "n": 3000,
+     "ringOut": 252,
+     "durma": 1927,
+     "parcalanma": 0,
+     "tur": 3000
+    },
+    {
+     "rakip": "D",
+     "kaz": 1695,
+     "n": 3000,
+     "ringOut": 781,
+     "durma": 784,
+     "parcalanma": 1113,
+     "tur": 3000
+    },
+    {
+     "rakip": "B",
+     "kaz": 994,
+     "n": 3000,
+     "ringOut": 1619,
+     "durma": 859,
+     "parcalanma": 6,
+     "tur": 3000
+    }
+   ],
+   "kazanma": 0.4992916666666667,
+   "ringOutPayi": 0.318
+  }
+ ],
+ "degerlendirme": [
+  {
+   "ad": "dag-diski@S",
+   "parca": "dag-diski",
+   "ev": "S",
+   "tip": "saldirgan",
+   "evTip": "saldirgan",
+   "kazanma": 0.6809583333333333,
+   "evKazanma": 0.529875,
+   "ringOutPayi": 0.254,
+   "evRingOutPayi": 0.2738333333333333,
+   "roFark": -0.019833333333333314,
+   "esAd": "agir-disk@S",
+   "esKazanma": 0.6847083333333334,
+   "esRingOutPayi": 0.25833333333333336,
+   "kazBantta": false,
+   "roBantta": true,
+   "gecti": false,
+   "rakipBasina": {
+    "S": {
+     "kaz": 0.7308333333333333,
+     "ev": 0.5038333333333334
+    },
+    "K": {
+     "kaz": 0.8413333333333334,
+     "ev": 0.7496666666666667
+    },
+    "D": {
+     "kaz": 0.559,
+     "ev": 0.493
+    },
+    "B": {
+     "kaz": 0.5926666666666667,
+     "ev": 0.373
+    }
+   }
+  },
+  {
+   "ad": "dag-diski@K",
+   "parca": "dag-diski",
+   "ev": "K",
+   "tip": "kale",
+   "evTip": "kale",
+   "kazanma": 0.21066666666666667,
+   "evKazanma": 0.22941666666666666,
+   "ringOutPayi": 0.041916666666666665,
+   "evRingOutPayi": 0.0405,
+   "roFark": 0.0014166666666666633,
+   "esAd": "K",
+   "esKazanma": 0.22941666666666666,
+   "esRingOutPayi": 0.0405,
+   "kazBantta": false,
+   "roBantta": true,
+   "gecti": false,
+   "rakipBasina": {
+    "S": {
+     "kaz": 0.24816666666666667,
+     "ev": 0.2628333333333333
+    },
+    "K": {
+     "kaz": 0.44716666666666666,
+     "ev": 0.5081666666666667
+    },
+    "D": {
+     "kaz": 0.0005,
+     "ev": 0.0003333333333333333
+    },
+    "B": {
+     "kaz": 0.14683333333333334,
+     "ev": 0.14633333333333334
+    }
+   }
+  },
+  {
+   "ad": "dag-diski@D",
+   "parca": "dag-diski",
+   "ev": "D",
+   "tip": "denge",
+   "evTip": "dayanikli",
+   "kazanma": 0.7553333333333333,
+   "evKazanma": 0.6275,
+   "ringOutPayi": 0.3458333333333333,
+   "evRingOutPayi": 0.13975,
+   "roFark": 0.2060833333333333,
+   "esAd": "agir-disk@D",
+   "esKazanma": 0.7650833333333333,
+   "esRingOutPayi": 0.358,
+   "kazBantta": false,
+   "roBantta": false,
+   "gecti": false,
+   "rakipBasina": {
+    "S": {
+     "kaz": 0.8555,
+     "ev": 0.5106666666666667
+    },
+    "K": {
+     "kaz": 0.9786666666666667,
+     "ev": 0.9993333333333333
+    },
+    "D": {
+     "kaz": 0.5463333333333333,
+     "ev": 0.49916666666666665
+    },
+    "B": {
+     "kaz": 0.6408333333333334,
+     "ev": 0.5008333333333334
+    }
+   }
+  },
+  {
+   "ad": "dag-diski@B",
+   "parca": "dag-diski",
+   "ev": "B",
+   "tip": "denge",
+   "evTip": "denge",
+   "kazanma": 0.7008333333333333,
+   "evKazanma": 0.608375,
+   "ringOutPayi": 0.38975,
+   "evRingOutPayi": 0.3949166666666667,
+   "roFark": -0.005166666666666708,
+   "esAd": "agir-disk@B",
+   "esKazanma": 0.7172083333333333,
+   "esRingOutPayi": 0.3868333333333333,
+   "kazBantta": false,
+   "roBantta": true,
+   "gecti": false,
+   "rakipBasina": {
+    "S": {
+     "kaz": 0.762,
+     "ev": 0.6115
+    },
+    "K": {
+     "kaz": 0.8933333333333333,
+     "ev": 0.8416666666666667
+    },
+    "D": {
+     "kaz": 0.5321666666666667,
+     "ev": 0.4861666666666667
+    },
+    "B": {
+     "kaz": 0.6158333333333333,
+     "ev": 0.49416666666666664
+    }
+   }
+  },
+  {
+   "ad": "kiragi-ucu@S",
+   "parca": "kiragi-ucu",
+   "ev": "S",
+   "tip": "saldirgan",
+   "evTip": "saldirgan",
+   "kazanma": 0.5838333333333333,
+   "evKazanma": 0.529875,
+   "ringOutPayi": 0.17083333333333334,
+   "evRingOutPayi": 0.2738333333333333,
+   "roFark": -0.10299999999999998,
+   "esAd": "top-uc@S",
+   "esKazanma": 0.5731666666666667,
+   "esRingOutPayi": 0.31216666666666665,
+   "kazBantta": true,
+   "roBantta": false,
+   "gecti": false,
+   "rakipBasina": {
+    "S": {
+     "kaz": 0.45166666666666666,
+     "ev": 0.5038333333333334
+    },
+    "K": {
+     "kaz": 0.8051666666666667,
+     "ev": 0.7496666666666667
+    },
+    "D": {
+     "kaz": 0.7083333333333334,
+     "ev": 0.493
+    },
+    "B": {
+     "kaz": 0.37016666666666664,
+     "ev": 0.373
+    }
+   }
+  },
+  {
+   "ad": "kiragi-ucu@K",
+   "parca": "kiragi-ucu",
+   "ev": "K",
+   "tip": "kale",
+   "evTip": "kale",
+   "kazanma": 0.626125,
+   "evKazanma": 0.22941666666666666,
+   "ringOutPayi": 0.2801666666666667,
+   "evRingOutPayi": 0.0405,
+   "roFark": 0.23966666666666667,
+   "esAd": "top-uc@K",
+   "esKazanma": 0.6702083333333333,
+   "esRingOutPayi": 0.35433333333333333,
+   "kazBantta": true,
+   "roBantta": false,
+   "gecti": false,
+   "rakipBasina": {
+    "S": {
+     "kaz": 0.747,
+     "ev": 0.2628333333333333
+    },
+    "K": {
+     "kaz": 0.9415,
+     "ev": 0.5081666666666667
+    },
+    "D": {
+     "kaz": 0.15666666666666668,
+     "ev": 0.0003333333333333333
+    },
+    "B": {
+     "kaz": 0.6593333333333333,
+     "ev": 0.14633333333333334
+    }
+   }
+  },
+  {
+   "ad": "kiragi-ucu@D",
+   "parca": "kiragi-ucu",
+   "ev": "D",
+   "tip": "dayanikli",
+   "evTip": "dayanikli",
+   "kazanma": 0.5882083333333333,
+   "evKazanma": 0.6275,
+   "ringOutPayi": 0.11008333333333334,
+   "evRingOutPayi": 0.13975,
+   "roFark": -0.029666666666666675,
+   "esAd": "D",
+   "esKazanma": 0.6275,
+   "esRingOutPayi": 0.13975,
+   "kazBantta": true,
+   "roBantta": true,
+   "gecti": true,
+   "rakipBasina": {
+    "S": {
+     "kaz": 0.42983333333333335,
+     "ev": 0.5106666666666667
+    },
+    "K": {
+     "kaz": 0.9985,
+     "ev": 0.9993333333333333
+    },
+    "D": {
+     "kaz": 0.48083333333333333,
+     "ev": 0.49916666666666665
+    },
+    "B": {
+     "kaz": 0.44366666666666665,
+     "ev": 0.5008333333333334
+    }
+   }
+  },
+  {
+   "ad": "kiragi-ucu@B",
+   "parca": "kiragi-ucu",
+   "ev": "B",
+   "tip": "denge",
+   "evTip": "denge",
+   "kazanma": 0.7164166666666667,
+   "evKazanma": 0.608375,
+   "ringOutPayi": 0.36591666666666667,
+   "evRingOutPayi": 0.3949166666666667,
+   "roFark": -0.029000000000000026,
+   "esAd": "top-uc@B",
+   "esKazanma": 0.6594583333333334,
+   "esRingOutPayi": 0.48533333333333334,
+   "kazBantta": false,
+   "roBantta": true,
+   "gecti": false,
+   "rakipBasina": {
+    "S": {
+     "kaz": 0.7448333333333333,
+     "ev": 0.6115
+    },
+    "K": {
+     "kaz": 0.9005,
+     "ev": 0.8416666666666667
+    },
+    "D": {
+     "kaz": 0.5956666666666667,
+     "ev": 0.4861666666666667
+    },
+    "B": {
+     "kaz": 0.6246666666666667,
+     "ev": 0.49416666666666664
+    }
+   }
+  },
+  {
+   "ad": "koz-govde@S",
+   "parca": "koz-govde",
+   "ev": "S",
+   "tip": "saldirgan",
+   "evTip": "saldirgan",
+   "kazanma": 0.6230833333333333,
+   "evKazanma": 0.529875,
+   "ringOutPayi": 0.2638333333333333,
+   "evRingOutPayi": 0.2738333333333333,
+   "roFark": -0.010000000000000009,
+   "esAd": "S",
+   "esKazanma": 0.529875,
+   "esRingOutPayi": 0.2738333333333333,
+   "kazBantta": true,
+   "roBantta": true,
+   "gecti": true,
+   "rakipBasina": {
+    "S": {
+     "kaz": 0.6626666666666666,
+     "ev": 0.5038333333333334
+    },
+    "K": {
+     "kaz": 0.796,
+     "ev": 0.7496666666666667
+    },
+    "D": {
+     "kaz": 0.5043333333333333,
+     "ev": 0.493
+    },
+    "B": {
+     "kaz": 0.5293333333333333,
+     "ev": 0.373
+    }
+   }
+  },
+  {
+   "ad": "koz-govde@K",
+   "parca": "koz-govde",
+   "ev": "K",
+   "tip": "denge",
+   "evTip": "kale",
+   "kazanma": 0.403875,
+   "evKazanma": 0.22941666666666666,
+   "ringOutPayi": 0.03983333333333333,
+   "evRingOutPayi": 0.0405,
+   "roFark": -0.0006666666666666696,
+   "esAd": "ok-govde@K",
+   "esKazanma": 0.4021666666666667,
+   "esRingOutPayi": 0.03208333333333333,
+   "kazBantta": true,
+   "roBantta": true,
+   "gecti": true,
+   "rakipBasina": {
+    "S": {
+     "kaz": 0.36666666666666664,
+     "ev": 0.2628333333333333
+    },
+    "K": {
+     "kaz": 0.857,
+     "ev": 0.5081666666666667
+    },
+    "D": {
+     "kaz": 0.12983333333333333,
+     "ev": 0.0003333333333333333
+    },
+    "B": {
+     "kaz": 0.262,
+     "ev": 0.14633333333333334
+    }
+   }
+  },
+  {
+   "ad": "koz-govde@D",
+   "parca": "koz-govde",
+   "ev": "D",
+   "tip": "denge",
+   "evTip": "dayanikli",
+   "kazanma": 0.77825,
+   "evKazanma": 0.6275,
+   "ringOutPayi": 0.27525,
+   "evRingOutPayi": 0.13975,
+   "roFark": 0.13549999999999998,
+   "esAd": "ok-govde@D",
+   "esKazanma": 0.6920833333333334,
+   "esRingOutPayi": 0.3,
+   "kazBantta": false,
+   "roBantta": false,
+   "gecti": false,
+   "rakipBasina": {
+    "S": {
+     "kaz": 0.7578333333333334,
+     "ev": 0.5106666666666667
+    },
+    "K": {
+     "kaz": 0.9588333333333333,
+     "ev": 0.9993333333333333
+    },
+    "D": {
+     "kaz": 0.8696666666666667,
+     "ev": 0.49916666666666665
+    },
+    "B": {
+     "kaz": 0.5266666666666666,
+     "ev": 0.5008333333333334
+    }
+   }
+  },
+  {
+   "ad": "koz-govde@B",
+   "parca": "koz-govde",
+   "ev": "B",
+   "tip": "saldirgan",
+   "evTip": "denge",
+   "kazanma": 0.5618333333333333,
+   "evKazanma": 0.608375,
+   "ringOutPayi": 0.29983333333333334,
+   "evRingOutPayi": 0.3949166666666667,
+   "roFark": -0.09508333333333335,
+   "esAd": "ok-govde@B",
+   "esKazanma": 0.4992916666666667,
+   "esRingOutPayi": 0.318,
+   "kazBantta": true,
+   "roBantta": false,
+   "gecti": false,
+   "rakipBasina": {
+    "S": {
+     "kaz": 0.5491666666666667,
+     "ev": 0.6115
+    },
+    "K": {
+     "kaz": 0.7021666666666667,
+     "ev": 0.8416666666666667
+    },
+    "D": {
+     "kaz": 0.5753333333333334,
+     "ev": 0.4861666666666667
+    },
+    "B": {
+     "kaz": 0.4206666666666667,
+     "ev": 0.49416666666666664
+    }
+   }
+  }
+ ]
+}
