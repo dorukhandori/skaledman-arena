@@ -29,6 +29,13 @@ cd /root/devran-kaynak && bash deploy/kur.sh
 ```
 (Veritabanı geri dönüşü, yedekten sonraki kayıtları siler; yalnız ciddi hatada.)
 
+## İkinci çıkış: telefon menüleri geri (`5d5ada9`, 18:50)
+- İlk çıkıştan sonra canlı kaynakla karşılaştırma: eski canlı, `devran-kod`'a hiç birleştirilmemiş `claude/mobil-menu-1b6ca9` dalından (MOBIL-2 telefon menüleri, `telefon.css`) kurulmuştu; `d13cc81` çıkışı telefon düzenini kaldırmıştı (masaüstü etkilenmedi; ~45 dk).
+- Dal `devran-kod`'a birleştirildi (`5d5ada9`): P2 gezinti modeli korunarak telefon kancaları eklendi; `telefon.css`'e birleştirme düzeltmeleri (takım şeridinde `.tk-ad`, üst bant dokunma payları yukarı, Günlük/Profil/Başarımlar etiketleri telefonda iki satır).
+- `araclar/mobil-menu-denetim.cjs`, 3 cihaz (iPhone 14, küçük, Pixel 7): tek uyarı Atölye'de kaydırma alanında kırpılmış bir ızgara hücresinin "binen" sayılması (orada tıklanamaz; yanlış alarm). Konsol hatası 0. Testler 647/647 (dışa aktarılan kopyada).
+- Yedek `/root/devran-yedek-20261106-1849/devran.sqlite` (integrity ok); `kur.sh` servisi kendisi yeniden başlattı; sağlık protokol 7, `127.0.0.1:2568`.
+- Ders: çıkıştan önce `/root/devran-kaynak` ile depo dalını karşılaştır (canlı başka daldan gelmiş olabilir); karşılaştırma artık bu sırayla yapılır.
+
 ## Tanıtım videosu
 `docs/art/tanitim/devran-harita-nasil-oynanir.mp4` (depo dışında, 2:07, 1280×720, 18 MB): Atölye → OYNA → HARİTA, düğüm türleri ve aşamalar, yürüme, DÖVÜŞ (maç ×4 hızlı), harita ödülü, Maden (isabet halkası), Ocak (ERİT, ÜRET), Profil. Türkçe altyazılı. Yeniden üretim: `araclar/tanitim-harita.cjs` (yerel `KIMLIK_MODU=sifre` sunucu, yeni test hesabı) + `araclar/tanitim-harita-kurgu.sh`. Bu Mac'te başsız Chrome'un ekran akışı alttan 87 px kestiği için kayıt sürekli ekran görüntüsüyle (≈ 28 kare/sn) alınır.
 
