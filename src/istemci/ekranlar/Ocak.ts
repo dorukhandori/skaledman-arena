@@ -4,6 +4,7 @@ import type { EkranBaglami } from "../main.ts";
 import { apiGet, apiPost, git, oku, sakla } from "../hesap.ts";
 import { cuzdanYaz, ekranKok, el } from "./arayuz.ts";
 import { Ses } from "../ses/Ses.ts";
+import { CEVHER_IKON, GORUNUM_IKON, USTALIK_IKON } from "./haritaVarlik.ts";
 
 // Ocak ekranı (docs/design/harita/07 § 5, 03, 12): Atölye'nin masası. Üst bant iki Ustalık çubuğu; solda cevher listesi
 // (K1–K4; kilitli kademe "USTALIK n"), sağda seçili kademe paneli: ERİT (parti −/+ 1–20, önizleme, başarı %, oran, bant),
@@ -45,6 +46,14 @@ const STIL = `
 .ock .oc-alt { display:flex; justify-content:flex-end; gap:calc(6 * var(--p)); margin-top:calc(4 * var(--p)); }
 .ock .oc-alt button.ana { min-width:calc(140 * var(--p)); min-height:max(44px, calc(30 * var(--p))); }
 .ock .ipucu { color:var(--turuncu, #e8762f); }
+.ock img { image-rendering:pixelated; vertical-align:middle; }
+.ock .oc-ust img.ui { width:22px; height:22px; margin-right:4px; }
+.ock .oc-tarifler img.gi { width:24px; height:24px; margin-right:4px; }
+.ock .oc-sonuc img.gi.buyuk { width:48px; height:48px; margin-right:8px; }
+.ock .oc-sonuc { position:relative; display:flex; align-items:center; flex-wrap:wrap; }
+.ock .oc-sonuc .parilti { position:absolute; right:6px; top:6px; width:32px; height:32px; background:url(/harita/efekt/usta-isi.png) 0 0 / 256px 32px; image-rendering:pixelated; animation: oc-parilti .8s steps(8) infinite; }
+@keyframes oc-parilti { to { background-position:-256px 0; } }
+@media (prefers-reduced-motion: reduce) { .ock .oc-sonuc .parilti { animation:none; } }
 html[data-telefon] .ock .oc-govde { grid-template-columns:calc(120 * var(--p)) 1fr; }
 .ock .oc-panel { max-height:calc(190 * var(--p)); overflow:auto; }
 html[data-telefon] .ock .oc-panel { max-height:52vh; }
@@ -69,7 +78,7 @@ class OcakEkrani {
   private kademe: number;
   private parti = 1;
   private secim: Secim = { tur: "erit" };
-  private sonuc: { metin: string; usta: boolean; parca?: UretilenG } | null = null;
+  private sonuc: { metin: string; usta: boolean; parca?: UretilenG; gorunum?: string } | null = null;
   private mesaj = "";
   private mesgul = false;
 
@@ -105,7 +114,7 @@ class OcakEkrani {
     kart.innerHTML = "";
     const o = this.o;
     const u = el("div", "oc-ust k-e16", kart);
-    const cubuk = (ad: string, x: Ust) => { const s = el("span", "", u, `${ad} ${ust(x)} `); const c = el("span", "cb", s); el("i", "", c).style.width = `${Math.round(x.ilerleme * 100)}%`; return s; };
+    const cubuk = (ad: string, x: Ust) => { const s = el("span", "", u); const ic = el("img", "ui", s); ic.src = USTALIK_IKON(ad.includes("MADEN") ? "madencilik" : "isleme"); ic.alt = ""; s.append(`${ad.replace(/^[⛏⚒] /, "")} ${ust(x)} `); const c = el("span", "cb", s); el("i", "", c).style.width = `${Math.round(x.ilerleme * 100)}%`; return s; };
     cubuk("⛏ MADENCİLİK", o.ustalik.madencilik).dataset["madencilik"] = String(o.ustalik.madencilik.seviye);
     cubuk("⚒ İŞLEME", o.ustalik.isleme).dataset["isleme"] = String(o.ustalik.isleme.seviye);
     el("span", "", u, `KOLEKSİYON ${o.koleksiyonDegeri}`);
@@ -119,7 +128,8 @@ class OcakEkrani {
       d.type = "button";
       d.dataset["kademe"] = String(k.kademe);
       d.setAttribute("aria-pressed", String(k.kademe === this.kademe));
-      const rz = el("span", "rz", d, String(k.kademe)); rz.style.background = k.renk.ana;
+      const rz = el("span", "rz", d); rz.style.background = k.renk.koyu;
+      const ci = el("img", "", rz); ci.src = CEVHER_IKON(k.kademe); ci.alt = ""; ci.width = 16; ci.height = 16;
       el("span", "", d, kAd(k.kademe));
       el("span", "", d, k.eritilebilir ? `${k.cevher} · ${k.kulce}` : `İŞL ${k.esik}`);
       d.setAttribute("aria-label", `${kAd(k.kademe)}: ${k.cevher} cevher, ${k.kulce} külçe${k.eritilebilir ? "" : `, İşleme ${k.esik} gerekir`}`);
@@ -149,6 +159,7 @@ class OcakEkrani {
         const girdi = (t.girdi ?? []).map((x) => `${x.kulce} ${kAd(x.kademe)}`).join(" + ");
         const durum = t.durum === "sahip" ? (t.usta ? "✓ USTA İŞİ" : "✓ SAHİP") : t.durum === "ustalik" ? `İŞL. ${t.esik}` : t.durum === "gizli" ? "???" : t.durum === "acik" ? "✓ EŞİK" : t.durum === "altin" ? "ALTIN EKSİK" : "EKSİK";
         d.textContent = t.durum === "gizli" ? "???" : `${t.ad} · ${girdi} · ${t.altin} · ${durum}`;
+        if (t.durum !== "gizli") { const gi = el("img", "gi", d); gi.src = GORUNUM_IKON(`${t.tur}-${t.tur === "arma" ? "cevher-" : ""}${MADENLER.find((m) => m.kademe === t.kademe)?.id}`); gi.alt = ""; d.prepend(gi); }
         d.disabled = t.durum === "gizli";
         d.addEventListener("click", () => { this.secim = { tur: "tarif", id: t.id }; this.sonuc = null; this.ciz(); });
       }
@@ -171,6 +182,8 @@ class OcakEkrani {
     }
     if (this.sonuc) {
       const s = el("div", `oc-sonuc${this.sonuc.usta ? " usta" : ""}`, p, this.sonuc.metin);
+      if (this.sonuc.gorunum) { const gi = el("img", "gi buyuk", s); gi.src = GORUNUM_IKON(this.sonuc.gorunum); gi.alt = ""; s.prepend(gi); }
+      if (this.sonuc.usta) el("span", "parilti", s).setAttribute("aria-hidden", "true");
       s.dataset["sonuc"] = "1";
       s.setAttribute("role", "status");
     }
@@ -236,7 +249,7 @@ class OcakEkrani {
     const r = await apiPost<{ cikti: string; usta: boolean; yeniBasarimlar: { ad: string }[] }>("/api/ocak/dov", { tarif: id, ref: yeniRef(), ...(yeniden ? { yeniden: true } : {}) });
     if (r.durum === 201) {
       Ses.cal("dovme");
-      this.sonuc = { metin: `${r.veri.cikti.startsWith("arma") ? "ARMA" : "ÇERÇEVE"} AÇILDI · PROFİLDE KULLAN${r.veri.usta ? " · USTA İŞİ" : ""}`, usta: r.veri.usta };
+      this.sonuc = { metin: `${r.veri.cikti.startsWith("arma") ? "ARMA" : "ÇERÇEVE"} AÇILDI · PROFİLDE KULLAN${r.veri.usta ? " · USTA İŞİ" : ""}`, usta: r.veri.usta, gorunum: r.veri.cikti };
       this.mesaj = r.veri.yeniBasarimlar?.length ? `AÇILDI: ${r.veri.yeniBasarimlar.map((y) => y.ad).join(", ")}` : "";
     } else this.mesaj = r.veri.hata === "altin" ? "ALTIN YETMİYOR" : r.veri.hata === "eksik" ? "KÜLÇE EKSİK" : r.veri.hata === "ustalik" ? "İŞLEME YETMİYOR" : "DÖVÜLEMEDİ";
     await this.yenile();

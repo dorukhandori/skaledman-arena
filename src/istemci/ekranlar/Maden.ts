@@ -3,6 +3,7 @@ import { BANT_METNI, type BantEtiketi } from "../../paylasilan/kurallar/ustalik.
 import type { EkranBaglami } from "../main.ts";
 import { apiGet, apiPost, git, oku, sakla } from "../hesap.ts";
 import { ekranKok, el } from "./arayuz.ts";
+import { CEVHER_IKON, KARAKTER_KARE, karakterSayfasi, kareKonumu } from "./haritaVarlik.ts";
 import { Ses } from "../ses/Ses.ts";
 
 // Maden ekranı (docs/design/harita/07 § 4, 02 § 3): ortada damar + Kuşak halkası (1,4 sn tur, bronz isabet yayı %22),
@@ -45,6 +46,7 @@ const STIL = `
 .mdn .md-satir.nadir { color:#fcd35a; }
 .mdn .md-seans span { display:block; }
 .mdn .md-mini { position:absolute; left:calc(4 * var(--p)); bottom:calc(4 * var(--p)); }
+.mdn .md-sprite { width:32px; height:48px; background-size:288px 144px; image-rendering:pixelated; }
 html[data-telefon] .mdn .md-govde { grid-template-columns:calc(118 * var(--p)) 1fr calc(100 * var(--p)); min-height:0; }
 html[data-telefon] .mdn .md-orta svg { width:calc(110 * var(--p)); height:calc(110 * var(--p)); }
 @media (prefers-reduced-motion: reduce) { .mdn .md-ucus { animation:none; opacity:1; } }
@@ -182,8 +184,12 @@ class MadenEkrani {
     const kaya = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     for (const [a, v] of Object.entries({ x: -22, y: -22, width: 44, height: 44, fill: kademe(s.kademe).renk.koyu, stroke: kademe(s.kademe).renk.ana, "stroke-width": 3 })) kaya.setAttribute(a, String(v));
     svg.appendChild(kaya);
+    // damar: kodla çizilmiş cevher ikonu (A3), kademe numarası rozetle
+    const cv = document.createElementNS("http://www.w3.org/2000/svg", "image");
+    for (const [a, v] of Object.entries({ href: CEVHER_IKON(s.kademe), x: -16, y: -16, width: 32, height: 32, style: "image-rendering:pixelated" })) cv.setAttribute(a, String(v));
+    svg.appendChild(cv);
     const rz = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    rz.setAttribute("text-anchor", "middle"); rz.setAttribute("y", "6"); rz.setAttribute("font-size", "16"); rz.setAttribute("fill", "#fff");
+    rz.setAttribute("text-anchor", "middle"); rz.setAttribute("x", "16"); rz.setAttribute("y", "-12"); rz.setAttribute("font-size", "11"); rz.setAttribute("fill", "#fff");
     rz.textContent = String(s.kademe);
     svg.appendChild(rz);
     if (this.halkaAcik) {
@@ -210,10 +216,12 @@ class MadenEkrani {
     for (const [kd, n] of this.seansCevher) el("span", "", sg, `◆${kd} ${kAd(kd)} ×${n}`);
     // karakterin küçük kopyası (KAZ animasyonu yer tutucusu, 13 § 2.2)
     const mini = el("div", "md-mini", g);
-    mini.innerHTML = `<svg width="20" height="30" viewBox="-10 -26 20 30" aria-hidden="true"><rect x="-3" y="-24" width="6" height="6" fill="#e9c9a0"/><rect x="-5" y="-18" width="10" height="9" fill="#f4cf47" data-giysi="1"/><rect x="-4" y="-9" width="3" height="9" fill="#2a2f3a"/><rect x="1" y="-9" width="3" height="9" fill="#2a2f3a"/></svg>`;
-    const giysi = mini.querySelector("[data-giysi]");
     const ben = this.b.ben?.girisli ? this.b.ben : null;
-    if (giysi && ben?.oyuncu.renk) giysi.setAttribute("fill", ben.oyuncu.renk); // profil rengi DOM özniteliğiyle
+    const sp = el("div", "md-sprite", mini);
+    sp.style.backgroundImage = `url(${karakterSayfasi(ben?.karakter ?? 0, ben?.oyuncu.renk)})`;
+    sp.setAttribute("aria-hidden", "true");
+    this.spriteEl = sp;
+    this.spriteKare(KARAKTER_KARE.bekle[0]);
     // alt: dinç sayacı + KAZ
     if (s.vurus.bugun >= s.vurus.tam && s.vurus.bugun < s.vurus.tavan) el("div", "md-bant k-e16", k, "BUNDAN SONRA YARIM VERİM");
     const alt = el("div", "md-alt", k);
@@ -258,6 +266,7 @@ class MadenEkrani {
     }
     const v = r.veri;
     Ses.cal(v.isabet ? "isabet" : "kazi-tik");
+    queueMicrotask(() => this.kazAnim());
     if (v.verim > 0) this.seansCevher.set(v.kademe, (this.seansCevher.get(v.kademe) ?? 0) + v.verim);
     s.sira = v.sira;
     s.kalan = v.kalan;
@@ -268,6 +277,19 @@ class MadenEkrani {
     this.ucusGoster(v.basari ? `+${v.verim} ◆${v.kademe}${v.isabet ? " İSABET" : ""}${v.nadir ? " NADİR" : ""}` : `ISKA +${v.tecrube}`, !v.basari);
     if (v.ustalik.atladi) { this.kart.querySelector(".md-cubuk")?.classList.add("atladi"); this.ucusGoster(`MADENCİLİK ${v.ustalik.seviye}`, false, 30); }
     if (v.yeniBasarimlar?.length) this.ucusGoster(`AÇILDI: ${v.yeniBasarimlar.map((x) => x.ad).join(", ")}`, false, 60);
+  }
+
+  private spriteEl: HTMLElement | null = null;
+  /** Mini karakter karesi (sayfa 9×3, hücre 16×24; ×2 gösterim). */
+  private spriteKare(k: number): void {
+    const [x, y] = kareKonumu(k);
+    if (this.spriteEl) this.spriteEl.style.backgroundPosition = `${-x * 2}px ${-y * 2}px`;
+  }
+  /** KAZ animasyonu (6 kare, ~0,5 sn), sonra BEKLE. */
+  private kazAnim(): void {
+    const [bas, n] = KARAKTER_KARE.kaz;
+    for (let i = 0; i < n; i++) window.setTimeout(() => this.spriteKare(bas + i), i * 80);
+    window.setTimeout(() => this.spriteKare(KARAKTER_KARE.bekle[0]), n * 80 + 60);
   }
 
   private ucusGoster(metin: string, iska: boolean, dy = 0): void {

@@ -33,3 +33,10 @@
 | S-27 | Karakter gövde biçimi sayısı | 4 (ilk sürüm), adlar yok | 13 § 2.1, 10 § 3.6 |
 | S-28 | Karakter maçta/lobide görünsün mü? | Hayır; yalnız harita ve Maden ekranı (maçta oyuncu topaçtır) | 13 § 2.3 |
 | S-29 | Maden USTALAŞ ölçütü (30 başarılı vuruş) ve ödülü (USTA DAMAR: +1 kapasite, +5 nadir) | Evet | 13 § 3.1–3.2 |
+
+## Sahip kararları (2026-11-06, kod oturumu sonrası)
+| Konu | Karar |
+|---|---|
+| 61+ günlük kazı vuruşu | **Açık ama verimsiz** (cevher 0, tecrübe ×0,1); kilit yok (S-23 onaylandı) |
+| Günün parçası | **Kilidi açılan pahalı (kilitli, gizli olmayan) parçalardan**, %30 indirim (kilitsizler ücretsiz) |
+| Asset üretimi | Bulut oturumunda **kodla üretilebilenler** üretilir (ikonlar, cevher/külçe palet takası, arma/çerçeve, Usta işi parıltısı, kodla çizilmiş karakter sayfası); bölge zeminleri ve 3B karakter Mac hattında (10 § 5) |

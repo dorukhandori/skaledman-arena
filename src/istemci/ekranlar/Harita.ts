@@ -5,6 +5,7 @@ import type { EkranBaglami } from "../main.ts";
 import { BakimHatasi, apiGet, apiPost, git, oku, sakla } from "../hesap.ts";
 import { ELEMENT_RENK, renkCss } from "../oyun/renkler.ts";
 import { bakimKatmani, cuzdanYaz, ekranKok, el } from "./arayuz.ts";
+import { CEVHER_IKON, DUGUM_IKON, KARAKTER_KARE, KILIT_IKON, type KarakterAnim, animKaresi, karakterSayfasi, kareKonumu } from "./haritaVarlik.ts";
 
 // Harita ekranı (docs/design/harita/07 § 2–3, 13): bölge başına sabit kamera düğüm haritası (480×270 mantıksal ızgara,
 // SVG), oyuncu KARAKTERİ (yer tutucu: 3 dikdörtgen + taşıdığı aktif topaç; sanat hattı 10 § 3.6), açık düğüme dokununca
@@ -241,12 +242,15 @@ class HaritaEkrani {
         fill: "none", stroke: i < lit ? "#FBBE88" : kilitli ? "#2a3236" : "#5a4a3a", "stroke-width": 2.5, "data-centik": i < lit ? "1" : "0",
       });
     }
+    // zemin karesi (kademe/tür rengi) + kodla çizilmiş ikon (public/harita/**; 10 § 3.1 A1/A3)
     const renk = d.tur === "maden" ? kademeRengi(d.kademe ?? 1) : d.tur === "patron" ? "#c9a33b" : d.tur === "sandik" ? "#8a5a34" : "#7a3a2e";
-    svgEl("rect", g, { x: -10, y: -10, width: 20, height: 20, fill: kilitli ? "#1b2226" : renk, stroke: kilitli ? "#2c3d43" : "#0b1418", "stroke-width": 1.5 });
-    const t = svgEl("text", g, { y: 4, "text-anchor": "middle", "font-size": 12, fill: kilitli ? "#5b666b" : "#0b1418", "font-family": "var(--font-baslik), monospace" });
-    t.textContent = TUR_HARF[d.tur]; // kilitliyken de tür görünür (07 § 3), sönük renkte
+    svgEl("rect", g, { x: -10, y: -10, width: 20, height: 20, fill: kilitli ? "#1b2226" : "#11141f", stroke: kilitli ? "#2c3d43" : renk, "stroke-width": 1.5 });
+    const ikon = d.tur === "maden" ? CEVHER_IKON(d.kademe ?? 1) : DUGUM_IKON(d.tur, d.acildi === true);
+    const im = svgEl("image", g, { href: ikon, x: -8, y: -8, width: 16, height: 16, style: "image-rendering:pixelated", opacity: kilitli ? 0.35 : 1 });
+    im.dataset["ikon"] = d.tur;
+    if (kilitli) svgEl("image", g, { href: KILIT_IKON(), x: 2, y: 2, width: 9, height: 9, style: "image-rendering:pixelated" });
     if (d.tur === "maden" && !kilitli) {
-      const r = svgEl("text", g, { x: 8, y: -6, "font-size": 8, fill: "#fff", "text-anchor": "middle" });
+      const r = svgEl("text", g, { x: 8, y: -6, "font-size": 8, fill: "#fff", "text-anchor": "middle", stroke: "#0b1418", "stroke-width": 0.6, "paint-order": "stroke" });
       r.textContent = String(d.kademe);
     }
     if (d.durum === DURUM.acik) {
@@ -278,18 +282,18 @@ class HaritaEkrani {
     const g = svgEl("g", this.svg, { role: "button", tabindex: 0, "aria-label": "Karakterin: mini profil" });
     g.dataset["karakter"] = String(this.h.karakter);
     svgEl("rect", g, { x: -27, y: -44, width: 54, height: 56, fill: "transparent", "data-isabet": "1" }); // isabet payı
-    const gov = this.h.karakter;
-    const basW = gov === 2 ? 8 : 6;
-    svgEl("rect", g, { x: -basW / 2, y: -24, width: basW, height: 6, fill: "#e9c9a0", stroke: "#0b1418", "stroke-width": 1 });
-    svgEl("rect", g, { x: gov === 1 ? -6 : -5, y: -18, width: gov === 1 ? 12 : 10, height: gov === 3 ? 10 : 9, fill: renk, stroke: "#0b1418", "stroke-width": 1, "data-giysi": "1" });
-    svgEl("rect", g, { x: -4, y: -9, width: 3, height: 9, fill: "#2a2f3a", "data-bacak": "0" });
-    svgEl("rect", g, { x: 1, y: -9, width: 3, height: 9, fill: "#2a2f3a", "data-bacak": "1" });
+    // kodla çizilmiş karakter sayfası (16×24, 27 kare; profil rengi önceden boyalı sayfa): iç <svg> viewBox ile kare seçilir
+    const kutu = svgEl("svg", g, { x: -10, y: -30, width: 20, height: 30, viewBox: "0 0 16 24", overflow: "hidden" });
+    this.sprite = svgEl("image", kutu, { href: karakterSayfasi(this.h.karakter, renk), width: 144, height: 72, style: "image-rendering:pixelated" });
+    this.spriteKutu = kutu;
+    this.animBas = performance.now();
+    this.anim = this.kutla.size ? "kutla" : "bekle";
     // taşıdığı topaç: aktif takımın ilk üyesinin element rengi
     const t = ben?.takimlar.find((x) => x.id === ben.aktifTakim) ?? ben?.takimlar[0];
     const kod = t ? takimKoduVeya(t) : "";
     const p = kod ? takimProfilleriKimlikten(kod) : [];
     const el0 = (p[0]?.element ?? "kaya") as keyof typeof ELEMENT_RENK;
-    const tp = svgEl("circle", g, { cx: 8, cy: -12, r: 4, fill: renkCss(ELEMENT_RENK[el0]?.orta ?? 0x8c8a88), stroke: "#0b1418", "stroke-width": 1 });
+    const tp = svgEl("circle", g, { cx: 7, cy: -8, r: 2.5, fill: renkCss(ELEMENT_RENK[el0]?.orta ?? 0x8c8a88), stroke: "#0b1418", "stroke-width": 1 });
     tp.dataset["topac"] = el0;
     g.addEventListener("click", (e) => { e.stopPropagation(); this.yuruyusuBitir(); this.miniProfil = !this.miniProfil; this.seritCiz(); });
     this.karakterG = g;
@@ -301,9 +305,29 @@ class HaritaEkrani {
     this.karakterG?.setAttribute("transform", `translate(${this.karakterXY[0].toFixed(1)} ${(this.karakterXY[1] - sallan).toFixed(1)})`);
   }
 
+  private sprite: SVGImageElement | null = null;
+  private spriteKutu: SVGSVGElement | null = null;
+  private anim: KarakterAnim = "bekle";
+  private animBas = 0;
+  private sonKare = -1;
+  private spriteKare(t: number): void {
+    if (!this.sprite || !this.spriteKutu) return;
+    const tek = this.anim === "kutla";
+    let k = animKaresi(this.anim, t - this.animBas, this.anim === "yuru" ? 12 : 6, !tek);
+    if (tek && t - this.animBas > 1600) { this.anim = "bekle"; this.animBas = t; k = KARAKTER_KARE.bekle[0]; }
+    if (hareketiAzalt() && this.anim === "bekle") k = KARAKTER_KARE.bekle[0];
+    if (k === this.sonKare) return;
+    this.sonKare = k;
+    const [x, y] = kareKonumu(k);
+    this.spriteKutu.setAttribute("viewBox", `${x} ${y} 16 24`);
+    this.spriteKutu.dataset["kare"] = String(k);
+  }
+
   private kare(t: number, _dt: number): void {
+    this.spriteKare(t);
     const y = this.yuruyus;
     if (!y) return;
+    if (this.anim !== "yuru") { this.anim = "yuru"; this.animBas = t; }
     const u = Math.min(1, (t - y.bas) / y.sure);
     const n = y.yol.length - 1;
     const f = u * n;
@@ -311,10 +335,9 @@ class HaritaEkrani {
     const a = y.yol[i]!, c = y.yol[i + 1] ?? a;
     const k = f - i;
     this.karakterXY = [a[0] + (c[0] - a[0]) * k - 14, a[1] + (c[1] - a[1]) * k + 6];
-    // 2 kareli sallanma
-    const kareNo = Math.floor((t - y.bas) / 120) % 2;
-    this.karakterYerlestir(kareNo);
-    for (const b of this.karakterG?.querySelectorAll<SVGRectElement>("[data-bacak]") ?? []) b.setAttribute("height", String(kareNo === Number(b.dataset["bacak"]) ? 7 : 9));
+    // sola yürürken ayna (13 § 2.2: sağ; sol = ayna)
+    if (this.spriteKutu) this.spriteKutu.setAttribute("transform", c[0] < a[0] ? "translate(0 0) scale(-1 1)" : "");
+    this.karakterYerlestir();
     if (u >= 1) this.yuruyusuBitir();
   }
 
@@ -322,6 +345,9 @@ class HaritaEkrani {
     const y = this.yuruyus;
     if (!y) return;
     this.yuruyus = null;
+    this.anim = "bekle";
+    this.animBas = performance.now();
+    this.spriteKutu?.setAttribute("transform", "");
     const son = y.yol[y.yol.length - 1]!;
     this.karakterXY = [son[0] - 14, son[1] + 6];
     this.karakterYerlestir();

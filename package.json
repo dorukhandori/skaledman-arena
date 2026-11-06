@@ -31,7 +31,8 @@
     "qa:bot": "tsx araclar/qa-bot.ts",
     "qa:cokme": "tsx araclar/qa-cokme.ts",
     "topac:uret": "tsx araclar/sanat/topac-uret.ts",
-    "h:akis": "tsx araclar/h-akis.ts"
+    "h:akis": "tsx araclar/h-akis.ts",
+    "harita:asset": "tsx araclar/sanat/harita-asset-uret.ts"
   },
   "dependencies": {
     "@colyseus/monitor": "0.18.7",

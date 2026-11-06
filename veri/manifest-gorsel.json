@@ -546,7 +546,7 @@
     196,
     168
    ],
-   "kaynakSureSn": 2.0,
+   "kaynakSureSn": 2,
    "dongu": true,
    "hamKare30fps": 60,
    "arac": "kaynak/efekt/pixelfx/arac/bake.py → node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 [--opts palette]; pack.py (raf paketleme, 1 px boşluk)",
@@ -618,7 +618,7 @@
     128,
     84
    ],
-   "kaynakSureSn": 3.0,
+   "kaynakSureSn": 3,
    "dongu": true,
    "hamKare30fps": 90,
    "arac": "kaynak/efekt/pixelfx/arac/bake.py → node tools/render.mjs <id> --sheet --no-actor --bg none --fps 12 [--opts palette]; pack.py (raf paketleme, 1 px boşluk)",
@@ -858,6 +858,625 @@
     "kare": "64×64 (sayfa 32×32 diyor: yalnız ikonlar)",
     "oneri": "yedek havuz: Explosion, Tornado, Earth_Spike; mermi/yan görünüş kareleri kullanılmaz",
     "duzlem": "hava/dikey"
+   }
+  ]
+ },
+ "harita": {
+  "aciklama": "Harita/Maden/Ocak 2B varlıkları: araclar/sanat/harita-asset-uret.ts ile KODLA çizildi (pixel matrisleri + palet takası). Dış kaynak yok. Sanat hattı (Mac) gelince aynı yollar değişebilir.",
+  "kaynak": "kod (araclar/sanat/harita-asset-uret.ts)",
+  "lisans": "CC0-1.0",
+  "tarih": "2026-11-06",
+  "toplamBayt": 32589,
+  "karakterKareleri": {
+   "bekle": [
+    0,
+    4
+   ],
+   "yuru": [
+    4,
+    6
+   ],
+   "kaz": [
+    10,
+    6
+   ],
+   "dovus": [
+    16,
+    5
+   ],
+   "kutla": [
+    21,
+    6
+   ]
+  },
+  "dosyalar": [
+   {
+    "ad": "dugum/dusman",
+    "dosya": "harita/dugum/dusman.png",
+    "olay": "Harita düğümü: DÜŞMAN (iki topaç çarpışıyor)",
+    "bayt": 192,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "dugum/patron",
+    "dosya": "harita/dugum/patron.png",
+    "olay": "Harita düğümü: PATRON (taçlı topaç)",
+    "bayt": 192,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "dugum/maden",
+    "dosya": "harita/dugum/maden.png",
+    "olay": "Harita düğümü: MADEN (kazma)",
+    "bayt": 179,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "dugum/sandik",
+    "dosya": "harita/dugum/sandik.png",
+    "olay": "Harita düğümü: SANDIK (kapalı)",
+    "bayt": 169,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "dugum/sandik-bos",
+    "dosya": "harita/dugum/sandik-bos.png",
+    "olay": "Harita düğümü: SANDIK (açık, boş)",
+    "bayt": 172,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "dugum/kilit",
+    "dosya": "harita/dugum/kilit.png",
+    "olay": "Düğüm durum katmanı: kilit",
+    "bayt": 163,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "maden/cevher-demir",
+    "dosya": "harita/maden/cevher-demir.png",
+    "olay": "Cevher K1 demir (gri kalıp + palet takası)",
+    "bayt": 189,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "maden/kulce-demir",
+    "dosya": "harita/maden/kulce-demir.png",
+    "olay": "Külçe K1 demir (gri kalıp + palet takası)",
+    "bayt": 172,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "maden/cevher-kaya",
+    "dosya": "harita/maden/cevher-kaya.png",
+    "olay": "Cevher K2 kaya (gri kalıp + palet takası)",
+    "bayt": 189,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "maden/kulce-kaya",
+    "dosya": "harita/maden/kulce-kaya.png",
+    "olay": "Külçe K2 kaya (gri kalıp + palet takası)",
+    "bayt": 172,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "maden/cevher-don",
+    "dosya": "harita/maden/cevher-don.png",
+    "olay": "Cevher K3 don (gri kalıp + palet takası)",
+    "bayt": 189,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "maden/kulce-don",
+    "dosya": "harita/maden/kulce-don.png",
+    "olay": "Külçe K3 don (gri kalıp + palet takası)",
+    "bayt": 172,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "maden/cevher-kor",
+    "dosya": "harita/maden/cevher-kor.png",
+    "olay": "Cevher K4 kor (gri kalıp + palet takası)",
+    "bayt": 189,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "maden/kulce-kor",
+    "dosya": "harita/maden/kulce-kor.png",
+    "olay": "Külçe K4 kor (gri kalıp + palet takası)",
+    "bayt": 172,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "maden/cevher-kasirga",
+    "dosya": "harita/maden/cevher-kasirga.png",
+    "olay": "Cevher K5 kasirga (gri kalıp + palet takası)",
+    "bayt": 189,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "maden/kulce-kasirga",
+    "dosya": "harita/maden/kulce-kasirga.png",
+    "olay": "Külçe K5 kasirga (gri kalıp + palet takası)",
+    "bayt": 172,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "maden/cevher-simsek",
+    "dosya": "harita/maden/cevher-simsek.png",
+    "olay": "Cevher K6 simsek (gri kalıp + palet takası)",
+    "bayt": 189,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "maden/kulce-simsek",
+    "dosya": "harita/maden/kulce-simsek.png",
+    "olay": "Külçe K6 simsek (gri kalıp + palet takası)",
+    "bayt": 172,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "maden/cevher-girdap",
+    "dosya": "harita/maden/cevher-girdap.png",
+    "olay": "Cevher K7 girdap (gri kalıp + palet takası)",
+    "bayt": 189,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "maden/kulce-girdap",
+    "dosya": "harita/maden/kulce-girdap.png",
+    "olay": "Külçe K7 girdap (gri kalıp + palet takası)",
+    "bayt": 172,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "maden/cevher-devir",
+    "dosya": "harita/maden/cevher-devir.png",
+    "olay": "Cevher K8 devir (gri kalıp + palet takası)",
+    "bayt": 189,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "maden/kulce-devir",
+    "dosya": "harita/maden/kulce-devir.png",
+    "olay": "Külçe K8 devir (gri kalıp + palet takası)",
+    "bayt": 172,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "ustalik/madencilik",
+    "dosya": "harita/ustalik/madencilik.png",
+    "olay": "Ustalık rozeti: Madencilik (kazma)",
+    "bayt": 179,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "ustalik/isleme",
+    "dosya": "harita/ustalik/isleme.png",
+    "olay": "Ustalık rozeti: İşleme (çekiç)",
+    "bayt": 168,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "arma/arma-cevher-demir",
+    "dosya": "harita/arma/arma-cevher-demir.png",
+    "olay": "Arma: demir cevheri (Ocak tarifi)",
+    "bayt": 203,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "arma/arma-cevher-kaya",
+    "dosya": "harita/arma/arma-cevher-kaya.png",
+    "olay": "Arma: kaya cevheri (Ocak tarifi)",
+    "bayt": 203,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "arma/arma-cevher-don",
+    "dosya": "harita/arma/arma-cevher-don.png",
+    "olay": "Arma: don cevheri (Ocak tarifi)",
+    "bayt": 203,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "arma/arma-cevher-kor",
+    "dosya": "harita/arma/arma-cevher-kor.png",
+    "olay": "Arma: kor cevheri (Ocak tarifi)",
+    "bayt": 203,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "arma/arma-cevher-kasirga",
+    "dosya": "harita/arma/arma-cevher-kasirga.png",
+    "olay": "Arma: kasirga cevheri (Ocak tarifi)",
+    "bayt": 203,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "arma/arma-cevher-simsek",
+    "dosya": "harita/arma/arma-cevher-simsek.png",
+    "olay": "Arma: simsek cevheri (Ocak tarifi)",
+    "bayt": 203,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "arma/arma-cevher-girdap",
+    "dosya": "harita/arma/arma-cevher-girdap.png",
+    "olay": "Arma: girdap cevheri (Ocak tarifi)",
+    "bayt": 203,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "arma/arma-cevher-devir",
+    "dosya": "harita/arma/arma-cevher-devir.png",
+    "olay": "Arma: devir cevheri (Ocak tarifi)",
+    "bayt": 203,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "arma/arma-kazma",
+    "dosya": "harita/arma/arma-kazma.png",
+    "olay": "Arma: kazma (Ocak Yamacı başarımı)",
+    "bayt": 213,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "arma/arma-ocak-yamaci",
+    "dosya": "harita/arma/arma-ocak-yamaci.png",
+    "olay": "Arma: ocak-yamaci (patron USTALAŞ)",
+    "bayt": 194,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "arma/arma-ayaz-gecidi",
+    "dosya": "harita/arma/arma-ayaz-gecidi.png",
+    "olay": "Arma: ayaz-gecidi (patron USTALAŞ)",
+    "bayt": 185,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "arma/arma-kor-kraterleri",
+    "dosya": "harita/arma/arma-kor-kraterleri.png",
+    "olay": "Arma: kor-kraterleri (patron USTALAŞ)",
+    "bayt": 194,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "arma/arma-yel-sirti",
+    "dosya": "harita/arma/arma-yel-sirti.png",
+    "olay": "Arma: yel-sirti (patron USTALAŞ)",
+    "bayt": 189,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "arma/arma-cakim-yaylasi",
+    "dosya": "harita/arma/arma-cakim-yaylasi.png",
+    "olay": "Arma: cakim-yaylasi (patron USTALAŞ)",
+    "bayt": 192,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "arma/arma-dip-magaralari",
+    "dosya": "harita/arma/arma-dip-magaralari.png",
+    "olay": "Arma: dip-magaralari (patron USTALAŞ)",
+    "bayt": 185,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "arma/arma-dip",
+    "dosya": "harita/arma/arma-dip.png",
+    "olay": "Arma: Dip (sezon 2 başarımı)",
+    "bayt": 203,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "cerceve/cerceve-demir",
+    "dosya": "harita/cerceve/cerceve-demir.png",
+    "olay": "Çerçeve: demir (9-dilim, kenar 6)",
+    "bayt": 197,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "cerceve/cerceve-kaya",
+    "dosya": "harita/cerceve/cerceve-kaya.png",
+    "olay": "Çerçeve: kaya (9-dilim, kenar 6)",
+    "bayt": 197,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "cerceve/cerceve-don",
+    "dosya": "harita/cerceve/cerceve-don.png",
+    "olay": "Çerçeve: don (9-dilim, kenar 6)",
+    "bayt": 197,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "cerceve/cerceve-kor",
+    "dosya": "harita/cerceve/cerceve-kor.png",
+    "olay": "Çerçeve: kor (9-dilim, kenar 6)",
+    "bayt": 197,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "cerceve/cerceve-kasirga",
+    "dosya": "harita/cerceve/cerceve-kasirga.png",
+    "olay": "Çerçeve: kasirga (9-dilim, kenar 6)",
+    "bayt": 197,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "cerceve/cerceve-simsek",
+    "dosya": "harita/cerceve/cerceve-simsek.png",
+    "olay": "Çerçeve: simsek (9-dilim, kenar 6)",
+    "bayt": 197,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "cerceve/cerceve-girdap",
+    "dosya": "harita/cerceve/cerceve-girdap.png",
+    "olay": "Çerçeve: girdap (9-dilim, kenar 6)",
+    "bayt": 197,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "cerceve/cerceve-devir",
+    "dosya": "harita/cerceve/cerceve-devir.png",
+    "olay": "Çerçeve: devir (9-dilim, kenar 6)",
+    "bayt": 197,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "cerceve/cerceve-ocak-yamaci",
+    "dosya": "harita/cerceve/cerceve-ocak-yamaci.png",
+    "olay": "Çerçeve: ocak-yamaci (GÜMÜŞ rozet)",
+    "bayt": 170,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "cerceve/cerceve-ayaz-gecidi",
+    "dosya": "harita/cerceve/cerceve-ayaz-gecidi.png",
+    "olay": "Çerçeve: ayaz-gecidi (GÜMÜŞ rozet)",
+    "bayt": 170,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "cerceve/cerceve-kor-kraterleri",
+    "dosya": "harita/cerceve/cerceve-kor-kraterleri.png",
+    "olay": "Çerçeve: kor-kraterleri (GÜMÜŞ rozet)",
+    "bayt": 170,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "cerceve/cerceve-yel-sirti",
+    "dosya": "harita/cerceve/cerceve-yel-sirti.png",
+    "olay": "Çerçeve: yel-sirti (GÜMÜŞ rozet)",
+    "bayt": 170,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "cerceve/cerceve-cakim-yaylasi",
+    "dosya": "harita/cerceve/cerceve-cakim-yaylasi.png",
+    "olay": "Çerçeve: cakim-yaylasi (GÜMÜŞ rozet)",
+    "bayt": 170,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "cerceve/cerceve-dip-magaralari",
+    "dosya": "harita/cerceve/cerceve-dip-magaralari.png",
+    "olay": "Çerçeve: dip-magaralari (GÜMÜŞ rozet)",
+    "bayt": 170,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "cerceve/cerceve-krater",
+    "dosya": "harita/cerceve/cerceve-krater.png",
+    "olay": "Çerçeve: krater",
+    "bayt": 200,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "cerceve/cerceve-yildiz",
+    "dosya": "harita/cerceve/cerceve-yildiz.png",
+    "olay": "Çerçeve: yildiz",
+    "bayt": 182,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "cerceve/cerceve-koleksiyon",
+    "dosya": "harita/cerceve/cerceve-koleksiyon.png",
+    "olay": "Çerçeve: koleksiyon",
+    "bayt": 197,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "cerceve/cerceve-usta-madenci",
+    "dosya": "harita/cerceve/cerceve-usta-madenci.png",
+    "olay": "Çerçeve: usta-madenci",
+    "bayt": 192,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "cerceve/cerceve-usta-ocakci",
+    "dosya": "harita/cerceve/cerceve-usta-ocakci.png",
+    "olay": "Çerçeve: usta-ocakci",
+    "bayt": 192,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "efekt/usta-isi",
+    "dosya": "harita/efekt/usta-isi.png",
+    "olay": "Usta işi parıltısı (8 kare × 16×16)",
+    "bayt": 201,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "karakter/govde-0-renk-0",
+    "dosya": "harita/karakter/govde-0-renk-0.png",
+    "olay": "Karakter sayfası: gövde 0, profil rengi 0 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
+    "bayt": 892,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "karakter/govde-0-renk-1",
+    "dosya": "harita/karakter/govde-0-renk-1.png",
+    "olay": "Karakter sayfası: gövde 0, profil rengi 1 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
+    "bayt": 892,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "karakter/govde-0-renk-2",
+    "dosya": "harita/karakter/govde-0-renk-2.png",
+    "olay": "Karakter sayfası: gövde 0, profil rengi 2 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
+    "bayt": 892,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "karakter/govde-0-renk-3",
+    "dosya": "harita/karakter/govde-0-renk-3.png",
+    "olay": "Karakter sayfası: gövde 0, profil rengi 3 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
+    "bayt": 892,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "karakter/govde-0-renk-4",
+    "dosya": "harita/karakter/govde-0-renk-4.png",
+    "olay": "Karakter sayfası: gövde 0, profil rengi 4 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
+    "bayt": 892,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "karakter/govde-0-renk-5",
+    "dosya": "harita/karakter/govde-0-renk-5.png",
+    "olay": "Karakter sayfası: gövde 0, profil rengi 5 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
+    "bayt": 892,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "karakter/govde-1-renk-0",
+    "dosya": "harita/karakter/govde-1-renk-0.png",
+    "olay": "Karakter sayfası: gövde 1, profil rengi 0 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
+    "bayt": 901,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "karakter/govde-1-renk-1",
+    "dosya": "harita/karakter/govde-1-renk-1.png",
+    "olay": "Karakter sayfası: gövde 1, profil rengi 1 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
+    "bayt": 901,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "karakter/govde-1-renk-2",
+    "dosya": "harita/karakter/govde-1-renk-2.png",
+    "olay": "Karakter sayfası: gövde 1, profil rengi 2 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
+    "bayt": 901,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "karakter/govde-1-renk-3",
+    "dosya": "harita/karakter/govde-1-renk-3.png",
+    "olay": "Karakter sayfası: gövde 1, profil rengi 3 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
+    "bayt": 901,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "karakter/govde-1-renk-4",
+    "dosya": "harita/karakter/govde-1-renk-4.png",
+    "olay": "Karakter sayfası: gövde 1, profil rengi 4 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
+    "bayt": 901,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "karakter/govde-1-renk-5",
+    "dosya": "harita/karakter/govde-1-renk-5.png",
+    "olay": "Karakter sayfası: gövde 1, profil rengi 5 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
+    "bayt": 901,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "karakter/govde-2-renk-0",
+    "dosya": "harita/karakter/govde-2-renk-0.png",
+    "olay": "Karakter sayfası: gövde 2, profil rengi 0 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
+    "bayt": 878,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "karakter/govde-2-renk-1",
+    "dosya": "harita/karakter/govde-2-renk-1.png",
+    "olay": "Karakter sayfası: gövde 2, profil rengi 1 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
+    "bayt": 878,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "karakter/govde-2-renk-2",
+    "dosya": "harita/karakter/govde-2-renk-2.png",
+    "olay": "Karakter sayfası: gövde 2, profil rengi 2 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
+    "bayt": 878,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "karakter/govde-2-renk-3",
+    "dosya": "harita/karakter/govde-2-renk-3.png",
+    "olay": "Karakter sayfası: gövde 2, profil rengi 3 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
+    "bayt": 878,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "karakter/govde-2-renk-4",
+    "dosya": "harita/karakter/govde-2-renk-4.png",
+    "olay": "Karakter sayfası: gövde 2, profil rengi 4 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
+    "bayt": 878,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "karakter/govde-2-renk-5",
+    "dosya": "harita/karakter/govde-2-renk-5.png",
+    "olay": "Karakter sayfası: gövde 2, profil rengi 5 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
+    "bayt": 878,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "karakter/govde-3-renk-0",
+    "dosya": "harita/karakter/govde-3-renk-0.png",
+    "olay": "Karakter sayfası: gövde 3, profil rengi 0 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
+    "bayt": 887,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "karakter/govde-3-renk-1",
+    "dosya": "harita/karakter/govde-3-renk-1.png",
+    "olay": "Karakter sayfası: gövde 3, profil rengi 1 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
+    "bayt": 887,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "karakter/govde-3-renk-2",
+    "dosya": "harita/karakter/govde-3-renk-2.png",
+    "olay": "Karakter sayfası: gövde 3, profil rengi 2 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
+    "bayt": 887,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "karakter/govde-3-renk-3",
+    "dosya": "harita/karakter/govde-3-renk-3.png",
+    "olay": "Karakter sayfası: gövde 3, profil rengi 3 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
+    "bayt": 887,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "karakter/govde-3-renk-4",
+    "dosya": "harita/karakter/govde-3-renk-4.png",
+    "olay": "Karakter sayfası: gövde 3, profil rengi 4 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
+    "bayt": 887,
+    "lisans": "CC0-1.0"
+   },
+   {
+    "ad": "karakter/govde-3-renk-5",
+    "dosya": "harita/karakter/govde-3-renk-5.png",
+    "olay": "Karakter sayfası: gövde 3, profil rengi 5 (27 kare: BEKLE 4, YÜRÜ 6, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6)",
+    "bayt": 887,
+    "lisans": "CC0-1.0"
    }
   ]
  }
