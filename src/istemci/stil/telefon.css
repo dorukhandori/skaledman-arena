@@ -187,7 +187,7 @@ html[data-telefon] .ms .oduller { height: auto; min-height: 172px; grid-template
 html[data-telefon] .ms .oduller .yt { font-size: 26px; line-height: 24px; }
 html[data-telefon] .ms .kutu > .dg { position: static; margin-top: auto; padding-top: 8px; }
 /* maç menüsü (Esc): düğmeler ≥ 44 CSS px (çerçeve ×0,69 ölçekli: 64 çerçeve pikseli) */
-html[data-telefon] .ms .menu .dg button { min-height: 66px; }
+html[data-telefon] .ms .menu .dg button { min-height: 72px; }
 html[data-telefon] .ms .ac[data-altin] > svg { display: none; }
 
 /* ================= Ayarlar · Günlük · Krediler · Gizlilik ================= */

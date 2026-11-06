@@ -36,8 +36,8 @@ const denetle = () => {
   const ad = (e) => (e.tagName.toLowerCase() + (e.className && typeof e.className === "string" ? "." + e.className.trim().split(/\s+/).slice(0, 3).join(".") : "") + (e.dataset.eylem ? `[eylem=${e.dataset.eylem}]` : "")).slice(0, 70);
   const metin = (e) => (e.innerText || e.value || e.getAttribute("aria-label") || "").replace(/\s+/g, " ").trim().slice(0, 40);
   // açık açılır menü / modal varsa yalnız onun içi denetlenir (altındaki ekranın örtülmesi beklenen davranış)
-  const ustKatman = document.querySelector(".takim-menu:not([hidden]), .k-menu-liste:not([hidden]), .tam-katman, .modal");
-  const tum = [...document.querySelectorAll("body *")].filter((e) => (!ustKatman || ustKatman.contains(e)) && gorunur(e) && !e.matches("button[title^='select to enable accessibility']") && !e.closest("[aria-hidden=true]") && !["CANVAS", "svg", "SVG", "IMG", "STYLE", "SCRIPT"].includes(e.tagName));
+  const ustKatman = document.querySelector(".takim-menu:not([hidden]), .k-menu-liste:not([hidden]), .tam-katman, .modal, .ms .ort.acik, .ms .menu.acik");
+  const tum = [...document.querySelectorAll("body *")].filter((e) => (!ustKatman || ustKatman.contains(e)) && !e.closest("body > header, #menu") && gorunur(e) && !e.matches("button[title^='select to enable accessibility']") && !e.closest("[aria-hidden=true]") && !["CANVAS", "svg", "SVG", "IMG", "STYLE", "SCRIPT"].includes(e.tagName));
   const etkilesimli = tum.filter((e) => e.matches("button, a[href], [role=button], [role=tab], [role=radio], [role=option], [data-eylem], input:not([type=hidden]), select, [tabindex='0']") && getComputedStyle(e).pointerEvents !== "none" && !e.disabled);
   const yaprak = tum.filter((e) => e.children.length === 0 && (e.innerText || e.value || "").trim());
   const etkilesimliMi = (e) => e.matches("button, a[href], [role=button], [role=tab], [role=radio], [role=option], [data-eylem], input:not([type=hidden]), select, [tabindex='0']");
@@ -162,6 +162,9 @@ const EKRANLAR = [
   ["ana", [
     ["10-atolye-pergel", git("atolye", 4800)],
     ["11-atolye", async (s, cek, ad) => { await s.tap(".pergel .p-dugme").catch(() => {}); await cek(ad, 600); }],
+    ["11b-atolye-deger", async (s, cek, ad) => { await s.tap("[data-sekme=deger]").catch(() => {}); await cek(ad, 500); }],
+    ["11c-atolye-parca-incele", async (s, cek, ad) => { await s.tap("[data-sekme=uc]").catch(() => {}); await s.tap(".g3-etiket[data-yuva=govde]").catch(() => {}); await cek(ad, 900); await s.tap("[data-eylem=odak-geri]").catch(() => {}); }],
+    ["11d-atolye-takim-sec", async (s, cek, ad) => { await s.tap("[data-takim-yuva='1']").catch(() => {}); await cek(ad, 600); await s.tap("[data-takim-yuva='0']").catch(() => {}); }],
     ["12-atolye-takim-menu", async (s, cek, ad) => { await s.tap("[data-eylem=takim-menu]").catch(() => {}); await cek(ad, 600); }],
     ["13-atolye-daha-fazla", async (s, cek, ad) => { await s.goto(`${TABAN}?ekran=atolye`); await bekle(3500); await s.tap("[data-eylem=daha-fazla]").catch(() => {}); await cek(ad, 600); }],
     ["14-atolye-filtre", async (s, cek, ad) => { await s.goto(`${TABAN}?ekran=atolye`); await bekle(3500); await s.tap("[data-eylem=filtre]").catch(() => {}); await cek(ad, 600); }],
