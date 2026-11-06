@@ -17,7 +17,8 @@ node -v
 
 id devran >/dev/null 2>&1 || useradd --system --home "$HEDEF" --shell /usr/sbin/nologin devran
 mkdir -p "$HEDEF" "$HEDEF/veri-db"
-rsync -a --delete --exclude node_modules --exclude dist --exclude .git --exclude .env --exclude veri-db "$KAYNAK/" "$HEDEF/"
+# yedek: devran-yedek.timer /opt/devran/yedek altına yazar; --delete onu silmesin
+rsync -a --delete --exclude node_modules --exclude dist --exclude .git --exclude .env --exclude veri-db --exclude yedek "$KAYNAK/" "$HEDEF/"
 if [ ! -f "$HEDEF/.env" ]; then
   cp "$HEDEF/.env.example" "$HEDEF/.env"
   # D5: oturum/bilet imza anahtarı rastgele üretilir (sunucu bunsuz açılmaz)

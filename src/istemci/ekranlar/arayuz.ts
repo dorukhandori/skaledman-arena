@@ -88,6 +88,8 @@ export interface LentoSecenek {
   cuzdan?: boolean;
   /** Atölye: ad + Ayarlar + Çıkış */
   kim?: boolean;
+  /** plakada metin yerine marka logosu (docs/art/kimlik/kurumsal-kimlik.md § 3) */
+  logo?: boolean;
 }
 
 /** Üst lento: ◄ (20×20 @5,3) · bronz plaka (@30,3) · boşluk · Altın yuvası (80×20). */
@@ -101,7 +103,12 @@ export function lentoKur(kok: HTMLElement, s: LentoSecenek): HTMLElement {
     const hedef = s.geri;
     g.addEventListener("click", () => git(hedef));
   }
-  if (s.baslik) el("h1", "k-plaka", l, s.baslik);
+  if (s.logo) {
+    const h = el("h1", "k-plaka genis k-logo", l);
+    const im = el("img", "", h);
+    im.src = "/marka/logo-kucuk.svg";
+    im.alt = s.baslik ?? "Devran";
+  } else if (s.baslik) el("h1", "k-plaka", l, s.baslik);
   el("span", "k-bosluk", l);
   const ben = sonBen?.girisli ? sonBen : null;
   if (s.kim && ben) {
@@ -180,7 +187,7 @@ export function ekranKok(ust: HTMLElement, etiket: string, s: LentoSecenek & { y
   const kok = el("div", `ekr k-zemin${s.yer && s.yer !== "duvar" ? ` yer-${s.yer}` : ""}`, ust);
   kok.setAttribute("role", "main");
   kok.setAttribute("aria-label", etiket);
-  const lento = lentoKur(kok, { baslik: s.baslik === undefined ? etiket : s.baslik, geri: s.geri ?? null, cuzdan: s.cuzdan, kim: s.kim });
+  const lento = lentoKur(kok, { baslik: s.baslik === undefined ? etiket : s.baslik, geri: s.geri ?? null, cuzdan: s.cuzdan, kim: s.kim, logo: s.logo });
   const govde = el("div", "k-govde", kok);
   const kart = el("div", "kart k-panel", govde);
   kSiniflandir(kok);
