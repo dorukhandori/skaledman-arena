@@ -4,6 +4,7 @@ Her oturum işe başlamadan önce `git pull`, bu dosyayı oku, satırını ekle,
 
 ## Devam eden
 
+- 2026-11-06 · Harita kod alt oturumu (bulut, `devran-kod`) · `veri/{madenler,ustalik,tarifler,harita,market-fiyat}.json`, `src/paylasilan/{veri/harita.ts,kurallar/{harita,maden,ustalik,ocak}.ts}`, `src/sunucu/{api/{harita,maden,ocak}.ts,oyuncu/haritaMac.ts,db}`, `src/istemci/ekranlar/{Harita,Maden,Ocak}.ts`, `test/harita*` · H1→H8 (brief `docs/production/harita-kod-brief.md`); raporlar `raporlar/HARITA-H<n>.md`
 - 2026-11-05 · baş geliştirici (bulut kodlama oturumu, `devran-kod`) · `src/**`, `veri/`, `test/` · dilimler ve cila; haber yalnız `docs/production/devran-kod-brief.md` ile
 - 2026-11-05 · yerel oturum "Oyun menüsü UI hataları" · `docs/production/raporlar/MENU-DENETIM.md`, `araclar/menu-denetim-*.cjs` · denetim bitti; düzeltmeler (P1-P5) başlarsa `src/istemci/ekranlar/**`, `src/istemci/stil/**` (S-1 kararı bekliyor)
 - 2026-11-05 · yerel oturum "Mac oturum başlat dokümantasyonu" · `araclar/sanat/**`, `public/topac/**` · parça hattı Parti 1-3 işlendi; Disk/Uç parametrik
