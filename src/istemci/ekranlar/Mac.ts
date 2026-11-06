@@ -152,6 +152,13 @@ html[data-dokunmatik] .ms .menu { top:50%; transform:translateY(-50%); max-heigh
 html[data-dokunmatik] .ms .menu .dg { gap:6px; }
 html[data-dokunmatik] .ms .ipc { display:none; }
 html[data-dokunmatik] .ms .oduller { height:164px; }
+.ms .hrt { line-height:24px; text-align:left; font-size:28px; }
+.ms .hrt .yildizlar { display:flex; gap:10px; flex-wrap:wrap; }
+.ms .hrt .yz { color:var(--soluk); }
+.ms .hrt .yz.dolu { color:var(--gold, #fcd35a); }
+.ms .hrt .yz.yeni { text-decoration:underline; }
+.ms .hrt .hodul { color:var(--ink, #fff); }
+.ms .hrt .hasama, .ms .hrt .hacilan { color:var(--turuncu, #e8762f); text-transform:uppercase; }
 `;
 
 const BITIS_AD = { durma: "DURMA", ringOut: "RING OUT", parcalanma: "PARÇALANMA", berabere: "BERABERE" } as const;
@@ -175,7 +182,12 @@ const ALTIN_SIFIR: Record<string, string> = {
 };
 const BASARIM_SAYILMADI: Record<string, string> = {
   teslim: "Teslim edilen maçta başarım sayılmaz.", hukmen: "Hükmen biten maçta başarım sayılmaz.", ciftTavani: "Bu rakiple bugün 3 maçı geçtin: başarım sayılmaz.",
+  haritaTavani: "Bugünlük harita ödülü bitti (10/10) · 04:00'te yenilenir.", kisaMac: "20 saniyeden kısa maç sayılmaz.",
 };
+const YILDIZ_AD: Record<string, string> = {
+  kazan: "Kazan", temiz: "Temiz kazan", hizli: "60 sn'de kazan", ringOut: "Ring Out ile puan", durma: "Durma ile puan", parcalanma: "Parçalanma ile puan", yetenekBitis: "Yetenekle bitir",
+};
+const KADEME_AD = ["Demir", "Kaya", "Don", "Kor", "Kasırga", "Şimşek", "Girdap", "Devir Taşı"];
 const NEDEN_AD: Record<MacSonucu["neden"], string> = {
   puan: "İlk 3 puan",
   tukenme: "Takım tükendi (3 topaç elendi)",
@@ -963,6 +975,7 @@ export class MacEkrani {
     bas.dataset["basarim"] = "1";
     this.sonucSatirlari.push(altin, cek, bas);
     const mod = this.ag?.durum.mod;
+
     if (!this.ag || mod === "antrenman") {
       const neden = !this.ag ? "Bota karşı çevrimdışı maç" : this.b.ben?.girisli ? "Antrenman" : "Hesapsız Antrenman";
       altin.innerHTML = `<b class="bas">Altın</b><span class="say">—</span>${YIGIN_SVG(70)}<span class="yt">${neden}: Altın ve başarım yok.</span>`;
@@ -977,8 +990,14 @@ export class MacEkrani {
     }
     el("div", "ipc", k, "Space / Enter: atla");
     const dg = el("div", "dg", k);
+    if (mod === "harita") {
+      const h = el("button", "bir pah", dg, "Harita");
+      h.dataset["eylem"] = "harita";
+      h.addEventListener("click", () => { void this.ag?.baglanti.ayril().finally(() => { location.search = "?ekran=harita&donus=1"; }); });
+      queueMicrotask(() => h.focus());
+    }
     const oda = this.ag && mod === "oda";
-    const tekrar = el("button", "bir pah", dg, oda ? "Rövanş" : "Tekrar");
+    const tekrar = el("button", mod === "harita" ? "pah" : "bir pah", dg, oda ? "Rövanş" : "Tekrar");
     tekrar.dataset["rovans"] = "1";
     tekrar.addEventListener("click", () => {
       if (!this.ag) { this.yeniMac(this.tohum + 1); return; }
@@ -995,7 +1014,7 @@ export class MacEkrani {
     this.sonucSaat = 0;
     this.sonucOrt.classList.add("acik", "k-gece");
     this.hud.kok.style.opacity = "0.35";
-    queueMicrotask(() => tekrar.focus());
+    if (mod !== "harita") queueMicrotask(() => tekrar.focus());
   }
 
   /** ZAFER taş kıymığı + kıvılcım (KM-7; konfeti yerine; ≤ 60 parça, 2-3 sn, bir kez; "Parçacık: Az" ×0,4). */
@@ -1068,9 +1087,10 @@ export class MacEkrani {
     const liste = [...(o.basarimlar ?? [])].sort((x, y) => Number(y.tamamlandi) - Number(x.tamamlandi) || (y.ilerleme / y.sayi) - (x.ilerleme / x.sayi));
     if (o.basarimSayilmadi && o.basarimSayilmadi !== "iptal") el("span", "yt", bas, BASARIM_SAYILMADI[o.basarimSayilmadi] ?? "Bu maç başarım saymadı.");
     else if (o.mod === "bot") el("span", "yt", bas, "Bot maçı: başarımda yalnız Yol sayılır.");
+    if (o.harita) this.haritaOdulYaz(o.harita, bas);
     else if (o.mod === "oda") el("span", "yt", bas, "Oda maçı: yalnız Sosyal başarımlar sayılır.");
-    if (!liste.length) el("div", "bsk pah", bas).innerHTML = `<span>${BASARIM_IKON}</span><span class="ad">Başarım</span><span class="yt" style="grid-column:2">Bu maçta ilerleme yok.</span>`;
-    for (const x of liste.slice(0, 3)) {
+    if (!liste.length && !o.harita) el("div", "bsk pah", bas).innerHTML = `<span>${BASARIM_IKON}</span><span class="ad">Başarım</span><span class="yt" style="grid-column:2">Bu maçta ilerleme yok.</span>`;
+    for (const x of liste.slice(0, o.harita ? 1 : 3)) {
       const kart = el("div", `bsk pah${x.tamamlandi ? " tamam" : ""}`, bas);
       kart.dataset["basarimId"] = x.id;
       kart.dataset["ilerleme"] = `${x.ilerleme}/${x.sayi}`;
@@ -1092,6 +1112,31 @@ export class MacEkrani {
       }
     }
     if (this.sonucAdim >= this.sonucSatirlari.length) this.altinSayBitir();
+  }
+
+  /** Harita eki: ★★☆ yıldızlar (yeni yananlar işaretli), ödül, aşama, açılan düğümler, sayaç. */
+  private haritaOdulYaz(h: NonNullable<Extract<BilgiMesaji, { tur: "odul" }>["harita"]>, bas: HTMLElement): void {
+    const hp = el("div", "hrt", bas);
+    hp.dataset["haritaOdul"] = "1";
+    hp.dataset["yildiz"] = String(h.yildiz);
+    hp.dataset["asama"] = String(h.asama);
+    const yr = el("div", "yildizlar", hp);
+    h.sartlar.forEach((s, i) => {
+      const alindi = (h.yildiz & (1 << i)) !== 0;
+      const yeni = (h.maske & (1 << i)) !== 0 && alindi;
+      const y = el("span", `yz${alindi ? " dolu" : ""}${yeni ? " yeni" : ""}`, yr, `${alindi ? "★" : "☆"} ${YILDIZ_AD[s] ?? s}`);
+      y.setAttribute("aria-label", `${YILDIZ_AD[s] ?? s}: ${alindi ? "alındı" : "alınmadı"}`);
+    });
+    const parcalar: string[] = [];
+    if (h.altin) parcalar.push(`+${h.altin} ALTIN`);
+    for (const c of h.cevher) parcalar.push(`+${c.adet} ${KADEME_AD[c.kademe - 1]!.toUpperCase()}`);
+    for (const c of h.kulce) parcalar.push(`+${c.adet} ${KADEME_AD[c.kademe - 1]!.toUpperCase()} KÜLÇESİ`);
+    if (h.rozetAltini) parcalar.push(`ROZET +${h.rozetAltini} ALTIN`);
+    el("div", "hodul", hp, h.gecersiz ? (BASARIM_SAYILMADI[h.gecersiz] ?? "Bu maç sayılmadı.") : parcalar.length ? parcalar.join(" · ") : "Bu maçta ödül yok.");
+    const as = ["", "", "KEŞFET", "TEMİZLE", "USTALAŞ"];
+    if (h.asama > h.asamaOnce) el("div", "hasama", hp, `DÜĞÜM: ${as[h.asama] ?? ""}`);
+    if (h.acilan.length) el("div", "hacilan", hp, h.bolgeAcildi ? "YENİ BÖLGE AÇILDI" : `${h.acilan.length} YENİ DÜĞÜM AÇILDI`);
+    el("div", "hsayac yt", hp, h.sayilan ? `Sayılan harita maçı ${h.sayilanMac}/${h.tavan}` : "BUGÜNLÜK ÖDÜL BİTTİ · 04:00");
   }
 
   private altinSayBitir(): void {

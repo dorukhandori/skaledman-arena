@@ -30,7 +30,8 @@
     "d8:akis": "tsx araclar/d8-akis.ts",
     "qa:bot": "tsx araclar/qa-bot.ts",
     "qa:cokme": "tsx araclar/qa-cokme.ts",
-    "topac:uret": "tsx araclar/sanat/topac-uret.ts"
+    "topac:uret": "tsx araclar/sanat/topac-uret.ts",
+    "h:akis": "tsx araclar/h-akis.ts"
   },
   "dependencies": {
     "@colyseus/monitor": "0.18.7",

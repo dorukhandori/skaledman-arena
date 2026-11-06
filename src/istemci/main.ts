@@ -11,7 +11,7 @@ import { mobilKabukKur } from "./mobil/kabuk.ts";
 
 export type EkranAdi =
   | "karsilama" | "kayit" | "giris" | "profil" | "ilk-cekirdek" | "antrenman" | "atolye" | "market" | "basarimlar" | "ayarlar"
-  | "lobi" | "mac" | "topac-lab" | "dene" | "gunluk" | "seyirci" | "ruhlar" | "gizlilik" | "krediler";
+  | "lobi" | "mac" | "topac-lab" | "dene" | "gunluk" | "seyirci" | "ruhlar" | "gizlilik" | "krediler" | "harita" | "maden" | "ocak";
 
 export interface EkranBaglami {
   app: Application;
@@ -42,12 +42,16 @@ const EKRANLAR: Record<EkranAdi, () => Promise<Modul>> = {
   ruhlar: () => import("./ekranlar/RuhKontakt.ts"),
   gizlilik: () => import("./ekranlar/Bilgi.ts").then((m) => ({ baslat: m.gizlilik })),
   krediler: () => import("./ekranlar/Bilgi.ts").then((m) => ({ baslat: m.krediler })),
+  // Harita / Maden / Ocak (docs/design/harita/07)
+  harita: () => import("./ekranlar/Harita.ts"),
+  maden: () => import("./ekranlar/Maden.ts"),
+  ocak: () => import("./ekranlar/Ocak.ts"),
 };
 
 /** Giriş isteyen ekranlar (misafir yalnız Karşılama / Kayıt / Giriş / Antrenman / Ayarlar). */
-const GIRIS_GEREKIR = new Set<EkranAdi>(["profil", "ilk-cekirdek", "atolye", "market", "basarimlar", "lobi", "dene", "gunluk"]);
+const GIRIS_GEREKIR = new Set<EkranAdi>(["profil", "ilk-cekirdek", "atolye", "market", "basarimlar", "lobi", "dene", "gunluk", "harita", "maden", "ocak"]);
 /** Pixi gerekmeyen menü ekranları */
-const CANVASSIZ = new Set<EkranAdi>(["karsilama", "kayit", "giris", "profil", "atolye", "market", "basarimlar", "ayarlar", "gunluk", "gizlilik", "krediler"]);
+const CANVASSIZ = new Set<EkranAdi>(["karsilama", "kayit", "giris", "profil", "atolye", "market", "basarimlar", "ayarlar", "gunluk", "gizlilik", "krediler", "harita", "maden", "ocak"]);
 /** D8: hesap ve gezinti istemeyen ekranlar (seyirci/OBS: giriş yok, kontrol yok) */
 const HESAPSIZ = new Set<EkranAdi>(["mac", "topac-lab", "seyirci", "ruhlar"]);
 

@@ -1,4 +1,5 @@
 import { type OdaGorunumu } from "../../ag/durum.ts";
+import { dugumBul } from "../../paylasilan/kurallar/harita.ts";
 import { MESAJ, ODA_FAZI, odaKoduBicimle, odaKoduCoz } from "../../ag/protokol.ts";
 import { takimKoduYaz, takimProfilleriKimlikten } from "../../paylasilan/veri/takimlar.ts";
 import { type Girisli, type TakimGorunumu, SON_TAKIM, git, oku, sakla } from "../hesap.ts";
@@ -169,6 +170,13 @@ export function baslat(b: EkranBaglami): void {
   new LobiEkrani(b);
 }
 
+/** Harita düğümünün lobi bilgisi (ad + zorluk; harita.json). */
+function haritaDugumBilgisi(id: string | undefined): { ad: string; zorluk: number } | null {
+  const d = id ? dugumBul(id) : undefined;
+  if (!d || (d.tur !== "dusman" && d.tur !== "patron")) return null;
+  return { ad: d.tur === "patron" ? d.ad : "DÜŞMAN", zorluk: d.zorluk };
+}
+
 type Asama = "giris" | "bekliyor" | "secim" | "mac" | "hata";
 
 class LobiEkrani {
@@ -206,6 +214,9 @@ class LobiEkrani {
     this.giris();
     (window as unknown as { __lobi: LobiEkrani }).__lobi = this;
     if (new URLSearchParams(location.search).get("hizli") === "1") void this.hizliBasla();
+    // Harita (H6): ?ekran=lobi&dugum=b1-01 → düğüm botuna karşı (karakter düğümde; sunucu denetler)
+    const dugum = new URLSearchParams(location.search).get("dugum");
+    if (dugum && /^b[1-9]-(0[1-9]|1[0-2])$/.test(dugum)) void this.bagla(() => this.yeniBaglanti().harita(dugum, this.secilenTakim));
     if (location.hash.startsWith("#oda=")) { this.modSecimi = "oda"; this.giris(); }
     this.zamanlayici = window.setInterval(() => this.tik(), 200);
     window.addEventListener("keydown", (e) => this.tus(e));
@@ -273,6 +284,12 @@ class LobiEkrani {
     an.dataset["mod"] = "antrenman";
     modlar.push([an, "antrenman"]);
     // Dereceli: yeni oyuncuya hiç görünmez; bir Çekirdek Lv.3 olunca belirir (sahip kararı S4). Mod D7'de yok.
+    // Harita (01 § 7): İlk Devir sonrası 4. mod; Harita ekranına götürür (düğüm orada seçilir)
+    if (this.ben.harita?.acik) {
+      const hr = dugme(sol, "mod centik", "Harita");
+      hr.dataset["mod"] = "harita";
+      hr.addEventListener("click", () => git("harita"));
+    }
     if (dereceliAcik(this.ben.cekirdekler.map((c) => c.seviye))) {
       const dr = dugme(sol, "mod kilitli", "Dereceli");
       dr.dataset["mod"] = "dereceli";
@@ -652,7 +669,7 @@ class LobiEkrani {
     this.asama = "secim";
     const ag = this.ag!;
     if (this.mac) { this.kok.classList.add("ust"); this.kok.style.display = ""; }
-    const g = this.iskelet(this.mac ? "Rövanş: takım seç" : "Takım seç", null, "lb-secim");
+    const g = this.iskelet(this.mac ? "Rövanş: takım seç" : "Takım seç", ag.durum.mod === "harita" ? () => { void this.baglanti?.ayril(); git("harita"); } : null, "lb-secim");
     const sen = el("div", "k-panel lb-taraf k-e16", g);
     const rs = el("span", "rol sen", sen); el("i", "k-isaret", rs); rs.append(" Sen");
     el("span", "", sen, this.ben.oyuncu.ad);
@@ -686,6 +703,9 @@ class LobiEkrani {
     });
     const duyuru = el("div", "lb-duyuru k-e16", orta, "");
     duyuru.dataset["duyuru"] = "1";
+    // harita maçı: rakip düğüm botu, zorluk göstergesi (07 § 3)
+    const hd = ag.durum.mod === "harita" ? haritaDugumBilgisi(ag.durum.dugum) : null;
+    if (hd) { const z = el("div", "k-e16 lb-zorluk", orta, `${hd.ad} · ZORLUK ${"●".repeat(hd.zorluk)}${"○".repeat(5 - hd.zorluk)}`); z.dataset["zorluk"] = String(hd.zorluk); }
     duyuru.setAttribute("aria-live", "polite");
     const rk = el("div", "k-panel lb-taraf sag-taraf k-e16", g);
     rk.dataset["rakip"] = "1";
@@ -763,7 +783,9 @@ class LobiEkrani {
         tekrar: () => {
           const q = new URLSearchParams(location.search);
           q.set("ekran", "lobi");
-          q.set("hizli", "1");
+          // harita: aynı düğüme yeni maç (sunucu karakterin hâlâ orada olduğunu denetler)
+          const dg = this.ag?.durum.mod === "harita" ? this.ag.durum.dugum : undefined;
+          if (dg) { q.delete("hizli"); q.set("dugum", dg); } else q.set("hizli", "1");
           void this.baglanti?.ayril().finally(() => { location.href = `${location.pathname}?${q.toString()}`; });
         },
       });

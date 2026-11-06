@@ -1,0 +1,60 @@
+{
+ "not": "Otomatik oynanış (oyuncu topacı paylaşılan bot ?oto=dolas). İnsan play pass değil.",
+ "hesap": "Harita q48mn",
+ "hazirlik": [
+  201,
+  200,
+  201,
+  200
+ ],
+ "haritaIlk": {
+  "secili": "b1-01",
+  "konum": null,
+  "ana": "YÜRÜ"
+ },
+ "hiyerarsi": {
+  "plaka": [
+   94,
+   98,
+   310,
+   40
+  ],
+  "ana": [
+   1010,
+   486,
+   220,
+   86
+  ],
+  "secili": [
+   300,
+   371,
+   81,
+   81
+  ],
+  "karakter": [
+   279,
+   354,
+   81,
+   84
+  ]
+ },
+ "lobiZorluk": "DÜŞMAN · ZORLUK ●○○○○",
+ "sonuc": {
+  "yildiz": "1",
+  "asama": "3",
+  "metin": "★ Kazan ☆ Temiz kazan ☆ 60 sn'de kazan +50 ALTIN · +2 DEMIR DÜĞÜM: TEMİZLE 1 YENİ DÜĞÜM AÇILDI Sayılan harita maçı 1/10"
+ },
+ "donus": {
+  "b102": "1",
+  "b101": "3"
+ },
+ "konsolHatalari": [],
+ "ekranlar": [
+  "docs/production/raporlar/ekran/HARITA-H6-oyna-harita-modu.png",
+  "docs/production/raporlar/ekran/HARITA-H6-harita-ilk.png",
+  "docs/production/raporlar/ekran/HARITA-H6-harita-dusman-dovus.png",
+  "docs/production/raporlar/ekran/HARITA-H6-lobi-dugum-botu.png",
+  "docs/production/raporlar/ekran/HARITA-H6-sonuc-harita-eki.png",
+  "docs/production/raporlar/ekran/HARITA-H6-harita-donus.png"
+ ]
+}

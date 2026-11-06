@@ -22,6 +22,12 @@ export type Ben =
     altin?: number;
     /** TEMIZLIK #5: son maç özeti (sunucu `SonMacSema`); hiç maç yoksa null */
     sonMac?: SonMacGorunumu | null;
+    /** Harita (H2–H4): İlk Devir sonrası açık; karakter gövdesi 0–3; profil çerçevesi; Ustalık seviyeleri; Ocak görünür mü */
+    harita?: { acik: boolean; konum: string | null };
+    karakter?: number;
+    cerceve?: string | null;
+    ustalik?: { madencilik: number; isleme: number };
+    ocakAcik?: boolean;
   };
 export interface SonMacGorunumu { neden: string; kazandi: boolean; bitis: string | null; ringOutKayip: boolean; zaman: number; macSayisi: number }
 export type Girisli = Extract<Ben, { girisli: true }>;

@@ -223,10 +223,14 @@ export function dunyaGorunumu(d: Dunya): DunyaGorunumu {
 export interface OyuncuGorunumu {
   oturum: string; ad: string; takimId: string; takimNo: string; bagli: boolean; hazir: boolean; rovans: boolean; bot: boolean;
   ack: number; ackTick: number; dondurmaHakki: number;
+  /** v7: kozmetik malzeme (12 hane; sim dışı) */
+  malzeme?: string;
 }
 export interface OdaGorunumu {
   faz: number; kod: string; izleKod: string; mod: string; macNo: number; secimKalan: number; beklemeKalan: number;
   donma: number; donmaKalan: number; kopan: number; dunyaVar: boolean;
+  /** v7: harita maçının düğümü */
+  dugum?: string;
   oyuncular: Dizi<OyuncuGorunumu>;
   dunya: DunyaGorunumu;
 }
