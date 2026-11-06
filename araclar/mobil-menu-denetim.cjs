@@ -176,6 +176,17 @@ const EKRANLAR = [
     ["20-ayarlar", git("ayarlar", 2000)],
     ["21-gunluk", git("gunluk", 2500)],
   ]],
+  // çevrimdışı bot maçı 8× hızla: Esc menüsü ve Sonuç ekranı (hızlı; EKRAN=macsonuc)
+  ["macsonuc", [
+    ["40-mac-menu", async (s, cek, ad) => {
+      await s.goto(`${TABAN}?ekran=mac&oto=dolas&hiz=8&tohum=3`); await bekle(4000);
+      await s.keyboard.press("Escape"); await cek(ad, 700); await s.keyboard.press("Escape");
+    }],
+    ["41-sonuc", async (s, cek, ad) => {
+      await s.waitForSelector(".ms .ort.acik", { timeout: 180000 }).catch(() => {});
+      await cek(ad, 4500);
+    }],
+  ]],
   // lobi akışları (yerel sunucuda bot): oda açık, arama, bot teklifi, takım seçimi, VS (uzun sürer: EKRAN=lobiakis)
   ["lobiakis", [
     ["30-oda-acik", async (s, cek, ad) => {

@@ -179,3 +179,26 @@ html[data-telefon] .mk .hucre { min-height: 44px; }
 html[data-telefon] .mk .hucre .ik { width: calc(56 * var(--p)); height: calc(36 * var(--p)); }
 html[data-telefon] .mk .alt-serit { flex: none; align-items: center; }
 html[data-telefon] .mk .alt-serit .k-dugme.ana { min-height: 48px; }
+
+/* ================= Sonuç (maç sonu) ================= */
+/* 960×540 çerçeve telefonda ölçeklenir; içerik sığmayınca düğmeler paneli örtüyordu: düğmeler akışa girer, ödül satırı içeriğe göre yükselir */
+html[data-telefon] .ms .kutu { display: flex; flex-direction: column; }
+html[data-telefon] .ms .oduller { height: auto; min-height: 172px; grid-template-columns: 190px minmax(0, 1fr) minmax(0, 1.1fr); }
+html[data-telefon] .ms .oduller .yt { font-size: 26px; line-height: 24px; }
+html[data-telefon] .ms .kutu > .dg { position: static; margin-top: auto; padding-top: 8px; }
+/* maç menüsü (Esc): düğmeler ≥ 44 CSS px (çerçeve ×0,69 ölçekli: 64 çerçeve pikseli) */
+html[data-telefon] .ms .menu .dg button { min-height: 66px; }
+html[data-telefon] .ms .ac[data-altin] > svg { display: none; }
+
+/* ================= Ayarlar · Günlük · Krediler · Gizlilik ================= */
+/* lento zaten ekran adını taşır: içerik başlığı yinelenmez (dikey yer kazanılır) */
+html[data-telefon] .ekr[aria-label="Ayarlar"] .kart > h2.k-plaka:first-of-type,
+html[data-telefon] .ekr[aria-label="Çekirdek Günlüğü"] .kart > h2.k-plaka:first-of-type,
+html[data-telefon] .ekr[aria-label="Krediler"] .bilgi > h2:first-child { display: none; }
+/* uzun tablolar (Krediler): beş sütun yerine satır başına küçük kart */
+html[data-telefon] .ekr .bilgi table, html[data-telefon] .ekr .bilgi tbody { display: block; }
+html[data-telefon] .ekr .bilgi thead { display: none; }
+html[data-telefon] .ekr .bilgi tr { display: block; padding: calc(3 * var(--p)) 0; border-bottom: var(--p) solid #2a3146; }
+html[data-telefon] .ekr .bilgi td { display: block; border: 0; padding: 0 calc(3 * var(--p)); }
+html[data-telefon] .ekr .bilgi td:first-child { color: var(--gold); }
+html[data-telefon] .ekr .bilgi td:empty { display: none; }
