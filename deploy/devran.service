@@ -1,4 +1,4 @@
-# Devran oyun sunucusu (D4). Kurulum: deploy/kur.sh. Dinleme yalnız 127.0.0.1:2567; dışarıya Cloudflare Tunnel `devran`.
+# Devran oyun sunucusu (D4). Kurulum: deploy/kur.sh. Dinleme 2568 (2567'yi VPS'te WyrmWar tutar); dış erişim IPAddressDeny ile kesik; dışarıya Cloudflare Tunnel `devran`.
 [Unit]
 Description=Devran oyun sunucusu (Colyseus 0.18, yetkili 1v1)
 After=network-online.target
@@ -12,7 +12,7 @@ WorkingDirectory=/opt/devran
 EnvironmentFile=/opt/devran/.env
 Environment=NODE_ENV=production
 Environment=HOST=127.0.0.1
-Environment=PORT=2567
+Environment=PORT=2568
 ExecStart=/usr/bin/node dist/server/server.mjs
 Restart=on-failure
 RestartSec=3

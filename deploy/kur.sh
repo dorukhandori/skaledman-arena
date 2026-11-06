@@ -5,6 +5,8 @@
 set -euo pipefail
 HEDEF=/opt/devran
 KAYNAK="$(cd "$(dirname "$0")/.." && pwd)"
+# Üretim portu: VPS'te 2567'yi WyrmWar tutar. Değiştirirsen deploy/devran.service ve tünel ingress'i de güncelle.
+SUNUCU_PORT="${SUNUCU_PORT:-2568}"
 
 if ! command -v node >/dev/null || [ "$(node -p 'process.versions.node.split(".")[0]')" -lt 22 ]; then
   echo "[kur] Node 22 kuruluyor"
@@ -27,7 +29,8 @@ chmod 600 "$HEDEF/.env"
 cd "$HEDEF"
 # better-sqlite3 yerel modül: Node 22 için önceden derlenmiş ikili indirilir (yoksa derlemek için build-essential gerekir)
 sudo -u devran npm ci --no-audit --no-fund
-sudo -u devran npm run build
+sudo -u devran env SUNUCU_PORT="$SUNUCU_PORT" npm run build
+grep -q "listen($SUNUCU_PORT)" dist/server/server.mjs || { echo "[kur] HATA: derlenen sunucu $SUNUCU_PORT portunu dinlemiyor"; exit 1; }
 test -f dist/server/server.mjs
 
 install -m 644 "$HEDEF/deploy/devran.service" /etc/systemd/system/devran.service
@@ -35,5 +38,5 @@ systemctl daemon-reload
 systemctl enable --now devran
 sleep 2
 systemctl --no-pager status devran | head -n 12
-curl -fsS http://127.0.0.1:2567/api/saglik && echo
+curl -fsS "http://127.0.0.1:$SUNUCU_PORT/api/saglik" && echo
 echo "[kur] tamam. Tünel: deploy/README.md"

@@ -7,7 +7,9 @@ export default defineConfig({
   plugins: [
     colyseus({
       serverEntry: "/src/sunucu/index.ts",
-      port: 2567,
+      // Üretim portu yapı sırasında gömülür (dist/server/server.mjs `listen(port)`): VPS'te 2567'yi WyrmWar tutar,
+      // bu yüzden deploy/kur.sh `SUNUCU_PORT=2568` ile derler. Geliştirmede varsayılan 2567.
+      port: Number(process.env.SUNUCU_PORT ?? 2567),
       serveClient: true,
     }),
   ],

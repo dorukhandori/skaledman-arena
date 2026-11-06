@@ -1,13 +1,17 @@
 # Devran dağıtımı (D4)
 
-Durum: **dosyalar hazır, VPS'e bu ortamdan dağıtım yapılamadı** (oturumun VPS erişimi yok). Sahip ya da VPS
-erişimi olan oturum aşağıdaki adımları uygular.
+Durum (2026-11-06): **VPS'te canlı: https://devran.ovarlak.games** (kur.sh ile kuruldu, `devran.service` + `cloudflared-devran.service`).
+Aşağıdaki "Cloudflare Tunnel" bölümündeki genel komutlar yerine VPS'te şu kalıp kullanıldı: tünel `3ba11d38…` (`cloudflared tunnel create devran`),
+ayar `/etc/cloudflared/devran.yml`, servis `cloudflared-devran` (diğer tüneller gibi ayrı yapılandırma; varsayılan `config.yml`'e dokunulmaz),
+DNS `cloudflared tunnel --config /etc/cloudflared/devran.yml route dns <id> devran.ovarlak.games`.
 
 ## Mimari
-- Not: `colyseus/vite` üretim girişi `server.listen(2567)` ile tüm arayüzlere bağlanır; dış erişimi birim dosyasındaki `IPAddressDeny=any` + `IPAddressAllow=localhost` keser (ve VPS güvenlik duvarında 2567 kapalı tutulur).
+- **Port 2568** (2567'yi VPS'te WyrmWar tutuyor). Port yapı sırasında gömülür: `SUNUCU_PORT` ortam değişkeni `vite.config.ts` içinde okunur,
+  `deploy/kur.sh` varsayılan 2568 ile derler ve çıktıyı doğrular. Birim dosyasındaki `PORT=` yalnız bilgi amaçlıdır; sunucu gömülü portu dinler.
+- Not: `colyseus/vite` üretim girişi `server.listen(<port>)` ile tüm arayüzlere bağlanır; dış erişimi birim dosyasındaki `IPAddressDeny=any` + `IPAddressAllow=localhost` keser (ve VPS güvenlik duvarında port kapalı tutulur; 2026-11-06'da dışarıdan kapalı olduğu doğrulandı).
 - Tek Node 22 süreci (`dist/server/server.mjs`, `vite build --app` çıktısı): Colyseus 0.18 + istemci dosyaları
-  (`serveClient`). Dinleme **yalnız `127.0.0.1:2567`**; dışarı açılan port yok.
-- Dış erişim **Cloudflare Tunnel**, tünel adı `devran`. Alan adı **sahip kararı** (öneri B-24: `devran.ovarlak.games`).
+  (`serveClient`). Dışarı açılan port yok.
+- Dış erişim **Cloudflare Tunnel**, tünel adı `devran`, alan adı `devran.ovarlak.games`.
 - Test döneminde site **Cloudflare Access** arkasında (yalnız davetli e-postalar); `KIMLIK_MODU=yerel` yalnız bu
   koşulda kabul edilebilir. D5'te Kick OAuth gelince `KIMLIK_MODU=kick`.
 - systemd: ayrı `devran` kullanıcısı, `CPUQuota=150%`, `MemoryMax=1G`, sertleştirme (`deploy/devran.service`).
