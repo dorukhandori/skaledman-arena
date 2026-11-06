@@ -33,13 +33,13 @@ html[data-dokunmatik] .k-zemin .k-dugme, html[data-dokunmatik] .k-zemin button.s
 html[data-dokunmatik] .k-zemin .kart a:not(.k-dugme) { display: inline-flex; align-items: center; min-height: 44px; }
 /* lento (26 px şerit) içindekiler: görsel boy aynı, görünmez isabet payı ≥ 48 px (lento düzeni bozulmaz) */
 html[data-dokunmatik] .k-lento .k-dugme { min-height: 0; min-width: 0; }
-html[data-dokunmatik] .k-geri, html[data-dokunmatik] .k-lento .k-dugme, html[data-dokunmatik] .k-cuzdan, html[data-dokunmatik] .g3-etiket { position: relative; }
+html[data-dokunmatik] .k-geri, html[data-dokunmatik] .k-ayar, html[data-dokunmatik] .k-lento .k-dugme, html[data-dokunmatik] .k-cuzdan, html[data-dokunmatik] .g3-etiket { position: relative; }
 html[data-dokunmatik] .g3-etiket::after, html[data-dokunmatik] .dk-pay::after {
   content: ""; position: absolute; left: 50%; top: 50%; width: max(100%, 48px); height: max(100%, 48px); transform: translate(-50%, -50%);
   background: none; display: block;
 }
 /* lento ekranın üst kenarında: pay yalnız aşağı uzar (üst kenar zaten sonsuz hedef) */
-html[data-dokunmatik] .k-geri::after, html[data-dokunmatik] .k-lento .k-dugme::after, html[data-dokunmatik] .k-cuzdan::after {
+html[data-dokunmatik] .k-geri::after, html[data-dokunmatik] .k-ayar::after, html[data-dokunmatik] .k-lento .k-dugme::after, html[data-dokunmatik] .k-cuzdan::after {
   content: ""; position: absolute; left: 50%; top: calc(-1 * var(--p) - 3px); width: max(100%, 48px); height: 48px; transform: translateX(-50%);
   background: none; display: block;
 }
@@ -56,8 +56,13 @@ html[data-telefon] .at .uc3 { grid-template-columns: 236px minmax(0, 1fr) 124px 
 html[data-telefon] .at .sekmeler button { letter-spacing: 0; }
 html[data-telefon] .at .tkart { grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "b b" "ik mini" "ok ok"; }
 html[data-telefon] .at .tkart:not([aria-selected=true]) .ok { display: none; }
-html[data-telefon] .at .tkart .ok { justify-content: center; gap: 6px; }
+html[data-telefon] .at .tkart .ok { flex-direction: row; justify-content: center; gap: 6px; }
 html[data-telefon] .at .tkart .ok button { width: 44px; height: 44px; min-width: 44px; font-size: 18px; }
+/* S-1 alt sıra (MARKET · BAŞARIMLAR · GÜNLÜK · PROFİL [+ OCAK] · KAYDET · OYNA) telefonda sığsın: gezinti etiket yazısıyla */
+html[data-telefon] .at .at-nav { gap: 4px; }
+html[data-telefon] .at .at-nav .k-dugme { font: 400 var(--y-16)/.75 var(--font-etiket); letter-spacing: 0; padding: 2px 8px; }
+html[data-telefon] .at .kaydet-yer .k-dugme { font: 400 var(--y-16)/.75 var(--font-etiket); letter-spacing: 0; padding: 2px 8px; }
+html[data-telefon] .at .oyna-yer .oyna { min-width: 0; }
 /* Oyna / Lobi: mod sütunu yazı ×1,5'e göre */
 html[data-telefon] .lobi .lb-govde { grid-template-columns: 170px 1fr; }
 /* Takım seçimi: oyuncu adları ×1,5 yazıda yan sütuna sığsın */
@@ -107,3 +112,12 @@ html[data-dokunmatik] input, html[data-dokunmatik] select, html[data-dokunmatik]
   background: rgba(27, 33, 49, .96); color: var(--ink, #fbf2c3); box-shadow: inset 0 0 0 2px var(--bronz, #c08e52), 0 2px 0 #05050a;
   font: 400 24px/1 var(--font-etiket, monospace); }
 .tam-teklif .k-dugme { min-height: 44px; min-width: 44px; }
+
+/* ---- Market (MENU-P2 K-9): telefonda detay kartı sağ sütun yerine altta tek satır şerit (ad · fiyat · AL) ---- */
+html[data-telefon] .mk .ic { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; }
+html[data-telefon] .mk .detay { grid-column: 1; grid-row: 3; flex-direction: row; align-items: center; gap: 8px; padding: 4px 8px; }
+html[data-telefon] .mk .detay .d-baslik, html[data-telefon] .mk .detay .md-cubuk, html[data-telefon] .mk .detay .d-kosul,
+html[data-telefon] .mk .detay .d-tur, html[data-telefon] .mk .detay .d-ik { display: none; }
+html[data-telefon] .mk .detay .d-ust { flex: 1 1 auto; min-width: 0; }
+html[data-telefon] .mk .detay h3 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html[data-telefon] .mk .detay .d-al { margin: 0 0 0 auto; width: auto; min-height: 44px; flex-direction: row; gap: 6px; }

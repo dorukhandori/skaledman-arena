@@ -66,6 +66,9 @@ function el<K extends keyof HTMLElementTagNameMap>(etiket: K, ust?: HTMLElement,
 }
 
 export function baslat(b: EkranBaglami): void {
+  // S-1 / sadelik S-10: Topaç Lab geliştirici aracı; yalnız ?gelistir=1 (araçların ?debug'ı da) ile açılır
+  const q = new URLSearchParams(location.search);
+  if (q.get("gelistir") !== "1" && !q.has("debug")) { location.replace(`${location.pathname}?ekran=atolye`); return; }
   new TopacLab(b);
 }
 

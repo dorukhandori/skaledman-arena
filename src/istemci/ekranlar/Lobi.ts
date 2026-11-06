@@ -10,7 +10,7 @@ import { AgMaci } from "../ag/AgMaci.ts";
 import { Baglanti, BaglantiHatasiE, HATA_METNI } from "../ag/Baglanti.ts";
 import { type MacEkrani, cevrimiciBaslat } from "./Mac.ts";
 import { dereceliAcik, kuyrukAsamasi, sureBicimle } from "../../paylasilan/kurallar/kuyruk.ts";
-import { lentoKur, stilEkle } from "./arayuz.ts";
+import { lentoKur, lvYaz, stilEkle } from "./arayuz.ts";
 import { pikselTopac, topac3bIkonu } from "./pikselTopac.ts";
 import { ikonGozle } from "../atolye3d/ikonOnbellek.ts";
 import type { TopacProfili } from "../../paylasilan/veri/profil.ts";
@@ -278,7 +278,7 @@ class LobiEkrani {
     k.innerHTML = "";
     this.ana = null;
     this.geriEylem = geri;
-    const l = lentoKur(k, { baslik, geri: null });
+    const l = lentoKur(k, { baslik, geri: null, ayar: baslik === "Oyna" }); // S-1: ⚙ yalnız kök Oyna ekranında
     if (geri) {
       const g = el("button", "k-geri", l);
       g.type = "button";
@@ -364,7 +364,7 @@ class LobiEkrani {
       el("b", "", et, u.ad);
       const lv = el("div", "lv", et);
       elRozet(lv, u.element, u.odunc ? "odunc" : "");
-      el("span", "", lv, u.odunc ? "Ödünç · Lv.1" : `Lv.${u.seviye}`);
+      lvYaz(el("span", "", lv), u.odunc ? "Ödünç · Lv.1" : `Lv.${u.seviye}`);
       k.title = u.odunc ? `${u.ad} (ödünç): Lv.1, tecrübe ve başarım almaz` : `${u.ad} · Lv.${u.seviye}`;
     }
   }
@@ -726,7 +726,7 @@ class LobiEkrani {
       for (const x of u) m.appendChild(topac3bIkonu(x.profil, 7, x.odunc));
       el("b", "", d, t.ad);
       const odunc = u.filter((x) => x.odunc).length;
-      el("small", odunc ? "" : "lv", d, odunc ? `${odunc} ödünç` : `Lv.${Math.max(...u.map((x) => x.seviye))}`);
+      lvYaz(el("small", odunc ? "" : "lv", d), odunc ? `${odunc} ödünç` : `Lv.${Math.max(...u.map((x) => x.seviye))}`);
       d.setAttribute("aria-label", `${i + 1}. ${t.ad}${odunc ? `, ${odunc} ödünç topaç` : ""}`);
       d.addEventListener("click", () => {
         this.secilenTakim = t.id;

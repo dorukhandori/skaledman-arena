@@ -8,7 +8,7 @@ import { type Depo, depo } from "../db/depo.ts";
 import { type Istek, type Uygulama, type Yanit, govdeOku, ip, kokenTamam, oturumId, oturumdakiOyuncu, yaz } from "./ortak.ts";
 import { atolyeRotalariKur } from "./atolye.ts";
 import { marketRotalariKur } from "./market.ts";
-import { haritaRotalariKur } from "./harita.ts";
+import { armaDenetle, haritaRotalariKur } from "./harita.ts";
 import { madenRotalariKur } from "./maden.ts";
 import { ocakRotalariKur } from "./ocak.ts";
 import { haritaAcikMi, ocakAcikMi } from "../oyuncu/harita.ts";
@@ -36,7 +36,7 @@ export const ILK_DEVIR = "ilk-devir";
 
 const KayitSema = z.object({ ad: z.string().max(64), sifre: z.string().max(256), sifreTekrar: z.string().max(256) });
 const GirisSema = z.object({ ad: z.string().max(64), sifre: z.string().max(256) });
-const ProfilSema = z.object({ arma: z.enum(AMBLEMLER as unknown as [string, ...string[]]), renk: z.enum(RENKLER), destekKanali: z.string().trim().max(25).regex(/^[A-Za-z0-9_]*$/).optional() });
+const ProfilSema = z.object({ arma: z.string().max(40), renk: z.enum(RENKLER), destekKanali: z.string().trim().max(25).regex(/^[A-Za-z0-9_]*$/).optional() });
 const IlkCekirdekSema = z.object({ set: z.string().max(20) });
 const HesapSilSema = z.object({ sifre: z.string().max(256) });
 
@@ -193,6 +193,8 @@ export function rotalariKur(app: Uygulama): void {
     if (id === null) { yaz(r, 401, { hata: "oturum" }); return; }
     let b: z.infer<typeof ProfilSema>;
     try { b = ProfilSema.parse(await govdeOku(q)); } catch { yaz(r, 400, { hata: "bicim" }); return; }
+    const armaHata = armaDenetle(d, id, b.arma);
+    if (armaHata) { yaz(r, armaHata === "bicim" ? 400 : 403, { hata: armaHata }); return; }
     d.profilKaydet(id, { arma: b.arma, renk: b.renk, destekKanali: b.destekKanali || null });
     yaz(r, 200, { ok: true });
   });

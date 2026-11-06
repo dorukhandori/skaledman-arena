@@ -6,7 +6,7 @@ import type { EkranBaglami } from "../main.ts";
 import { type AtolyeCekirdegi, BakimHatasi, GORULEN_SEVIYE, atolyeGetir, git, oku, sakla } from "../hesap.ts";
 import { elementSvg } from "../oyun/elementSimge.ts";
 import { ELEMENT_RENK, KOKEN_RENK, renkCss } from "../oyun/renkler.ts";
-import { bakimKatmani, ekranKok, el, geriDugmesi } from "./arayuz.ts";
+import { bakimKatmani, ekranKok, el, geriDugmesi, lvYaz } from "./arayuz.ts";
 
 // Çekirdek Günlüğü (D6, US-2.2): seviye ve tecrübe çubuğu, sonraki seviyede ne açılır, defter (maç, galibiyet,
 // krizden galibiyet, en uzun dönüş, Kararma, Yapay kalan ömür), ruh kartı (ad, element, kişilik, Yetenek / Özel
@@ -14,33 +14,39 @@ import { bakimKatmani, ekranKok, el, geriDugmesi } from "./arayuz.ts";
 // Lv.2 Yetenek, Lv.3 Özel Yetenek + Ulti (ilk sürümde tavan Lv.3; tuning § 14'teki "Lv.4 Ulti, sezon 2" SAPMA).
 
 const STIL = `
-.gn .kart { width:min(calc(520 * var(--p)),100%); }
-.gn .dz { display:grid; grid-template-columns:calc(120 * var(--p)) 1fr; gap:calc(8 * var(--p)); margin-top:calc(4 * var(--p)); }
+.gn .k-govde { padding-top:calc(8 * var(--p)); }
+.gn .kart { width:min(calc(600 * var(--p)),100%); }
+.gn .dz { display:grid; grid-template-columns:calc(112 * var(--p)) 1fr; gap:calc(8 * var(--p)); }
 .gn .liste { display:flex; flex-direction:column; gap:calc(3 * var(--p)); }
 .gn .liste button { justify-content:flex-start; text-align:left; gap:calc(4 * var(--p)); min-height:calc(24 * var(--p)); }
 .gn .liste button[aria-current=true] { --ks: inset 0 0 0 var(--p) var(--gold), inset 0 calc(2 * var(--p)) 0 0 #8a5a34; background-color:var(--secili); }
 .gn .liste button svg { width:calc(11 * var(--p)); height:calc(11 * var(--p)); }
-.gn .liste small { color:var(--soluk); display:block; }
+.gn .liste small { color:var(--soluk); display:block; text-transform:none; }
 .gn .liste button[aria-current=true] small { color:var(--ink); }
 .gn .bas { display:flex; gap:calc(6 * var(--p)); align-items:center; }
 .gn .bas h3 { margin:0; }
 .gn .bas svg { width:calc(22 * var(--p)); height:calc(22 * var(--p)); }
-.gn .lv { font:400 var(--y-30)/1 var(--font-baslik); padding:calc(2 * var(--p)) calc(6 * var(--p)); color:var(--gold); background:#3b2c0c; box-shadow:inset 0 0 0 var(--p) #c9a33b; }
-.gn .xp { height:calc(6 * var(--p)); background:#0d0f18; box-shadow:inset 0 0 0 var(--p) var(--harc); margin:calc(4 * var(--p)) 0 calc(2 * var(--p)); position:relative; }
+.gn .lv { font:400 var(--y-20)/1 var(--font-baslik); letter-spacing:var(--yp); padding:calc(2 * var(--p)) calc(6 * var(--p)); color:var(--gold); background:#3b2c0c; box-shadow:inset 0 0 0 var(--p) #c9a33b; }
+.gn .xp { height:calc(6 * var(--p)); background:#0d0f18; box-shadow:inset 0 0 0 var(--p) var(--harc); margin:calc(3 * var(--p)) 0 calc(2 * var(--p)); position:relative; }
 .gn .xp i { position:absolute; left:var(--p); top:var(--p); bottom:var(--p); max-width:calc(100% - 2 * var(--p)); background:repeating-linear-gradient(90deg, var(--sen) 0 calc(3 * var(--p)), transparent calc(3 * var(--p)) calc(4 * var(--p))); }
-.gn .sonraki { margin:calc(4 * var(--p)) 0; padding:calc(4 * var(--p)) calc(6 * var(--p)); background:#11141f; box-shadow:inset 0 0 0 var(--p) var(--bronz-1); line-height:.875; }
-.gn .defter { display:grid; grid-template-columns:repeat(3,1fr); gap:calc(3 * var(--p)); margin:calc(4 * var(--p)) 0; }
-.gn .defter div { padding:calc(3 * var(--p)) calc(4 * var(--p)); background:var(--hucre); box-shadow:inset 0 var(--p) 0 0 var(--hucre-isik), inset 0 0 0 var(--p) var(--harc); }
+.gn .sonraki { margin:calc(3 * var(--p)) 0; padding:calc(4 * var(--p)) calc(6 * var(--p)); background:#11141f; box-shadow:inset 0 0 0 var(--p) var(--bronz-1); line-height:.875; }
+/* K-12: dört istatistik tek sırada (Kararma / ömür varsa sıra uzar, yine tek satır) */
+.gn .defter { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0,1fr); gap:calc(3 * var(--p)); margin:calc(3 * var(--p)) 0; }
+.gn .defter div { min-width:0; padding:calc(2 * var(--p)) calc(4 * var(--p)); background:var(--hucre); box-shadow:inset 0 var(--p) 0 0 var(--hucre-isik), inset 0 0 0 var(--p) var(--harc); }
 .gn .defter b { display:block; font:400 var(--y-20)/1 var(--font-baslik); color:var(--turuncu); }
-.gn .defter span { color:var(--soluk); text-transform:uppercase; }
-.gn .ruh { display:grid; grid-template-columns:calc(64 * var(--p)) 1fr; gap:calc(6 * var(--p)); padding:calc(5 * var(--p)); background:#11141f; box-shadow:inset 0 0 0 var(--p) var(--bronz-1); }
-.gn .ruh .silu { width:calc(64 * var(--p)); height:calc(64 * var(--p)); background:var(--panel-0); box-shadow:inset 0 0 0 var(--p) var(--harc); display:flex; align-items:center; justify-content:center; }
-.gn .ruh .silu svg { width:calc(56 * var(--p)); height:calc(56 * var(--p)); }
-.gn .yt3 { display:flex; flex-direction:column; gap:calc(3 * var(--p)); margin-top:calc(3 * var(--p)); }
-.gn .yet { padding:calc(3 * var(--p)) calc(4 * var(--p)); background:var(--hucre); box-shadow:inset 0 0 0 var(--p) #3f8f60; line-height:.875; }
+.gn .defter span { display:block; color:var(--soluk); text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.gn .ruh { display:grid; grid-template-columns:calc(48 * var(--p)) 1fr; gap:calc(6 * var(--p)); padding:calc(4 * var(--p)) calc(5 * var(--p)); background:#11141f; box-shadow:inset 0 0 0 var(--p) var(--bronz-1); }
+.gn .ruh .silu { width:calc(48 * var(--p)); height:calc(48 * var(--p)); background:var(--panel-0); box-shadow:inset 0 0 0 var(--p) var(--harc); display:flex; align-items:center; justify-content:center; }
+.gn .ruh .silu svg { width:calc(42 * var(--p)); height:calc(42 * var(--p)); }
+.gn .ruh-bas { display:flex; align-items:baseline; gap:calc(6 * var(--p)); flex-wrap:wrap; }
+.gn .ruh p { margin:var(--p) 0; }
+.gn .yt3 { display:flex; flex-direction:column; gap:calc(2 * var(--p)); margin-top:calc(2 * var(--p)); }
+.gn .yet { padding:calc(2 * var(--p)) calc(4 * var(--p)); background:var(--hucre); box-shadow:inset 0 0 0 var(--p) #3f8f60; line-height:.875; }
+.gn .yet > div { color:var(--soluk); }
 .gn .yet b { color:var(--ink); text-transform:uppercase; }
 .gn .yet.kilitli { box-shadow:inset 0 0 0 var(--p) #3a3f55; background:#11141f; color:var(--kilitli-yazi); }
 .gn .yet .kl { float:right; color:var(--gold); text-transform:uppercase; }
+.gn .yet .kl .k-lv, .gn .liste .k-lv { text-transform:none; }
 .gn .not { color:var(--soluk); margin-top:calc(3 * var(--p)); line-height:.875; }
 html[data-yazi-buyuk] .gn .dz { grid-template-columns:1fr; }
 `;
@@ -72,12 +78,11 @@ export function baslat(b: EkranBaglami): void {
 }
 
 function ciz(b: EkranBaglami, cekirdekler: AtolyeCekirdegi[]): void {
+  // K-2: plaka = ekranın adı (Atölye alt sırasındaki GÜNLÜK ile aynı); içerikte ikinci başlık yok
   const { kok, kart } = ekranKok(b.ustYazi, "Çekirdek Günlüğü", { baslik: "Günlük" });
   kok.classList.add("gn");
   const st = el("style"); st.textContent = STIL; document.head.appendChild(st);
   geriDugmesi(kart);
-  el("h2", "k-plaka", kart, "Çekirdek Günlüğü");
-  el("div", "alt", kart, "Çekirdeğin büyümesi: seviye, defter ve ruhu.");
   const q = new URLSearchParams(location.search);
   let secili = cekirdekler.find((c) => String(c.id) === q.get("c")) ?? cekirdekler[0];
   const dz = el("div", "dz", kart);
@@ -93,7 +98,7 @@ function ciz(b: EkranBaglami, cekirdekler: AtolyeCekirdegi[]): void {
       d.innerHTML = elementSvg(c.element as ElementAdi, 22);
       const s = el("span", "", d);
       el("span", "", s, c.ad);
-      el("small", "", s, `Lv.${c.seviye} · ${c.tecrube} XP${c.devreDisi ? " · ömrü bitti" : ""}`);
+      lvYaz(el("small", "", s), `Lv.${c.seviye} · ${c.tecrube} XP${c.devreDisi ? " · ömrü bitti" : ""}`);
       d.addEventListener("click", () => { secili = c; history.replaceState(null, "", `?ekran=gunluk&c=${c.id}`); listeCiz(); anaCiz(); });
     }
   };
@@ -152,10 +157,11 @@ function ciz(b: EkranBaglami, cekirdekler: AtolyeCekirdegi[]): void {
       const sl = el("div", "silu", rk);
       sl.innerHTML = ruhSiluet(ruh.element as ElementAdi, c.seviye >= 3);
       const sag = el("div", "", rk);
-      const rb = el("h3", "", sag, ruh.ad);
+      const rbs = el("div", "ruh-bas", sag);
+      const rb = el("h3", "", rbs, ruh.ad);
       rb.style.margin = "0";
       rb.style.color = renkCss(KOKEN_RENK[c.koken as keyof typeof KOKEN_RENK]?.isik ?? 0xffffff);
-      el("div", "yt", sag, `${ELEMENT_RENK[ruh.element as ElementAdi].ad} ruhu · ${KOKEN_AD[ruh.koken] ?? ""}`);
+      el("span", "yt", rbs, `${ELEMENT_RENK[ruh.element as ElementAdi].ad} ruhu · ${KOKEN_AD[ruh.koken] ?? ""}`);
       el("p", "", sag, `"${ruh.kisilik}"`);
       const y3 = el("div", "yt3", sag);
       const yt = (tur: string, y: Yetenek | undefined, ad: string, gerek: number) => {
@@ -163,7 +169,7 @@ function ciz(b: EkranBaglami, cekirdekler: AtolyeCekirdegi[]): void {
         const d = el("div", `yet${acik ? "" : " kilitli"}`, y3);
         d.dataset["yetenekYuva"] = tur;
         d.dataset["acik"] = acik ? "1" : "0";
-        el("span", "kl", d, acik ? "Açık" : `Kilitli: Lv.${gerek}`);
+        lvYaz(el("span", "kl", d), acik ? "Açık" : `Kilitli: Lv.${gerek}`);
         el("b", "", d, `${tur}: ${y?.ad ?? ad}`);
         el("div", "", d, yetenekAciklamasi(y));
         d.setAttribute("aria-label", `${tur}: ${y?.ad ?? ad}. ${acik ? "Açık" : `Kilitli, Lv.${gerek} gerekir`}. ${yetenekAciklamasi(y)}`);
@@ -171,7 +177,9 @@ function ciz(b: EkranBaglami, cekirdekler: AtolyeCekirdegi[]): void {
       yt("Yetenek", yetenek, ruh.yetenek, SY[0]!);
       yt("Özel Yetenek", ozel, ruh.ozelYetenek, SY[1]!);
       if (ruh.ulti) yt("Ulti", ulti, ruh.ulti, SY[2]!);
-      el("div", "not", sag, "Lv.1: yetenek yok · Lv.2: Yetenek · Lv.3: Özel Yetenek + Ulti (maçta Çekirdeğin gerçek seviyesi geçerli).");
+      const nt = el("div", "not", sag);
+      nt.title = "Maçta Çekirdeğin gerçek seviyesi geçerli.";
+      lvYaz(nt, "Lv.1: yetenek yok · Lv.2: Yetenek · Lv.3: Özel Yetenek + Ulti");
     }
   };
   listeCiz();

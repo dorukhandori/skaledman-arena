@@ -7,7 +7,6 @@ import { refStilEkle } from "./referansStil.ts";
 import { parca3bIkonEl } from "./pikselTopac.ts";
 import { ikonGozle } from "../atolye3d/ikonOnbellek.ts";
 
-const COIN_SVG = (_b = 0): string => `<span class="k-sikke" aria-hidden="true"></span>`;
 const KILIT_SVG = (_b = 0): string => `<span class="k-kilit" aria-hidden="true"></span>`;
 
 // Başarımlar (D7, 03 § 4, ux § 7, referans görsel 05): tam çerçeve panel, üst bantta BAŞARIMLAR (◄ geri: G-15, X yalnız
@@ -46,13 +45,19 @@ const STIL = `
 .bs .kart .ilr .cubukc { height:calc(7 * var(--p)); }
 .bs .kart.tamam .ilr .cubukc i { background:repeating-linear-gradient(90deg, var(--gold) 0 calc(3 * var(--p)), transparent calc(3 * var(--p)) calc(4 * var(--p))); }
 .bs .kart .ilr .tamamY { color:var(--gold); }
-.bs .kart .odl { grid-column:2; grid-row:2 / 4; display:flex; align-items:flex-start; gap:calc(2 * var(--p)); flex-wrap:wrap; color:#e2c98e; line-height:.875; }
+/* K-11: ödül satırları sola hizalı, her biri tek satır + ikon (sığmazsa "…", tam metin ipucunda) */
+.bs .kart .odl { grid-column:2; grid-row:2 / 4; min-width:0; display:flex; flex-direction:column; align-items:stretch; justify-content:flex-start; gap:calc(2 * var(--p)); color:#e2c98e; line-height:.75; }
+.bs .kart .odl .os { display:flex; align-items:center; gap:calc(2 * var(--p)); min-width:0; white-space:nowrap; }
+.bs .kart .odl .os .om { min-width:0; overflow:hidden; text-overflow:ellipsis; }
+.bs .kart .odl .os .k-sikke, .bs .kart .odl .os canvas, .bs .kart .odl .os img, .bs .kart .odl .os .oi { flex:none; }
+.bs .kart .odl .oi { display:inline-block; width:calc(8 * var(--p)); height:calc(8 * var(--p)); background:var(--bronz); clip-path:polygon(35% 0, 65% 0, 65% 35%, 100% 35%, 100% 65%, 65% 65%, 65% 100%, 35% 100%, 35% 65%, 0 65%, 0 35%, 35% 35%); }
+.bs .kart .odl .os a { flex:none; margin-left:auto; color:var(--turuncu); }
 .bs .kart.sifir .odl, .bs .kart.gizli .odl { color:var(--kilitli-yazi); }
 .bs .kart .odl b { font-weight:400; color:var(--gold); }
 .bs .kart .odl a { color:var(--turuncu); }
 .bs .kart .zr { display:none; }
 .bs .bos { padding:calc(6 * var(--p)); margin:0 0 calc(6 * var(--p)); text-align:center; color:#ffb070; background:#2a1610; box-shadow:inset 0 0 0 var(--p) var(--turuncu); text-transform:uppercase; }
-.bs .alt-serit { display:flex; align-items:flex-end; gap:calc(8 * var(--p)); margin-top:calc(8 * var(--p)); min-height:calc(36 * var(--p)); }
+.bs .alt-serit { display:flex; align-items:flex-end; gap:calc(8 * var(--p)); margin-top:calc(8 * var(--p)); }
 .bs .alt-serit .son { margin-right:auto; color:var(--gold); text-transform:uppercase; }
 html[data-yazi-buyuk] .bs .izg { grid-template-columns:repeat(2, 1fr); }
 `;
@@ -98,12 +103,12 @@ class BasarimEkrani {
 
   private ciz(): void {
     this.kok.innerHTML = "";
-    const lento = lentoKur(this.kok, { baslik: "Başarımlar", geri: "atolye" });
+    const lento = lentoKur(this.kok, { baslik: "Başarımlar", geri: "atolye", ayar: true });
     const tamamSay = this.liste.filter((x) => x.tamam).length;
     const sayac = el("div", "k-plaka kucuk", lento);
     sayac.setAttribute("aria-label", `Tamamlanan ${tamamSay} / ${this.liste.length}`);
     el("span", "", sayac, `Tamam ${tamamSay}/${this.liste.length}`).dataset["tamam"] = "1";
-    lento.insertBefore(sayac, lento.querySelector(".k-cuzdan"));
+    lento.insertBefore(sayac, lento.querySelector(".k-cuzdan, .k-ayar"));
     const ic = el("div", "ic", this.kok);
     if (!this.liste.some((x) => x.tamam || x.ilerleme > 0)) el("div", "bos", ic, "Henüz başarım yok. İlk maçını oyna.").setAttribute("role", "status");
     // sekmeler
@@ -139,11 +144,11 @@ class BasarimEkrani {
     izg.setAttribute("role", "tabpanel");
     izg.setAttribute("aria-label", KATEGORI_AD[this.secili] ?? this.secili);
     for (const x of ogeler) this.kart(izg, x);
-    // alt şerit (b-basarimlar): son açılan parça + MARKETE GİT ana (yalnız açılmış parça varsa)
-    const serit = el("div", "alt-serit", ic);
+    // alt şerit (b-basarimlar): son açılan parça + MARKETE GİT ana (yalnız açılmış parça varsa; yoksa şerit hiç yok, K-11)
     const son = [...this.liste].filter((x) => x.tamam && x.acilanParcalar.length).sort((a, b) => (b.tamamTarihi ?? 0) > (a.tamamTarihi ?? 0) ? 1 : -1)[0];
-    el("span", "son k-e16", serit, son ? `${son.ad} · Market'te açıldı` : "");
     if (son) {
+      const serit = el("div", "alt-serit", ic);
+      el("span", "son k-e16", serit, `${son.ad} · Market'te açıldı`);
       const d = el("button", "k-dugme ana", serit, "Markete git");
       d.dataset["eylem"] = "markete-git";
       d.addEventListener("click", () => git("market", `&parca=${son.acilanParcalar[0]!.id}`));
@@ -168,21 +173,30 @@ class BasarimEkrani {
     else ilr.innerHTML = `<span class="cubukc"></span>${KILIT_SVG(16)}`;
     if (x.gorunur) {
       el("span", `rozet zr ${x.zorluk}`, k, x.ilkSurum ? ZORLUK_AD[x.zorluk] : "Sezon 2");
+      // K-11: her ödül kendi satırında, sola hizalı, ikonla (Altın sikke · parça ikonu · açılan özellik işareti)
       const od = el("div", "odl", k);
-      od.innerHTML = `${COIN_SVG(14)} ${x.odulAltin} Altın`;
+      const satir = (ikon: HTMLElement | null, metin: string, vurgu = false) => {
+        const s = el("div", "os", od);
+        if (ikon) s.appendChild(ikon);
+        el(vurgu ? "b" : "span", "om", s, metin).title = metin;
+        return s;
+      };
+      const sikke = el("span", "k-sikke"); sikke.setAttribute("aria-hidden", "true");
+      satir(sikke, `${x.odulAltin} Altın`);
       for (const p of x.acilanParcalar) {
-        const s = el("span", "", od, ` · ${x.tamam ? "Market'te açıldı" : "Açar"}: `);
-        s.appendChild(parca3bIkonEl(p.id, null, 16)); // TEMIZLIK #4: ödül parçası 3B ikon
-        el("b", "", s, p.ad);
+        const s = satir(parca3bIkonEl(p.id, null, 12), p.ad, true); // TEMIZLIK #4: ödül parçası 3B ikon (açılan parça; tam metin ARIA'da)
+        s.title = `${x.tamam ? "Market'te açıldı" : "Market'te açar"}: ${p.ad}`;
         if (x.tamam) {
-          const a = el("a", "", od, "Markete git");
+          const a = el("a", "", s, "Market");
           a.href = `?ekran=market&parca=${p.id}`;
           a.dataset["marketeGit"] = p.id;
+          a.setAttribute("aria-label", `${p.ad}: Markete git`);
         }
       }
-      if (x.acilanOzellik.includes("takim-yuvasi-4")) el("span", "", od, " · 4. takım yuvası");
-      if (x.acilanOzellik.includes("yenileme-indirimi-50")) el("span", "", od, " · Yapay yenileme %50 indirim");
-      if (x.acilanOzellik.includes("market")) el("span", "", od, " · Market");
+      const ozellik = (metin: string) => { const i = el("span", "oi"); i.setAttribute("aria-hidden", "true"); satir(i, metin).title = `${x.tamam ? "Açıldı" : "Açar"}: ${metin}`; };
+      if (x.acilanOzellik.includes("takim-yuvasi-4")) ozellik("4. takım yuvası");
+      if (x.acilanOzellik.includes("yenileme-indirimi-50")) ozellik("Yenileme %50 indirim");
+      if (x.acilanOzellik.includes("market")) ozellik("Market");
     }
   }
 }

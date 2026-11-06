@@ -7,7 +7,7 @@ import { ELEMENT_RENK, renkCss } from "../oyun/renkler.ts";
 import { bakimKatmani, cuzdanYaz, ekranKok, el } from "./arayuz.ts";
 import { type Ipucu } from "../bilgic/ipuclari.ts";
 import { ipucuBas, ipucuSec } from "../bilgic/haritaIpucu.ts";
-import { BOLGE_ZEMIN, CEVHER_IKON, DUGUM_IKON, KARAKTER_KARE, KILIT_IKON, type KarakterAnim, animKaresi, karakterSayfasi, kareKonumu } from "./haritaVarlik.ts";
+import { BOLGE_ZEMIN, CEVHER_IKON, DUGUM_IKON, GORUNUM_IKON, KARAKTER_KARE, KILIT_IKON, type KarakterAnim, animKaresi, karakterSayfasi, kareKonumu } from "./haritaVarlik.ts";
 import { ayakTozu, efektStili, kirintiPatlat, ortamParcaciklari, parilti, svgNoktasi } from "./haritaEfekt.ts";
 
 // Harita ekranı (docs/design/harita/07 § 2–3, 13): bölge başına sabit kamera düğüm haritası (480×270 mantıksal ızgara,
@@ -478,7 +478,10 @@ class HaritaEkrani {
     }
     ipucuBas(sol, "ipucu", this.ipucu);
     if (this.miniProfil && ben) {
-      el("b", "", sol, `${ben.oyuncu.ad}${ben.oyuncu.arma ? ` · ${ben.oyuncu.arma.toUpperCase()}` : ""}`);
+      const ad = el("b", "", sol, ben.oyuncu.ad);
+      const arma = ben.oyuncu.arma;
+      if (arma?.startsWith("arma-")) { const im = el("img", "", ad); im.src = GORUNUM_IKON(arma); im.alt = ""; im.width = 16; im.height = 16; im.style.cssText = "image-rendering:pixelated;vertical-align:middle;margin-left:6px"; }
+      else if (arma && arma in ELEMENT_RENK) ad.append(` · ${ELEMENT_RENK[arma as keyof typeof ELEMENT_RENK].ad.toLocaleUpperCase("tr")}`);
       el("div", "s2", sol, `⛏ ${ben.ustalik?.madencilik ?? 0} · ⚒ ${ben.ustalik?.isleme ?? 0} · ${this.bolge.ad} %${this.bolge.ilerleme.yuzde}`);
       const v = el("div", "s3 vitrin", sol);
       void apiGet<{ vitrin: string[]; uretilenler: { anahtar: string; ad: string }[] }>("/api/ocak").then((o) => {

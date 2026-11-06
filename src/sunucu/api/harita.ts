@@ -4,13 +4,24 @@ import { depo } from "../db/depo.ts";
 import { haritaGit, haritaGorunumu, sandikAc } from "../oyuncu/harita.ts";
 import { basarimHaritaOlaylari } from "../oyuncu/haritaBasarim.ts";
 import { type Uygulama, oturumdakiOyuncu, yaz, yazimGirisi } from "./ortak.ts";
+import { ELEMENT_CARKI } from "../../paylasilan/kurallar/ayar.ts";
 
 // Harita uçları (docs/design/harita/08 § 4, 13 § 4.2): GET /api/harita, POST /api/harita/git (yürüme, KEŞFET),
 // POST /api/harita/sandik, PATCH /api/profil (karakter). Hepsi oturum ister (misafir haritayı görmez); yazımlar Origin
 // + zod; sunucu yetkili (istemci yalnız düğüm kimliği yollar).
 
-const ProfilYamaSema = z.object({ karakter: z.number().int().min(0).max(3).optional(), cerceve: z.string().max(40).nullable().optional() })
-  .refine((o) => o.karakter !== undefined || o.cerceve !== undefined);
+const ProfilYamaSema = z.object({ karakter: z.number().int().min(0).max(3).optional(), cerceve: z.string().max(40).nullable().optional(), arma: z.string().max(40).optional() })
+  .refine((o) => o.karakter !== undefined || o.cerceve !== undefined || o.arma !== undefined);
+
+/**
+ * Profil arması: 6 element simgesinden biri ya da Ocak'ta dövülen, sahip olunan `arma-*` görünümü (harita 03 § 1,
+ * 08 § 4 "arma zaten var"). Dönen: geçerli → null; biçim dışı → "bicim"; dövülmemiş arma → "sahipDegil".
+ */
+export function armaDenetle(d: { gorunumler(id: number): { gorunum_id: string }[] }, oyuncuId: number, arma: string): "bicim" | "sahipDegil" | null {
+  if ((ELEMENT_CARKI as readonly string[]).includes(arma)) return null;
+  if (!/^arma-[a-z0-9-]{1,34}$/.test(arma)) return "bicim";
+  return d.gorunumler(oyuncuId).some((x) => x.gorunum_id === arma) ? null : "sahipDegil";
+}
 
 /** Yürüme hız sınırı: oyuncu başına saniyede 10 istek (dolaşma ödülsüz; yalnız kötüye kullanım kesici). */
 const gitPencere = new Map<number, number[]>();
@@ -52,7 +63,7 @@ export function haritaRotalariKur(app: Uygulama): void {
     yaz(r, 200, { altin: s.altin, cevher: s.cevher, bakiye: s.bakiye, acilan: s.acilan, yeniBasarimlar: basarimlar, harita: haritaGorunumu(g.d, g.id, simdi) });
   });
 
-  /** Profil yaması (13 § 2.1, 08 § 4): karakter gövdesi 0–3; çerçeve yalnız sahip olunan görünüm (null = yok). */
+  /** Profil yaması (13 § 2.1, 08 § 4): karakter gövdesi 0–3; çerçeve ve dövülen arma yalnız sahip olunan görünüm (null = yok). */
   app.patch("/api/profil", async (q, r) => {
     const g = await yazimGirisi(q, r, ProfilYamaSema);
     if (!g) return;
@@ -60,6 +71,11 @@ export function haritaRotalariKur(app: Uygulama): void {
       const sahip = g.d.gorunumler(g.id).some((x) => x.gorunum_id === g.b.cerceve && x.gorunum_id.startsWith("cerceve-"));
       if (!sahip) { yaz(r, 403, { hata: "sahipDegil" }); return; }
     }
+    if (g.b.arma !== undefined) {
+      const h = armaDenetle(g.d, g.id, g.b.arma);
+      if (h) { yaz(r, h === "bicim" ? 400 : 403, { hata: h }); return; }
+    }
+    if (g.b.arma !== undefined) g.d.armaYaz(g.id, g.b.arma);
     if (g.b.karakter !== undefined) g.d.karakterYaz(g.id, g.b.karakter);
     if (g.b.cerceve !== undefined) g.d.cerceveYaz(g.id, g.b.cerceve);
     yaz(r, 200, { ok: true });

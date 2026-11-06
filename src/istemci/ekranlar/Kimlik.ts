@@ -1,33 +1,63 @@
 import { odaKoduCoz } from "../../ag/protokol.ts";
 import type { EkranBaglami } from "../main.ts";
 import { BakimHatasi, HESAP_HATA, apiGet, apiPost, git, sonrakiEkran, type Ben } from "../hesap.ts";
-import { anaEylem, bakimKatmani, ekranKok, el, kalin } from "./arayuz.ts";
+import { anaEylem, bakimKatmani, ekranKok, el, geriDugmesi, kalin } from "./arayuz.ts";
 import { cekirdekIllustrasyonu } from "./pikselTopac.ts";
 import { dokunmatikMetin, dokunmatikMi } from "../mobil/cihaz.ts";
 
-// GU-10 (menü dili v2, maket b-giris / referans 01): sol panelde ışıyan Çekirdek, sağda form paneli; lento yerine sol üstte
-// DEVRAN plakası; ana düğme bronz-turuncu (K-2; referanstaki yeşil değil).
+// GU-10 (menü dili v2, maket b-giris / referans 01): sol panelde ışıyan Çekirdek, sağda form paneli; ana düğme
+// bronz-turuncu (K-2; referanstaki yeşil değil). MENU-P2: lento plakası ekranın adı (Karşılama'da marka logosu), içerikte
+// ikinci başlık yok; ◄ lentoda (Kayıt/Giriş → Karşılama, Profil → Atölye); sol panelde oyunun 3 cümlelik tanıtımı (K-14);
+// "Hesabın var mı?" ikincil düğme. Yazı tipleri jetonlardan (H-7).
 const KIMLIK_STIL = `
 .kml .k-govde { flex-direction:row; justify-content:center; align-items:stretch; gap:calc(12 * var(--p)); padding-top:calc(8 * var(--p)); }
-.kml .kml-sol { flex:0 1 calc(200 * var(--p)); display:flex; align-items:center; justify-content:center; min-height:calc(200 * var(--p)); }
+.kml .kml-sol { flex:0 1 calc(200 * var(--p)); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:calc(6 * var(--p)); min-height:0; overflow:hidden; }
+.kml .kml-sol canvas { flex:none; }
+.kml .kml-tanitim { margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:calc(4 * var(--p)); max-width:calc(172 * var(--p)); }
+.kml .kml-tanitim li { margin:0; color:var(--ink); line-height:.875; text-align:center; }
+.kml .kml-tanitim li:first-child { color:var(--gold); }
 .kml .kart { flex:0 1 calc(260 * var(--p)); width:auto; }
 .kml .kart.dar { width:auto; }
 .kml .kart > h2:first-of-type { display:flex; justify-content:center; }
 .kml .kart > p, .kml .kart > div > p { text-transform:none; line-height:1; }
 .kml .kart p b { color:var(--ink); }
 .kml .satir .k-dugme.ana { margin-left:0; order:0; }
+.kml .satir .ikincil { margin-left:auto; }
+.kml input.k-alan { font-family:var(--font-etiket); }
 html[data-yazi-buyuk] .kml .kml-sol { display:none; }
 `;
 let kimlikStil = false;
-/** iki panelli kimlik ekranı: sol illüstrasyon + sağ form kartı (kart döner) */
-export function kimlikKok(ust: HTMLElement, etiket: string): HTMLDivElement {
+
+/** Sol panelin tanıtımı (K-14): oyun ne, nasıl oynanır, nasıl başlanır; her biri tek cümle. */
+const TANITIM = [
+  "Devran, iki topacın arenada çarpışıp birbirini devirdiği hızlı bir düellodur.",
+  "Topacını Çekirdek, Gövde, Disk ve Uç'tan kurar, WASD ile sürersin.",
+  "Rakibi çarparak, yetenekle ya da kenardan iterek yen; ilk 3 puanı alan kazanır.",
+];
+
+export interface KimlikSecenek {
+  /** ◄ hedefi (yoksa ◄ yok) */
+  geri?: string | null;
+  /** sol panelde tanıtım metni (Karşılama'da sağ panel zaten anlatır: kapalı) */
+  tanitim?: boolean;
+  /** plaka yerine marka logosu (yalnız Karşılama) */
+  logo?: boolean;
+}
+
+/** iki panelli kimlik ekranı: sol illüstrasyon (+ tanıtım) + sağ form kartı */
+export function kimlikKok(ust: HTMLElement, etiket: string, s: KimlikSecenek = {}): { kart: HTMLDivElement; sol: HTMLDivElement } {
   if (!kimlikStil) { kimlikStil = true; const st = document.createElement("style"); st.textContent = KIMLIK_STIL; document.head.appendChild(st); }
-  const { kok, kart, govde } = ekranKok(ust, etiket, { baslik: "Devran", logo: true, yer: "lacivert", cuzdan: false });
+  const { kok, kart, govde } = ekranKok(ust, etiket, { baslik: s.logo ? "Devran" : etiket, logo: !!s.logo, yer: "lacivert", geri: s.geri ?? null });
   kok.classList.add("kml");
   const sol = el("div", "k-panel kml-sol");
-  sol.appendChild(cekirdekIllustrasyonu(64));
+  sol.appendChild(cekirdekIllustrasyonu(s.tanitim === false ? 64 : 40));
+  if (s.tanitim !== false) {
+    const ul = el("ul", "kml-tanitim", sol);
+    ul.setAttribute("aria-label", "Devran nedir");
+    for (const c of TANITIM) el("li", "", ul, dokunmatikMi() ? dokunmatikMetin(c) : c);
+  }
   govde.insertBefore(sol, kart);
-  return kart;
+  return { kart, sol };
 }
 
 // Karşılama, Kayıt, Giriş (D5; sahip kararı 2026-11-04: Kick OAuth en sona, kimlik ad + şifre).
@@ -38,6 +68,13 @@ const UC_CUMLE = [
   "**Topacını WASD ile sür; rakibi çarparak, yeteneklerle ya da kenardan iterek yen, ilk 3 puanı alan kazanır.**",
   "**Kayıt ol, 60 saniyelik antrenmanla başla.**",
 ];
+
+/** ◄ ve Esc → Karşılama (oda dönüş eki korunur; yazı alanındayken Backspace geri gitmez). */
+function geriBagla(kart: HTMLElement): void {
+  const g = geriDugmesi(kart, "karsilama");
+  const ek = donusEki();
+  if (ek) { const y = g.cloneNode(true) as HTMLButtonElement; g.replaceWith(y); y.addEventListener("click", () => git("karsilama", ek)); }
+}
 
 /** Oda bağlantısıyla gelen misafir: giriş sonrası aynı odaya döner. */
 function donusEki(): string {
@@ -57,7 +94,7 @@ function girisSonrasi(ben: Ben): void {
 
 export function karsilama(b: EkranBaglami): void {
   if (b.ben?.girisli) { girisSonrasi(b.ben); return; }
-  const kart = kimlikKok(b.ustYazi, "Karşılama");
+  const { kart } = kimlikKok(b.ustYazi, "Karşılama", { logo: true, tanitim: false });
   kart.classList.add("dar");
   kart.style.textAlign = "center";
   el("h2", "k-plaka", kart, "Hoş geldin");
@@ -110,11 +147,9 @@ async function yenile(): Promise<Ben> {
 
 export function kayit(b: EkranBaglami): void {
   if (b.ben?.girisli) { girisSonrasi(b.ben); return; }
-  const kart = kimlikKok(b.ustYazi, "Kayıt ol");
+  const { kart } = kimlikKok(b.ustYazi, "Kayıt ol", { geri: "karsilama" });
   kart.classList.add("dar");
-  const geri = el("button", "geri", kart, "◄ Geri");
-  geri.addEventListener("click", () => git("karsilama", donusEki()));
-  el("h2", "k-plaka", kart, "Kayıt ol");
+  geriBagla(kart);
   el("div", "alt", kart, "Adın arenada görünür. Şifren yalnız sende kalır.");
   const ad = alan(kart, "Oyuncu adı", "text", "ad", "3-16 karakter");
   ad.girdi.maxLength = 16;
@@ -127,8 +162,10 @@ export function kayit(b: EkranBaglami): void {
   const satir = el("div", "satir", kart);
   const d = el("button", "bir", satir, "Kayıt ol");
   d.dataset["eylem"] = "kayit-ol";
-  const g = el("a", "", satir, "Hesabın var mı? Giriş yap");
+  // K-14: web bağlantısı yerine ikincil düğme
+  const g = el("a", "k-dugme kucuk ikincil", satir, "Hesabın var mı? Giriş yap");
   g.href = `?ekran=giris${donusEki()}`;
+  g.dataset["eylem"] = "girise-git";
   // ad uygunluğu: alandan çıkınca (sunucu kuralı: biçim, filtre, tekillik)
   ad.girdi.addEventListener("blur", async () => {
     const v = ad.girdi.value.trim();
@@ -165,11 +202,9 @@ export function kayit(b: EkranBaglami): void {
 
 export function giris(b: EkranBaglami): void {
   if (b.ben?.girisli) { girisSonrasi(b.ben); return; }
-  const kart = kimlikKok(b.ustYazi, "Giriş yap");
+  const { kart } = kimlikKok(b.ustYazi, "Giriş yap", { geri: "karsilama" });
   kart.classList.add("dar");
-  const geri = el("button", "geri", kart, "◄ Geri");
-  geri.addEventListener("click", () => git("karsilama", donusEki()));
-  el("h2", "k-plaka", kart, "Giriş yap");
+  geriBagla(kart);
   el("div", "alt", kart, "Kayıtlı adın ve şifrenle gir.");
   const ad = alan(kart, "Oyuncu adı", "text", "ad");
   ad.girdi.maxLength = 16;
@@ -180,8 +215,9 @@ export function giris(b: EkranBaglami): void {
   const satir = el("div", "satir", kart);
   const d = el("button", "bir", satir, "Giriş yap");
   d.dataset["eylem"] = "giris-yap";
-  const k = el("a", "", satir, "Hesabın yok mu? Kayıt ol");
+  const k = el("a", "k-dugme kucuk ikincil", satir, "Hesabın yok mu? Kayıt ol");
   k.href = `?ekran=kayit${donusEki()}`;
+  k.dataset["eylem"] = "kayda-git";
   const gonder = async () => {
     genel.textContent = "";
     d.disabled = true;

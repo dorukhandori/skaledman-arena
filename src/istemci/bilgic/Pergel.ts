@@ -36,7 +36,8 @@ const STIL = `
   background:var(--panel) var(--k-doku-panel, none) 0 0 / calc(32 * var(--p)) calc(32 * var(--p));
   border:var(--p) solid var(--harc); border-radius:0;
   box-shadow:inset 0 0 0 var(--p) var(--bronz), inset 0 calc(2 * var(--p)) 0 0 #2a3146, 0 calc(2 * var(--p)) 0 0 var(--golge);
-  font:400 var(--y-16)/.8 var(--font-etiket); letter-spacing:0; visibility:hidden; opacity:0; }
+  font:400 var(--y-16)/.8 var(--font-etiket); letter-spacing:0; color:var(--ink); visibility:hidden; opacity:0; }
+.pergel .p-balon, .pergel .p-balon * { font-family:var(--font-etiket); }
 /* balon kuyruğu: rozete bakan 2 basamaklı pixel üçgen (gradyan değil, düz kutular) */
 .pergel .p-balon::before, .pergel .p-balon::after { content:""; position:absolute; left:calc(-3 * var(--p)); background:var(--bronz); width:calc(3 * var(--p)); }
 .pergel .p-balon::before { bottom:calc(6 * var(--p)); height:calc(4 * var(--p)); }
@@ -48,8 +49,9 @@ const STIL = `
 .pergel.kucuk .p-metin { margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
 .pergel.kucuk .p-dugmeler { display:none; }
 .pergel .p-dugmeler { display:flex; gap:calc(4 * var(--p)); justify-content:flex-end; align-items:center; }
-.pergel .p-dugmeler .p-kisayol { margin-right:auto; color:var(--soluk); }
-.pergel .p-dugme:focus-visible, .pergel .p-rozet:focus-visible { outline:calc(2 * var(--p)) solid #fff; outline-offset:var(--p); }
+.pergel .p-dugmeler .p-kisayol { margin-right:auto; }
+/* odak: ortak bronz köşe çerçevesi (arayuz.ts, C-1); beyaz halka yok */
+.pergel .p-dugme:focus-visible, .pergel .p-rozet:focus-visible { outline:none; }
 .pergel.sessiz-gizli { display:none; }
 @media (prefers-reduced-motion: reduce) { .pergel.acik .p-balon { animation:none; } }
 @media (max-width:600px) {
@@ -103,7 +105,10 @@ export function pergelKur(g: PergelGirdi): () => void {
   const metin = el("p", "p-metin", balon);
   const dg = el("div", "p-dugmeler", balon);
   // MOBIL-1: klavye kısayolu dokunmatikte yok; rozete dokunmak aynı işi görür
-  el("span", "p-kisayol", dg, dokunmatikMi() ? "Rozete dokun: başka ipucu" : "H: başka ipucu");
+  // C-2: kısayol rozeti ortak biçimde (.k-tus + .k-kisayol; ENTER / ESC ile aynı)
+  const ks = el("span", "p-kisayol k-kisayol", dg);
+  if (dokunmatikMi()) ks.textContent = "Rozete dokun: başka ipucu";
+  else { el("span", "k-tus", ks, "H"); ks.appendChild(document.createTextNode("başka ipucu")); }
   const tamam = el("button", "k-dugme kucuk p-dugme", dg, "Tamam");
   tamam.type = "button";
   img.src = "/bilgic/anlatiyor.png";

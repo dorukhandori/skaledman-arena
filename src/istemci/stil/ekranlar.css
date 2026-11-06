@@ -37,7 +37,7 @@
 .tam-katman p { margin: calc(2 * var(--p)) 0; }
 .tam-katman .yt { color: var(--soluk); }
 .tam-katman .k-dugme { margin-top: calc(6 * var(--p)); }
-.tam-katman :focus-visible { outline: calc(2 * var(--p)) solid #fff; outline-offset: var(--p); }
+.tam-katman :focus-visible { outline: none; }
 .ust-bant { position: fixed; left: 50%; top: calc(30 * var(--p)); transform: translateX(-50%); z-index: 50; display: flex; gap: calc(6 * var(--p)); align-items: center; pointer-events: auto;
   color: var(--ink); font: 400 var(--y-16)/.75 var(--font-etiket); }
 
@@ -47,4 +47,4 @@
 .rf .modal { position: fixed; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center; background: rgba(8, 7, 12, .78); }
 .rf .modal .kutu { width: min(calc(260 * var(--p)), calc(100% - 2 * var(--kenar))); text-align: center; }
 .rf .modal h3 { color: #ffb070; text-align: center; }
-.rf :focus-visible { outline: calc(2 * var(--p)) solid #fff !important; outline-offset: var(--p) !important; }
+.rf :focus-visible { outline: none !important; }

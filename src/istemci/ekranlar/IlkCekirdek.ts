@@ -7,7 +7,8 @@ import type { EkranBaglami } from "../main.ts";
 import { BakimHatasi, HESAP_HATA, MISAFIR_EGITIM, apiPost, git, oku, sakla } from "../hesap.ts";
 import { ELEMENT_RENK, KOKEN_RENK, renkCss } from "../oyun/renkler.ts";
 import { bakimKatmani, ekranKok, el } from "./arayuz.ts";
-import { kokenKuresi } from "./pikselTopac.ts";
+import { parca3bIkonEl } from "./pikselTopac.ts";
+import { ikonGozle } from "../atolye3d/ikonOnbellek.ts";
 
 // İlk Çekirdek (US-1.3, tide G-33, ux § 7): 3 başlangıç kartı; her kartta AYNI dört çubuk (Saldırı, Savunma, Hız,
 // Stamina) + element + köken pasifi (tek cümle) + yetenek adı + 5 sn hareket önizlemesi (gerçek paylaşılan sim,
@@ -22,35 +23,35 @@ const KOKEN_AD: Record<string, string> = { goktasi: "Göktaşı", maden: "Maden"
 const TIP_AD: Record<string, string> = { saldirgan: "Saldırgan", kale: "Kale", denge: "Denge", dayanikli: "Dayanıklı" };
 
 const STIL = `
-.ic .k-govde { padding-top:calc(8 * var(--p)); }
-.ic .kart.ic-kart { flex:0 1 auto; min-height:0; width:100%; max-width:calc(560 * var(--p)); padding:0; border:0; border-image:none; background:none; }
+.ic .k-govde { padding-top:calc(4 * var(--p)); }
+/* H-3: kart kutusu seçim köşelerini (.k-centik, 4 px dışarıda) kırpmasın: iç pay 6 px */
+.ic .kart.ic-kart { flex:0 1 auto; min-height:0; width:100%; max-width:calc(572 * var(--p)); padding:calc(6 * var(--p)); border:0; border-image:none; background:none; }
 .ic .ust-not { text-align:center; color:var(--soluk); text-transform:uppercase; margin:0 0 calc(6 * var(--p)); }
 .ic .kartlar { display:grid; grid-template-columns:repeat(3, 1fr); gap:calc(16 * var(--p)); }
 .ic .ck { position:relative; display:flex; flex-direction:column; align-items:center; gap:calc(2 * var(--p)); padding:calc(6 * var(--p)) calc(6 * var(--p)) calc(6 * var(--p));
   background:#0e0d12; box-shadow:inset 0 0 0 var(--p) var(--harc), inset 0 0 0 calc(2 * var(--p)) #1e1b24; text-transform:uppercase; }
-.ic .ck.secili::before { content:""; position:absolute; inset:calc(-5 * var(--p)); pointer-events:none; --c:var(--gold); --u:calc(8 * var(--p)); --k:var(--p);
-  background:linear-gradient(var(--c),var(--c)) 0 0 / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 0 0 / var(--k) var(--u) no-repeat, linear-gradient(var(--c),var(--c)) 100% 0 / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 100% 0 / var(--k) var(--u) no-repeat,
-    linear-gradient(var(--c),var(--c)) 0 100% / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 0 100% / var(--k) var(--u) no-repeat, linear-gradient(var(--c),var(--c)) 100% 100% / var(--u) var(--k) no-repeat, linear-gradient(var(--c),var(--c)) 100% 100% / var(--k) var(--u) no-repeat; }
 .ic .ck h3 { order:3; width:max-content; max-width:100%; white-space:nowrap; display:flex; align-items:center; justify-content:center; gap:calc(3 * var(--p)); margin:0; padding:calc(3 * var(--p)) calc(10 * var(--p)); min-width:calc(110 * var(--p));
   background:var(--panel); box-shadow:inset 0 0 0 var(--p) var(--harc), inset 0 0 0 calc(2 * var(--p)) var(--turuncu); font:400 var(--y-20)/1 var(--font-baslik); letter-spacing:var(--yp); }
 .ic .ck.secili h3 { box-shadow:inset 0 0 0 var(--p) var(--harc), inset 0 0 0 calc(2 * var(--p)) var(--gold); }
 .ic .ck .kk { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
-.ic canvas.onz { order:0; width:calc(56 * var(--p)); height:calc(24 * var(--p)); background:var(--panel-0); box-shadow:inset 0 0 0 var(--p) var(--bronz); image-rendering:pixelated; }
+/* K-16: 5 sn hareket önizlemesi okunur boyda (eski 56×24 "daire + nokta" gibi görünüyordu), istatistiklerin altında */
+.ic canvas.onz { order:6; align-self:stretch; width:auto; height:calc(28 * var(--p)); background:var(--panel-0); box-shadow:inset 0 0 0 var(--p) var(--bronz); image-rendering:pixelated; }
 .ic .ck.secili canvas.onz { box-shadow:inset 0 0 0 var(--p) var(--gold); }
 .ic .kure-yer { order:1; display:flex; flex-direction:column; align-items:center; margin-top:0; }
+.ic .kure-yer .cekirdek-ik { width:calc(28 * var(--p)) !important; height:calc(28 * var(--p)) !important; margin:0 !important; image-rendering:pixelated; }
 .ic .kure-yer .k-kaide { width:calc(62 * var(--p)); margin-top:calc(-3 * var(--p)); }
 .ic .cb { order:5; align-self:stretch; display:grid; grid-template-columns:1fr auto; gap:calc(2 * var(--p)) calc(6 * var(--p)); align-items:center; padding:calc(3 * var(--p)) calc(5 * var(--p));
   background:var(--panel); border:calc(3 * var(--p)) solid transparent; border-image:var(--k-tas-cerceve) 5 fill / calc(3 * var(--p)) / 0 round; }
-.ic .ps { order:6; color:var(--soluk); text-transform:none; text-align:center; line-height:.875; }
-.ic .yet { order:7; color:var(--ink); text-transform:none; text-align:center; line-height:.875; }
-.ic .not { order:8; color:#ffb070; background:#2a1a08; box-shadow:inset 0 0 0 var(--p) #6b4a1a; padding:calc(2 * var(--p)) calc(4 * var(--p)); text-transform:none; line-height:.875; }
-.ic .bos { order:8; min-height:calc(12 * var(--p)); }
+.ic .ps { order:7; color:var(--soluk); text-transform:none; text-align:center; line-height:.875; }
+.ic .yet { order:8; color:var(--ink); text-transform:none; text-align:center; line-height:.875; }
+.ic .not { order:9; color:#ffb070; background:#2a1a08; box-shadow:inset 0 0 0 var(--p) #6b4a1a; padding:calc(2 * var(--p)) calc(4 * var(--p)); text-transform:none; line-height:.875; text-align:center; }
+.ic .not.sinirsiz { color:var(--soluk); background:#11141f; box-shadow:inset 0 0 0 var(--p) #3a3f55; }
 .ic .ck { cursor:pointer; }
-.ic .ck:focus-visible { outline:calc(2 * var(--p)) solid #fff; outline-offset:calc(2 * var(--p)); }
-.ic .sec-satir { display:flex; flex-direction:column; align-items:center; gap:calc(4 * var(--p)); }
+/* odak = seçim (kart odaklanınca seçilir): seçim köşeleri yeter, ayrı odak çerçevesi yok (data-odak-cerceve=secim) */
+.ic .sec-satir { display:flex; flex-direction:row; align-items:center; justify-content:center; gap:calc(10 * var(--p)); }
 .ic .ck button { order:4; }
 .ic .ck button.k-dugme { min-height:calc(18 * var(--p)); font-size:var(--y-20); letter-spacing:var(--yp); padding:calc(2 * var(--p)) calc(10 * var(--p)) calc(4 * var(--p)); min-width:0; }
-.ic .alt-yazi { text-align:center; color:var(--soluk); text-transform:uppercase; margin-top:calc(4 * var(--p)); }
+.ic .alt-yazi { text-align:right; color:var(--soluk); text-transform:uppercase; max-width:calc(150 * var(--p)); }
 html[data-yazi-buyuk] .ic .kartlar { grid-template-columns:1fr; }
 `;
 const KOKEN_SEG: Record<string, string> = { goktasi: "#d5b787", maden: "#c0793a", yapay: "#6b8792", karanlik: "#8a5cb8" };
@@ -145,7 +146,7 @@ export function baslat(b: EkranBaglami): void {
   let ilkKart: HTMLElement | null = null;
   veriler.forEach((v, k) => {
     const p = v.profil;
-    const c = el("section", `ck${k === 0 ? " secili" : ""}`, izgara);
+    const c = el("section", `ck${k === 0 ? " secili k-centik" : ""}`, izgara);
     c.setAttribute("aria-labelledby", `ck-${k}`);
     c.dataset["set"] = v.set.id;
     const bas = el("h3", "", c);
@@ -154,7 +155,11 @@ export function baslat(b: EkranBaglami): void {
     bas.querySelector("span:last-child")!.textContent = cekirdekBul(v.set.cekirdek).ad;
     el("div", "kk", c, `${KOKEN_AD[p.koken]} · ${ELEMENT_RENK[p.element].ad} · ${TIP_AD[p.tip] ?? p.tip} · Lv.2`);
     const ky = el("div", "kure-yer", c);
-    ky.appendChild(kokenKuresi(p.koken, 9));
+    // K-16: gerçek Çekirdek (3B ikon önbelleği; hazır olana dek yordamsal ikon)
+    const ck = parca3bIkonEl(v.set.cekirdek, null, 28);
+    ck.classList.add("cekirdek-ik");
+    ck.setAttribute("aria-hidden", "true");
+    ky.appendChild(ck);
     el("div", "k-kaide", ky);
     const cv = el("canvas", "onz", c);
     cv.setAttribute("aria-label", `${cekirdekBul(v.set.cekirdek).ad}: 5 saniyelik hareket önizlemesi`);
@@ -178,8 +183,9 @@ export function baslat(b: EkranBaglami): void {
     el("div", "ps", c, PASIF[p.koken] ?? "");
     // yetenek bilgisi ikinci katta (kart ipucu + ARIA; sadelik § 2.2)
     c.title = `Yetenek: ${v.yetenek} · Lv.3'te Özel Yetenek: ${v.ozel}`;
-    if (p.koken === "yapay") el("div", "not", c, "30 maç ömür").title = "Ömrü sınırlı: 30 maç sonra yenilenmesi gerekir.";
-    else el("div", "bos", c);
+    // K-16: ömür rozeti her kartta (neden yalnız birinde olduğu belli olsun): Yapay sınırlı, diğerleri sınırsız
+    if (p.koken === "yapay") el("div", "not", c, "Ömür 30 maç · yenilenir").title = "Yapay Çekirdeğin ömrü sınırlı: 30 maçtan sonra Market'te (Dökümhane) yenilenir.";
+    else el("div", "not sinirsiz", c, "Ömür sınırsız").title = "Göktaşı ve Maden Çekirdeklerinin ömrü bitmez.";
     // kart = seçim (radyo); onay tek SEÇ düğmesiyle (S-2)
     c.tabIndex = k === 0 ? 0 : -1;
     c.setAttribute("role", "radio");
@@ -188,7 +194,8 @@ export function baslat(b: EkranBaglami): void {
     c.dataset["ck"] = v.set.id;
     const sec = () => {
       secili = v;
-      for (const x of izgara.querySelectorAll<HTMLElement>(".ck")) { const on = x === c; x.classList.toggle("secili", on); x.setAttribute("aria-checked", String(on)); x.tabIndex = on ? 0 : -1; }
+      // H-3: seçim çerçevesi ortak köşe bileşeni (.k-centik), kartın kendi kenarına bağlı
+      for (const x of izgara.querySelectorAll<HTMLElement>(".ck")) { const on = x === c; x.classList.toggle("secili", on); x.classList.toggle("k-centik", on); x.setAttribute("aria-checked", String(on)); x.tabIndex = on ? 0 : -1; }
       secD.dataset["eylem"] = "sec";
       secD.dataset["set"] = v.set.id;
       secD.setAttribute("aria-label", `Seç: ${cekirdekBul(v.set.cekirdek).ad}`);
@@ -198,6 +205,8 @@ export function baslat(b: EkranBaglami): void {
     if (k === 0) ilkKart = c;
   });
   izgara.setAttribute("role", "radiogroup");
+  izgara.dataset["odakCerceve"] = "secim";
+  ikonGozle(kok);
   izgara.setAttribute("aria-label", "İlk Çekirdek");
 
   // SEÇ kartın dışında (gövdede): kart kendi içinde kayarsa bile ana düğme her zaman görünür
@@ -238,5 +247,5 @@ export function baslat(b: EkranBaglami): void {
     if (e.key === "Enter" || e.key === " ") { e.preventDefault(); secD.click(); }
   });
   (ilkKart as HTMLElement | null)?.click();
-  queueMicrotask(() => (ilkKart as HTMLElement | null)?.focus());
+  queueMicrotask(() => (ilkKart as HTMLElement | null)?.focus({ preventScroll: true }));
 }

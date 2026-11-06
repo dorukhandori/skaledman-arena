@@ -14,7 +14,7 @@ import { AtolyeSahnesi } from "../atolye3d/AtolyeSahnesi.ts";
 import type { KatmanTuru } from "../atolye3d/durum.ts";
 import { cikintiSayisi } from "../atolye3d/geometri.ts";
 import type { TopacKurulumu } from "../atolye3d/tipler.ts";
-import { acilirMenu, anaEylem, bakimKatmani, ekranKok, el, gelistirAcik } from "./arayuz.ts";
+import { anaEylem, bakimKatmani, ekranKok, el, gelistirAcik, lvYaz } from "./arayuz.ts";
 import { parcaPikselIkonu, pikselTopac } from "./pikselTopac.ts";
 import { pergelKur } from "../bilgic/Pergel.ts";
 import { ikonCizeriBagla } from "../atolye3d/ikonOnbellek.ts";
@@ -28,8 +28,10 @@ import { dokunmatikMi } from "../mobil/cihaz.ts";
 // turuncu bağlantı çizgisi; sürükle/ok tuşu döndür, katmana tıkla → parça öne çıkar + parça kartı, BİRLEŞTİR / AYIR;
 // envanterde parçanın üzerine gelince topaçta canlı önizleme, tıklayınca tak). Sağ-orta: ALTI çubuk (turuncu dolgu, değer,
 // fark ±) + tip + element uyumu tek satır. En sağ: TAKIM (3 kart: element simgesi, ad, mini topaç, mini çubuklar, sıra
-// okları ve sürükle-bırak; TAKIM ULTİSİ rozeti yalnız oluşunca). Alt: MARKET · BAŞARIMLAR · DENE ikincil, OYNA ana.
-// İkinci kat: Ayrıntı (Uç deseni, yön, Yapay yön, Dene rakibi, çıkar), takım menüsü, Daha fazla (Günlük, Profil).
+// okları ve sürükle-bırak; TAKIM ULTİSİ rozeti yalnız oluşunca). Alt (S-1 gezinti modeli, MENU-P2): MARKET · BAŞARIMLAR ·
+// GÜNLÜK · PROFİL (+ OCAK, İlk Kazı sonrası) ikincil, OYNA ana; KAYDET yalnız değişiklik varsa "kaydedilmedi" rozetiyle
+// OYNA'nın yanında. Lento: plaka ATÖLYE (ana üs, ◄ yok) · Altın · ⚙. DENE seçili topacın yanında (Ayrıntı ile).
+// İkinci kat: Ayrıntı (Uç deseni, yön, Yapay yön, Dene rakibi, çıkar), takım menüsü.
 // Kural ve sayı paylaşılan saf koddan (sunucu aynı kuralla yetkili doğrular).
 
 const KOKEN_AD: Record<string, string> = { goktasi: "Göktaşı", maden: "Maden", yapay: "Yapay", karanlik: "Karanlık" };
@@ -44,7 +46,7 @@ const STIL = `
 .at .kart.at-kart { min-height:0; width:100%; max-width:none; padding:calc(3 * var(--p)) calc(3 * var(--p)) calc(40 * var(--p)); position:relative; flex:1; display:flex; flex-direction:column; overflow:hidden; }
 .at .at-pano { background:var(--panel); box-shadow:0 0 0 var(--p) #0a0c14, inset 0 0 0 var(--p) #bfaba0, inset 0 0 0 calc(2 * var(--p)) #0a0c14, inset 0 calc(3 * var(--p)) 0 0 #262e45; padding:calc(5 * var(--p)); }
 .at .kutu { overflow-y:auto; overflow-x:hidden; min-height:0; min-width:0; scrollbar-width:thin; scrollbar-color:var(--bronz-1) var(--panel-0); }
-.at .uc3 { flex:1; min-height:0; padding:calc(4 * var(--p)); box-shadow:inset 0 0 0 var(--p) #0a0c14; display:grid; grid-template-columns:calc(214 * var(--p)) minmax(0,1fr) calc(110 * var(--p)) calc(94 * var(--p)); gap:calc(4 * var(--p)); align-items:stretch; }
+.at .uc3 { flex:1; min-height:0; padding:calc(4 * var(--p)); box-shadow:inset 0 0 0 var(--p) #0a0c14; display:grid; grid-template-columns:calc(214 * var(--p)) minmax(0,1fr) calc(110 * var(--p)) calc(112 * var(--p)); gap:calc(4 * var(--p)); align-items:stretch; }
 .at h3 { margin:0 0 calc(4 * var(--p)); font:400 var(--y-16)/.75 var(--font-etiket); color:var(--gold); letter-spacing:0; }
 /* sol: 4 ikonlu sekme + 4 sütunlu ızgara */
 .at .sekmeler { display:flex; gap:calc(2 * var(--p)); margin:0 0 calc(4 * var(--p)); border-bottom:var(--p) solid #bfaba0; }
@@ -131,6 +133,7 @@ const STIL = `
 .at .etk { padding:var(--p) calc(3 * var(--p)); background:#20232f; box-shadow:inset 0 0 0 var(--p) #59607a; text-transform:uppercase; }
 .at .tip { margin:calc(2 * var(--p)) 0; text-transform:uppercase; }
 .at .tip b { color:var(--gold); font-weight:400; }
+.at .uyari, .at .bilgi { font:400 var(--y-16)/.875 var(--font-etiket); text-transform:uppercase; }
 .at .uyari { display:flex; gap:calc(3 * var(--p)); align-items:flex-start; padding:calc(2 * var(--p)) calc(3 * var(--p)); background:#2a2104; box-shadow:inset 0 0 0 var(--p) var(--gold); color:#fff6c8; margin:0 0 calc(3 * var(--p)); line-height:.875; }
 .at .uyari b { color:var(--gold); font-weight:400; }
 .at .uyari.iyi { background:#0f2a1d; box-shadow:inset 0 0 0 var(--p) #3f8f60; color:var(--yesil); }
@@ -160,17 +163,19 @@ const STIL = `
 .at .takim-bas .takim-adi { max-width:100%; white-space:normal; text-align:center; }
 .at .takim-menu { display:flex; flex-direction:column; gap:calc(4 * var(--p)); margin-bottom:calc(4 * var(--p)); box-shadow:inset 0 0 0 var(--p) var(--bronz); }
 .at .tkm { display:flex; flex-direction:column; gap:calc(3 * var(--p)); }
-.at .tkart { display:grid; grid-template-columns:auto minmax(0,1fr) auto; grid-template-areas:"b b ok" "ik mini mini"; gap:calc(2 * var(--p)) calc(3 * var(--p)); align-items:center; padding:calc(3 * var(--p)); background:#161c2c; border:0; cursor:grab; text-align:left;
+.at .tkart { display:grid; grid-template-columns:auto minmax(0,1fr) auto; grid-template-areas:"b b b" "ik mini ok"; gap:calc(2 * var(--p)) calc(3 * var(--p)); align-items:center; padding:calc(3 * var(--p)); background:#161c2c; border:0; cursor:grab; text-align:left;
   box-shadow:inset 0 0 0 var(--p) #59607a, inset 0 calc(2 * var(--p)) 0 0 #262e45, var(--odak-g, 0 0 0 0 transparent); text-transform:uppercase; }
 .at .tkart[aria-selected=true] { box-shadow:inset 0 0 0 var(--p) var(--turuncu), inset 0 0 0 calc(2 * var(--p)) #0a0c14, var(--odak-g, 0 0 0 0 transparent); }
 .at .tkart.odunc { box-shadow:inset 0 0 0 var(--p) #6a7088, var(--odak-g, 0 0 0 0 transparent); }
 .at .tkart.odunc .tk-ik { filter:grayscale(1); opacity:.7; }
 .at .tkart.bos, .at .tkart.eksik { box-shadow:inset 0 0 0 var(--p) #ffb070, var(--odak-g, 0 0 0 0 transparent); }
 .at .tkart.devreDisi { box-shadow:inset 0 0 0 var(--p) var(--tehlike), var(--odak-g, 0 0 0 0 transparent); }
-.at .tkart .tk-ik { grid-area:ik; width:calc(24 * var(--p)); height:calc(24 * var(--p)); display:grid; place-items:center; }
+.at .tkart .tk-no { position:absolute; left:calc(-2 * var(--p)); top:calc(-2 * var(--p)); padding:0 var(--p); font:400 var(--y-16)/.5625 var(--font-etiket); }
+.at .tkart .tk-ik { position:relative; grid-area:ik; width:calc(24 * var(--p)); height:calc(24 * var(--p)); display:grid; place-items:center; }
 .at .tkart .tk-ik canvas.g3-ikon { width:calc(24 * var(--p)); height:calc(24 * var(--p)); image-rendering:pixelated; }
 .at .tkart .yazi { grid-area:b; min-width:0; display:flex; flex-direction:column; gap:var(--p); }
-.at .tkart b { font-weight:400; color:var(--ink); line-height:.5625; overflow-wrap:normal; }
+.at .tkart b { display:flex; align-items:center; gap:var(--p); min-width:0; font-weight:400; color:var(--ink); line-height:.5625; white-space:nowrap; }
+.at .tkart b .tk-ad { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding-bottom:var(--p); }
 .at .tkart .yazi > small:not([data-omur-bitti]) { display:none; }
 .at .tkart b .k-el { margin-right:var(--p); }
 .at .tkart small { display:block; color:var(--soluk); font-size:var(--y-16); line-height:.5625; }
@@ -178,13 +183,15 @@ const STIL = `
 .at .tkart .mini span { color:var(--soluk); font-size:var(--y-16); line-height:.5625; }
 .at .tkart .mini i { display:block; height:calc(3 * var(--p)); background:#0a0c14; box-shadow:inset 0 0 0 var(--p) #3a4258; position:relative; }
 .at .tkart .mini i u { position:absolute; left:0; top:0; bottom:0; background:var(--turuncu); }
-.at .tkart .ok { grid-area:ok; display:flex; gap:var(--p); align-self:start; }
-.at .tkart .ok button { width:calc(10 * var(--p)); height:calc(9 * var(--p)); padding:0; border:var(--p) solid var(--harc); background:var(--panel-2); color:var(--ink); cursor:pointer; font:400 calc(7px * var(--yo))/1 system-ui; box-shadow:inset 0 0 0 var(--p) var(--bronz-1), var(--odak-g, 0 0 0 0 transparent); }
-.at .tkart .ok button:disabled { opacity:.35; }
+.at .tkart .ok { grid-area:ok; display:flex; flex-direction:column; gap:calc(2 * var(--p)); align-self:center; }
+.at .tkart .ok button { display:grid; place-items:center; width:calc(13 * var(--p)); height:calc(12 * var(--p)); padding:0; margin:0; border:var(--p) solid var(--harc); border-radius:0; background:var(--panel-2); color:var(--bronz-isik); cursor:pointer;
+  box-shadow:inset 0 0 0 var(--p) var(--bronz-1), var(--odak-g, 0 0 0 0 transparent); }
+.at .tkart .ok button:hover:not(:disabled) { box-shadow:inset 0 0 0 var(--p) var(--bronz-isik); }
+.at .tkart .ok button:disabled { opacity:.35; cursor:default; }
 .at .tkart.surukle { opacity:.5; }
 .at .tkart.hedef { box-shadow:inset 0 0 0 var(--p) var(--sen); }
 .at .yenileB { display:block; margin-top:var(--p); padding:var(--p) calc(4 * var(--p)); background:#3b2c0c; color:var(--gold); border:0; box-shadow:inset 0 0 0 var(--p) #c9a33b; cursor:pointer; font:400 var(--y-16)/.75 var(--font-etiket); text-transform:uppercase; }
-.at .rozetY { display:inline-block; padding:0 calc(2 * var(--p)); background:var(--yesil); color:#06210f; margin-left:calc(2 * var(--p)); }
+.at .rozetY { align-self:flex-start; padding:0 calc(2 * var(--p)); background:var(--yesil); color:#06210f; line-height:.75; }
 .at .cark-ozet { min-height:calc(4 * var(--p)); margin:calc(4 * var(--p)) 0 0; text-align:center; }
 .at .kayitli { display:flex; flex-direction:column; gap:calc(2 * var(--p)); margin-top:calc(2 * var(--p)); }
 .at .kayitli button { text-align:left; padding:calc(2 * var(--p)) calc(4 * var(--p)); cursor:pointer; display:flex; flex-direction:column; gap:0; border:var(--p) solid var(--harc); border-radius:0;
@@ -196,8 +203,13 @@ const STIL = `
 .at .eylemler { display:flex; gap:calc(3 * var(--p)); flex-wrap:wrap; margin-top:calc(4 * var(--p)); justify-content:center; }
 /* alt şerit: MARKET · BAŞARIMLAR · DENE ikincil, OYNA ana (sabit konum, sağ alt) */
 .at .alt-serit { position:absolute; left:calc(3 * var(--p)); right:calc(3 * var(--p)); bottom:calc(3 * var(--p)); display:flex; align-items:flex-end; gap:calc(6 * var(--p)); }
-.at .alt-serit .k-dugme:not(.ana) { min-height:calc(24 * var(--p)); min-width:calc(80 * var(--p)); }
-.at .kaydet-yer { display:contents; }
+.at .at-nav { display:flex; gap:calc(5 * var(--p)); flex-wrap:nowrap; min-width:0; }
+.at .alt-serit .k-dugme:not(.ana) { min-height:calc(24 * var(--p)); min-width:0; padding-left:calc(7 * var(--p)); padding-right:calc(7 * var(--p)); }
+.at .oyna-yer:has(.kaydet-yer:not([hidden])) .oyna { min-width:calc(116 * var(--p)); }
+.at .oyna-yer { position:relative; margin-left:auto; display:flex; align-items:flex-end; gap:calc(5 * var(--p)); }
+.at .kaydet-yer { display:flex; flex-direction:column; align-items:stretch; gap:calc(2 * var(--p)); }
+.at .kaydet-yer .k-rozet { justify-content:center; }
+
 .at .durumSatiri { position:absolute; left:calc(220 * var(--p)); bottom:calc(100% + 6 * var(--p)); max-width:calc(170 * var(--p)); padding:calc(2 * var(--p)) calc(4 * var(--p)); pointer-events:none; z-index:4;
   background:#0f1a12; box-shadow:inset 0 0 0 var(--p) #3f8f60; color:var(--yesil); text-transform:uppercase; line-height:.875; }
 .at .durumSatiri:empty { display:none; }
@@ -206,6 +218,10 @@ const STIL = `
 .at .oyna { margin-left:auto; }
 /* Pergel (docs/ux/bilgic-pergel.md): alt şeridin (Market/Başarımlar/OYNA) üstünde durur, düğmeleri örtmez */
 .at .pergel { bottom:calc(34 * var(--p) + .9rem); }
+/* K-4 (bilgic-pergel § 2.1): balon parça panelinin genişliğinde kalır (3B görünüme taşmaz); açıkken ızgara balonun
+   üstünde biter (panelin altına balon yüksekliği kadar pay, Atolye.pergelPayi) — balon ızgarayı örtmez */
+.at .pergel .p-balon { width:calc(172 * var(--p)); }
+.at .sol { padding-bottom:var(--pergel-pay, calc(5 * var(--p))); }
 .at .oyna[aria-disabled=true] { --ks: inset 0 0 0 var(--p) var(--cerceve-0), inset 0 0 0 0 transparent; color:var(--kapali-yazi); text-shadow:none; background:var(--tas-2); cursor:not-allowed; }
 .at .neden { position:absolute; right:0; bottom:calc(100% + 6 * var(--p)); max-width:calc(200 * var(--p)); padding:calc(2 * var(--p)) calc(4 * var(--p)); pointer-events:none; z-index:4;
   background:#2a1a08; box-shadow:inset 0 0 0 var(--p) #ffb070; color:#ffb070; text-align:right; text-transform:uppercase; line-height:.875; }
@@ -274,7 +290,8 @@ class AtolyeEkrani {
   private taslak!: Taslak;
   private takimAdi = "";
   private secili = 0;
-  private sekme: YuvaTuru = "uc";
+  /** K-3: ilk açılış Çekirdek sekmesi (Pergel "dört parça: Çekirdek, Gövde…" diye anlatırken) */
+  private sekme: YuvaTuru = "cekirdek";
   private filtre: Filtre = { element: "", koken: "", tip: "", sahiplik: "hepsi" };
   private onceki: CubukOzeti | null = null;
   private uyari = "";
@@ -308,19 +325,16 @@ class AtolyeEkrani {
 
   constructor(private b: EkranBaglami, v: AtolyeGorunumu) {
     this.v = v;
-    const { kok, kart, lento } = ekranKok(b.ustYazi, "Atölye", { kim: true });
-    // lento: Daha fazla (Çekirdek Günlüğü, Profil; Topaç Lab yalnız ?gelistir=1) — ad menü başlığında (taş üstünde metin yok)
-    const ogeler: [string, string, () => void][] = [
-      ["Çekirdek Günlüğü", "gunluk", () => git("gunluk", `&c=${this.yuvalar()[this.secili]?.cekirdek?.id ?? ""}`)],
-      ["Profil", "profil", () => git("profil")],
-    ];
-    if (gelistirAcik()) ogeler.push(["Topaç Lab", "topac-lab", () => git("topac-lab")]);
-    const menu = acilirMenu(lento, "Daha fazla", b.ben?.girisli ? b.ben.oyuncu.ad : null, ogeler, "daha-fazla");
-    const ayarlar = lento.querySelector("a.k-dugme");
-    lento.insertBefore(menu, ayarlar ? ayarlar.nextSibling : lento.querySelector(".k-cuzdan"));
-    // referans 03: başlık "◄ ATÖLYE" (◄ süs; Atölye ana ekran, geri hedefi yok: ux § 3.2)
-    const plaka = lento.querySelector("h1.k-plaka");
-    if (plaka) { plaka.classList.add("at-plaka"); plaka.setAttribute("aria-label", "Atölye"); plaka.innerHTML = `<span aria-hidden="true" class="at-ok">◄</span> Atölye`; }
+    // S-1: Atölye ana üs; lento = plaka ATÖLYE · Altın · ⚙ (◄ yok; Çıkış Ayarlar'ın Hesap bölümünde)
+    const { kok, kart, lento } = ekranKok(b.ustYazi, "Atölye");
+    // Topaç Lab yalnız ?gelistir=1 (sadelik S-10): lentoda küçük geliştirici bağlantısı
+    if (gelistirAcik()) {
+      const lab = el("a", "k-dugme kucuk", lento, "Lab");
+      lab.href = "?ekran=topac-lab&gelistir=1";
+      lab.dataset["eylem"] = "topac-lab";
+      lab.dataset["pergelHedef"] = "lab";
+      lento.insertBefore(lab, lento.querySelector(".k-cuzdan, .k-ayar"));
+    }
     kok.classList.add("at");
     kart.className = "kart at-kart k-panel";
     this.kart = kart;
@@ -336,7 +350,7 @@ class AtolyeEkrani {
           this.takimNo = t.takimNo;
           this.taslak = t.taslak;
           this.secili = t.secili;
-          this.sekme = YUVA_TURLERI.includes(t.sekme) ? t.sekme : "uc";
+          this.sekme = YUVA_TURLERI.includes(t.sekme) ? t.sekme : "cekirdek";
           this.takimAdi = t.ad;
           this.degisti = t.degisti;
           if (takimDegerlendir(this.taslak, this.env()).hatalar.some((h) => h.kod === "sahipDegil")) this.takimYukle(this.takimNo);
@@ -431,6 +445,28 @@ class AtolyeEkrani {
         ...sonMacDurumu(this.b.ben?.girisli ? this.b.ben.sonMac : undefined),
       },
     });
+    this.pergelPayi(kok);
+  }
+
+  /**
+   * K-4: Pergel balonu açıkken parça panelinin altına balonun kapladığı yükseklik kadar pay verilir; ızgara balonun
+   * üstünde biter (fazlası panelin içinde kayar), balon ızgarayı örtmez. Balon kapanınca pay kalkar.
+   */
+  private pergelPayi(kok: HTMLElement): void {
+    const pg = kok.querySelector<HTMLElement>(".pergel");
+    if (!pg) return;
+    const balon = pg.querySelector<HTMLElement>(".p-balon");
+    const yaz = () => {
+      const acik = pg.classList.contains("acik") && !!balon;
+      if (!acik) { this.sol.style.removeProperty("--pergel-pay"); return; }
+      const s = this.sol.getBoundingClientRect();
+      const b = balon.getBoundingClientRect();
+      const pay = Math.max(0, Math.ceil(s.bottom - b.top) + 4);
+      this.sol.style.setProperty("--pergel-pay", `${pay}px`);
+    };
+    new MutationObserver(() => requestAnimationFrame(yaz)).observe(pg, { attributes: true, attributeFilter: ["class"] });
+    window.addEventListener("resize", () => requestAnimationFrame(yaz));
+    requestAnimationFrame(yaz);
   }
 
   // ---- iskelet ----
@@ -457,30 +493,25 @@ class AtolyeEkrani {
     this.cubukK.setAttribute("aria-label", "Topaç değerleri");
     this.sag = el("section", "kutu sag at-pano", uc3);
     this.sag.setAttribute("aria-label", "Takım");
-    // alt şerit (KM-4: web gezinti çubuğu yerine): Market · Başarımlar · Dene ikincil, OYNA ana sağ altta
+    // alt şerit (S-1): MARKET · BAŞARIMLAR · GÜNLÜK · PROFİL (+ OCAK) ikincil solda; KAYDET (yalnız değişiklik varken,
+    // "kaydedilmedi" rozetiyle) ve OYNA ana sağ altta. Gezinti yalnız burada (üst bantta ⚙ dışında hedef yok).
     const serit = el("div", "alt-serit", k);
-    const mk = el("button", "k-dugme", serit, "Market");
-    mk.dataset["eylem"] = "market";
-    mk.addEventListener("click", () => git("market"));
-    const bs = el("button", "k-dugme", serit, "Başarımlar");
-    bs.dataset["eylem"] = "basarimlar";
-    bs.addEventListener("click", () => git("basarimlar"));
+    const nav = el("nav", "at-nav", serit);
+    nav.setAttribute("aria-label", "Atölye gezintisi");
+    const git_ = (ad: string, eylem: string, f: () => void) => { const d = el("button", "k-dugme", nav, ad); d.type = "button"; d.dataset["eylem"] = eylem; d.addEventListener("click", f); return d; };
+    git_("Market", "market", () => git("market"));
+    git_("Başarımlar", "basarimlar", () => git("basarimlar"));
+    git_("Günlük", "gunluk", () => git("gunluk", `&c=${this.yuvalar()[this.secili]?.cekirdek?.id ?? ""}`)).title = "Çekirdek Günlüğü: seçili Çekirdeğin seviyesi, defteri ve ruhu";
+    git_("Profil", "profil", () => git("profil"));
     // harita 03 § 1: OCAK yalnız İlk Kazı sonrası
-    if (this.b.ben?.girisli && this.b.ben.ocakAcik) {
-      const oc = el("button", "k-dugme", serit, "Ocak");
-      oc.dataset["eylem"] = "ocak";
-      oc.addEventListener("click", () => git("ocak"));
-    }
-    this.dene = el("button", "k-dugme", serit, "Dene · 30 sn");
-    this.dene.dataset["eylem"] = "dene";
-    this.dene.title = "30 sn Antrenman: sonuç sayılmaz, Altın ve tecrübe yok.";
-    this.dene.addEventListener("click", () => this.dene_(oku("devran.deneBot.v1") ?? "kukla"));
-    this.kaydetYer = el("span", "kaydet-yer", serit);
+    if (this.b.ben?.girisli && this.b.ben.ocakAcik) git_("Ocak", "ocak", () => git("ocak"));
     this.durumEl = el("div", "durumSatiri k-e16", serit);
     this.durumEl.setAttribute("role", "status");
     this.durumEl.dataset["durumSatiri"] = "1";
-    this.neden = el("div", "neden k-e16", serit);
-    this.oyna = el("button", "k-dugme ana oyna", serit, "OYNA");
+    const sag = el("div", "oyna-yer", serit);
+    this.neden = el("div", "neden k-e16", sag);
+    this.kaydetYer = el("div", "kaydet-yer", sag);
+    this.oyna = el("button", "k-dugme ana oyna", sag, "OYNA");
     this.oyna.dataset["eylem"] = "oyna";
     this.neden.id = "oyna-neden";
     this.neden.setAttribute("role", "status");
@@ -728,7 +759,8 @@ class AtolyeEkrani {
       m.dataset["odak"] = "marketten-al";
       m.dataset["k"] = "yok";
       el("span", "ik", m).appendChild(el("span", "k-sikke"));
-      el("span", "ad", m, "Market'ten al");
+      el("span", "ad", m, "Market");
+      m.title = `Daha fazla ${YUVA_AD[this.sekme]}: Market'ten al`;
       m.setAttribute("aria-label", `Daha fazla ${YUVA_AD[this.sekme]}: Market'e git`);
       m.addEventListener("click", () => git("market"));
       bos--;
@@ -854,7 +886,6 @@ class AtolyeEkrani {
     for (const [deger, ad] of [["pasif", "Rakip: Hedef"], ["kukla", "Rakip: Kukla"], ["dolas", "Rakip: Dolaşan"], ["kenar", "Rakip: İten"]] as const) { const op = el("option", "", sel, ad); op.value = deger; }
     sel.value = oku("devran.deneBot.v1") ?? "kukla";
     sel.addEventListener("change", () => sakla("devran.deneBot.v1", sel.value));
-    this.dene.disabled = !p;
     if (odak) (ayr.querySelector(`[data-odak="${odak}"]`) as HTMLElement | null)?.focus();
   }
 
@@ -869,7 +900,7 @@ class AtolyeEkrani {
     const kisaNot = (sinif: string, metin: string, uzun: string) => { const n = el("div", sinif, s, metin); n.title = uzun; n.setAttribute("aria-label", uzun); return n; };
     if (y.durum === "bos") kisaNot("bilgi", "Yuva boş: Çekirdek tak", "Bu yuva boş. Envanterden bir Çekirdek tak.");
     if (y.durum === "eksik") kisaNot("uyari", "! Parça eksik", this.eksikMetni());
-    if (odunc) kisaNot("bilgi", "Ödünç · Lv.1", "Ödünç topaç: Lv.1, tecrübe ve başarım almaz. Kendi Çekirdeğini takınca yerini alır.");
+    if (odunc) { const n = kisaNot("bilgi", "", "Ödünç topaç: Lv.1, tecrübe ve başarım almaz. Kendi Çekirdeğini takınca yerini alır."); lvYaz(n, "Ödünç · Lv.1"); }
     if (y.durum === "devreDisi") kisaNot("uyari kirmizi", "! Ömrü bitti", `${y.cekirdek ? cekirdekBul(y.cekirdek.tanimId).ad : "Çekirdek"}: ömrü bitti. Maça girişte yerine ödünç topaç girer.`);
     const oniz = this.onizProfil();
     const p = oniz ?? y.profil;
@@ -893,13 +924,15 @@ class AtolyeEkrani {
         bar.setAttribute("aria-valuemax", "100");
         bar.setAttribute("aria-valuenow", String(c.deger));
         bar.setAttribute("aria-valuetext", `${c.deger} / 100 (${c.ham}${c.birim})`);
-        el("i", "", bar).style.width = `${c.deger}%`;
+        el("i", "", bar).style.width = `${Math.max(2, c.deger)}%`;
         const fk = fark?.[k] ?? 0;
         if (fk !== 0 && kiyas) {
           const o2 = kiyas.cubuklar.find((x) => x.anahtar === k)!;
           el("i", "once", bar).style.width = `${o2.deger}%`;
         }
-        el("span", "say", satir, String(c.deger));
+        // K-6: 0-100 göreli ölçek; taban 1 ("0" hata gibi okunuyordu), ham değer ve ölçek ipucunda
+        el("span", "say", satir, String(Math.max(1, c.deger)));
+        satir.title = `${c.ad}: ${Math.max(1, c.deger)} / 100 (ham ${c.ham}${c.birim}). Ölçek göreli: 1 = katalogdaki en düşük topaç, 100 = en yüksek.`;
         const fe = el("span", `fark${fk > 0 ? " art" : fk < 0 ? " azal" : ""}`, satir);
         fe.dataset["fark"] = String(fk);
         if (fk !== 0) fe.innerHTML = `${fk > 0 ? ART_SVG : AZAL_SVG} ${fk > 0 ? "+" : "−"}${Math.abs(fk)}`;
@@ -915,7 +948,7 @@ class AtolyeEkrani {
         const u = el("div", "uyari", s);
         u.dataset["uyum"] = "uyumsuz";
         u.setAttribute("role", "status");
-        u.innerHTML = `<span>! Uyumsuz: Enerji yavaş</span>`;
+        u.textContent = "! Uyumsuz: Enerji yavaş";
         const uzun = `Enerji dolumu yavaşlar. ${ELEMENT_RENK[p.govdeElement].ad} Gövde, ${ELEMENT_RENK[p.element].ad} Çekirdeğe uzak (×0,80).`;
         u.title = uzun; u.setAttribute("aria-label", uzun);
       } else if (p.uyumCarpani > 1) {
@@ -934,6 +967,14 @@ class AtolyeEkrani {
       u.querySelector("span")!.textContent = this.uyari;
     }
     const ds = el("div", "dene-satir", s);
+    // DENE seçili topacın eylemi (S-1: gezinti sırasında değil): 30 sn Antrenman, sonuç sayılmaz
+    this.dene = el("button", "k-dugme kucuk", ds, "Dene");
+    this.dene.type = "button";
+    this.dene.dataset["eylem"] = "dene";
+    this.dene.title = "30 sn Antrenman: sonuç sayılmaz, Altın ve tecrübe yok.";
+    this.dene.setAttribute("aria-label", "Dene: bu topaçla 30 saniyelik Antrenman");
+    this.dene.disabled = !y.profil;
+    this.dene.addEventListener("click", () => this.dene_(oku("devran.deneBot.v1") ?? "kukla"));
     const ad = el("button", `k-dugme kucuk${this.ayrintiAcik ? " secili" : ""}`, ds, "Ayrıntı");
     ad.dataset["eylem"] = "ayrinti";
     ad.dataset["odak"] = "ayrinti";
@@ -1000,7 +1041,8 @@ class AtolyeEkrani {
       el("i", "", bar).style.width = `${Math.round((d[k] / tavan[k]) * 100)}%`;
       satir.setAttribute("aria-label", `${CUBUK_AD[k]} katkısı ${Math.round(d[k])}`);
     }
-    el("div", "pk-ipucu k-e16", kart, "Döndür: sürükle / oklar · Geri: Esc");
+    const ip = el("div", "pk-ipucu k-e16", kart, "Döndür: sürükle / oklar · ");
+    const ks = el("span", "k-kisayol", ip); el("span", "k-tus", ks, "Esc"); ks.appendChild(document.createTextNode("geri"));
   }
 
   private eksikMetni(): string {
@@ -1083,13 +1125,20 @@ class AtolyeEkrani {
       else if (cTanim) ik.appendChild(pikselTopac(cekirdekBul(cTanim).element, { r: 9, golge: false, koken: cekirdekBul(cTanim).koken }));
       else el("span", "k-soru", ik, "?");
       const yazi = el("span", "yazi", kart);
+      // H-9: ad tek satır (sığmazsa "…"; tam ad ipucunda), element simgesi ve sıra numarası önde
       const bas = el("b", "", yazi);
+      const tamAd = cTanim ? cekirdekBul(cTanim).ad : "Boş";
+      // sıra numarası mini topacın köşesinde (Takım sırası: maça ilk giren 1.)
+      const no = el("span", "tk-no k-rozet tamam", ik, String(k + 1));
+      no.setAttribute("aria-hidden", "true");
+      no.title = `${k + 1}. sıra`;
       if (cTanim) { const e = el("span", "k-el", bas); e.dataset["el"] = cekirdekBul(cTanim).element; e.setAttribute("aria-hidden", "true"); }
-      bas.appendChild(document.createTextNode(`${k + 1}. ${cTanim ? cekirdekBul(cTanim).ad : "Boş"}`));
+      el("span", "tk-ad", bas, tamAd);
+      bas.title = tamAd;
       const yeniYetenek = y.cekirdek && gorulen[y.cekirdek.id] !== undefined && y.cekirdek.seviye > gorulen[y.cekirdek.id]!;
-      if (yeniYetenek) { const r = el("span", "rozetY", bas, "Yeni yetenek açıldı"); r.dataset["yeniYetenek"] = "1"; }
+      if (yeniYetenek) { const r = el("span", "rozetY", yazi, "Yeni yetenek"); r.dataset["yeniYetenek"] = "1"; r.title = "Yeni yetenek açıldı: Günlük'te gör"; }
       const alt = y.durum === "odunc" ? "Ödünç · Lv.1" : y.durum === "devreDisi" ? "Ömrü bitti · maçta ödünç" : y.durum === "bos" ? "Yuva boş" : y.durum === "eksik" ? "Parça eksik" : `Lv.${y.seviye}${y.cekirdek?.omur !== null && y.cekirdek?.omur !== undefined ? ` · ömür ${y.cekirdek.omur}` : ""}`;
-      el("small", "", yazi, alt);
+      lvYaz(el("small", "", yazi), alt);
       if (y.durum === "devreDisi") { const u = el("small", "", yazi, "Yapay ömrü bitti: yenile ya da başka Çekirdek tak."); u.style.color = "#ff9a7a"; u.dataset["omurBitti"] = "1"; }
       // D7: Dökümhane yenilemesi (kırmızı kart ya da azalan ömür): Market'te onayla
       const yn = y.cekirdek ? this.v.yenileme?.find((x) => x.cekirdekId === y.cekirdek!.id && x.omur !== null && x.omur < 30) : undefined;
@@ -1100,12 +1149,19 @@ class AtolyeEkrani {
         yd.addEventListener("click", (e) => { e.stopPropagation(); git("market", `&yenile=${yn.cekirdekId}`); });
       }
       kart.setAttribute("aria-label", `${k + 1}. yuva: ${cTanim ? cekirdekBul(cTanim).ad : "boş"}, ${alt}. Seçmek için tıkla; Alt+yukarı/aşağı ile taşı.`);
+      // H-9: sıra okları pixel üçgen (yazı tipine düşmez), 12×11 mantıksal px; telefonda 44 px (dokunmatik.css)
       const ok = el("span", "ok", kart);
-      const yuk = el("button", "", ok, "▲");
+      const yuk = el("button", "k-ok-yukari", ok);
+      yuk.type = "button";
+      yuk.dataset["k"] = "yok";
+      yuk.title = "Yukarı taşı";
       yuk.setAttribute("aria-label", `${k + 1}. yuvayı yukarı taşı`);
       yuk.disabled = k === 0;
       yuk.addEventListener("click", (e) => { e.stopPropagation(); this.tasi(k, k - 1); });
-      const asa = el("button", "", ok, "▼");
+      const asa = el("button", "k-ok-asagi", ok);
+      asa.type = "button";
+      asa.dataset["k"] = "yok";
+      asa.title = "Aşağı taşı";
       asa.setAttribute("aria-label", `${k + 1}. yuvayı aşağı taşı`);
       asa.disabled = k === 2;
       asa.addEventListener("click", (e) => { e.stopPropagation(); this.tasi(k, k + 1); });
@@ -1162,15 +1218,8 @@ class AtolyeEkrani {
         this.ciz();
       });
     }
-    const ey = this.kaydetYer;
-    ey.innerHTML = "";
     const eyM = el("div", "eylemler", menu);
-    const kaydet = el("button", "k-dugme", ey, this.degisti ? "Kaydet *" : "Kaydet");
-    kaydet.dataset["eylem"] = "kaydet";
-    kaydet.dataset["odak"] = "kaydet";
-    const hatalar = this.degerlendirme().hatalar;
-    if (hatalar.length) { kaydet.setAttribute("aria-disabled", "true"); kaydet.title = takimHataMetni(hatalar[0]!); }
-    kaydet.addEventListener("click", () => void this.kaydet());
+    this.kaydetCiz();
     const aktif = el("button", "", eyM, this.takimNo === this.v.aktifTakim ? "Aktif takım" : "Aktif yap");
     aktif.dataset["eylem"] = "aktif";
     aktif.disabled = this.takimNo === this.v.aktifTakim;
@@ -1182,6 +1231,26 @@ class AtolyeEkrani {
     }
     this.durumYaz();
     if (odak) (s.querySelector(`[data-odak="${odak}"]`) as HTMLElement | null)?.focus();
+  }
+
+  /** K-5: KAYDET yalnız kaydedilmemiş değişiklik varken; "kaydedilmedi" rozetiyle OYNA'nın yanında. */
+  private kaydetCiz(): void {
+    const ey = this.kaydetYer;
+    const odakta = ey.contains(document.activeElement);
+    ey.innerHTML = "";
+    ey.hidden = !this.degisti;
+    if (!this.degisti) return;
+    const r = el("span", "k-rozet indirim kaydedilmedi", ey, "Kaydedilmedi");
+    r.dataset["kaydedilmedi"] = "1";
+    const kaydet = el("button", "k-dugme kaydet", ey, "Kaydet");
+    kaydet.type = "button";
+    kaydet.dataset["eylem"] = "kaydet";
+    kaydet.dataset["odak"] = "kaydet";
+    kaydet.setAttribute("aria-label", `Kaydet: ${this.takimAdi} kaydedilmedi`);
+    const hatalar = this.degerlendirme().hatalar;
+    if (hatalar.length) { kaydet.setAttribute("aria-disabled", "true"); kaydet.title = takimHataMetni(hatalar[0]!); }
+    kaydet.addEventListener("click", () => void this.kaydet());
+    if (odakta) kaydet.focus({ preventScroll: true });
   }
 
   sec(k: number, odakla = false): void {
@@ -1323,7 +1392,8 @@ class AtolyeEkrani {
     } else {
       this.oyna.removeAttribute("aria-disabled");
       this.oyna.removeAttribute("aria-describedby");
-      if (this.degisti) this.neden.textContent = "Kaydedilmemiş değişiklik: OYNA önce kaydeder.";
+      // K-5: kaydedilmemiş değişiklik rozeti KAYDET'in yanında; OYNA önce kaydeder (ipucunda)
+      this.oyna.title = this.degisti ? "Kaydedilmemiş değişiklik: OYNA önce kaydeder." : "";
     }
   }
 

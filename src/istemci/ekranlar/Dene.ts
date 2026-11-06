@@ -183,7 +183,7 @@ class Dene {
   private yaz(): void {
     const O = this.olcum;
     const kalan = Math.max(0, Math.ceil(SURE_SN - O.turSn));
-    this.sayacEl.innerHTML = `<b>Dene</b> · ${this.s.ad} · kalan <b>${kalan} sn</b> · sayılmaz, Altın ve tecrübe yok · Esc: Atölye`;
+    this.sayacEl.innerHTML = `<b>Dene</b> · ${this.s.ad} · kalan <b>${kalan} sn</b> · sayılmaz, Altın ve tecrübe yok · <span class="k-kisayol"><span class="k-tus">Esc</span>Atölye</span>`;
     this.olcEl.innerHTML = `Ölçüm (bu topaç)<br>En yüksek hız: <b>${Math.round(O.enYuksekHiz)}</b> br/sn<br>`
       + `Sürüş ivmesi: <b>${O.ivme === null ? "–" : `${Math.round(O.ivme)} br/sn²`}</b> (${O.ivmeOrnek})<br>`
       + `Bırakınca 1 sn kayma: <b>${O.kayma === null ? "–" : `${Math.round(O.kayma)} br`}</b> (${O.kaymaOrnek})<br>Çarpışma: <b>${O.carpisma}</b> · Stamina: <b>%${O.staminaYuzde}</b>`;

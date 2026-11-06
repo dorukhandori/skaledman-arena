@@ -1,6 +1,6 @@
 import { PROTOKOL_SURUMU } from "../../ag/protokol.ts";
 import { KATALOG_OZETI } from "../../ag/katalog.ts";
-import { type Ben, apiPost, git } from "../hesap.ts";
+import { type Ben, git } from "../hesap.ts";
 import { dokunmatikMi, olcekHesapla as mobilOlcek } from "../mobil/cihaz.ts";
 
 // Menü ekranları ortak DOM kalıbı (D5, ux § 3.2, § 6.3-6.4) · GU-01 menü dili v2 "Kuşak Taşı" (sahip onayı 2026-11-05;
@@ -9,6 +9,9 @@ import { dokunmatikMi, olcekHesapla as mobilOlcek } from "../mobil/cihaz.ts";
 // kart `.kart.k-panel` taş panel. Eski işaretleme (button, button.bir, input, .geri) `kSiniflandir` ile bileşen sınıflarına
 // eşlenir (seçiciler ve data-* korunur). Ölçek: tam sayı `--o` (480×270 mantıksal ızgara), metin ölçeği `--yo`.
 // Web gezinti çubuğu menülerde yok (KM-4): Atölye ana ekran, alt ekranlarda sol üstte ◄; Esc / Backspace → geri.
+// S-1 gezinti modeli (sahip kararı 2026-11-05, MENU-P2): lento = ◄ (alt ekranda, hep Atölye'ye) · plaka (ekranın kendi
+// adı) · Altın · tek ⚙ (Ayarlar; Çıkış onun "Hesap" bölümünde). "Daha fazla" açılırı yok; Atölye alt sırası
+// MARKET · BAŞARIMLAR · GÜNLÜK · PROFİL. Tek odak dili (C-1): klavye odağı bronz köşeli çerçeve (odakCercevesiKur).
 
 /** Eski satır içi stil bloğu (geriye uyum): bileşen kuralları artık CSS dosyalarında. */
 export const ARAYUZ_STIL = "";
@@ -21,6 +24,7 @@ export function stilEkle(): void {
   if (stilEklendi) return;
   stilEklendi = true;
   olcekUygula();
+  odakCercevesiKur();
   window.addEventListener("resize", () => olcekUygula());
 }
 
@@ -86,19 +90,20 @@ export interface LentoSecenek {
   geri?: string | null;
   /** Altın yuvası (varsayılan: girişliyse göster) */
   cuzdan?: boolean;
-  /** Atölye: ad + Ayarlar + Çıkış */
-  kim?: boolean;
+  /** tek ⚙ (Ayarlar) düğmesi (S-1); ekranKok'ta varsayılan açık, Ayarlar ekranının kendisinde kapalı */
+  ayar?: boolean;
   /** plakada metin yerine marka logosu (docs/art/kimlik/kurumsal-kimlik.md § 3) */
   logo?: boolean;
 }
 
-/** Üst lento: ◄ (20×20 @5,3) · bronz plaka (@30,3) · boşluk · Altın yuvası (80×20). */
+/** Üst lento: ◄ (20×20 @5,3) · bronz plaka (@30,3) · boşluk · Altın yuvası (80×20) · ⚙ (20×20). */
 export function lentoKur(kok: HTMLElement, s: LentoSecenek): HTMLElement {
   const l = el("header", "k-lento", kok);
   if (s.geri) {
     const g = el("button", "k-geri", l);
     g.type = "button";
     g.setAttribute("aria-label", s.geri === "atolye" ? "Geri: Atölye" : "Geri");
+    g.title = s.geri === "atolye" ? "Atölye (Esc)" : "Geri (Esc)";
     g.dataset["geri"] = s.geri;
     const hedef = s.geri;
     g.addEventListener("click", () => git(hedef));
@@ -111,51 +116,26 @@ export function lentoKur(kok: HTMLElement, s: LentoSecenek): HTMLElement {
   } else if (s.baslik) el("h1", "k-plaka", l, s.baslik);
   el("span", "k-bosluk", l);
   const ben = sonBen?.girisli ? sonBen : null;
-  if (s.kim && ben) {
-    // metin taş üstünde durmaz (§ 5.1): oyuncu adı "Daha fazla" menüsünün başlığında
-    const ay = el("a", "k-dugme kucuk", l, "Ayarlar");
-    ay.href = "?ekran=ayarlar";
-    const c = el("button", "k-dugme kucuk", l, "Çıkış");
-    c.type = "button";
-    c.dataset["eylem"] = "cikis";
-    c.addEventListener("click", () => { void apiPost("/api/cikis").finally(() => git("karsilama")); });
-  }
   if ((s.cuzdan ?? true) && ben && typeof ben.altin === "number") {
     const a = el("a", "k-cuzdan", l, String(ben.altin));
     a.href = "?ekran=market";
     a.dataset["bakiye"] = String(ben.altin);
     a.setAttribute("aria-label", `Bakiye ${ben.altin} Altın: Market`);
   }
+  if (s.ayar) ayarDugmesi(l);
   return l;
 }
 
-/**
- * Açılır menü (ikinci kat; sadelik S-9): düğme + liste. Liste düğmenin altında, Esc ya da dışarı tıklama kapatır.
- * `ogeler`: [etiket, eylem anahtarı, tıklama] (eylem → data-eylem).
- */
-export function acilirMenu(ust: HTMLElement, etiket: string, baslik: string | null, ogeler: [string, string, () => void][], anahtar = "menu"): HTMLElement {
-  const kap = el("div", "k-menu", ust);
-  const d = el("button", "k-dugme kucuk", kap, etiket);
-  d.type = "button";
-  d.dataset["eylem"] = anahtar;
-  d.setAttribute("aria-haspopup", "true");
-  d.setAttribute("aria-expanded", "false");
-  const liste = el("div", "k-menu-liste", kap);
-  liste.setAttribute("role", "menu");
-  liste.hidden = true;
-  if (baslik) el("div", "k-menu-baslik k-e16", liste, baslik);
-  for (const [ad, eylem, f] of ogeler) {
-    const o = el("button", "k-dugme kucuk", liste, ad);
-    o.type = "button";
-    o.setAttribute("role", "menuitem");
-    o.dataset["eylem"] = eylem;
-    o.addEventListener("click", () => { kapat(); f(); });
-  }
-  const kapat = () => { liste.hidden = true; d.setAttribute("aria-expanded", "false"); };
-  d.addEventListener("click", (e) => { e.stopPropagation(); liste.hidden = !liste.hidden; d.setAttribute("aria-expanded", String(!liste.hidden)); if (!liste.hidden) liste.querySelector<HTMLButtonElement>("button")?.focus(); });
-  document.addEventListener("click", (e) => { if (!kap.contains(e.target as Node)) kapat(); });
-  kap.addEventListener("keydown", (e) => { if (e.key === "Escape" && !liste.hidden) { e.stopPropagation(); kapat(); d.focus(); } });
-  return kap;
+/** Tek ⚙ (S-1): pixel dişli, Ayarlar ekranına gider. Lentonun en sağında; ekran kendi lentosunu kurduysa da eklenir. */
+export function ayarDugmesi(lento: HTMLElement): HTMLAnchorElement {
+  const v = lento.querySelector<HTMLAnchorElement>(":scope > .k-ayar");
+  if (v) return v;
+  const a = el("a", "k-ayar", lento);
+  a.href = "?ekran=ayarlar";
+  a.dataset["eylem"] = "ayarlar";
+  a.setAttribute("aria-label", "Ayarlar");
+  a.title = "Ayarlar";
+  return a;
 }
 
 /** Geliştirici araçları yalnız `?gelistir=1` ile (sadelik S-10). */
@@ -176,6 +156,14 @@ export function el<K extends keyof HTMLElementTagNameMap>(etiket: K, sinif = "",
   return e;
 }
 
+/** Metni ekler; "Lv.N" parçaları büyük harf bağlamında da "Lv." kalır (K-12, `.k-lv`). */
+export function lvYaz(ust: HTMLElement, metin: string): void {
+  for (const p of metin.split(/(Lv\.\d+)/)) {
+    if (!p) continue;
+    if (/^Lv\.\d+$/.test(p)) el("span", "k-lv", ust, p); else ust.appendChild(document.createTextNode(p));
+  }
+}
+
 /** `**kalın**` → <b> (yalnız güvenilir sabit metin). */
 export function kalin(metin: string): string {
   return metin.replace(/[<>&]/g, "").replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
@@ -187,29 +175,98 @@ export function ekranKok(ust: HTMLElement, etiket: string, s: LentoSecenek & { y
   const kok = el("div", `ekr k-zemin${s.yer && s.yer !== "duvar" ? ` yer-${s.yer}` : ""}`, ust);
   kok.setAttribute("role", "main");
   kok.setAttribute("aria-label", etiket);
-  const lento = lentoKur(kok, { baslik: s.baslik === undefined ? etiket : s.baslik, geri: s.geri ?? null, cuzdan: s.cuzdan, kim: s.kim, logo: s.logo });
+  const lento = lentoKur(kok, { baslik: s.baslik === undefined ? etiket : s.baslik, geri: s.geri ?? null, cuzdan: s.cuzdan, ayar: s.ayar ?? true, logo: s.logo });
   const govde = el("div", "k-govde", kok);
   const kart = el("div", "kart k-panel", govde);
   kSiniflandir(kok);
   return { kok, kart, lento, govde };
 }
 
-/** ◄ geri → Atölye; Esc / Backspace (yazı alanında değilken) aynı (ux § 3.2). */
+/**
+ * ◄ geri → Atölye; Esc / Backspace (yazı alanında değilken) aynı (ux § 3.2). ◄ her alt ekranda aynı yerde: lentonun
+ * başında (lentoda zaten varsa o kullanılır, ikinci ◄ eklenmez).
+ */
 export function geriDugmesi(kart: HTMLElement, hedef = "atolye"): HTMLButtonElement {
-  // lentoda ◄ varsa onu kullan; yoksa lentonun ◄ yerine yeni düğme
   const kok = kart.closest(".ekr");
   const lento = kok?.querySelector(".k-lento");
-  const g = el("button", "k-geri");
-  g.type = "button";
-  if (lento) lento.prepend(g); else kart.prepend(g);
+  const var_ = lento?.querySelector<HTMLButtonElement>(":scope > .k-geri") ?? null;
+  const g = var_ ?? el("button", "k-geri");
+  if (!var_) {
+    g.type = "button";
+    if (lento) lento.prepend(g); else kart.prepend(g);
+    g.addEventListener("click", () => git(hedef));
+  }
   g.setAttribute("aria-label", hedef === "atolye" ? "Geri: Atölye" : "Geri");
+  g.title = hedef === "atolye" ? "Atölye (Esc)" : "Geri (Esc)";
   g.dataset["geri"] = hedef;
-  g.addEventListener("click", () => git(hedef));
   window.addEventListener("keydown", (e) => {
-    const yazi = e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement;
+    const yazi = e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLSelectElement;
+    if (e.defaultPrevented) return;
     if (e.key === "Escape" || (e.key === "Backspace" && !yazi)) { e.preventDefault(); git(hedef); }
   });
   return g;
+}
+
+/**
+ * Uzun panel için kaydırma ipucu (H-13): içerik taşıyorsa panelin altında "▼ aşağıda devamı var" şeridi; en alta
+ * inilince kaybolur. Kutu `overflow-y:auto` olan öğe.
+ */
+export function kaydirmaIpucu(kutu: HTMLElement): HTMLElement {
+  const ip = el("div", "k-kaydir-ipucu k-e16", kutu, "Aşağıda devamı var");
+  ip.setAttribute("aria-hidden", "true");
+  // şerit akışta yer kaplar (sticky): görünürken kendi yüksekliği taşma sayılmaz
+  const yenile = () => { const ek = ip.hidden ? 0 : ip.offsetHeight; ip.hidden = kutu.scrollHeight - ek - kutu.clientHeight - kutu.scrollTop < 4; };
+  kutu.addEventListener("scroll", yenile, { passive: true });
+  window.addEventListener("resize", yenile);
+  if (typeof ResizeObserver === "function") new ResizeObserver(yenile).observe(kutu);
+  requestAnimationFrame(yenile);
+  return ip;
+}
+
+// ---- tek odak dili (C-1): klavye odağı bronz köşeli çerçeve ----
+let odakKuruldu = false;
+/** Odağı kendi halkasıyla gösteren öğe (ör. maç ekranı) çerçeve almaz; seçimle aynı şey olan radyo/sekme de almaz. */
+function odakCizilir(e: HTMLElement): boolean {
+  try { if (!e.matches(":focus-visible")) return false; } catch { return false; }
+  if (!e.closest(".k-zemin, .rf, .tam-katman, .ust-bant, .pergel")) return false;
+  if (e.closest("[data-odak-cerceve=secim]") && (e.getAttribute("aria-checked") === "true" || e.getAttribute("aria-selected") === "true" || e.classList.contains("secili"))) return false;
+  const st = getComputedStyle(e);
+  return !(st.outlineStyle !== "none" && parseFloat(st.outlineWidth) > 0);
+}
+/** Kaydırılan bir kutunun dışına çıkan odak çizilmez (çerçeve kutunun üstüne taşmasın). */
+function kirpildi(e: HTMLElement, r: DOMRect): boolean {
+  for (let u = e.parentElement; u && u !== document.body; u = u.parentElement) {
+    const o = getComputedStyle(u).overflowY;
+    if (o !== "auto" && o !== "scroll" && o !== "hidden") continue;
+    const k = u.getBoundingClientRect();
+    if (r.bottom < k.top + 2 || r.top > k.bottom - 2 || r.right < k.left + 2 || r.left > k.right - 2) return true;
+  }
+  return false;
+}
+function odakCercevesiKur(): void {
+  if (odakKuruldu || typeof document === "undefined") return;
+  odakKuruldu = true;
+  const c = document.createElement("div");
+  c.className = "k-odak-cerceve";
+  c.setAttribute("aria-hidden", "true");
+  c.hidden = true;
+  let hedef: HTMLElement | null = null;
+  let kare = 0;
+  const yerlestir = (): void => {
+    kare = 0;
+    if (!c.isConnected) document.body.appendChild(c);
+    if (!hedef || !hedef.isConnected || document.activeElement !== hedef || !odakCizilir(hedef)) { c.hidden = true; hedef = null; return; }
+    const r = hedef.getBoundingClientRect();
+    if (r.width < 1 || kirpildi(hedef, r)) c.hidden = true;
+    else {
+      c.hidden = false;
+      c.style.left = `${Math.round(r.left)}px`; c.style.top = `${Math.round(r.top)}px`;
+      c.style.width = `${Math.round(r.width)}px`; c.style.height = `${Math.round(r.height)}px`;
+    }
+    kare = requestAnimationFrame(yerlestir); // öğe kayarsa / yeniden çizilirse izler (yalnız klavye odağı varken)
+  };
+  document.addEventListener("focusin", (e) => { hedef = e.target instanceof HTMLElement ? e.target : null; if (!kare) kare = requestAnimationFrame(yerlestir); }, true);
+  document.addEventListener("focusout", () => { if (!kare) kare = requestAnimationFrame(yerlestir); }, true);
 }
 
 /** Enter = ana eylem (odak bir düğmedeyse o düğme kendi işini yapar). */
@@ -236,7 +293,7 @@ export function ustGezinti(ekran: string, ben: Ben | null): void {
     nav.setAttribute("aria-label", "Geliştirici gezintisi");
     for (const [k, ad] of [["atolye", "Atölye"], ["mac", "Maç (bota karşı)"], ["topac-lab", "Topaç Lab"]] as const) {
       const a = el("a", "", nav, ad);
-      a.href = `?ekran=${k}`;
+      a.href = `?ekran=${k}${k === "topac-lab" ? "&gelistir=1" : ""}`;
       if (k === ekran) a.setAttribute("aria-current", "page");
     }
     return;

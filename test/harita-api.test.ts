@@ -239,6 +239,17 @@ describe("H2 HTTP uçları ve harita odası", () => {
     expect((await istek("PATCH", "/api/profil", A, { karakter: 2 })).durum).toBe(200);
     expect((await istek("PATCH", "/api/profil", A, { karakter: 4 })).durum).toBe(400);
     expect((await istek("PATCH", "/api/profil", A, { cerceve: "cerceve-don" })).durum).toBe(403);
+    // MENU-P2 / HARITA-KOD kalan iş: profilde dövülen arma (yalnız sahip olunan `arma-*`; element simgesi her zaman)
+    expect((await istek("PATCH", "/api/profil", A, { arma: "arma-cevher-kor" })).durum).toBe(403);
+    expect((await istek("POST", "/api/profil", A, { arma: "arma-cevher-kor", renk: "#2fb8e8" })).durum).toBe(403);
+    expect((await istek("PATCH", "/api/profil", A, { arma: "../x" })).durum).toBe(400);
+    {
+      const { depo } = await import("../src/sunucu/db/depo.ts");
+      depo().gorunumVer(depo().oyuncuAdla("harita ayla")!.id, "arma-cevher-kor", false, Date.now());
+    }
+    expect((await istek("PATCH", "/api/profil", A, { arma: "arma-cevher-kor" })).durum).toBe(200);
+    expect((await istek("GET", "/api/ben", A)).veri.oyuncu).toMatchObject({ arma: "arma-cevher-kor", profilTamam: true });
+    expect((await istek("POST", "/api/profil", A, { arma: "kaya", renk: "#2fb8e8" })).durum).toBe(200);
     expect((await istek("GET", "/api/ben", A)).veri).toMatchObject({ harita: { acik: true, konum: "b1-01" }, karakter: 2, protokol: 7 });
   });
 
