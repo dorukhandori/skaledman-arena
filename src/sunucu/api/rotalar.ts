@@ -10,6 +10,7 @@ import { atolyeRotalariKur } from "./atolye.ts";
 import { marketRotalariKur } from "./market.ts";
 import { haritaRotalariKur } from "./harita.ts";
 import { madenRotalariKur } from "./maden.ts";
+import { ocakRotalariKur } from "./ocak.ts";
 import { haritaAcikMi, ocakAcikMi } from "../oyuncu/harita.ts";
 import { seviye as ustalikSeviye } from "../../paylasilan/kurallar/ustalik.ts";
 import { basarimOlayiIsle } from "../oyuncu/basarimYaz.ts";
@@ -237,4 +238,5 @@ export function rotalariKur(app: Uygulama): void {
   marketRotalariKur(app);
   haritaRotalariKur(app);
   madenRotalariKur(app);
+  ocakRotalariKur(app);
 }

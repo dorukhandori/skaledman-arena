@@ -1,4 +1,5 @@
 import { BASARIMLAR, PARCALAR } from "../veri/katalog.ts";
+import { MARKET_FIYAT } from "../veri/harita.ts";
 import type { Basarim, Parca } from "../veri/semalar.ts";
 import { indirimliFiyat } from "./ekonomi.ts";
 
@@ -18,6 +19,16 @@ export const RAFLAR: readonly Raf[] = [
 ];
 
 export const KATMAN_FIYATI: Record<string, number> = { baslangic: 100, standart: 500, nadir: 2000, hizip: 4000, karanlik: 6000 };
+
+/**
+ * SAPMA (tuning § 16 / § 22, sahip 2026-11-06, harita 12 § 5): Market fiyatı `veri/market-fiyat.json`'dan. Kilitsiz
+ * parçalar ücretsiz; kilitli katmanlar çarpanlı (craft asıl yol, Market pahalı kısayol). `parcalar.json` `fiyat` alanı
+ * Yapay yenileme tabanı olarak kalır (KATALOG_OZETI değişmez).
+ */
+export function marketFiyati(p: Parca): number {
+  if (MARKET_FIYAT.kilitsizUcretsiz && marketKilidi(p).kilit === "acik") return 0;
+  return MARKET_FIYAT.katman[p.katman] ?? p.fiyat;
+}
 export const KATMAN_AD: Record<string, string> = { baslangic: "Başlangıç", standart: "Standart", nadir: "Nadir", hizip: "Hizip", karanlik: "Karanlık" };
 
 /**
@@ -66,7 +77,7 @@ export interface OyuncuMarketBilgisi {
 }
 
 /** Parçanın bu oyuncu için Market durumu. Kilitli parça yalnız başarım açıldıktan sonra satın alınır (§ 16). */
-export function marketDurumu(p: Parca, o: OyuncuMarketBilgisi, fiyat = p.fiyat): MarketDurumu {
+export function marketDurumu(p: Parca, o: OyuncuMarketBilgisi, fiyat = marketFiyati(p)): MarketDurumu {
   const k = marketKilidi(p);
   const b = k.kilit !== "acik" ? basarimBul(k.kilit) : undefined;
   const acildi = k.kilit === "acik" || o.tamamlanan.has(k.kilit);
@@ -82,14 +93,18 @@ export function marketDurumu(p: Parca, o: OyuncuMarketBilgisi, fiyat = p.fiyat):
   return { durum: "acik", ad: p.ad, basarim: bb, etiket: `${fiyat} Altın`, okunan: `${p.ad}. ${fiyat} Altın.${b ? ` ${b.ad} ile açıldı.` : ""}`, basarimlaAcildi: !!b };
 }
 
-/** Günün parçası adayları (§ 16 "Açık raftan"): veri kilidi açık olan parçalar, dosya sırası. */
+/**
+ * Günün parçası adayları (§ 16): SAPMA sonrası kilitsiz parçalar ücretsiz olduğundan adaylar fiyatı olan (kilitli,
+ * başarımla açılan) parçalar; dosya sırası. Gizli parça aday değil (ipucu vermez).
+ */
 export function gununParcasiAdaylari(): string[] {
-  return PARCALAR.parcalar.filter((p) => marketKilidi(p).kilit === "acik").map((p) => p.id);
+  return PARCALAR.parcalar.filter((p) => marketFiyati(p) > 0 && marketKilidi(p).gorunum !== "gizli").map((p) => p.id);
 }
 
 /** Satış fiyatı: günün parçasıysa %30 indirimli. */
 export function satisFiyati(p: Parca, gununParcasi: string | null): number {
-  return p.id === gununParcasi ? indirimliFiyat(p.fiyat) : p.fiyat;
+  const f = marketFiyati(p);
+  return p.id === gununParcasi ? indirimliFiyat(f) : f;
 }
 
 export type SatinAlmaReddi = "yok" | "marketKapali" | "sahip" | "kilitli" | "yetersiz";

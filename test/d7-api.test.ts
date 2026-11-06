@@ -181,16 +181,18 @@ describe("satın alma ve Yapay yenileme (tek SQLite işlemi)", () => {
     expect(satinAl(d, a, "duz-uc", OGLE)).toMatchObject({ ok: false, hata: "marketKapali" });
     basarimOlayiIsle(d, a, { olay: { antrenmanBitti: true } }, OGLE); // +100
     const gp = bugununParcasi(OGLE);
-    const ucuz = ["duz-uc", "dengeli-uc", "ok-govde"].find((x) => x !== gp)!;
-    expect(satinAl(d, a, "top-uc", OGLE)).toMatchObject({ ok: false, hata: "yetersiz", eksik: gp === "top-uc" ? 250 : 400 });
+    // SAPMA (harita 12 § 5): kilitsiz parçalar 0 Altın; kilitli Nadir 12 000 (günün parçasıysa 8 400)
+    const ucuz = "duz-uc";
     expect(satinAl(d, a, "ayaz-govde", OGLE)).toMatchObject({ ok: false, hata: "kilitli" });
     expect(satinAl(d, a, "kor-kalbi", OGLE)).toMatchObject({ ok: false, hata: "kilitli" });
     expect(satinAl(d, a, "yok-boyle", OGLE)).toMatchObject({ ok: false, hata: "yok" });
+    basarimOlayiIsle(d, a, { durum: { enYuksekSeviye: 3 } }, OGLE); // Parlayan +300 → Parlak Disk açılır
+    expect(satinAl(d, a, "parlak-disk", OGLE)).toMatchObject({ ok: false, hata: "yetersiz", eksik: (gp === "parlak-disk" ? 8400 : 12000) - 400 });
     const r = satinAl(d, a, ucuz, OGLE);
-    expect(r).toMatchObject({ ok: true, fiyat: 100, bakiye: 0 });
+    expect(r).toMatchObject({ ok: true, fiyat: 0, bakiye: 400 });
     expect(d.parcalar(a).some((p) => p.tanim_id === ucuz)).toBe(true);
-    expect(d.defterRef(`satin:${a}:${ucuz}`)).toMatchObject({ miktar: -100, neden: "satin" });
-    d.altinYaz(a, 1000, "test", "test:1", OGLE);
+    expect(d.defterRef(`satin:${a}:${ucuz}`)).toMatchObject({ miktar: 0, neden: "satin" });
+    d.altinYaz(a, 600, "test", "test:1", OGLE);
     expect(satinAl(d, a, ucuz, OGLE)).toMatchObject({ ok: false, hata: "sahip" });
     expect(d.bakiye(a)).toBe(1000);
     // Çekirdek satın alımı cekirdek satırı (Lv.1, Yapay ömür 30)
@@ -202,10 +204,11 @@ describe("satın alma ve Yapay yenileme (tek SQLite işlemi)", () => {
     const d = yeni();
     const { a } = kur(d);
     basarimOlayiIsle(d, a, { olay: { antrenmanBitti: true } }, OGLE);
-    d.altinYaz(a, 5000, "test", "test:p", OGLE);
+    d.altinYaz(a, 20000, "test", "test:p", OGLE);
     expect(satinAl(d, a, "parlak-disk", OGLE)).toMatchObject({ ok: false, hata: "kilitli" });
     basarimOlayiIsle(d, a, { durum: { enYuksekSeviye: 3 } }, OGLE);
-    expect(satinAl(d, a, "parlak-disk", OGLE)).toMatchObject({ ok: true, fiyat: 2000, bakiye: 3100 + 300 });
+    const f = bugununParcasi(OGLE) === "parlak-disk" ? 8400 : 12000;
+    expect(satinAl(d, a, "parlak-disk", OGLE)).toMatchObject({ ok: true, fiyat: f, bakiye: 20100 - f + 300 });
   });
   it("yarış: iki ayrı bağlantı aynı bakiyeyle iki parça ister → yalnız biri geçer; aynı parça iki kez → tek defter satırı", () => {
     const dizin = mkdtempSync(join(tmpdir(), "devran-d7-"));
@@ -214,14 +217,18 @@ describe("satın alma ve Yapay yenileme (tek SQLite işlemi)", () => {
     const d2 = new Depo(veritabaniAc(yol));
     const { a } = kur(d1);
     basarimOlayiIsle(d1, a, { olay: { antrenmanBitti: true } }, OGLE);
-    d1.altinYaz(a, 400, "test", "test:y", OGLE); // 500: Top Uç (500) ya da Halka Gövde (500) — biri
+    // SAPMA: iki açık kilitli parça (Parlayan → Parlak Disk, Son Dören → Alçak Disk), bakiye yalnız birine yeter
+    basarimOlayiIsle(d1, a, { durum: { enYuksekSeviye: 3 } }, OGLE);
+    d1.db.prepare("INSERT INTO basarim (oyuncu_id, basarim_id, ilerleme, tamam) VALUES (?, 'son-doren', 1, 1)").run(a);
     const gp = bugununParcasi(OGLE);
-    const iki = ["top-uc", "halka-govde", "girdap-maden"].filter((x) => x !== gp).slice(0, 2);
+    const iki = ["parlak-disk", "alcak-disk", "ayaz-govde"].filter((x) => x !== gp).slice(0, 2);
+    d1.db.prepare("INSERT INTO basarim (oyuncu_id, basarim_id, ilerleme, tamam) VALUES (?, 'don-ustasi', 10, 1) ON CONFLICT DO NOTHING").run(a);
+    d1.altinYaz(a, 12000 - d1.bakiye(a) + 5000, "test", "test:y", OGLE); // 17 000: yalnız bir 12 000'lik parça
     const r1 = satinAl(d1, a, iki[0]!, OGLE);
     const r2 = satinAl(d2, a, iki[1]!, OGLE);
     expect([r1.ok, r2.ok].filter(Boolean)).toHaveLength(1);
     expect(d2.bakiye(a)).toBeGreaterThanOrEqual(0);
-    d1.altinYaz(a, 5000, "test", "test:y2", OGLE);
+    d1.altinYaz(a, 15000, "test", "test:y2", OGLE);
     const s1 = satinAl(d1, a, iki[1]!, OGLE);
     const s2 = satinAl(d2, a, iki[1]!, OGLE);
     expect([s1.ok, s2.ok].filter(Boolean).length).toBeLessThanOrEqual(1);
@@ -306,18 +313,23 @@ describe("D7 HTTP uçları", () => {
   it("POST satın al: 402 eksik · 403 kilitli · 201 (bakiye düşer, envanterde) · 409 sahip", async () => {
     const v = (await istek("GET", "/api/market", A)).veri;
     const gp = v.gununParcasi.id;
-    expect((await istek("POST", "/api/market/satin-al", A, { parca: "top-uc" })).veri).toMatchObject({ hata: "yetersiz", eksik: (gp === "top-uc" ? 350 : 500) - 100 });
+    // SAPMA (harita 12 § 5): kilitsiz 0, kilitli Nadir 12 000; geliştirme ucuyla Parlayan → Parlak Disk açılır (+300)
+    expect((await istek("POST", "/api/market/satin-al", A, { parca: "parlak-disk" })).durum).toBe(403);
+    expect((await istek("POST", "/api/gelistirme/basarim", A, { basarim: "parlayan", ilerleme: 1 })).durum).toBe(200);
+    expect((await istek("POST", "/api/market/satin-al", A, { parca: "parlak-disk" })).veri).toMatchObject({ hata: "yetersiz", eksik: (gp === "parlak-disk" ? 8400 : 12000) - 400 });
     expect((await istek("POST", "/api/market/satin-al", A, { parca: "ayaz-govde" })).durum).toBe(403);
-    const ucuz = ["duz-uc", "dengeli-uc"].find((x) => x !== gp)!;
+    const ucuz = "duz-uc";
     const r = await istek("POST", "/api/market/satin-al", A, { parca: ucuz });
     expect(r.durum).toBe(201);
-    expect(r.veri).toMatchObject({ ok: true, fiyat: 100, bakiye: 0 });
+    expect(r.veri).toMatchObject({ ok: true, fiyat: 0, bakiye: 400 });
+    expect(r.veri.market.raflar[3].urunler.find((u: V) => u.id === "dengeli-uc").craft).toMatchObject({ metin: "CRAFT: 3 DEMİR KÜLÇESİ · ~1 GÜN (TAHMİN)" });
+    expect(r.veri.market.raflar[3].urunler.find((u: V) => u.id === "top-uc").craft).toMatchObject({ metin: "CRAFT: İŞLEME 5 GEREKİR", ustalikEksik: 5 });
     expect(r.veri.market.raflar[3].urunler.find((u: V) => u.id === ucuz).durum).toBe("sahip");
     expect((await istek("GET", "/api/atolye", A)).veri.parcalar.some((p: V) => p.tanimId === ucuz)).toBe(true);
     expect((await istek("POST", "/api/market/satin-al", A, { parca: ucuz })).durum).toBe(409);
     const df = (await istek("GET", "/api/defter", A)).veri;
-    expect(df.bakiye).toBe(0);
-    expect(df.satirlar.map((s: V) => s.neden)).toStrictEqual(["satin", "basarim"]);
+    expect(df.bakiye).toBe(400);
+    expect(df.satirlar.map((s: V) => s.neden)).toStrictEqual(["satin", "basarim", "basarim"]);
   });
   it("GET /api/basarimlar: 46; gizli başarım ??? (ipucu yok); İlk Devir tamam + tarih", async () => {
     const v = (await istek("GET", "/api/basarimlar", A)).veri;

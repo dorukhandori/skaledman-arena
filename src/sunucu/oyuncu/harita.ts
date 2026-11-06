@@ -38,7 +38,8 @@ export function haritaAcikMi(d: Depo, id: number): boolean {
 export function ocakAcikMi(d: Depo, id: number): boolean {
   if (tamamlananlar(d, id).has("ilk-kazi")) return true;
   const c = d.cevherler(id);
-  return c.cevher.some((x) => x > 0) || c.kulce.some((x) => x > 0);
+  const u = d.ustaliklar(id);
+  return u.madencilik > 0 || u.isleme > 0 || c.cevher.some((x) => x > 0) || c.kulce.some((x) => x > 0);
 }
 
 /** İlk Devir'i olan oyuncu için b1-01 AÇIK satırını yaz (08 § 10). Dönen: harita açık mı. */

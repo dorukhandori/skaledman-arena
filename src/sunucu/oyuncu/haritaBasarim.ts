@@ -15,3 +15,13 @@ export function basarimHaritaOlaylari(d: Depo, id: number, o: HaritaOlaylari, si
 export function basarimMadenOlaylari(d: Depo, id: number, o: HaritaOlaylari, simdi: number): BasarimBildirimi[] {
   return basarimHaritaOlaylari(d, id, o, simdi);
 }
+
+/** Ocak olayları (H5: eritme, ustaIsi, parcaUret, ustalikSeviye, malzemeTopac, tanimKademeCesidi, koleksiyonDegeri). */
+export function basarimOcakOlaylari(d: Depo, id: number, _o: unknown, simdi: number): BasarimBildirimi[] {
+  return basarimHaritaOlaylari(d, id, { dugumTamam: 0, bolgeTamam: [], rozet: [] }, simdi);
+}
+
+/** Vitrin doluluğu (H5: vitrinDolu). */
+export function basarimVitrin(d: Depo, id: number, _dolu: number, simdi: number): BasarimBildirimi[] {
+  return basarimHaritaOlaylari(d, id, { dugumTamam: 0, bolgeTamam: [], rozet: [] }, simdi);
+}

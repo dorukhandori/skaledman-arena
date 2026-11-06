@@ -4,8 +4,12 @@ import { basarimAciklama, KATEGORI_SIRASI } from "../../paylasilan/kurallar/basa
 import { gunNo, gununParcasi, yenilenebilir, yenilemeFiyati, zorluk } from "../../paylasilan/kurallar/ekonomi.ts";
 import { ILERLEME } from "../../paylasilan/kurallar/ilerleme.ts";
 import {
-  KATMAN_AD, RAFLAR, gununParcasiAdaylari, marketDurumu, rafUrunleri, satinAlmaDenetle, satisFiyati,
+  KATMAN_AD, RAFLAR, gununParcasiAdaylari, marketDurumu, marketFiyati, rafUrunleri, satinAlmaDenetle, satisFiyati,
 } from "../../paylasilan/kurallar/market.ts";
+import { parcaMaliyeti, uretilebilirKademe } from "../../paylasilan/kurallar/ocak.ts";
+import { seviye } from "../../paylasilan/kurallar/ustalik.ts";
+import { SURUM_KADEME_TAVANI, kademeBul } from "../../paylasilan/veri/harita.ts";
+import type { Parca } from "../../paylasilan/veri/semalar.ts";
 import { BASARIMLAR, PARCALAR, cekirdekBul, parcaBul } from "../../paylasilan/veri/katalog.ts";
 import type { Depo } from "../db/depo.ts";
 import { depo } from "../db/depo.ts";
@@ -48,8 +52,34 @@ function referansTopac(d: Depo, id: number): { cekirdek: string; govde: string; 
   return y ? { cekirdek: y.cekirdek, govde: y.govde, disk: y.disk, uc: y.uc, yon: y.yon } : null;
 }
 
+/** Sim p50 (06 Tablo G, aktif profil) varsayılan külçe üretimi/gün: oyuncunun üretim verisi yoksa "(TAHMİN)". */
+export const TAHMINI_KULCE_GUN = 6;
+
+export interface CraftBilgisi { kademe: number | null; kulce: number; iscilik: number; gun: number | null; tahmini: boolean; hazir: boolean; ustalikEksik: number | null; metin: string }
+
+/** Market kartı "CRAFT: 25 DON KÜLÇESİ · ~3 GÜN" (12 § 5.2): dürüst fiyat gösterimi, karanlık desen yok. */
+export function craftBilgisi(p: Parca, U: number, kulce: readonly number[], kulceGun: number): CraftBilgisi {
+  const k = uretilebilirKademe(p, U);
+  if (k === null) {
+    // Ustalık yetmiyor: katmanın en düşük kademesindeki eşik
+    const ilk = [1, 2, 3, 4].filter((x) => x <= SURUM_KADEME_TAVANI).map((x) => parcaMaliyeti(p, x)).find((m) => m !== null) ?? null;
+    if (!ilk) return { kademe: null, kulce: 0, iscilik: 0, gun: null, tahmini: false, hazir: false, ustalikEksik: null, metin: "CRAFT: YOK" };
+    return { kademe: null, kulce: ilk.kulce, iscilik: ilk.iscilik, gun: null, tahmini: false, hazir: false, ustalikEksik: ilk.esik, metin: `CRAFT: İŞLEME ${ilk.esik} GEREKİR` };
+  }
+  const m = parcaMaliyeti(p, k)!;
+  const eksik = Math.max(0, m.kulce - (kulce[k - 1] ?? 0));
+  const ad = `${kademeBul(k).ad.replace(/ CEVHERİ$/, "")} KÜLÇESİ`;
+  if (eksik === 0) return { kademe: k, kulce: m.kulce, iscilik: m.iscilik, gun: 0, tahmini: false, hazir: true, ustalikEksik: null, metin: "CRAFT: HAZIR · OCAK'A GİT" };
+  const tahmini = kulceGun <= 0;
+  const gun = Math.max(1, Math.ceil(eksik / (tahmini ? TAHMINI_KULCE_GUN : kulceGun)));
+  return { kademe: k, kulce: m.kulce, iscilik: m.iscilik, gun, tahmini, hazir: false, ustalikEksik: null, metin: `CRAFT: ${m.kulce} ${ad} · ~${gun} GÜN${tahmini ? " (TAHMİN)" : ""}` };
+}
+
 export function marketGorunumu(d: Depo, id: number, simdi: number) {
   const tamam = tamamlananlar(d, id);
+  const U = seviye(d.ustaliklar(id).isleme);
+  const kulce = d.cevherler(id).kulce;
+  const kulceGun = d.sonKulceUretimi(id, simdi - 7 * 86_400_000) / 7;
   const ilerleme = ilerlemeler(d, id);
   const sahip = sahipSayilari(d, id);
   const gp = bugununParcasi(simdi);
@@ -63,7 +93,8 @@ export function marketGorunumu(d: Depo, id: number, simdi: number) {
       if (m.durum === "gizli") return { id: `gizli-${++gizliSira}`, durum: "gizli" as const, ad: "???", etiket: m.etiket, okunan: m.okunan, tur: p.tur };
       return {
         id: p.id, durum: m.durum, ad: p.ad, tur: p.tur, element: p.element, koken: p.tur === "cekirdek" ? p.koken : null,
-        tipEgilimi: p.tipEgilimi, katman: p.katman, katmanAd: KATMAN_AD[p.katman] ?? p.katman, fiyat: p.fiyat, satisFiyati: fiyat,
+        tipEgilimi: p.tipEgilimi, katman: p.katman, katmanAd: KATMAN_AD[p.katman] ?? p.katman, fiyat: marketFiyati(p), satisFiyati: fiyat,
+        craft: craftBilgisi(p, U, kulce, kulceGun),
         gununParcasi: p.id === gp, etiket: m.etiket, okunan: m.okunan, basarim: m.basarim, basarimlaAcildi: m.basarimlaAcildi,
         sahip: sahip.get(p.id) ?? 0, aciklama: p.aciklama,
       };
@@ -79,7 +110,7 @@ export function marketGorunumu(d: Depo, id: number, simdi: number) {
     acik: tamam.has(ILK_DEVIR),
     bakiye: d.bakiye(id),
     gun: gunNo(simdi),
-    gununParcasi: gpParca ? { id: gpParca.id, ad: gpParca.ad, tur: gpParca.tur, element: gpParca.element, fiyat: gpParca.fiyat, satisFiyati: satisFiyati(gpParca, gp) } : null,
+    gununParcasi: gpParca ? { id: gpParca.id, ad: gpParca.ad, tur: gpParca.tur, element: gpParca.element, fiyat: marketFiyati(gpParca), satisFiyati: satisFiyati(gpParca, gp) } : null,
     raflar,
     yenileme,
     referans: referansTopac(d, id),

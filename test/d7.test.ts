@@ -105,9 +105,10 @@ describe("Market kataloğu (tuning § 16, 03 US-3.1)", () => {
   });
   it("kilit üç hâl: açık / kilitli-görünür (başarım adı + ilerleme) / gizli ???; tamamlanınca açılır", () => {
     const bos = { sahipAdet: 0, tamamlanan: new Set<string>(), ilerleme: {} };
-    expect(marketDurumu(parcaBul("top-uc"), bos)).toMatchObject({ durum: "acik", etiket: "500 Altın" });
+    // SAPMA (harita 12 § 5): kilitsiz parça 0, kilitli Nadir 12 000
+    expect(marketDurumu(parcaBul("top-uc"), bos)).toMatchObject({ durum: "acik", etiket: "0 Altın" });
     expect(marketDurumu(parcaBul("ayaz-govde"), { ...bos, ilerleme: { "don-ustasi": 3 } })).toMatchObject({ durum: "kilitli", etiket: "Kilitli: Don Ustası 3/10" });
-    expect(marketDurumu(parcaBul("ayaz-govde"), bos).okunan).toBe("Ayaz Gövde. 2000 Altın. Kilitli: Don Ustası 0/10.");
+    expect(marketDurumu(parcaBul("ayaz-govde"), bos).okunan).toBe("Ayaz Gövde. 12000 Altın. Kilitli: Don Ustası 0/10.");
     expect(marketDurumu(parcaBul("kor-kalbi"), bos)).toMatchObject({ durum: "gizli", ad: "???", basarim: null });
     expect(marketDurumu(parcaBul("kor-kalbi"), { ...bos, tamamlanan: new Set(["kriz-donusu"]) })).toMatchObject({ durum: "acik", ad: "Kor Kalbi", basarimlaAcildi: true });
     expect(marketDurumu(parcaBul("parlak-disk"), { ...bos, tamamlanan: new Set(["parlayan"]) })).toMatchObject({ durum: "acik", basarimlaAcildi: true });
@@ -131,10 +132,10 @@ describe("Market kataloğu (tuning § 16, 03 US-3.1)", () => {
     expect(satinAlmaDenetle(parcaBul("top-uc"), o, 500)).toBe("yetersiz");
     expect(satinAlmaDenetle(parcaBul("duz-uc"), o, 100)).toBeNull();
   });
-  it("günün parçası: gün başına sabit, deterministik, yalnız açık raftan; %30 indirim", () => {
+  it("günün parçası: gün başına sabit, deterministik; SAPMA sonrası fiyatlı (kilitli, gizli olmayan) parçalardan; %30 indirim", () => {
     const ad = gununParcasiAdaylari();
-    for (const id of ad) expect(marketKilidi(parcaBul(id)).kilit).toBe("acik");
-    expect(ad).toHaveLength(15); // 12 başlangıç + Halka Gövde + Top Uç + Girdap Maden
+    for (const id of ad) { expect(marketKilidi(parcaBul(id)).kilit).not.toBe("acik"); expect(marketKilidi(parcaBul(id)).gorunum).not.toBe("gizli"); }
+    expect(ad).toHaveLength(10); // 12 kilitli − 2 gizli (Kor Kalbi, Tutucu Uç; Kül Çekirdeği kilitli-görünür)
     const g = gununParcasi(20400, "devran", ad);
     expect(gununParcasi(20400, "devran", ad)).toBe(g);
     expect(gununParcasi(20400, "devran", [...ad])).toBe(g);
@@ -142,8 +143,9 @@ describe("Market kataloğu (tuning § 16, 03 US-3.1)", () => {
     expect(ay.size).toBeGreaterThan(5);
     expect(gununParcasi(1, "x", [])).toBeNull();
     expect(indirimliFiyat(500)).toBe(350);
-    expect(satisFiyati(parcaBul("top-uc"), "top-uc")).toBe(350);
-    expect(satisFiyati(parcaBul("top-uc"), "duz-uc")).toBe(500);
+    expect(satisFiyati(parcaBul("ayaz-govde"), "ayaz-govde")).toBe(8400);
+    expect(satisFiyati(parcaBul("ayaz-govde"), "duz-uc")).toBe(12000);
+    expect(satisFiyati(parcaBul("top-uc"), "top-uc")).toBe(0);
   });
 });
 

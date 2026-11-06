@@ -469,8 +469,9 @@ export class Depo {
 
   /** Cevher/külçe değiştir (CHECK eksiye düşürmez: yetersizse SQLite hatası; çağıran önce denetler). */
   cevherEkle(oyuncuId: number, kademe: number, cevher: number, kulce = 0): void {
-    this.db.prepare(`INSERT INTO cevher (oyuncu_id, kademe, cevher, kulce) VALUES (?, ?, ?, ?)
-      ON CONFLICT (oyuncu_id, kademe) DO UPDATE SET cevher = cevher + excluded.cevher, kulce = kulce + excluded.kulce`).run(oyuncuId, kademe, cevher, kulce);
+    // önce güncelle (eksi değer eklenen INSERT satırı CHECK'e takılır); satır yoksa ekle
+    const r = this.db.prepare("UPDATE cevher SET cevher = cevher + ?, kulce = kulce + ? WHERE oyuncu_id = ? AND kademe = ?").run(cevher, kulce, oyuncuId, kademe);
+    if (r.changes === 0) this.db.prepare("INSERT INTO cevher (oyuncu_id, kademe, cevher, kulce) VALUES (?, ?, ?, ?)").run(oyuncuId, kademe, cevher, kulce);
   }
 
   /** Ustalık tecrübesi (×100). */
@@ -553,7 +554,7 @@ export class Depo {
   sonKulceUretimi(oyuncuId: number, sonra: number): number {
     const satirlar = this.db.prepare("SELECT cikti FROM isleme_defteri WHERE oyuncu_id = ? AND tur = 'erit' AND zaman >= ?").all(oyuncuId, sonra) as { cikti: string }[];
     let t = 0;
-    for (const s of satirlar) t += Number((JSON.parse(s.cikti) as { kulce?: number }).kulce ?? 0);
+    for (const s of satirlar) t += Number((JSON.parse(s.cikti) as { uretilenKulce?: number }).uretilenKulce ?? 0);
     return t;
   }
 
