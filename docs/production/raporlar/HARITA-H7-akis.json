@@ -1,0 +1,128 @@
+{
+ "not": "Otomatik oynanış (oyuncu topacı paylaşılan bot ?oto=dolas). İnsan play pass değil.",
+ "hesap": "Harita qispe",
+ "hazirlik": [
+  201,
+  200,
+  201,
+  200
+ ],
+ "haritaIlk": {
+  "secili": "b1-01",
+  "konum": null,
+  "ana": "YÜRÜ"
+ },
+ "hiyerarsi": {
+  "plaka": [
+   94,
+   98,
+   310,
+   40
+  ],
+  "ana": [
+   1010,
+   486,
+   220,
+   86
+  ],
+  "secili": [
+   300,
+   371,
+   81,
+   81
+  ],
+  "karakter": [
+   279,
+   354,
+   81,
+   84
+  ]
+ },
+ "lobiZorluk": "DÜŞMAN · ZORLUK ●○○○○",
+ "sonuc": {
+  "yildiz": "1",
+  "asama": "3",
+  "metin": "★ Kazan ☆ Temiz kazan ☆ 60 sn'de kazan +50 ALTIN · +2 DEMIR DÜĞÜM: TEMİZLE 1 YENİ DÜĞÜM AÇILDI Sayılan harita maçı 1/10"
+ },
+ "donus": {
+  "b102": "1",
+  "b101": "3"
+ },
+ "kazi": {
+  "ucuslar": [
+   "+4 ◆1 İSABET | AÇILDI: İlk Kazı",
+   "+3 ◆1 | MADENCİLİK 1",
+   "+3 ◆1",
+   "ISKA +5",
+   "+3 ◆1 | MADENCİLİK 2",
+   "+3 ◆1"
+  ],
+  "kalan": "0",
+  "dinc": "6"
+ },
+ "erit": "6 KÜLÇE · 2 CÜRUF · AÇILDI: İlk Külçe",
+ "ilkParca": {
+  "metin": "DEMİR DÜZ UÇ · YAPAN: HARİTA QİSPE · NO. 0002 · 06.11.2026",
+  "sureSn": 122
+ },
+ "atolyeBicim": [
+  "K1"
+ ],
+ "market": {
+  "ucretsiz": true
+ },
+ "profil": 2,
+ "vitrin": [
+  "p29"
+ ],
+ "telefonHarita": {
+  "kayma": false,
+  "kucuk": [
+   "BUTTON 20×20",
+   "550 80×20"
+  ],
+  "genislik": 844,
+  "W": 844
+ },
+ "telefonOcak": {
+  "kayma": false,
+  "kucuk": [
+   "BUTTON 20×20",
+   "550 80×20"
+  ],
+  "genislik": 844,
+  "W": 844
+ },
+ "telefonMaden": {
+  "kayma": false,
+  "kucuk": [
+   "BUTTON 20×20",
+   "550 80×20"
+  ],
+  "genislik": 844,
+  "W": 844
+ },
+ "konsolHatalari": [],
+ "ekranlar": [
+  "docs/production/raporlar/ekran/HARITA-H7-oyna-harita-modu.png",
+  "docs/production/raporlar/ekran/HARITA-H7-harita-ilk.png",
+  "docs/production/raporlar/ekran/HARITA-H7-harita-dusman-dovus.png",
+  "docs/production/raporlar/ekran/HARITA-H7-lobi-dugum-botu.png",
+  "docs/production/raporlar/ekran/HARITA-H7-sonuc-harita-eki.png",
+  "docs/production/raporlar/ekran/HARITA-H7-harita-donus.png",
+  "docs/production/raporlar/ekran/HARITA-H7-harita-maden-kaz.png",
+  "docs/production/raporlar/ekran/HARITA-H7-maden-ilk.png",
+  "docs/production/raporlar/ekran/HARITA-H7-maden-vurus.png",
+  "docs/production/raporlar/ekran/HARITA-H7-maden-bitti.png",
+  "docs/production/raporlar/ekran/HARITA-H7-atolye-ocak-dugmesi.png",
+  "docs/production/raporlar/ekran/HARITA-H7-ocak-ilk.png",
+  "docs/production/raporlar/ekran/HARITA-H7-ocak-erit.png",
+  "docs/production/raporlar/ekran/HARITA-H7-ocak-parca-uretildi.png",
+  "docs/production/raporlar/ekran/HARITA-H7-atolye-bicim.png",
+  "docs/production/raporlar/ekran/HARITA-H7-market-ucretsiz.png",
+  "docs/production/raporlar/ekran/HARITA-H7-profil-karakter-vitrin.png",
+  "docs/production/raporlar/ekran/HARITA-H7-telefon-harita.png",
+  "docs/production/raporlar/ekran/HARITA-H7-telefon-ocak.png",
+  "docs/production/raporlar/ekran/HARITA-H7-telefon-maden.png"
+ ]
+}

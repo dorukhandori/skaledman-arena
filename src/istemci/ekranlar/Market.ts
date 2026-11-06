@@ -215,7 +215,7 @@ class MarketEkrani {
         ik.innerHTML = u.durum === "kilitli" ? KILIT_SVG(26) : parcaIkonu(u.id, u.tur, u.element, u.koken, u.katman, 44, u.durum === "gizli");
         el("span", "ad", h, u.durum === "gizli" ? "???" : u.ad);
         const rz = el("span", "", h);
-        if (u.durum === "acik") { rz.className = "rozet altin"; rz.textContent = `${u.satisFiyati} Altın`; }
+        if (u.durum === "acik") { rz.className = "rozet altin"; rz.textContent = u.satisFiyati === 0 ? "ÜCRETSİZ" : `${u.satisFiyati} Altın`; }
         else if (u.durum === "sahip") { rz.className = "rozet sende"; rz.textContent = "Sende"; }
         else if (u.durum === "gizli") { rz.className = "rozet gizli"; rz.textContent = "???"; }
         else {
@@ -299,7 +299,7 @@ class MarketEkrani {
     this.seciliUrun = u;
     for (const x of this.kok.querySelectorAll<HTMLElement>(".hucre[data-secili]")) delete x.dataset["secili"];
     h.dataset["secili"] = "1";
-    if (this.secimYazi) this.secimYazi.textContent = u.durum === "gizli" ? "???" : u.durum === "sahip" ? `${u.ad} · sende` : u.durum === "kilitli" ? `${u.ad} · kilitli` : `${u.ad} · ${u.satisFiyati}`;
+    if (this.secimYazi) this.secimYazi.textContent = u.durum === "gizli" ? "???" : u.durum === "sahip" ? `${u.ad} · sende` : u.durum === "kilitli" ? `${u.ad} · kilitli` : `${u.ad} · ${u.satisFiyati === 0 ? "ücretsiz" : u.satisFiyati}${u.craft && u.durum === "acik" && u.satisFiyati ? ` · ${u.craft.metin}` : ""}`;
     if (this.satinAlD) this.satinAlD.disabled = u.durum !== "acik";
   }
 
@@ -316,7 +316,12 @@ class MarketEkrani {
       if (u.koken && u.koken in KOKEN_RENK) ek.push(KOKEN_RENK[u.koken as keyof typeof KOKEN_RENK].ad);
       if (u.katmanAd) ek.push(u.katmanAd);
       el("p", "", p, ek.join(" · "));
-      el("p", "", p, u.durum === "sahip" ? "Sende" : `${u.satisFiyati} Altın${u.gununParcasi ? ` (günün parçası, normalde ${u.fiyat})` : ""}`);
+      el("p", "", p, u.durum === "sahip" ? "Sende" : u.satisFiyati === 0 ? "ÜCRETSİZ" : `${u.satisFiyati} Altın${u.gununParcasi ? ` (günün parçası, normalde ${u.fiyat})` : ""}`);
+      // harita 12 § 5.2: craft satırı (HAZIR → Ocak'a git)
+      if (u.craft && u.durum !== "kilitli") {
+        const c = el("p", "kosul", p, u.craft.metin);
+        c.dataset["craft"] = u.craft.hazir ? "hazir" : u.craft.ustalikEksik ? "ustalik" : "gun";
+      }
       if (u.durum === "kilitli" && u.basarim) el("p", "kosul", p, `Kilitli: ${u.basarim.ad} ${u.basarim.ilerleme}/${u.basarim.sayi}`);
       if (u.basarimlaAcildi && u.durum === "acik" && u.basarim) el("p", "kosul", p, `Market'te açıldı: ${u.basarim.ad}`);
     }

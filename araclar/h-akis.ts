@@ -108,6 +108,82 @@ async function ana(): Promise<void> {
     await goruntu(s, "harita-donus");
   }
 
+  if (ADIMLAR.has("maden")) {
+    // b1-02 MADEN: haritada yürü → KAZ → Maden ekranı → damar bitene kadar kaz
+    await git(s, "?ekran=harita", 1200);
+    await bekleKosul(s, `!!document.querySelector("[data-dugum='b1-02']")`, 15000);
+    await tikla(s, "[data-dugum='b1-02']");
+    await bekleKosul(s, `document.querySelector("[data-eylem=ana]")?.dataset.tur === "kaz"`, 10000);
+    await goruntu(s, "harita-maden-kaz");
+    await tikla(s, "[data-eylem=ana]");
+    await bekleKosul(s, `!!document.querySelector("[data-eylem=kaz]")`, 15000);
+    await bekle(800);
+    await goruntu(s, "maden-ilk");
+    const ucuslar: string[] = [];
+    for (let i = 0; i < 8; i++) {
+      const bitti = await ev<boolean>(s, `!!document.querySelector("[data-eylem=harita]")`);
+      if (bitti) break;
+      await tikla(s, "[data-eylem=kaz]");
+      await bekle(350);
+      ucuslar.push(await ev<string>(s, `[...document.querySelectorAll("[data-ucus]")].map((x) => x.dataset.ucus).join(" | ")`));
+      if (i === 1) await goruntu(s, "maden-vurus");
+      await bekle(600);
+    }
+    kayit["kazi"] = { ucuslar, kalan: await ev(s, `document.querySelector("[data-kalan]")?.dataset.kalan`), dinc: await ev(s, `document.querySelector("[data-dinc]")?.dataset.dinc`) };
+    log("kazı:", kayit["kazi"]);
+    await goruntu(s, "maden-bitti");
+  }
+
+  if (ADIMLAR.has("ocak")) {
+    // hazırlık (yalnız geliştirme ucu): parça üretimi için yeterli Demir cevheri (kazı zarına bağlı kalmasın)
+    await api(s, "POST", "/api/gelistirme/cevher", { kademe: 1, cevher: 16, kulce: 0 });
+    await git(s, "?ekran=atolye", 1500);
+    await bekleKosul(s, `!!document.querySelector("[data-eylem=ocak]")`, 15000);
+    await goruntu(s, "atolye-ocak-dugmesi");
+    await tikla(s, "[data-eylem=ocak]");
+    await bekleKosul(s, `!!document.querySelector("[data-kademe='1']")`, 15000);
+    await bekle(300);
+    await goruntu(s, "ocak-ilk");
+    await tikla(s, "[data-eylem=ana]"); // ERİT (en çok parti)
+    await bekleKosul(s, `!!document.querySelector("[data-sonuc]")`, 15000);
+    kayit["erit"] = await ev(s, `document.querySelector("[data-sonuc]").textContent`);
+    await goruntu(s, "ocak-erit");
+    const kulce = await ev<number>(s, `window.__ocak.durum.kulce[0]`);
+    if (kulce < 3) { await api(s, "POST", "/api/gelistirme/cevher", { kademe: 1, cevher: 0, kulce: 3 - kulce }); await git(s, "?ekran=ocak", 1200); }
+    await bekleKosul(s, `!!document.querySelector("[data-parca='duz-uc']")`, 15000);
+    await tikla(s, "[data-parca='duz-uc']");
+    await bekle(200);
+    await tikla(s, "[data-eylem=ana]"); // ÜRET
+    await bekleKosul(s, `!!document.querySelector("[data-eylem=atolye]")`, 15000);
+    kayit["ilkParca"] = { metin: await ev(s, `document.querySelector("[data-sonuc]").textContent`), sureSn: Math.round((Date.now() - T0) / 1000) };
+    log("ilk parça:", kayit["ilkParca"]);
+    await goruntu(s, "ocak-parca-uretildi");
+    await tikla(s, "[data-eylem=atolye]");
+    await bekleKosul(s, `!!document.querySelector("[data-eylem=oyna]")`, 15000);
+    await bekle(800);
+    // Uç sekmesi: üretilmiş biçim rozeti
+    await ev(s, `(() => { const b = [...document.querySelectorAll("button")].find((x) => /^Uç/i.test(x.textContent.trim())); b?.click(); return 1; })()`);
+    await bekle(500);
+    kayit["atolyeBicim"] = await ev(s, `[...document.querySelectorAll("[data-malzeme]")].map((x) => x.textContent)`);
+    await goruntu(s, "atolye-bicim");
+    await git(s, "?ekran=market", 1500);
+    kayit["market"] = await ev(s, `({ ucretsiz: document.body.innerText.includes("ÜCRETSİZ") })`);
+    await goruntu(s, "market-ucretsiz");
+  }
+
+  if (ADIMLAR.has("profil")) {
+    await git(s, "?ekran=profil", 1500);
+    await bekleKosul(s, `!!document.querySelector("[data-karakter='2']")`, 15000);
+    await tikla(s, "[data-karakter='2']");
+    await bekleKosul(s, `!!document.querySelector("[data-vitrin='0']")`, 10000).catch(() => 0);
+    await ev(s, `(() => { const v = document.querySelector("[data-vitrin='0']"); if (v && v.options.length > 1) { v.selectedIndex = 1; v.dispatchEvent(new Event("change")); } return 1; })()`);
+    await goruntu(s, "profil-karakter-vitrin");
+    await tikla(s, "[data-eylem=profil-kaydet]");
+    await bekle(1500);
+    kayit["profil"] = (await api(s, "GET", "/api/ben")).veri.karakter;
+    kayit["vitrin"] = (await api(s, "GET", "/api/ocak")).veri.vitrin;
+  }
+
   if (ADIMLAR.has("telefon")) {
     const m = await baglam(t, true);
     await git(m, "?ekran=ayarlar");
@@ -116,6 +192,19 @@ async function ana(): Promise<void> {
     await bekleKosul(m, `!!document.querySelector("[data-dugum='b1-01']")`, 15000);
     kayit["telefonHarita"] = await olc(m);
     await goruntu(m, "telefon-harita");
+    if (ADIMLAR.has("ocak")) {
+      await git(m, "?ekran=ocak", 1500);
+      await bekleKosul(m, `!!document.querySelector("[data-kademe='1']")`, 15000);
+      kayit["telefonOcak"] = await olc(m);
+      await goruntu(m, "telefon-ocak");
+    }
+    if (ADIMLAR.has("maden")) {
+      // telefon kazısı: b1-05 açık değilse damar bitti ekranı ölçülür (yine Maden ekranı)
+      await git(m, "?ekran=maden&dugum=b1-02", 1500);
+      await bekleKosul(m, `!!document.querySelector("[data-eylem=kaz], [data-eylem=harita]")`, 15000);
+      kayit["telefonMaden"] = await olc(m);
+      await goruntu(m, "telefon-maden");
+    }
   }
 
   kayit["konsolHatalari"] = hatalar;

@@ -1,5 +1,6 @@
 import { type OdaGorunumu } from "../../ag/durum.ts";
 import { dugumBul } from "../../paylasilan/kurallar/harita.ts";
+import { MADENLER } from "../../paylasilan/veri/harita.ts";
 import { MESAJ, ODA_FAZI, odaKoduBicimle, odaKoduCoz } from "../../ag/protokol.ts";
 import { takimKoduYaz, takimProfilleriKimlikten } from "../../paylasilan/veri/takimlar.ts";
 import { type Girisli, type TakimGorunumu, SON_TAKIM, git, oku, sakla } from "../hesap.ts";
@@ -168,6 +169,19 @@ function uyeler(t: TakimGorunumu): { element: string; odunc: boolean; seviye: nu
 
 export function baslat(b: EkranBaglami): void {
   new LobiEkrani(b);
+}
+
+/** Kozmetik malzeme rozetleri (12 § 3, 07 § 5b): 4 küçük kare [Çekirdek, Gövde, Disk, Uç], Market biçimi boş. */
+function malzemeRozetleri(ust: HTMLElement, kod: string): void {
+  if (!/[1-8]/.test(kod)) return;
+  const s = el("span", "mz", ust);
+  s.dataset["malzeme"] = kod;
+  s.style.cssText = "display:flex;gap:2px;margin-top:2px";
+  s.title = `Malzeme: ${[...kod].map((c) => (c === "0" ? "Market" : `K${c}`)).join(" · ")}`;
+  for (const c of kod) {
+    const q = el("i", "", s);
+    q.style.cssText = `display:inline-block;width:6px;height:6px;box-shadow:inset 0 0 0 1px #0b1418;background:${c === "0" ? "transparent" : MADENLER.find((m) => m.kademe === Number(c))?.renk.ana ?? "#888"}`;
+  }
 }
 
 /** Harita düğümünün lobi bilgisi (ad + zorluk; harita.json). */
@@ -737,7 +751,8 @@ class LobiEkrani {
       se.dataset["senTakim"] = t.id;
       se.innerHTML = "";
       se.style.display = "flex"; se.style.flexDirection = "column"; se.style.gap = "calc(6 * var(--p))";
-      uyeler(t).forEach((x, i) => { const k = el("div", `kutu${i === 0 ? " ilk" : ""}`, se); elRozet(k, x.element, `x2${x.odunc ? " odunc" : ""}`); });
+      const mz = ag.oyuncu(ag.yerel)?.malzeme ?? "";
+      uyeler(t).forEach((x, i) => { const k = el("div", `kutu${i === 0 ? " ilk" : ""}`, se); elRozet(k, x.element, `x2${x.odunc ? " odunc" : ""}`); malzemeRozetleri(k, mz.slice(i * 4, i * 4 + 4)); });
     }
     const sayac = this.kart.querySelector<HTMLElement>("[data-secim-sayac]");
     if (sayac && s.secimKalan !== this.sonSayac) {
@@ -759,7 +774,7 @@ class LobiEkrani {
         const rr = el("span", "rol rakip", r); el("i", "k-isaret rakip", rr); rr.append(" Rakip");
         el("b", "", r, rk.ad).style.cssText = "font-weight:400;color:var(--ink)";
         const p = takimProfilleriKimlikten(rk.takimId);
-        for (const x of p) { const k = el("div", "kutu", r); elRozet(k, x.element, "x2"); }
+        p.forEach((x, i) => { const k = el("div", "kutu", r); elRozet(k, x.element, "x2"); malzemeRozetleri(k, (rk.malzeme ?? "").slice(i * 4, i * 4 + 4)); });
         if (rk.hazir) el("span", "durum", r, "Hazır");
         r.setAttribute("aria-label", `Rakip: ${rk.ad}${rk.hazir ? " · hazır" : ""}`);
       }

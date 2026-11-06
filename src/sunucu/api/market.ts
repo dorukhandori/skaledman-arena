@@ -25,6 +25,7 @@ const ILK_DEVIR = "ilk-devir";
 const SatinSema = z.object({ parca: z.string().min(1).max(40) });
 const YenileSema = z.object({ cekirdekId: z.number().int().positive() });
 const AltinVerSema = z.object({ miktar: z.number().int().min(-100000).max(100000) });
+const CevherVerSema = z.object({ kademe: z.number().int().min(1).max(8), cevher: z.number().int().min(0).max(500), kulce: z.number().int().min(0).max(500) });
 const BasarimVerSema = z.object({ basarim: z.string().max(40), ilerleme: z.number().int().min(0).max(1000) });
 
 /** Günün parçası tohumu (sunucu; gün başına sabit). */
@@ -235,6 +236,16 @@ export function marketRotalariKur(app: Uygulama): void {
     g.d.altinYaz(g.id, g.b.miktar, "gelistirme", `gelistirme:${randomUUID()}`, Date.now());
     console.log(`[gelistirme] altın: oyuncu ${g.id} ${g.b.miktar}`);
     yaz(r, 200, { ok: true, bakiye: g.d.bakiye(g.id) });
+  });
+
+  /** Harita akışı (yalnız geliştirme, yerel): cevher/külçe ver (`h:akis` hazırlığı; üretimde yok). */
+  app.post("/api/gelistirme/cevher", async (q, r) => {
+    if (!gelistirmeIzinli(q.socket.remoteAddress)) { yaz(r, 404, { hata: "yok" }); return; }
+    const g = await yazimGirisi(q, r, CevherVerSema);
+    if (!g) return;
+    g.d.cevherEkle(g.id, g.b.kademe, g.b.cevher, g.b.kulce);
+    console.log(`[gelistirme] cevher: oyuncu ${g.id} K${g.b.kademe} +${g.b.cevher}/${g.b.kulce}`);
+    yaz(r, 200, { ok: true, ...g.d.cevherler(g.id) });
   });
 
   /** Sayaç doldurma (yalnız geliştirme): ilerlemeyi yazar; tamamlanırsa ödül normal yoldan (defter). */

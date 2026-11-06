@@ -40,7 +40,7 @@ export interface AtolyeCekirdegi {
   id: number; tanimId: string; ad: string; element: string; koken: string; ruh: string; seviye: number; tecrube: number;
   alt: number; ust: number; omur: number | null; yon: "sag" | "sol"; ciftYon: boolean; devreDisi: boolean; defter: DefterGorunumu;
 }
-export interface AtolyeParcasi { id: number; tanimId: string; tur: "govde" | "disk" | "uc" | "cekirdek" }
+export interface AtolyeParcasi { id: number; tanimId: string; tur: "govde" | "disk" | "uc" | "cekirdek"; malzeme?: number | null; seri?: number | null; yapimciAd?: string | null; usta?: boolean }
 export interface AtolyeTakimi {
   takimNo: number; ad: string; yuvalar: TaslakTopac[]; degerlendirme: TakimDegerlendirmesi; oynanabilir: boolean;
   uyeler: (TakimUyeKodu | null)[]; cubuklar: (CubukOzeti | null)[];
@@ -66,6 +66,8 @@ export interface MarketUrunu {
   element?: string | null; koken?: string | null; tipEgilimi?: string; katman?: string; katmanAd?: string; fiyat?: number; satisFiyati?: number;
   gununParcasi?: boolean; etiket: string; okunan: string; basarim?: { id: string; ad: string; ilerleme: number; sayi: number } | null;
   basarimlaAcildi?: boolean; sahip?: number; aciklama?: string;
+  /** harita 12 § 5.2: dürüst craft satırı */
+  craft?: { kademe: number | null; kulce: number; iscilik: number; gun: number | null; tahmini: boolean; hazir: boolean; ustalikEksik: number | null; metin: string };
 }
 export interface MarketRafi { tur: "cekirdek" | "govde" | "disk" | "uc"; ad: string; tezgah: string; tezgahNotu: string; urunler: MarketUrunu[] }
 export interface YenilemeSatiri { cekirdekId: number; tanimId: string; ad: string; omur: number; tavan: number; fiyat: number; tamFiyat: number; asinmisIndirimi: boolean; yenilenebilir: boolean }

@@ -1,6 +1,6 @@
 import { ELEMENT_CARKI, type ElementAdi } from "../../paylasilan/kurallar/ayar.ts";
 import type { EkranBaglami } from "../main.ts";
-import { BakimHatasi, HESAP_HATA, apiIstek, apiPost, git } from "../hesap.ts";
+import { BakimHatasi, HESAP_HATA, apiGet, apiIstek, apiPost, git } from "../hesap.ts";
 import { ELEMENT_RENK } from "../oyun/renkler.ts";
 import { anaEylem, bakimKatmani, el } from "./arayuz.ts";
 import { kimlikKok } from "./Kimlik.ts";
@@ -158,6 +158,44 @@ export function baslat(b: EkranBaglami): void {
   kanal.placeholder = "Kick kanal adı";
   kanal.value = ben.oyuncu.destekKanali ?? "";
   el("div", "ipucu", kk, "Yayıncının kanalı. Yalnız profilde görünür.");
+  // Harita (13 § 2, 12 § 3, 04 § 6): KARAKTER (4 gövde), çerçeve (Ocak/başarım görünümü), vitrin (3 üretilmiş parça), Ustalık rozetleri
+  let karakter = ben.karakter ?? 0;
+  let cerceve: string | null = ben.cerceve ?? null;
+  let vitrin: string[] | null = null;
+  if (duzenle && ben.harita?.acik) {
+    el("label", "", kart, "Karakter");
+    radyoGrubu(kart, "Karakter", ["0", "1", "2", "3"] as const, (v, d) => {
+      const n = Number(v);
+      d.innerHTML = `<svg width="22" height="30" viewBox="-11 -26 22 30" aria-hidden="true"><rect x="${n === 2 ? -4 : -3}" y="-24" width="${n === 2 ? 8 : 6}" height="6" fill="#e9c9a0"/><rect x="${n === 1 ? -6 : -5}" y="-18" width="${n === 1 ? 12 : 10}" height="${n === 3 ? 10 : 9}" fill="currentColor"/><rect x="-4" y="-9" width="3" height="9" fill="#2a2f3a"/><rect x="1" y="-9" width="3" height="9" fill="#2a2f3a"/></svg>`;
+      d.style.color = renk;
+      d.dataset["karakter"] = v;
+      d.setAttribute("aria-label", `Karakter gövdesi ${n + 1}`);
+    }, (v) => { karakter = Number(v); }, String(Math.max(0, Math.min(3, karakter))) as "0" | "1" | "2" | "3");
+    if (ben.ustalik) el("div", "ipucu", kart, `⛏ MADENCİLİK ${ben.ustalik.madencilik} · ⚒ İŞLEME ${ben.ustalik.isleme}`).dataset["ustalik"] = "1";
+    const ek = el("div", "", kart);
+    void apiGet<{ gorunumler: { id: string; usta: boolean }[]; uretilenler: { anahtar: string; ad: string; deger: number }[]; vitrin: string[] }>("/api/ocak").then((o) => {
+      const cer = o.gorunumler.filter((x) => x.id.startsWith("cerceve-"));
+      el("label", "", ek, "Çerçeve");
+      const sc = el("select", "k-alan", ek);
+      sc.dataset["cerceve"] = "1";
+      for (const [v, ad] of [["", "Yok"], ...cer.map((x) => [x.id, `${x.id.replace("cerceve-", "").toUpperCase()}${x.usta ? " ✦" : ""}`])] as [string, string][]) {
+        const op = el("option", "", sc, ad); op.value = v; if (v === (cerceve ?? "")) op.selected = true;
+      }
+      sc.addEventListener("change", () => { cerceve = sc.value || null; });
+      el("label", "", ek, "Vitrin");
+      vitrin = [...o.vitrin];
+      const ur = [...o.uretilenler].sort((a, b) => b.deger - a.deger);
+      for (let i = 0; i < 3; i++) {
+        const sv = el("select", "k-alan", ek);
+        sv.dataset["vitrin"] = String(i);
+        for (const [v, ad] of [["", "Boş yuva"], ...ur.map((x) => [x.anahtar, `${x.ad} · ${x.deger}`])] as [string, string][]) {
+          const op = el("option", "", sv, ad); op.value = v; if (v === (o.vitrin[i] ?? "")) op.selected = true;
+        }
+        sv.addEventListener("change", () => { vitrin![i] = sv.value; });
+      }
+      if (!ur.length) el("div", "ipucu", ek, "Ocak'ta parça üretince vitrine koyabilirsin.");
+    }).catch(() => { /* Ocak kapalı: yalnız karakter */ });
+  }
   kart.appendChild(on);
   guncelle();
   const h = el("div", "hata", kart);
@@ -172,6 +210,10 @@ export function baslat(b: EkranBaglami): void {
     d.disabled = true;
     try {
       const r = await apiPost("/api/profil", { arma, renk, destekKanali: k });
+      if (r.durum === 200 && duzenle && ben.harita?.acik) {
+        await apiIstek("PATCH", "/api/profil", { karakter, cerceve });
+        if (vitrin) await apiIstek("PATCH", "/api/vitrin", { parcalar: vitrin.filter((x) => x) });
+      }
       if (r.durum === 200) { git(ben.cekirdekler.length ? "atolye" : "ilk-cekirdek"); return; }
       h.textContent = HESAP_HATA[r.veri.hata ?? "bicim"] ?? HESAP_HATA["bicim"]!;
     } catch (e) {

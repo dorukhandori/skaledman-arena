@@ -465,6 +465,12 @@ class AtolyeEkrani {
     const bs = el("button", "k-dugme", serit, "Başarımlar");
     bs.dataset["eylem"] = "basarimlar";
     bs.addEventListener("click", () => git("basarimlar"));
+    // harita 03 § 1: OCAK yalnız İlk Kazı sonrası
+    if (this.b.ben?.girisli && this.b.ben.ocakAcik) {
+      const oc = el("button", "k-dugme", serit, "Ocak");
+      oc.dataset["eylem"] = "ocak";
+      oc.addEventListener("click", () => git("ocak"));
+    }
     this.dene = el("button", "k-dugme", serit, "Dene · 30 sn");
     this.dene.dataset["eylem"] = "dene";
     this.dene.title = "30 sn Antrenman: sonuç sayılmaz, Altın ve tecrübe yok.";
@@ -663,6 +669,16 @@ class AtolyeEkrani {
       et.title = g.etiket;
       d.title = `${g.ad} · ${g.etiket}`;
       if (o.takili) { const tk = el("span", "tk k-rozet tamam", d, String(o.takili)); tk.title = `${o.takili}. topaçta takılı`; }
+      // biçim yığını: üretilmiş biçimin kademe rozeti (renk + rakam) ve kopya sayısı
+      const bicimler = this.v.parcalar.filter((x) => x.tanimId === o.parca.id);
+      const takiliId = this.taslak[this.secili]?.[this.sekme] ?? null;
+      const gosterilen = bicimler.find((x) => x.id === takiliId) ?? bicimler[0];
+      if (gosterilen?.malzeme) {
+        const mz = el("span", "k-rozet malzeme", d, `K${gosterilen.malzeme}${gosterilen.usta ? "✦" : ""}`);
+        mz.dataset["malzeme"] = String(gosterilen.malzeme);
+        mz.title = `${gosterilen.yapimciAd ? `Yapan: ${gosterilen.yapimciAd} · ` : ""}No. ${gosterilen.seri ?? ""}`;
+      }
+      if (bicimler.length > 1) el("span", "k-rozet adet", d, `×${bicimler.length}`).dataset["bicim"] = String(bicimler.length);
       const takilabilir = g.durum === "sahip";
       d.setAttribute("aria-label", `${g.okunan} ${TIP_AD[o.parca.tipEgilimi]}.${elm && g.durum !== "gizli" ? ` ${ELEMENT_RENK[elm].ad}.` : ""}${o.takili ? ` ${o.takili}. topaçta takılı.` : ""}${takilabilir ? ` Enter: ${this.secili + 1}. topaca tak.` : ""}`);
       if (!takilabilir) d.setAttribute("aria-disabled", "true");
@@ -725,7 +741,9 @@ class AtolyeEkrani {
     const sonuc: { parca: Parca; sahipIdler: number[]; takili: number }[] = [];
     for (const p of PARCALAR.parcalar) {
       if (p.tur !== this.sekme) continue;
-      const sahipIdler = p.tur === "cekirdek" ? this.v.cekirdekler.filter((c) => c.tanimId === p.id).map((c) => c.id) : this.v.parcalar.filter((x) => x.tanimId === p.id).map((x) => x.id);
+      // biçimler: en kıymetli malzeme önce, Market biçimi sonda (12 § 4)
+      const sahipIdler = p.tur === "cekirdek" ? this.v.cekirdekler.filter((c) => c.tanimId === p.id).map((c) => c.id)
+        : this.v.parcalar.filter((x) => x.tanimId === p.id).sort((a, b) => (b.malzeme ?? 0) - (a.malzeme ?? 0)).map((x) => x.id);
       const durum = parcaGorunumu(p, sahipIdler.length, this.v.basarimIlerleme, this.tamamSet).durum;
       if (f.sahiplik === "sahip" && durum !== "sahip") continue;
       if (f.sahiplik === "kilitli" && durum !== "kilitli" && durum !== "gizli") continue;
@@ -743,8 +761,13 @@ class AtolyeEkrani {
   tak(p: Parca, idler: number[]): void {
     const tur = p.tur as YuvaTuru;
     const kullanilan = new Set(this.taslak.map((y) => y[tur]).filter((x): x is number => x !== null));
-    if (this.taslak[this.secili]![tur] !== null && idler.includes(this.taslak[this.secili]![tur]!)) { this.uyari = ""; this.ciz(); return; }
-    const id = idler.find((x) => !kullanilan.has(x)) ?? idler[0];
+    const simdiki = this.taslak[this.secili]![tur];
+    let id: number | undefined;
+    if (simdiki !== null && idler.includes(simdiki)) {
+      // harita 12 § 4: aynı tanımın birden çok biçimi → tekrar dokunuş sıradaki biçimi takar (DEMİR · KOR ✦ · MARKET)
+      if (idler.length < 2) { this.uyari = ""; this.ciz(); return; }
+      id = idler[(idler.indexOf(simdiki) + 1) % idler.length];
+    } else id = idler.find((x) => !kullanilan.has(x)) ?? idler[0];
     if (id === undefined) return;
     const once = this.cubuklar;
     const r = parcaTak(this.taslak, this.secili, tur, id, (x) => this.cekirdekOrnek(x)?.tanimId);

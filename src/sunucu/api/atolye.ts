@@ -73,7 +73,7 @@ export function atolyeGorunumu(d: Depo, oyuncuId: number) {
     oyuncu: { id: o.id, ad: o.ad, arma: o.arma, renk: o.renk, destekKanali: o.destek_kanali, adKalanGun: kalanGun },
     aktifTakim: o.aktif_takim,
     cekirdekler: cekirdekGorunumleri(d, oyuncuId),
-    parcalar: d.parcalar(oyuncuId).map((p) => ({ id: p.id, tanimId: p.tanim_id, tur: parcaBul(p.tanim_id).tur })),
+    parcalar: d.parcalar(oyuncuId).map((p) => ({ id: p.id, tanimId: p.tanim_id, tur: parcaBul(p.tanim_id).tur, malzeme: p.malzeme ?? null, seri: p.seri ?? null, yapimciAd: p.yapimci_ad ?? null, usta: p.usta === 1 })),
     takimlar,
     basarimIlerleme: ilerleme,
     /** D7: tamamlanan başarımlar (kilitli parça "Market'te"ye döner), bakiye, Yapay yenileme fiyatı */
