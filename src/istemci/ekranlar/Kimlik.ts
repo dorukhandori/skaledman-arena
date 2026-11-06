@@ -95,7 +95,7 @@ function girisSonrasi(ben: Ben): void {
 export function karsilama(b: EkranBaglami): void {
   if (b.ben?.girisli) { girisSonrasi(b.ben); return; }
   const { kart } = kimlikKok(b.ustYazi, "Karşılama", { logo: true, tanitim: false });
-  kart.classList.add("dar");
+  kart.classList.add("dar", "kars");
   kart.style.textAlign = "center";
   el("h2", "k-plaka", kart, "Hoş geldin");
   const p = el("div", "", kart);
@@ -122,15 +122,17 @@ export function karsilama(b: EkranBaglami): void {
 
 function alan(kart: HTMLElement, etiket: string, tur: "text" | "password", ad: string, ipucu = ""): { girdi: HTMLInputElement; hata: HTMLElement } {
   const id = `a-${ad}`;
-  const l = el("label", "", kart, etiket);
+  // MOBIL-2: etiket + alan + ipucu + hata tek sarmalayıcıda (telefonda iki sütunlu form; masaüstünde görsel fark yok)
+  const sar = el("div", "alan", kart);
+  const l = el("label", "", sar, etiket);
   l.htmlFor = id;
-  const girdi = el("input", "", kart);
+  const girdi = el("input", "", sar);
   girdi.type = tur;
   girdi.id = id;
   girdi.name = ad;
   girdi.autocomplete = tur === "password" ? (ad === "sifre" && etiket.startsWith("Şifre") ? "new-password" : "current-password") : "username";
-  if (ipucu) { const i = el("div", "ipucu", kart, ipucu); i.id = `${id}-ip`; girdi.setAttribute("aria-describedby", i.id); }
-  const hata = el("div", "hata", kart);
+  if (ipucu) { const i = el("div", "ipucu", sar, ipucu); i.id = `${id}-ip`; girdi.setAttribute("aria-describedby", i.id); }
+  const hata = el("div", "hata", sar);
   hata.setAttribute("role", "alert");
   hata.style.minHeight = "0";
   return { girdi, hata };

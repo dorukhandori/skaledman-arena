@@ -1,0 +1,216 @@
+/* MOBIL-2 · telefon (yatay) menü düzeni. Yalnız html[data-telefon] (dokunmatik ve o = 1; arayuz.ts olcekUygula kurar) altında
+   etkin: masaüstü düzeni aynen. Mantıksal alan = görünüm (667–932 × 375–430 CSS px), yazı yo = 1,5 (cihaz pikseline yuvarlı).
+   Kural: 640×360 masaüstü ızgarası 1,5× yazıyı taşıyamadığı yerde sütun sayısı azalır, panel sekmeye/şeride dönüşür ya da
+   kendi içinde kayar; hedefler ≥ 44 px. Ekran düzeltmeleri ilgili ekranın bölümünde. */
+
+/* ================= Atölye ================= */
+/* alt şerit akışa girer (mutlak konumlu şerit içeriği örtüyordu); iç çerçeve payı küçülür */
+html[data-telefon] .at .k-govde { padding: calc(4 * var(--p)) calc(4 * var(--p)) calc(4 * var(--p)); }
+html[data-telefon] .at .kart.at-kart { padding: calc(3 * var(--p)); }
+html[data-telefon] .at .alt-serit { position: relative; left: auto; right: auto; bottom: auto; flex: none; margin-top: calc(4 * var(--p)); gap: calc(5 * var(--p)); align-items: center; }
+html[data-telefon] .at .alt-serit .k-dugme:not(.ana) { min-width: 0; min-height: 44px; padding-inline: calc(6 * var(--p)); }
+html[data-telefon] .at .alt-serit .k-dugme.ana { min-height: 48px; }
+/* üç sütun: takım şeridi · büyük 3B inceleme görünümü · sağ panel (parça sekmeleri + "Değer" sekmesi). Değerler ayrı sütun
+   değil, sağ panelin sekmesi: ekran tek odaklı (3B topaç), kalabalık yok. */
+html[data-telefon] .at .uc3 {
+  position: relative;
+  grid-template-columns: calc(98 * var(--p)) minmax(0, 1fr) minmax(0, 54%);
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-areas: "tkm orta env";
+  gap: calc(4 * var(--p)); padding: calc(3 * var(--p));
+}
+html[data-telefon] .at .uc3 > .sag { grid-area: tkm; }
+html[data-telefon] .at .uc3 > .sol { grid-area: env; }
+html[data-telefon] .at .uc3 > .orta-kutu { grid-area: orta; }
+/* değerler sağ panelde, sekme çubuğunun altında; parça modunda gizli, değer modunda parça ızgarası gizli */
+html[data-telefon] .at .uc3 > .cubuk-sutun { grid-area: env; z-index: 2; margin-top: calc(53 * var(--p)); padding: 0 calc(5 * var(--p)) calc(4 * var(--p)); display: none; }
+html[data-telefon] .at .uc3[data-gorunum=deger] > .cubuk-sutun { display: block; }
+html[data-telefon] .at .uc3[data-gorunum=deger] > .sol .filtre-satir,
+html[data-telefon] .at .uc3[data-gorunum=deger] > .sol .filtre,
+html[data-telefon] .at .uc3[data-gorunum=deger] > .sol .liste { display: none; }
+html[data-telefon] .at .sekmeler .sk-deger { color: var(--gold); }
+
+/* -- sol: envanter (sekme çubuğu + filtre sabit, ızgara kayar) -- */
+html[data-telefon] .at .uc3 > .sol { display: flex; flex-direction: column; overflow: hidden; padding: calc(3 * var(--p)); }
+html[data-telefon] .at .sekmeler { flex: none; gap: var(--p); margin-bottom: calc(3 * var(--p)); }
+html[data-telefon] .at .sekmeler button { flex: 1 1 0; min-width: 44px; min-height: 44px; justify-content: center; padding: 0 var(--p); }
+html[data-telefon] .at .sekmeler button[aria-selected=true] { flex: 3 1 0; min-width: 0; }
+html[data-telefon] .at .sekmeler button:not([aria-selected=true]) > span:last-child { display: none; }
+html[data-telefon] .at .sekmeler button > span:last-child { white-space: nowrap; font-size: var(--y-16); line-height: .6; }
+html[data-telefon] .at .filtre-satir { flex: none; margin-bottom: calc(3 * var(--p)); }
+html[data-telefon] .at .filtre-satir .ipucu { display: none; }
+html[data-telefon] .at .filtre { flex: 1 1 0; min-height: 0; overflow-y: auto; grid-template-columns: 1fr; align-content: start; }
+html[data-telefon] .at .filtre:not([hidden]) ~ .liste { display: none; }
+html[data-telefon] .at .liste { flex: 1 1 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; grid-template-columns: repeat(auto-fill, minmax(calc(76 * var(--p)), 1fr)); gap: calc(3 * var(--p)); scrollbar-width: thin; scrollbar-color: var(--bronz-1) var(--panel-0); padding-bottom: calc(2 * var(--p)); }
+html[data-telefon] .at .pc { min-height: calc(58 * var(--p)); padding-inline: 0; }
+html[data-telefon] .at .pc .ad { overflow-wrap: anywhere; line-height: .6; }
+html[data-telefon] .at .pc .et { top: calc(18 * var(--p)); }
+html[data-telefon] .at .pc.yer:not(.ipucu-hucre) { display: none; }
+
+/* -- orta: 3B inceleme görünümü (etiketler çizginin altında: üstte kırpılmaz; araçlar sağ kenarda dar kolon) -- */
+html[data-telefon] .at .g3-etiket { transform: none; justify-content: flex-start; padding-top: 2px; }
+html[data-telefon] .at .g3-arac { right: calc(2 * var(--p)); bottom: calc(2 * var(--p)); flex-direction: column; align-items: flex-end; gap: calc(3 * var(--p)); }
+html[data-telefon] .at .g3-arac .k-dugme { padding-inline: calc(4 * var(--p)); }
+html[data-telefon] .at .at-baslik { min-height: calc(22 * var(--p)); font: 400 var(--y-16)/.75 var(--font-etiket); letter-spacing: 0; }
+html[data-telefon] .at .at-baslik span:last-child { overflow-wrap: normal; min-width: 0; }
+/* -- değerler sekmesi: çubuklar iki sütun (geniş panelde), notlar tam satır -- */
+html[data-telefon] .at .cubuk-sutun [data-cubuklar] { display: grid; grid-template-columns: repeat(auto-fill, minmax(calc(136 * var(--p)), 1fr)); gap: 0 calc(10 * var(--p)); }
+html[data-telefon] .at .cubuk { margin-bottom: calc(4 * var(--p)); }
+html[data-telefon] .at .cubuk .bar { height: calc(6 * var(--p)); }
+html[data-telefon] .at .cubuk .say { font-size: var(--y-20); }
+html[data-telefon] .at .tip { margin: calc(2 * var(--p)) 0; }
+html[data-telefon] .at .uyari, html[data-telefon] .at .bilgi { margin: 0 0 calc(2 * var(--p)); }
+
+/* -- takım şeridi: yuva kartları yalnız simge + sıra no; menü açılırında kapak -- */
+html[data-telefon] .at .uc3 > .sag { display: flex; flex-direction: column; overflow-y: auto; padding: calc(2 * var(--p)); }
+html[data-telefon] .at .takim-bas { flex: none; margin-bottom: calc(3 * var(--p)); gap: 0; }
+html[data-telefon] .at .takim-bas h3 { display: none; }
+html[data-telefon] .at .takim-bas .takim-adi { width: 100%; min-height: 44px; padding-inline: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html[data-telefon] .at .tkm { gap: calc(3 * var(--p)); }
+html[data-telefon] .at .tkart { grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "ik b" "ok ok"; align-items: center; padding: calc(3 * var(--p)); gap: calc(2 * var(--p)); min-height: 48px; }
+html[data-telefon] .at .tkart .yazi { grid-area: b; }
+html[data-telefon] .at .tkart .yazi .tad, html[data-telefon] .at .tkart .yazi .k-el, html[data-telefon] .at .tkart .yazi small, html[data-telefon] .at .tkart .yazi .rozetY, html[data-telefon] .at .tkart .mini { display: none; }
+html[data-telefon] .at .tkart .yazi .yenileB { display: none; }
+html[data-telefon] .at .tkart b { font-size: var(--y-20); font-family: var(--font-baslik); }
+html[data-telefon] .at .tkart:not([aria-selected=true]) .ok { display: none; }
+html[data-telefon] .at .tkart .ok { justify-content: center; gap: calc(2 * var(--p)); }
+html[data-telefon] .at .tkart .ok button { width: 44px; height: 44px; min-width: 44px; font-size: 18px; }
+html[data-telefon] .at .cark-ozet { display: none; }
+html[data-telefon] .at .takim-menu:not([hidden]) {
+  position: fixed; z-index: 30; left: calc(var(--p) * 106 + env(safe-area-inset-left, 0px)); top: calc(30 * var(--p)); width: min(calc(300 * var(--p)), calc(100vw - 130px)); max-height: calc(100vh - 80px); max-height: calc(100dvh - 80px);
+  overflow-y: auto; margin: 0; padding: calc(6 * var(--p)); background: var(--panel); box-shadow: 0 0 0 var(--p) var(--golge), inset 0 0 0 var(--p) var(--bronz), 0 calc(3 * var(--p)) 0 0 var(--golge);
+}
+html[data-telefon] .at .takim-menu .adsatir { flex-direction: row; flex-wrap: wrap; align-items: center; }
+html[data-telefon] .at .takim-menu .adsatir input { flex: 1 1 calc(120 * var(--p)); min-width: 0; }
+html[data-telefon] .at .takim-menu .adsatir button { flex: none; }
+html[data-telefon] .at .takim-menu button { min-height: 44px; }
+
+/* -- Pergel: alt şeridin içinde (OYNA'nın solunda 44 px rozet); balon şeridin üstünde, 3B + değer sütunlarının altına açılır
+   (parça ızgarasını, takım şeridini ve alt şeridi örtmez) -- */
+html[data-telefon] .at .alt-serit .pergel { position: static; order: 8; margin-left: auto; max-width: none; padding: 0; background: none; box-shadow: none; display: block; }
+html[data-telefon] .at .alt-serit .oyna { order: 9; margin-left: 0; }
+html[data-telefon] .at .pergel .p-rozet { width: 48px; height: 48px; }
+html[data-telefon] .at .pergel .p-rozet img { width: 44px; height: 44px; }
+html[data-telefon] .at .pergel .p-balon { position: absolute; right: 0; bottom: calc(100% + 4px); width: min(calc(330 * var(--p)), calc(100% - 4px)); z-index: 25; padding: calc(4 * var(--p)) calc(6 * var(--p)); }
+html[data-telefon] .at .pergel .p-balon::before, html[data-telefon] .at .pergel .p-balon::after { display: none; }
+html[data-telefon] .at .pergel:not(.acik) .p-balon { display: none; }
+html[data-telefon] .at .pergel .p-dugmeler .k-dugme { min-height: 44px; }
+
+/* ================= ortak ================= */
+/* lento içindeki açılır menü maddeleri (lento düğmeleri 26 px şeritte küçük kalır; menü maddeleri tam hedef) */
+html[data-dokunmatik] .k-lento .k-menu-liste .k-dugme { min-height: 44px; }
+
+/* ================= Karşılama · Kayıt · Giriş ================= */
+/* illüstrasyon gizli; kart geniş ve iki sütunlu: form alanları yan yana, buton aynı ekranda (klavye açıkken alan az) */
+html[data-telefon] .kml .kml-sol { display: none; }
+html[data-telefon] .kml .k-govde { padding-top: calc(8 * var(--p)); }
+html[data-telefon] .kml .kart.dar { flex: 0 1 min(100%, calc(600 * var(--p))); width: min(100%, calc(600 * var(--p))); display: grid; grid-template-columns: 1fr 1fr; column-gap: calc(12 * var(--p)); align-content: start; }
+html[data-telefon] .kml .kart.dar > h2, html[data-telefon] .kml .kart.dar > .alt { grid-column: 1 / -1; margin-bottom: calc(2 * var(--p)); }
+html[data-telefon] .kml .kart.dar > .alan { min-width: 0; }
+html[data-telefon] .kml .kart.dar > .alan label { margin-top: 0; }
+html[data-telefon] .kml .kart.dar > .satir { grid-column: 2; order: 1; align-self: end; margin-top: calc(4 * var(--p)); }
+html[data-telefon] .kml .kart.dar > .hata { grid-column: 1 / -1; order: 2; min-height: 0; }
+/* giriş (iki alan): buton tam satır */
+html[data-telefon] .kml .kart.dar > .alan:nth-of-type(2):last-of-type ~ .satir { grid-column: 1 / -1; }
+/* Karşılama: sol metin, sağ üç düğme */
+html[data-telefon] .kml .kart.kars { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); align-items: start; }
+html[data-telefon] .kml .kart.kars > h2 { grid-column: 1; }
+html[data-telefon] .kml .kart.kars > div:not(.satir):not(.hata) { grid-column: 1; }
+html[data-telefon] .kml .kart.kars > p { grid-column: 1; }
+html[data-telefon] .kml .kart.kars > .satir { grid-column: 2; grid-row: 1 / span 3; order: 0; align-self: center; flex-direction: column; align-items: stretch; justify-content: center !important; margin: 0; }
+html[data-telefon] .kml .kart.kars > .satir .k-dugme { width: 100%; margin: 0; }
+html[data-telefon] .kml .kart.kars > .yt { grid-column: 1 / -1; order: 3; }
+
+/* tam ekran teklifi: lentonun boş orta kısmına sığar (içeriğin başlığını örtmez); yalnız düğmeler, isabet payı lento gibi */
+html[data-telefon] .tam-teklif { left: calc(190px + env(safe-area-inset-left, 0px)); top: 2px; transform: none; padding: 0 0 0 calc(2 * var(--p)); gap: 4px; height: calc(22 * var(--p)); align-items: center; box-shadow: none; background: none; }
+html[data-telefon] .tam-teklif:has(button[data-eylem=tam-ekran]) > span { display: none; }
+html[data-telefon] .tam-teklif .k-dugme { min-height: 0; min-width: 0; position: relative; }
+html[data-telefon] .tam-teklif .k-dugme::after { content: ""; position: absolute; left: 50%; top: -4px; width: max(100%, 48px); height: 48px; transform: translateX(-50%); }
+
+/* ================= İlk Çekirdek ================= */
+/* üç kart yan yana: yalnız simge + ad + dört çubuk; seçili kartta açıklama (köken pasifi, yetenek) açılır, 5 sn önizleme gizli;
+   SEÇ ve not tek satırda altta (kartlar daha çok yer bulur) */
+html[data-telefon] .ic .k-govde { padding-top: calc(6 * var(--p)); }
+html[data-telefon] .ic .kart.ic-kart { max-width: 100%; overflow-y: auto; }
+html[data-telefon] .ic .kartlar { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: calc(10 * var(--p)); align-items: start; }
+html[data-telefon] .ic .ck { padding: calc(4 * var(--p)) calc(4 * var(--p)); }
+html[data-telefon] .ic canvas.onz { display: none; }
+html[data-telefon] .ic .kure-yer .k-kaide { width: calc(48 * var(--p)); }
+html[data-telefon] .ic .ck h3 { white-space: normal; width: auto; min-width: 0; text-align: center; padding-inline: calc(4 * var(--p)); font-size: var(--y-16); font-family: var(--font-etiket); }
+html[data-telefon] .ic .ck:not(.secili) :is(.ps, .yet, .not) { display: none; }
+html[data-telefon] .ic .ck .cb { padding: calc(2 * var(--p)) calc(4 * var(--p)); gap: 0 calc(4 * var(--p)); }
+html[data-telefon] .ic .ck.secili :is(.ps, .yet) { line-height: .75; }
+html[data-telefon] .ic .sec-satir { flex-direction: row; justify-content: space-between; align-items: center; gap: calc(10 * var(--p)); padding: calc(2 * var(--p)) var(--kenar) calc(4 * var(--p)); }
+html[data-telefon] .ic .sec-satir .alt-yazi { margin: 0; text-align: left; }
+
+/* ================= Oyna / Lobi ================= */
+html[data-telefon] .lobi .lb-govde { grid-template-columns: 170px 1fr; }
+html[data-telefon] .lobi .lb-secim { grid-template-columns: 124px minmax(0, 1fr) 124px; }
+html[data-telefon] .lobi .lb-secim > * { min-width: 0; overflow-wrap: anywhere; }
+html[data-telefon] .pf .izgara:has(.sec .k-el, .sec svg) { grid-template-columns: repeat(3, 1fr); }
+html[data-telefon] .lobi .lb-govde { padding: calc(10 * var(--p)) max(16px, var(--kenar)) calc(12 * var(--p)); }
+html[data-telefon] .lobi .lb-sahne { min-height: 0; }
+html[data-dokunmatik] .ic .ck:focus-visible { outline: none; }
+
+/* arama: bot teklifi kartı geniş (düğme metni taşmasın), rakip kaidesi kartın altında */
+html[data-telefon] .lobi .lb-oneri { width: calc(190 * var(--p)); }
+html[data-telefon] .lobi .lb-oneri .k-dugme { width: 100%; white-space: normal; }
+/* VS: oyuncu adı plakası geniş (ad kesilmez) */
+html[data-telefon] .lobi .lb-vs .k-vs-plaka { width: calc(280 * var(--p)); }
+html[data-telefon] .lobi .lb-vs .k-vs-plaka > span:nth-child(2) { max-width: calc(170 * var(--p)); }
+/* oda açıldı: QR yer tutucusu telefonda yok (MENU-DENETIM S-2: kaldırılacak; bağlantı kopyalama yeterli) */
+html[data-telefon] .lobi .lb-qr { display: none; }
+html[data-telefon] .lobi .lb-ara:has(.lb-oneri) .lb-bos-rakip { display: none; }
+
+/* ================= Market ================= */
+/* dört raf yerine tek raf + sekme çubuğu; seçili parça adı ve SATIN AL altta her zaman görünür */
+html[data-telefon] .mk .ic { gap: calc(4 * var(--p)); padding-top: calc(4 * var(--p)); min-height: 0; }
+html[data-telefon] .mk .gunun { height: auto; min-height: 44px; }
+html[data-telefon] .mk .mk-sekmeler { display: flex; gap: calc(3 * var(--p)); }
+html[data-telefon] .mk .mk-sekme { flex: 1 1 0; min-height: 44px; padding: 0 calc(3 * var(--p)); cursor: pointer; border: 0; border-radius: 0; background: #151a28; color: var(--soluk);
+  font: 400 var(--y-16)/.75 var(--font-etiket); text-transform: uppercase; box-shadow: inset 0 0 0 var(--p) #4a4f66; }
+html[data-telefon] .mk .mk-sekme[aria-selected=true] { color: var(--ink); background: var(--secili); box-shadow: inset 0 0 0 var(--p) var(--gold); }
+html[data-telefon] .mk .raflar { display: block; flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+html[data-telefon] .mk .raf:not(.akt) { display: none; }
+html[data-telefon] .mk .raf { margin-top: 0; padding: calc(6 * var(--p)); }
+html[data-telefon] .mk .raf .tabela { display: none; }
+html[data-telefon] .mk .izg { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: calc(6 * var(--p)) calc(8 * var(--p)); }
+html[data-telefon] .mk .hucre { min-height: 44px; }
+html[data-telefon] .mk .hucre .ik { width: calc(56 * var(--p)); height: calc(36 * var(--p)); }
+html[data-telefon] .mk .alt-serit { flex: none; align-items: center; }
+html[data-telefon] .mk .alt-serit .k-dugme.ana { min-height: 48px; }
+
+/* ================= Sonuç (maç sonu) ================= */
+/* 960×540 çerçeve telefonda ölçeklenir; içerik sığmayınca düğmeler paneli örtüyordu: düğmeler akışa girer, ödül satırı içeriğe göre yükselir */
+html[data-telefon] .ms .kutu { display: flex; flex-direction: column; }
+html[data-telefon] .ms .oduller { height: auto; min-height: 172px; grid-template-columns: 190px minmax(0, 1fr) minmax(0, 1.1fr); }
+html[data-telefon] .ms .oduller .yt { font-size: 26px; line-height: 24px; }
+html[data-telefon] .ms .kutu > .dg { position: static; margin-top: auto; padding-top: 8px; }
+/* maç menüsü (Esc): düğmeler ≥ 44 CSS px (çerçeve ×0,69 ölçekli: 64 çerçeve pikseli) */
+html[data-telefon] .ms .menu .dg button { min-height: 72px; }
+html[data-telefon] .ms .ac[data-altin] > svg { display: none; }
+
+/* ================= Ayarlar · Günlük · Krediler · Gizlilik ================= */
+/* lento zaten ekran adını taşır: içerik başlığı yinelenmez (dikey yer kazanılır) */
+html[data-telefon] .ekr[aria-label="Ayarlar"] .kart > h2.k-plaka:first-of-type,
+html[data-telefon] .ekr[aria-label="Çekirdek Günlüğü"] .kart > h2.k-plaka:first-of-type,
+html[data-telefon] .ekr[aria-label="Krediler"] .bilgi > h2:first-child { display: none; }
+/* uzun tablolar (Krediler): beş sütun yerine satır başına küçük kart */
+html[data-telefon] .ekr .bilgi table, html[data-telefon] .ekr .bilgi tbody { display: block; }
+html[data-telefon] .ekr .bilgi thead { display: none; }
+html[data-telefon] .ekr .bilgi tr { display: block; padding: calc(3 * var(--p)) 0; border-bottom: var(--p) solid #2a3146; }
+html[data-telefon] .ekr .bilgi td { display: block; border: 0; padding: 0 calc(3 * var(--p)); }
+html[data-telefon] .ekr .bilgi td:first-child { color: var(--gold); }
+html[data-telefon] .ekr .bilgi td:empty { display: none; }
+
+/* CANLI-2 birleştirme (MOBIL-2 + menü P2, 2026-11-06) */
+/* takım şeridi: ad gizli (sıra numarası ikonda, seçili topacın adı panel başlığında); P2 `.tk-ad` = eski `.tad` */
+html[data-telefon] .at .tkart .yazi .tk-ad { display: none; }
+/* ⚙ isabet payı aşağıdaki sekmelere ve Altın'a binmesin: pay yukarı doğru uzar, Altın'la arada boşluk */
+html[data-dokunmatik][data-telefon] .k-lento .k-ayar { margin-left: 10px; }
+html[data-dokunmatik][data-telefon] .k-ayar::after { top: auto; bottom: -2px; height: 44px; width: 44px; }
+/* Günlük defter kutuları ve Profil arma etiketleri telefonda iki satıra inebilir (kırpılmasın) */
+html[data-telefon] .gn [data-defter] span { white-space: normal; overflow: visible; text-overflow: clip; line-height: .85; }
+html[data-telefon] .pf .sec > span:last-child:not(.k-el):not(.renk) { white-space: normal; overflow: visible; text-overflow: clip; letter-spacing: 0; line-height: .8; }
+html[data-dokunmatik][data-telefon] .k-cuzdan::after, html[data-dokunmatik][data-telefon] .k-geri::after { top: auto; bottom: -2px; height: 44px; }
+html[data-telefon] .bs .kart .odl .os .om { white-space: normal; overflow: visible; text-overflow: clip; line-height: .85; }
