@@ -1,0 +1,133 @@
+{
+ "surum": 1,
+ "kademeler": [
+  {
+   "kademe": 1,
+   "id": "demir",
+   "ad": "DEMİR",
+   "loreAd": "Ham Demir",
+   "element": null,
+   "esik": 0,
+   "verim": 3,
+   "nadirlik": "yaygin",
+   "renk": {
+    "ana": "#8C8A88",
+    "koyu": "#4A4846"
+   },
+   "aciklama": "Her yerde bulunur; ocakların ilk dersi.",
+   "ilkSurum": true
+  },
+  {
+   "kademe": 2,
+   "id": "kaya",
+   "ad": "KAYA CEVHERİ",
+   "loreAd": "Dağ Bakırı",
+   "element": "kaya",
+   "esik": 10,
+   "verim": 3,
+   "nadirlik": "yaygin",
+   "renk": {
+    "ana": "#B0743A",
+    "koyu": "#45392A"
+   },
+   "aciklama": "Köklülerin eski ocaklarından; ağır ve sabırlı.",
+   "ilkSurum": true
+  },
+  {
+   "kademe": 3,
+   "id": "don",
+   "ad": "DON CEVHERİ",
+   "loreAd": "Kırağı Gümüşü",
+   "element": "don",
+   "esik": 25,
+   "verim": 2,
+   "nadirlik": "orta",
+   "renk": {
+    "ana": "#9FE3F5",
+    "koyu": "#3B7D8F"
+   },
+   "aciklama": "Ayaz geçidinin buzunda saklı, soğuk parlar.",
+   "ilkSurum": true
+  },
+  {
+   "kademe": 4,
+   "id": "kor",
+   "ad": "KOR CEVHERİ",
+   "loreAd": "Köz Demiri",
+   "element": "kor",
+   "esik": 40,
+   "verim": 2,
+   "nadirlik": "orta",
+   "renk": {
+    "ana": "#E8452C",
+    "koyu": "#7A1D12"
+   },
+   "aciklama": "Krater ağzında ısınan kızıl damar.",
+   "ilkSurum": true
+  },
+  {
+   "kademe": 5,
+   "id": "kasirga",
+   "ad": "KASIRGA CEVHERİ",
+   "loreAd": "Savruk Kuvars",
+   "element": "kasirga",
+   "esik": 55,
+   "verim": 2,
+   "nadirlik": "nadir",
+   "renk": {
+    "ana": "#5BD1A5",
+    "koyu": "#1F6B52"
+   },
+   "aciklama": "Rüzgârın oyduğu sırtlarda, ince ve hafif.",
+   "ilkSurum": false
+  },
+  {
+   "kademe": 6,
+   "id": "simsek",
+   "ad": "ŞİMŞEK CEVHERİ",
+   "loreAd": "Çakmak Taşı",
+   "element": "simsek",
+   "esik": 70,
+   "verim": 1,
+   "nadirlik": "nadir",
+   "renk": {
+    "ana": "#F7D83A",
+    "koyu": "#8A6A08"
+   },
+   "aciklama": "Yıldırımın düştüğü yerde kristalleşir.",
+   "ilkSurum": false
+  },
+  {
+   "kademe": 7,
+   "id": "girdap",
+   "ad": "GİRDAP CEVHERİ",
+   "loreAd": "Çevren İncisi",
+   "element": "girdap",
+   "esik": 82,
+   "verim": 1,
+   "nadirlik": "cok-nadir",
+   "renk": {
+    "ana": "#2A5BD7",
+    "koyu": "#14286B"
+   },
+   "aciklama": "Dip mağaralarının akıntısında dönen inci.",
+   "ilkSurum": false
+  },
+  {
+   "kademe": 8,
+   "id": "devir",
+   "ad": "DEVİR TAŞI",
+   "loreAd": "İlk Devir kırıntısı",
+   "element": null,
+   "esik": 92,
+   "verim": 1,
+   "nadirlik": "efsane",
+   "renk": {
+    "ana": "#F4E9FF",
+    "koyu": "#6B5A8A"
+   },
+   "aciklama": "Altı elemente bölünmeden önceki dönüşün kırıntısı.",
+   "ilkSurum": false
+  }
+ ]
+}

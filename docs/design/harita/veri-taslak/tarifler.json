@@ -1,0 +1,624 @@
+{
+ "surum": 1,
+ "eritme": {
+  "oranTaban": 4,
+  "oranUsta": 3,
+  "ustaFarki": 20,
+  "basarisizKayip": 1,
+  "not": "Eritme U >= esik(K) ister; U-esik >= 20 ise 3:1. Başarısızlıkta partiden 1 cevher kaybolur, kalan geri gelir; XP yarım."
+ },
+ "ustaIsi": {
+  "farkTaban": 10,
+  "bolen": 100,
+  "tavan": 0.25
+ },
+ "tarifler": [
+  {
+   "id": "arma-demir",
+   "tur": "arma",
+   "kademe": 1,
+   "girdi": [
+    {
+     "kademe": 1,
+     "kulce": 5
+    }
+   ],
+   "altin": 100,
+   "esik": 0,
+   "cikti": {
+    "gorunum": "arma-cevher-demir"
+   },
+   "ilkSurum": true
+  },
+  {
+   "id": "cerceve-demir",
+   "tur": "cerceve",
+   "kademe": 1,
+   "girdi": [
+    {
+     "kademe": 1,
+     "kulce": 10
+    }
+   ],
+   "altin": 200,
+   "esik": 5,
+   "cikti": {
+    "gorunum": "cerceve-demir"
+   },
+   "ilkSurum": true
+  },
+  {
+   "id": "arma-kaya",
+   "tur": "arma",
+   "kademe": 2,
+   "girdi": [
+    {
+     "kademe": 2,
+     "kulce": 3
+    },
+    {
+     "kademe": 1,
+     "kulce": 2
+    }
+   ],
+   "altin": 200,
+   "esik": 10,
+   "cikti": {
+    "gorunum": "arma-cevher-kaya"
+   },
+   "ilkSurum": true
+  },
+  {
+   "id": "cerceve-kaya",
+   "tur": "cerceve",
+   "kademe": 2,
+   "girdi": [
+    {
+     "kademe": 2,
+     "kulce": 6
+    },
+    {
+     "kademe": 1,
+     "kulce": 4
+    }
+   ],
+   "altin": 400,
+   "esik": 15,
+   "cikti": {
+    "gorunum": "cerceve-kaya"
+   },
+   "ilkSurum": true
+  },
+  {
+   "id": "cila-kaya",
+   "tur": "cila",
+   "kademe": 2,
+   "girdi": [
+    {
+     "kademe": 2,
+     "kulce": 10
+    },
+    {
+     "kademe": 1,
+     "kulce": 6
+    }
+   ],
+   "altin": 800,
+   "esik": 20,
+   "cikti": {
+    "cila": "kaya"
+   },
+   "ilkSurum": true
+  },
+  {
+   "id": "arma-don",
+   "tur": "arma",
+   "kademe": 3,
+   "girdi": [
+    {
+     "kademe": 3,
+     "kulce": 3
+    },
+    {
+     "kademe": 2,
+     "kulce": 2
+    }
+   ],
+   "altin": 300,
+   "esik": 25,
+   "cikti": {
+    "gorunum": "arma-cevher-don"
+   },
+   "ilkSurum": true
+  },
+  {
+   "id": "cerceve-don",
+   "tur": "cerceve",
+   "kademe": 3,
+   "girdi": [
+    {
+     "kademe": 3,
+     "kulce": 6
+    },
+    {
+     "kademe": 2,
+     "kulce": 4
+    }
+   ],
+   "altin": 600,
+   "esik": 30,
+   "cikti": {
+    "gorunum": "cerceve-don"
+   },
+   "ilkSurum": true
+  },
+  {
+   "id": "cila-don",
+   "tur": "cila",
+   "kademe": 3,
+   "girdi": [
+    {
+     "kademe": 3,
+     "kulce": 10
+    },
+    {
+     "kademe": 2,
+     "kulce": 6
+    }
+   ],
+   "altin": 1200,
+   "esik": 35,
+   "cikti": {
+    "cila": "don"
+   },
+   "ilkSurum": true
+  },
+  {
+   "id": "arma-kor",
+   "tur": "arma",
+   "kademe": 4,
+   "girdi": [
+    {
+     "kademe": 4,
+     "kulce": 3
+    },
+    {
+     "kademe": 3,
+     "kulce": 2
+    }
+   ],
+   "altin": 400,
+   "esik": 40,
+   "cikti": {
+    "gorunum": "arma-cevher-kor"
+   },
+   "ilkSurum": true
+  },
+  {
+   "id": "cerceve-kor",
+   "tur": "cerceve",
+   "kademe": 4,
+   "girdi": [
+    {
+     "kademe": 4,
+     "kulce": 6
+    },
+    {
+     "kademe": 3,
+     "kulce": 4
+    }
+   ],
+   "altin": 800,
+   "esik": 45,
+   "cikti": {
+    "gorunum": "cerceve-kor"
+   },
+   "ilkSurum": true
+  },
+  {
+   "id": "cila-kor",
+   "tur": "cila",
+   "kademe": 4,
+   "girdi": [
+    {
+     "kademe": 4,
+     "kulce": 10
+    },
+    {
+     "kademe": 3,
+     "kulce": 6
+    }
+   ],
+   "altin": 1600,
+   "esik": 50,
+   "cikti": {
+    "cila": "kor"
+   },
+   "ilkSurum": true
+  },
+  {
+   "id": "arma-kasirga",
+   "tur": "arma",
+   "kademe": 5,
+   "girdi": [
+    {
+     "kademe": 5,
+     "kulce": 3
+    },
+    {
+     "kademe": 4,
+     "kulce": 2
+    }
+   ],
+   "altin": 500,
+   "esik": 55,
+   "cikti": {
+    "gorunum": "arma-cevher-kasirga"
+   },
+   "ilkSurum": false
+  },
+  {
+   "id": "cerceve-kasirga",
+   "tur": "cerceve",
+   "kademe": 5,
+   "girdi": [
+    {
+     "kademe": 5,
+     "kulce": 6
+    },
+    {
+     "kademe": 4,
+     "kulce": 4
+    }
+   ],
+   "altin": 1000,
+   "esik": 60,
+   "cikti": {
+    "gorunum": "cerceve-kasirga"
+   },
+   "ilkSurum": false
+  },
+  {
+   "id": "cila-kasirga",
+   "tur": "cila",
+   "kademe": 5,
+   "girdi": [
+    {
+     "kademe": 5,
+     "kulce": 10
+    },
+    {
+     "kademe": 4,
+     "kulce": 6
+    }
+   ],
+   "altin": 2000,
+   "esik": 65,
+   "cikti": {
+    "cila": "kasirga"
+   },
+   "ilkSurum": false
+  },
+  {
+   "id": "arma-simsek",
+   "tur": "arma",
+   "kademe": 6,
+   "girdi": [
+    {
+     "kademe": 6,
+     "kulce": 3
+    },
+    {
+     "kademe": 5,
+     "kulce": 2
+    }
+   ],
+   "altin": 600,
+   "esik": 70,
+   "cikti": {
+    "gorunum": "arma-cevher-simsek"
+   },
+   "ilkSurum": false
+  },
+  {
+   "id": "cerceve-simsek",
+   "tur": "cerceve",
+   "kademe": 6,
+   "girdi": [
+    {
+     "kademe": 6,
+     "kulce": 6
+    },
+    {
+     "kademe": 5,
+     "kulce": 4
+    }
+   ],
+   "altin": 1200,
+   "esik": 75,
+   "cikti": {
+    "gorunum": "cerceve-simsek"
+   },
+   "ilkSurum": false
+  },
+  {
+   "id": "cila-simsek",
+   "tur": "cila",
+   "kademe": 6,
+   "girdi": [
+    {
+     "kademe": 6,
+     "kulce": 10
+    },
+    {
+     "kademe": 5,
+     "kulce": 6
+    }
+   ],
+   "altin": 2400,
+   "esik": 80,
+   "cikti": {
+    "cila": "simsek"
+   },
+   "ilkSurum": false
+  },
+  {
+   "id": "arma-girdap",
+   "tur": "arma",
+   "kademe": 7,
+   "girdi": [
+    {
+     "kademe": 7,
+     "kulce": 3
+    },
+    {
+     "kademe": 6,
+     "kulce": 2
+    }
+   ],
+   "altin": 700,
+   "esik": 82,
+   "cikti": {
+    "gorunum": "arma-cevher-girdap"
+   },
+   "ilkSurum": false
+  },
+  {
+   "id": "cerceve-girdap",
+   "tur": "cerceve",
+   "kademe": 7,
+   "girdi": [
+    {
+     "kademe": 7,
+     "kulce": 6
+    },
+    {
+     "kademe": 6,
+     "kulce": 4
+    }
+   ],
+   "altin": 1400,
+   "esik": 87,
+   "cikti": {
+    "gorunum": "cerceve-girdap"
+   },
+   "ilkSurum": false
+  },
+  {
+   "id": "cila-girdap",
+   "tur": "cila",
+   "kademe": 7,
+   "girdi": [
+    {
+     "kademe": 7,
+     "kulce": 10
+    },
+    {
+     "kademe": 6,
+     "kulce": 6
+    }
+   ],
+   "altin": 2800,
+   "esik": 92,
+   "cikti": {
+    "cila": "girdap"
+   },
+   "ilkSurum": false
+  },
+  {
+   "id": "arma-devir",
+   "tur": "arma",
+   "kademe": 8,
+   "girdi": [
+    {
+     "kademe": 8,
+     "kulce": 3
+    },
+    {
+     "kademe": 7,
+     "kulce": 2
+    }
+   ],
+   "altin": 800,
+   "esik": 92,
+   "cikti": {
+    "gorunum": "arma-cevher-devir"
+   },
+   "ilkSurum": false
+  },
+  {
+   "id": "cerceve-devir",
+   "tur": "cerceve",
+   "kademe": 8,
+   "girdi": [
+    {
+     "kademe": 8,
+     "kulce": 6
+    },
+    {
+     "kademe": 7,
+     "kulce": 4
+    }
+   ],
+   "altin": 1600,
+   "esik": 97,
+   "cikti": {
+    "gorunum": "cerceve-devir"
+   },
+   "ilkSurum": false
+  },
+  {
+   "id": "cila-devir",
+   "tur": "cila",
+   "kademe": 8,
+   "girdi": [
+    {
+     "kademe": 8,
+     "kulce": 10
+    },
+    {
+     "kademe": 7,
+     "kulce": 6
+    }
+   ],
+   "altin": 3200,
+   "esik": 100,
+   "cikti": {
+    "cila": "devir"
+   },
+   "ilkSurum": false
+  },
+  {
+   "id": "parca-dag-diski",
+   "tur": "parca",
+   "kademe": 2,
+   "girdi": [
+    {
+     "kademe": 2,
+     "kulce": 15
+    },
+    {
+     "kademe": 7,
+     "kulce": 10
+    }
+   ],
+   "altin": 1500,
+   "esik": 25,
+   "cikti": {
+    "parca": "dag-diski"
+   },
+   "ilkSurum": false,
+   "bayrak": "dovmeParcalari"
+  },
+  {
+   "id": "parca-kiragi-ucu",
+   "tur": "parca",
+   "kademe": 3,
+   "girdi": [
+    {
+     "kademe": 3,
+     "kulce": 15
+    },
+    {
+     "kademe": 7,
+     "kulce": 10
+    }
+   ],
+   "altin": 1500,
+   "esik": 40,
+   "cikti": {
+    "parca": "kiragi-ucu"
+   },
+   "ilkSurum": false,
+   "bayrak": "dovmeParcalari"
+  },
+  {
+   "id": "parca-koz-govde",
+   "tur": "parca",
+   "kademe": 4,
+   "girdi": [
+    {
+     "kademe": 4,
+     "kulce": 15
+    },
+    {
+     "kademe": 7,
+     "kulce": 10
+    }
+   ],
+   "altin": 1500,
+   "esik": 55,
+   "cikti": {
+    "parca": "koz-govde"
+   },
+   "ilkSurum": false,
+   "bayrak": "dovmeParcalari"
+  },
+  {
+   "id": "parca-savruk-ucu",
+   "tur": "parca",
+   "kademe": 5,
+   "girdi": [
+    {
+     "kademe": 5,
+     "kulce": 15
+    },
+    {
+     "kademe": 7,
+     "kulce": 10
+    }
+   ],
+   "altin": 1500,
+   "esik": 70,
+   "cikti": {
+    "parca": "savruk-ucu"
+   },
+   "ilkSurum": false,
+   "bayrak": "dovmeParcalari"
+  },
+  {
+   "id": "parca-cakim-diski",
+   "tur": "parca",
+   "kademe": 6,
+   "girdi": [
+    {
+     "kademe": 6,
+     "kulce": 15
+    },
+    {
+     "kademe": 7,
+     "kulce": 10
+    }
+   ],
+   "altin": 1500,
+   "esik": 85,
+   "cikti": {
+    "parca": "cakim-diski"
+   },
+   "ilkSurum": false,
+   "bayrak": "dovmeParcalari"
+  },
+  {
+   "id": "parca-cevren-govde",
+   "tur": "parca",
+   "kademe": 7,
+   "girdi": [
+    {
+     "kademe": 7,
+     "kulce": 15
+    },
+    {
+     "kademe": 7,
+     "kulce": 10
+    }
+   ],
+   "altin": 1500,
+   "esik": 97,
+   "cikti": {
+    "parca": "cevren-govde"
+   },
+   "ilkSurum": false,
+   "bayrak": "dovmeParcalari"
+  }
+ ]
+}
