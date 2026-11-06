@@ -208,7 +208,10 @@ class MadenEkrani {
     for (const [kd, n] of this.seansCevher) el("span", "", sg, `◆${kd} ${kAd(kd)} ×${n}`);
     // karakterin küçük kopyası (KAZ animasyonu yer tutucusu, 13 § 2.2)
     const mini = el("div", "md-mini", g);
-    mini.innerHTML = `<svg width="20" height="30" viewBox="-10 -26 20 30" aria-hidden="true"><rect x="-3" y="-24" width="6" height="6" fill="#e9c9a0"/><rect x="-5" y="-18" width="10" height="9" fill="${this.b.ben?.girisli ? this.b.ben.oyuncu.renk ?? "#f4cf47" : "#f4cf47"}"/><rect x="-4" y="-9" width="3" height="9" fill="#2a2f3a"/><rect x="1" y="-9" width="3" height="9" fill="#2a2f3a"/></svg>`;
+    mini.innerHTML = `<svg width="20" height="30" viewBox="-10 -26 20 30" aria-hidden="true"><rect x="-3" y="-24" width="6" height="6" fill="#e9c9a0"/><rect x="-5" y="-18" width="10" height="9" fill="#f4cf47" data-giysi="1"/><rect x="-4" y="-9" width="3" height="9" fill="#2a2f3a"/><rect x="1" y="-9" width="3" height="9" fill="#2a2f3a"/></svg>`;
+    const giysi = mini.querySelector("[data-giysi]");
+    const ben = this.b.ben?.girisli ? this.b.ben : null;
+    if (giysi && ben?.oyuncu.renk) giysi.setAttribute("fill", ben.oyuncu.renk); // profil rengi DOM özniteliğiyle
     // alt: dinç sayacı + KAZ
     if (s.vurus.bugun >= s.vurus.tam && s.vurus.bugun < s.vurus.tavan) el("div", "md-bant k-e16", k, "BUNDAN SONRA YARIM VERİM");
     const alt = el("div", "md-alt", k);
