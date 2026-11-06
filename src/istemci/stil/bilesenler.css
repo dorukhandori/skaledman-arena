@@ -74,6 +74,9 @@
 .k-plaka.buyuk { height: calc(30 * var(--p)); font-size: var(--y-30); letter-spacing: calc(2 * var(--yp)); padding: 0 calc(18 * var(--p)); }
 .k-plaka.kucuk { height: calc(16 * var(--p)); font: 400 var(--y-16)/.75 var(--font-etiket); letter-spacing: 0; text-shadow: none; }
 h1.k-plaka, h2.k-plaka, h3.k-plaka { margin: 0; }
+/* marka logosu plakada (kurumsal-kimlik.md § 3): 79×16 mantıksal px, tam sayı ölçek */
+.k-plaka.k-logo { padding: 0 calc(8 * var(--p)); }
+.k-plaka.k-logo img { display: block; width: calc(79 * var(--p)); height: calc(16 * var(--p)); image-rendering: pixelated; }
 
 /* ---- Altın yuvası (80×20) ---- */
 .k-cuzdan {

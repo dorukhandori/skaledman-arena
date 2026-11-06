@@ -22,7 +22,7 @@ let kimlikStil = false;
 /** iki panelli kimlik ekranı: sol illüstrasyon + sağ form kartı (kart döner) */
 export function kimlikKok(ust: HTMLElement, etiket: string): HTMLDivElement {
   if (!kimlikStil) { kimlikStil = true; const st = document.createElement("style"); st.textContent = KIMLIK_STIL; document.head.appendChild(st); }
-  const { kok, kart, govde } = ekranKok(ust, etiket, { baslik: "Devran", yer: "lacivert", cuzdan: false });
+  const { kok, kart, govde } = ekranKok(ust, etiket, { baslik: "Devran", logo: true, yer: "lacivert", cuzdan: false });
   kok.classList.add("kml");
   const sol = el("div", "k-panel kml-sol");
   sol.appendChild(cekirdekIllustrasyonu(64));
