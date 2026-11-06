@@ -43,6 +43,8 @@ export interface MacKurulumu {
   seviye?: [number, number];
   /** antrenman: bu oyuncuyu paylaşılan bot sürer (kip topacın tipinden, çevrimdışı maçla aynı) */
   bot?: [boolean, boolean];
+  /** Harita (08 § 5): düğümün bot kipi (sim dışı; verilmezse topacın tipinden) */
+  botKipleri?: [BotKipi | null, BotKipi | null];
 }
 
 export class MacYonetimi {
@@ -66,6 +68,7 @@ export class MacYonetimi {
   private bosta: [number, number] = [0, 0];
   private borc: [number, number] = [0, 0];
   private bot: [boolean, boolean];
+  private botKipleri: [BotKipi | null, BotKipi | null];
   /** ölçüm: adım başına süre (ms) */
   readonly adimSureleri: number[] = [];
   /** ölçüm: birikme birleştirmesi ve boşluk taşıma sayıları */
@@ -79,12 +82,15 @@ export class MacYonetimi {
     // D5: kayıtlı takım kodunda üye seviyeleri var (ödünç Lv.1); başlangıç takımında oyuncu seviyesi (Lv.3)
     this.dunya = macDunyasiKur(this.profiller, k.tohum, { seviye, uyeSeviyeleri: [a.seviyeler, b.seviyeler] });
     this.bot = k.bot ?? [false, false];
+    this.botKipleri = k.botKipleri ?? [null, null];
     this.kayit = { v: PROTOKOL_SURUMU, takimlar: [...k.takimlar], tohum: k.tohum, seviye: [...seviye], girdiler: [], eylemler: [], hashler: [], sonHash: dunyaHash(this.dunya), sonTick: 0 };
   }
 
   get bitti(): boolean { return this.dunya.mac.faz === "bitti"; }
 
   private botKipi(i: number): BotKipi {
+    const k = this.botKipleri[i];
+    if (k) return k;
     return botKademesiSec(this.dunya.profiller[i]!.tip);
   }
 

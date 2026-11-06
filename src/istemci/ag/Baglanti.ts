@@ -9,7 +9,7 @@ import {
 // Colyseus SDK cephesi (yalnız src/istemci/ag/** @colyseus/sdk import eder; eslint yalıtımı). Oda aç / katıl /
 // antrenman / hızlı; hata kodlarını ux § 7 metinlerine çevirir; olay, bilgi, kayıt mesajlarını dağıtır.
 
-export type BaglantiHatasi = "gecersiz" | "dolu" | "suresiDoldu" | "bakim" | "katalog" | "kimlik" | "ayni" | "bilinmiyor";
+export type BaglantiHatasi = "gecersiz" | "dolu" | "suresiDoldu" | "bakim" | "katalog" | "kimlik" | "ayni" | "dugum" | "uzak" | "bilinmiyor";
 
 export const HATA_METNI: Record<BaglantiHatasi, string> = {
   gecersiz: "Bu kod bulunamadı. Kod 8 harftir, örnek: ABCD-EFGH.",
@@ -19,6 +19,8 @@ export const HATA_METNI: Record<BaglantiHatasi, string> = {
   katalog: "Oyun güncellendi. Sayfayı yenile.",
   kimlik: "Oturumun kapanmış. Tekrar giriş yap.",
   ayni: "Bu hesap zaten bu odada. Rakip başka bir hesapla katılmalı.",
+  dugum: "Bu düğüm henüz açık değil.",
+  uzak: "Önce düğüme yürü.",
   bilinmiyor: "Bağlanamadık. Tekrar dene.",
 };
 
@@ -37,6 +39,8 @@ function hataCevir(e: unknown): BaglantiHatasi {
   const msj = String((e as { message?: string } | null)?.message ?? e);
   if (kod === 4101 || kod === 4102 || /katalog|surum/.test(msj)) return "katalog";
   if (kod === 4107 || /ayni/.test(msj)) return "ayni";
+  if (kod === 4111 || /uzak/.test(msj)) return "uzak";
+  if (kod === 4110 || /dugum/.test(msj)) return "dugum";
   if (kod === 4103 || /kimlik/.test(msj)) return "kimlik";
   if (kod === 522 || /not found|invalid room/i.test(msj)) return "gecersiz";
   if (/locked|full|maxClients/i.test(msj)) return "dolu";
@@ -98,6 +102,12 @@ export class Baglanti {
 
   async antrenman(takimId?: string): Promise<AgOdasi> {
     const s = await this.secenek("antrenman", takimId);
+    return this.bagla(() => this.istemci.create<OdaGorunumu>(ODA_ADI, s) as Promise<AgOdasi>);
+  }
+
+  /** Harita (H2): açık DÜŞMAN/PATRON düğümünde düğüm botuna karşı (karakter düğümde olmalı). */
+  async harita(dugum: string, takimId?: string): Promise<AgOdasi> {
+    const s = { ...(await this.secenek("harita", takimId)), dugum };
     return this.bagla(() => this.istemci.create<OdaGorunumu>(ODA_ADI, s) as Promise<AgOdasi>);
   }
 

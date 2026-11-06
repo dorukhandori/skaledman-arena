@@ -8,6 +8,8 @@ import { type Depo, depo } from "../db/depo.ts";
 import { type Istek, type Uygulama, type Yanit, govdeOku, ip, kokenTamam, oturumId, oturumdakiOyuncu, yaz } from "./ortak.ts";
 import { atolyeRotalariKur } from "./atolye.ts";
 import { marketRotalariKur } from "./market.ts";
+import { haritaRotalariKur } from "./harita.ts";
+import { haritaAcikMi } from "../oyuncu/harita.ts";
 import { basarimOlayiIsle } from "../oyuncu/basarimYaz.ts";
 import { sonMacOzeti } from "../oyuncu/sonMac.ts";
 
@@ -69,6 +71,10 @@ export function benGorunumu(d: Depo, oyuncuId: number) {
     altin: d.bakiye(oyuncuId),
     /** TEMIZLIK #5: son maç özeti (Pergel ring-out ipucu, sunucudaki biten maç sayısı); hiç maç yoksa null */
     sonMac: sonMacOzeti(d, oyuncuId),
+    /** Harita (08 § 4): İlk Devir sonrası açık; karakter gövdesi, profil çerçevesi */
+    harita: { acik: haritaAcikMi(d, oyuncuId), konum: o.harita_konum ?? null },
+    karakter: o.karakter ?? 0,
+    cerceve: o.cerceve ?? null,
   };
 }
 
@@ -224,4 +230,5 @@ export function rotalariKur(app: Uygulama): void {
 
   atolyeRotalariKur(app);
   marketRotalariKur(app);
+  haritaRotalariKur(app);
 }

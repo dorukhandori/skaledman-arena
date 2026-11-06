@@ -167,6 +167,8 @@ export const BasarimSema = z.object({
   acilanOzellik: z.array(z.string()),
   gizli: z.boolean(),
   ilkSurum: z.boolean(),
+  /** Harita (05 § 3): bu başarım harita maçında bu zorluk ve üstündeki düğümde sayılır; yoksa haritada sayılmaz */
+  haritaZorlukMin: z.number().int().min(1).max(5).optional(),
 });
 export const BasarimlarDosyaSema = z.object({ surum: z.literal(1), basarimlar: z.array(BasarimSema) });
 

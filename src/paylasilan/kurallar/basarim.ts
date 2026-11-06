@@ -25,7 +25,7 @@ export interface BitisKaydi {
   macKazandiran: boolean;
 }
 
-export type OzetModu = "hizli" | "dereceli" | "oda" | "bot";
+export type OzetModu = "hizli" | "dereceli" | "oda" | "bot" | "harita";
 
 /** Bir oyuncunun gözünden maç özeti (sunucu sim olaylarından çıkarır). */
 export interface MacOzeti {
@@ -61,6 +61,9 @@ export interface MacOzeti {
   evSahibi: boolean;
   /** Kick yayını canlıyken destek kanalı maçı (Kick D8 sonrası: sunucu şimdilik hep false verir) */
   destekKanaliCanli: boolean;
+  /** Harita (05 § 3): düğüm zorluğu ve günün ilk 10 harita maçından biri mi */
+  dugumZorluk?: number;
+  haritaSayilan?: boolean;
 }
 
 export interface BasarimGirdisi {
@@ -98,6 +101,8 @@ export function macKapisi(b: Basarim, m: MacOzeti): boolean {
   if (!m.sayildi) return false;
   if (m.mod === "oda") return b.kategori === "sosyal";
   if (m.mod === "bot") return b.kategori === "yol";
+  // harita: yalnız `haritaZorlukMin` taşıyan başarım, o zorluk ve üstündeki düğümde, günün sayılan maçında
+  if (m.mod === "harita") return b.haritaZorlukMin !== undefined && (m.dugumZorluk ?? 0) >= b.haritaZorlukMin && m.haritaSayilan === true;
   return true;
 }
 

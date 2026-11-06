@@ -33,10 +33,10 @@ export type AlanS = Sayisal;
 export type EngelS = Sayisal;
 export type MacS = Sayisal;
 export type DunyaS = Sayisal & { mac: MacS; topaclar: ArraySchema<TopacS>; takimlar: ArraySchema<TakimS>; alanlar: ArraySchema<AlanS>; engeller: ArraySchema<EngelS> };
-export interface OyuncuS { oturum: string; ad: string; takimId: string; takimNo: string; bagli: boolean; hazir: boolean; rovans: boolean; bot: boolean; ack: number; ackTick: number; dondurmaHakki: number }
+export interface OyuncuS { oturum: string; ad: string; takimId: string; takimNo: string; bagli: boolean; hazir: boolean; rovans: boolean; bot: boolean; ack: number; ackTick: number; dondurmaHakki: number; malzeme: string }
 export interface OdaS {
   faz: number; kod: string; izleKod: string; mod: string; macNo: number; secimKalan: number; beklemeKalan: number;
-  donma: number; donmaKalan: number; kopan: number; dunyaVar: boolean;
+  donma: number; donmaKalan: number; kopan: number; dunyaVar: boolean; dugum: string;
   oyuncular: ArraySchema<OyuncuS>; dunya: DunyaS;
 }
 
@@ -71,6 +71,11 @@ export const OyuncuSema = schema({
   ack: t.uint32().default(0),
   ackTick: t.uint32().default(0),
   dondurmaHakki: t.uint8().default(0),
+  /**
+   * v7 (harita 12 § 10): üye başına kozmetik malzeme kademesi [Çekirdek, Gövde, Disk, Uç] × 3 üye, 12 hane (0 = Market
+   * biçimi, 1–8 kademe). Sim, takım kodu ve hash'e GİRMEZ; yalnız görünüm (ad ön eki, rozet).
+   */
+  malzeme: t.string().default(""),
 } as any, "Oyuncu") as unknown as Sinif<OyuncuS>;
 export const OdaSema = schema({
   faz: t.uint8().default(0),
@@ -85,6 +90,8 @@ export const OdaSema = schema({
   donmaKalan: t.uint8().default(0),
   kopan: t.int8().default(-1),
   dunyaVar: t.boolean().default(false),
+  /** v7: harita maçının düğümü (yalnız `mod:"harita"`) */
+  dugum: t.string().default(""),
   oyuncular: t.array(OyuncuSema as any),
   dunya: t.ref(DunyaSema as any),
 } as any, "Oda") as unknown as Sinif<OdaS>;

@@ -6,6 +6,8 @@ import { RUHLAR, YETENEKLER, cekirdekBul } from "../../paylasilan/veri/katalog.t
 import type { Depo, TakimYuvasi, XpYazimi } from "../db/depo.ts";
 import { type BasarimBildirimi, basarimOlayiIsle, bildirim } from "./basarimYaz.ts";
 import type { OzetHam } from "./ozetSayaci.ts";
+import type { HaritaOdulBilgisi } from "../../ag/protokol.ts";
+import { HARITA_MAC_TAVANI, HARITA_MIN_SN, haritaMacSonu, sayilanHaritaMaci, type HaritaOlaylari } from "./harita.ts";
 
 // Maç sonu (D5): `mac` satırı + Çekirdek XP (tuning § 14) + Yapay ömrü (§ 17), tek işlemde ve maç kimliğiyle
 // idempotent. Yalnız sunucu hesaplar; istemci yalnız sonucu (OdulSatiri) gösterir. Ödünç topaç XP almaz.
@@ -54,6 +56,10 @@ export interface MacSonuGirdisi {
   /** telemetri (B-40): tur sonuçları ve yetenek kullanımı (kademe 1-3) */
   turlar?: readonly { tur: string; kazanan: number; sn: number }[];
   yetenekSayisi?: readonly [readonly number[], readonly number[]];
+  /** Harita (H2): `mod:"harita"` maçının düğümü (oyuncu 0 kayıtlı oyuncu, oyuncu 1 düğüm botu) */
+  harita?: { dugum: string };
+  /** iç: harita maçı XP vermez (günün 10 sayılan maçı doldu ya da maç geçersiz) */
+  xpYok?: readonly [boolean, boolean];
 }
 
 /** Oyuncu başına maç sonu (sonuç ekranı): Çekirdek kartı + Altın + başarım ilerlemesi. */
@@ -66,6 +72,10 @@ export interface OyuncuOdulu {
   /** sayılmadıysa neden (başarım sayacı işlemez): teslim · hukmen · iptal · ciftTavani */
   sayilmadi: string | null;
   mod: OzetModu;
+  /** harita maçı eki */
+  harita?: HaritaOdulBilgisi;
+  /** harita başarım olayları (H5) */
+  haritaOlaylari?: HaritaOlaylari;
 }
 
 export function sonucTuru(s: MacSonucu, i: number): MacSonuTuru {
@@ -93,7 +103,8 @@ export function oduller(g: MacSonuGirdisi, i: number): { satirlar: OdulSatiri[];
     const y = yuvalar[k];
     if (!y || y.devreDisi) continue;
     const t = cekirdekBul(y.cekirdek);
-    const x = macXp({ sonuc: tur, krizGordu: g.krizGordu[i]!, kalanStaminaOrani: g.kalanStaminaOrani[i]!, yapay: t.koken === "yapay", oda: g.mod === "oda" });
+    const x0 = macXp({ sonuc: tur, krizGordu: g.krizGordu[i]!, kalanStaminaOrani: g.kalanStaminaOrani[i]!, yapay: t.koken === "yapay", oda: g.mod === "oda" });
+    const x = g.xpYok?.[i] ? { ...x0, toplam: 0 } : x0;
     const xp = y.tecrube + x.toplam;
     const seviye = Math.max(y.seviye, seviyeBul(xp));
     const omur = y.omur === null ? null : yapayOmurSonrasi(y.omur, tur);
@@ -119,14 +130,22 @@ export function macSonuYaz(depo: Depo, g: MacSonuGirdisi, simdi = Date.now()): [
   return [r[0]?.cekirdekler ?? [], r[1]?.cekirdekler ?? []];
 }
 
-const ozetModu = (g: MacSonuGirdisi): OzetModu => (g.bot ? "bot" : g.mod === "oda" ? "oda" : "hizli");
+const ozetModu = (g: MacSonuGirdisi): OzetModu => (g.mod === "harita" ? "harita" : g.bot ? "bot" : g.mod === "oda" ? "oda" : "hizli");
+
+/** Harita maçı geçersiz mi (yıldız/ödül/sayaç yok): teslim, hükmen, iptal, 20 sn altı. */
+export function haritaGecersiz(g: MacSonuGirdisi): string | null {
+  const n = g.sonuc.neden;
+  if (n === "iptal" || n === "teslim" || n === "hukmen") return n;
+  return g.sureSn < HARITA_MIN_SN ? "kisaMac" : null;
+}
 
 /**
  * D7 maç sonu, TEK SQLite işlemi (flint § 5, axiom § 2 #20-#21): `mac` satırı (+ telemetri) + Çekirdek XP/ömür/defter +
  * Altın defteri (`ref = mac:<mac_id>:<oyuncu>`) + başarım sayaçları (+ tamamlananın Altını `basarim:<id>:<oyuncu>`).
  * Aynı `mac_id` ikinci kez hiçbir şey yazmaz (iki bitiş sinyali tek ödeme). `simdi`: sunucu duvar saati (gün 04:00).
  */
-export function macSonuKaydet(depo: Depo, g: MacSonuGirdisi, simdi = Date.now()): [OyuncuOdulu | null, OyuncuOdulu | null] {
+export function macSonuKaydet(depo: Depo, g0: MacSonuGirdisi, simdi = Date.now()): [OyuncuOdulu | null, OyuncuOdulu | null] {
+  let g = g0;
   const gun = gunNo(simdi);
   const s = g.sonuc;
   return depo.islem((): [OyuncuOdulu | null, OyuncuOdulu | null] => {
@@ -143,6 +162,11 @@ export function macSonuKaydet(depo: Depo, g: MacSonuGirdisi, simdi = Date.now())
         ciftGunlukMacNo: rakip !== null && !g.bot ? depo.ciftGunluk(id, rakip, gun) + 1 : 1,
       };
     });
+    // harita: XP yalnız günün ilk 10 geçerli harita maçında (01 § 5, G-5)
+    if (g.mod === "harita" && g.harita && ia !== null) {
+      const xpYok = haritaGecersiz(g) !== null || sayilanHaritaMaci(depo, ia, simdi) >= HARITA_MAC_TAVANI;
+      g = { ...g, xpYok: [xpYok, true] };
+    }
     const a = ia !== null ? oduller(g, 0) : { satirlar: [], yazim: [] };
     const b = ib !== null ? oduller(g, 1) : { satirlar: [], yazim: [] };
     const yazildi = depo.macYaz({
@@ -169,7 +193,14 @@ export function macSonuKaydet(depo: Depo, g: MacSonuGirdisi, simdi = Date.now())
       const xp = i === 0 ? a : b;
       const altinModu: AltinModu = mod === "bot" ? "bot" : g.mod === "oda" ? "oda" : "hizli";
       const bitisler = ham?.bitisler ?? [];
-      const altin = macAltini({
+      // harita maçı: maç Altını yerine düğüm ödülü (01 § 4–5); yıldız, aşama, kilit, rozet aynı işlemde
+      const hr = g.mod === "harita" && g.harita && i === 0
+        ? haritaMacSonu(depo, id, {
+          macId: g.macId, dugumId: g.harita.dugum, gecersiz: haritaGecersiz(g),
+          ozet: { kazandi: tur === "galibiyet", sureSn: g.sureSn, kalanStaminaOrani: g.kalanStaminaOrani[i]!, bitisler },
+        }, simdi)
+        : null;
+      const altin: MacAltini = hr ? { kalemler: [], carpanlar: [], toplam: hr.bilgi.altin + hr.bilgi.rozetAltini, sifirNedeni: null } : macAltini({
         mod: altinModu, misafir: false, sonuc: tur, rakipTerk, sureSn: g.sureSn,
         gunlukMacNo: o.gunlukMacNo, gununIlkGalibiyeti: o.gununIlkGalibiyeti, ciftGunlukMacNo: o.ciftGunlukMacNo,
         stil: {
@@ -178,17 +209,18 @@ export function macSonuKaydet(depo: Depo, g: MacSonuGirdisi, simdi = Date.now())
           takimUltisi: ham?.takimUltisi ?? false,
         },
       });
-      if (altin.toplam > 0) depo.altinYaz(id, altin.toplam, "mac", `mac:${g.macId}:${id}`, simdi);
+      if (!hr && altin.toplam > 0) depo.altinYaz(id, altin.toplam, "mac", `mac:${g.macId}:${id}`, simdi);
       altinlar[i] = altin.toplam;
       // başarım: sayılmayan maç (teslim/hükmen/iptal, aynı çift günde 3'ten sonra) maç sayacı işletmez
       const sayilmadi = s.neden === "iptal" ? "iptal" : s.neden === "teslim" ? "teslim" : s.neden === "hukmen" ? "hukmen"
-        : o.ciftGunlukMacNo > 3 ? "ciftTavani" : null;
+        : o.ciftGunlukMacNo > 3 ? "ciftTavani" : hr && !hr.sayilan ? (hr.bilgi.gecersiz ?? "haritaTavani") : null;
       const yuvalar = g.yuvalar[i] ?? [];
       const cikan = new Set(g.sahayaCikan?.[i] ?? [0, 1, 2]);
       const cekirdekler = yuvalar.flatMap((y, k) => (y && !y.devreDisi && cikan.has(k) ? [{ tanimId: y.cekirdek, element: cekirdekBul(y.cekirdek).element, koken: cekirdekBul(y.cekirdek).koken }] : []));
       const ozet: MacOzeti | undefined = ham ? {
         ...ham, mod, sayildi: sayilmadi === null, cekirdekler,
         rakipId: g.bot ? null : g.oyuncular[1 - i] ?? null, evSahibi: g.mod === "oda" && i === 0, destekKanaliCanli: false,
+        ...(hr ? { dugumZorluk: hr.zorluk, haritaSayilan: hr.sayilan } : {}),
       } : undefined;
       const seviyeler = depo.cekirdekler(id).map((c) => c.seviye);
       const omurBitti = xp.yazim.filter((x) => x.omur === 0 && (yuvalar.find((y) => y?.cekirdekId === x.cekirdekId)?.omur ?? 0) > 0).length;
@@ -203,6 +235,7 @@ export function macSonuKaydet(depo: Depo, g: MacSonuGirdisi, simdi = Date.now())
         basarimAltini: ba.odul,
         sayilmadi,
         mod,
+        ...(hr ? { harita: hr.bilgi, haritaOlaylari: hr.olaylar } : {}),
       };
     }
     depo.macAltinYaz(g.macId, altinlar[0], altinlar[1]);

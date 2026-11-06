@@ -12,8 +12,10 @@ import type { AltinKalemi, AltinSifirNedeni } from "../paylasilan/kurallar/ekono
  * v3: maç durumu şeması. v4 (D5): katılmada oda bileti (ad yok), kayıtlı takım kodu, maç sonu ödül bilgisi.
  * v5 (D7): maç sonu ödülüne Altın (kalemler, çarpanlar, bakiye) + başarım ilerlemesi; hızlı maçta `botIste`.
  * v6 (D8): Takım Enerjisi + Takım Ultisi (dünya şeması), seyirci odası `izle` (`IzleKatilmaSema`), oda şemasında `izleKod`.
+ * v7 (Harita H2): `mod:"harita"` + katılmada `dugum`; oda şemasında üye başına kozmetik `malzeme` (sim/hash dışı);
+ * maç sonu ödülüne `harita` eki (yıldız, aşama, açılan düğümler, cevher/külçe, rozet).
  */
-export const PROTOKOL_SURUMU = 6;
+export const PROTOKOL_SURUMU = 7;
 
 export const ODA_ADI = "mac";
 /** Sabit adım (K-6) ve yama yayını (ADR-002). Yama elle, her `YAMA_ADIMI` sim adımında bir (adım hizalı). */
@@ -122,7 +124,7 @@ export const SEYIRCI_SINIRI = 50;
 /** Seyirci katılması: yalnız sürüm + yayın kodu (giriş yok, bilet yok; misafir serbest). */
 export const IzleKatilmaSema = z.object({ v: z.literal(PROTOKOL_SURUMU), kod: z.string().regex(/^[A-HJ-NP-Z]{8}$/) });
 
-export const MOD = ["oda", "hizli", "antrenman"] as const;
+export const MOD = ["oda", "hizli", "antrenman", "harita"] as const;
 export type OdaModu = (typeof MOD)[number];
 
 /**
@@ -136,6 +138,10 @@ export const KatilmaSema = z.object({
   katalog: z.string().min(1).max(32),
   bilet: z.string().min(1).max(512).optional(),
   takimId: z.string().min(1).max(64).optional(),
+  /** Harita (H2): bota karşı oynanan DÜŞMAN/PATRON düğümü; `mod:"harita"` ise zorunlu */
+  dugum: z.string().regex(/^b[1-9]-(0[1-9]|1[0-2])$/).optional(),
+}).superRefine((o, c) => {
+  if (o.mod === "harita" && !o.dugum) c.addIssue({ code: "custom", message: "dugum", path: ["dugum"] });
 });
 export type KatilmaSecenekleri = z.infer<typeof KatilmaSema>;
 
@@ -166,9 +172,38 @@ export type BilgiMesaji =
     altin?: AltinBilgisi; basarimlar?: BasarimBilgisi[]; basarimAltini?: number;
     /** başarım sayacı işlemedi: teslim · hukmen · iptal · ciftTavani */
     basarimSayilmadi?: string | null;
-    /** hizli · oda · bot */
+    /** hizli · oda · bot · harita */
     mod?: string;
+    /** H2: harita maçı eki (yalnız `mod:"harita"`) */
+    harita?: HaritaOdulBilgisi;
   };
+
+/** Harita maçı sonuç eki (sunucu `haritaMacSonu`). */
+export interface HaritaOdulBilgisi {
+  dugum: string;
+  /** bu maçta sağlanan yıldız maskesi ve kalıcı (birikimli) maske */
+  maske: number;
+  yildiz: number;
+  yeniYildiz: number;
+  sartlar: string[];
+  asamaOnce: number;
+  asama: number;
+  altin: number;
+  cevher: { kademe: number; adet: number }[];
+  kulce: { kademe: number; adet: number }[];
+  gorunum: string[];
+  acilan: string[];
+  bolgeAcildi: string | null;
+  /** günün ilk 10 harita maçından biri */
+  sayilan: boolean;
+  /** bugün sayılan harita maçı / tavan */
+  sayilanMac: number;
+  tavan: number;
+  /** maç sayılmadıysa (teslim, < 20 sn…) neden */
+  gecersiz: string | null;
+  rozet: number;
+  rozetAltini: number;
+}
 
 /** D7 sonuç ekranı Altın satırı (sunucu `macAltini`). */
 export interface AltinBilgisi {

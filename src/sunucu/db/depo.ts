@@ -37,7 +37,11 @@ export interface SeansSatiri {
 export interface GunlukSatiri { vurus: number; seri: number; iska: number }
 export interface IslemeSatiri { id: number; tur: string; tarif_id: string | null; girdi: string; cikti: string; usta: number; ref: string; zaman: number }
 export interface TakimTaslagi { takimNo: number; ad: string; yuvalar: TaslakTopac[] }
-export interface TakimYuvasi extends SahipUye { cekirdekId: number; tecrube: number; omur: number | null }
+export interface TakimYuvasi extends SahipUye {
+  cekirdekId: number; tecrube: number; omur: number | null;
+  /** göç 5: kozmetik malzeme [Çekirdek, Gövde, Disk, Uç] (0 = Market biçimi); sim'e girmez */
+  malzeme?: [number, number, number, number];
+}
 export interface KayitliTakim { takimNo: number; ad: string; yuvalar: (TakimYuvasi | null)[] }
 
 export interface MacSatiri {
@@ -234,7 +238,8 @@ export class Depo {
   takimlar(oyuncuId: number): KayitliTakim[] {
     const satirlar = this.db.prepare(`
       SELECT t.takim_no, t.ad, t.sira, c.id cid, c.tanim_id c_t, c.seviye, c.tecrube, c.omur, c.yon,
-             g.tanim_id g_t, d.tanim_id d_t, u.tanim_id u_t
+             g.tanim_id g_t, d.tanim_id d_t, u.tanim_id u_t,
+             COALESCE(c.malzeme, 0) c_m, COALESCE(g.malzeme, 0) g_m, COALESCE(d.malzeme, 0) d_m, COALESCE(u.malzeme, 0) u_m
       FROM takim t
       LEFT JOIN cekirdek c ON c.id = t.cekirdek_id
       LEFT JOIN parca g ON g.id = t.govde_id
@@ -242,7 +247,7 @@ export class Depo {
       LEFT JOIN parca u ON u.id = t.uc_id
       WHERE t.oyuncu_id = ? ORDER BY t.takim_no, t.sira`).all(oyuncuId) as {
       takim_no: number; ad: string; sira: number; cid: number | null; c_t: string | null; seviye: number; tecrube: number; omur: number | null;
-      yon: string; g_t: string | null; d_t: string | null; u_t: string | null;
+      yon: string; g_t: string | null; d_t: string | null; u_t: string | null; c_m: number; g_m: number; d_m: number; u_m: number;
     }[];
     const harita = new Map<number, KayitliTakim>();
     for (const s of satirlar) {
@@ -252,6 +257,7 @@ export class Depo {
         t.yuvalar[s.sira] = {
           cekirdekId: s.cid, cekirdek: s.c_t, govde: s.g_t, disk: s.d_t, uc: s.u_t, seviye: s.seviye, tecrube: s.tecrube,
           omur: s.omur, yon: s.yon === "sol" ? "sol" : "sag", devreDisi: s.omur !== null && s.omur <= 0,
+          malzeme: [s.c_m, s.g_m, s.d_m, s.u_m],
         };
       }
     }
@@ -619,13 +625,13 @@ export class Depo {
   }
 
   /** Harita maçı satırına düğüm ve yıldız maskesi. */
-  macHaritaYaz(macId: string, dugumId: string, yildiz: number): void {
+  macHaritaYaz(macId: string, dugumId: string, yildiz: number | null): void {
     this.db.prepare("UPDATE mac SET dugum_id = ?, yildiz = ? WHERE id = ?").run(dugumId, yildiz, macId);
   }
 
-  /** Bugünkü sayılan harita maçı sayısı (iptal hariç). */
+  /** Bugünkü geçerli harita maçı sayısı (yıldız değerlendirilmiş: teslim/hükmen/iptal/kısa maç hariç). */
   gunlukHaritaMaci(oyuncuId: number, gun: number): number {
-    return (this.db.prepare("SELECT COUNT(*) n FROM mac WHERE gun = ? AND mod = 'harita' AND a = ? AND bitis_nedeni <> 'iptal'").get(gun, oyuncuId) as { n: number }).n;
+    return (this.db.prepare("SELECT COUNT(*) n FROM mac WHERE gun = ? AND mod = 'harita' AND a = ? AND yildiz IS NOT NULL").get(gun, oyuncuId) as { n: number }).n;
   }
 }
 

@@ -23,6 +23,8 @@ import { macSonuKaydet } from "../oyuncu/macSonu.ts";
 import { MacOzetSayaci } from "../oyuncu/ozetSayaci.ts";
 import { DonusSayaci } from "../oyuncu/defter.ts";
 import { sunucuTakimlari } from "../oyuncu/takim.ts";
+import { dovusGirisi, haritaBotTakimi } from "../oyuncu/harita.ts";
+import type { DovusDugumu } from "../../paylasilan/veri/harita.ts";
 import { GirdiSema, OdaSema, type OdaS, OyuncuSema, type OyuncuS } from "./sema.ts";
 import { dunyayiYaz } from "./semaYaz.ts";
 import { olcumKaydet } from "../olcum.ts";
@@ -38,12 +40,19 @@ import { type IzleGorunumu, type Yayin, yayinBagla, yayinCoz } from "../izleKayi
 interface KullaniciVerisi { i: number }
 /** Katılan: kayıtlı oyuncu (SQLite) ya da Antrenman misafiri (oyuncuId null). */
 interface OdaTakimi { id: string; kod: string; yuvalar: (TakimYuvasi | null)[] }
-interface Kimlik { oyuncuId: number | null; ad: string; takimlar: OdaTakimi[]; aktifTakim: string }
+interface Kimlik { oyuncuId: number | null; ad: string; takimlar: OdaTakimi[]; aktifTakim: string; dugum?: DovusDugumu }
 
 /** Hızlı maç botunun takımı: üç başlangıç seti, Lv.2 (yeni oyuncu gibi; ödünç değil). */
 const BOT_TAKIMI = takimKoduYaz(BASLANGIC_SETLERI.map((b) => ({ cekirdek: b.cekirdek, govde: b.govde, disk: b.disk, uc: b.uc, seviye: 2, odunc: false, yon: "sag" as const })));
 
-const HATA = { surum: 4101, katalog: 4102, kimlik: 4103, koken: 4104, sema: 4105, takim: 4106, ayni: 4107 } as const;
+const HATA = { surum: 4101, katalog: 4102, kimlik: 4103, koken: 4104, sema: 4105, takim: 4106, ayni: 4107, dugum: 4110, uzak: 4111 } as const;
+
+/** Kozmetik malzeme alanı (v7): 3 üye × [Çekirdek, Gövde, Disk, Uç], ödünç/Market = 0. Sim'e girmez. */
+export function malzemeKodu(yuvalar: readonly (TakimYuvasi | null)[]): string {
+  let s = "";
+  for (let k = 0; k < 3; k++) s += (yuvalar[k]?.malzeme ?? [0, 0, 0, 0]).map((m) => String(Math.max(0, Math.min(8, m)))).join("");
+  return s;
+}
 
 /**
  * Oyuncunun OYNANABİLİR kayıtlı takımları → oda takımları (boş yuvalar ödünç kotasıyla dolu kod; ömrü biten Yapay
@@ -89,6 +98,12 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
     if (this.oyuncuIdleri.includes(oy.id)) throw new ServerError(HATA.ayni, "ayni");
     const takimlar = odaTakimlari(oy.id);
     if (!takimlar.length) throw new ServerError(HATA.takim, "takim");
+    // harita (08 § 5, 13 § 4.2): düğüm açık DÜŞMAN/PATRON ve karakter orada; misafir zaten bilet yolunda elendi
+    if (k.data.mod === "harita") {
+      const g = dovusGirisi(depo(), oy.id, k.data.dugum!);
+      if (!g.ok) throw new ServerError(g.hata === "uzak" ? HATA.uzak : HATA.dugum, `dugum:${g.hata}`);
+      return { oyuncuId: oy.id, ad: oy.ad, takimlar, aktifTakim: String(oy.aktif_takim), dugum: g.dugum };
+    }
     return { oyuncuId: oy.id, ad: oy.ad, takimlar, aktifTakim: String(oy.aktif_takim) };
   }
 
@@ -104,6 +119,8 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
   private ozet = new MacOzetSayaci();
   private botMaci = false;
   private beklemeBas = 0;
+  /** harita maçının düğümü (bot kipi, takım, yıldız şartları) */
+  private haritaDugum: DovusDugumu | null = null;
   /** D8 seyirci yayını (oda modu, ev sahibi kayıtlı oyuncu) ve oda adımı süreleri (yayın dahil, ms) */
   private yayin: Yayin | null = null;
   readonly odaAdimSureleri: number[] = [];
@@ -138,7 +155,7 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
       s.kod = kod;
       void this.setPrivate(true);
       kodAc(kod, () => this.clients.length >= 2 || s.faz !== ODA_FAZI.bekliyor);
-    } else if (this.mod === "antrenman") {
+    } else if (this.mod === "antrenman" || this.mod === "harita") {
       this.maxClients = 1;
       void this.setPrivate(true);
     }
@@ -205,6 +222,22 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
     if (this.mod === "oda" && i === 0 && auth.oyuncuId !== null && !this.yayin) {
       this.yayin = yayinBagla(s.kod, auth.oyuncuId, this.izleKaynagi);
       s.izleKod = this.yayin.kod;
+    }
+    if (this.mod === "harita" && auth.dugum) {
+      // tek oyunculu: düğüm botu hemen (hızlı maçtaki `botIste` beklemesi yok); `mac.bot = 1`, `mac.dugum_id`
+      this.haritaDugum = auth.dugum;
+      this.botMaci = true;
+      s.dugum = auth.dugum.id;
+      while (s.oyuncular.length < 2) s.oyuncular.push(new OyuncuSema());
+      const b = this.oyuncu(1);
+      b.ad = auth.dugum.tur === "patron" ? auth.dugum.ad : "Düşman";
+      b.bot = true;
+      b.bagli = true;
+      b.takimId = haritaBotTakimi(auth.dugum);
+      b.takimNo = "";
+      this.oyuncuIdleri[1] = null;
+      this.secimBaslat();
+      return;
     }
     if (this.mod === "antrenman") {
       while (s.oyuncular.length < 2) s.oyuncular.push(new OyuncuSema());
@@ -325,7 +358,10 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
   private macBaslat(): void {
     const s = this.state;
     const takimlar: [string, string] = [this.oyuncu(0).takimId, this.oyuncu(1).takimId];
-    this.yon = new MacYonetimi({ takimlar, tohum: randomInt(1, 0x7fffffff), bot: [this.oyuncu(0).bot, this.oyuncu(1).bot] });
+    this.yon = new MacYonetimi({
+      takimlar, tohum: randomInt(1, 0x7fffffff), bot: [this.oyuncu(0).bot, this.oyuncu(1).bot],
+      ...(this.haritaDugum ? { botKipleri: [null, this.haritaDugum.botKip] as [null, DovusDugumu["botKip"]] } : {}),
+    });
     this.krizGordu = [false, false];
     this.donus = new DonusSayaci();
     this.ozet = new MacOzetSayaci();
@@ -333,6 +369,7 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
     this.macBaslangic = Date.now();
     // XP için maç başındaki sahip olunan yuvalar (seçilen takımın)
     for (let i = 0; i < 2; i++) this.macYuvalari[i] = this.odaTakimlari[i]!.find((x) => x.kod === takimlar[i])?.yuvalar ?? [];
+    for (let i = 0; i < 2; i++) this.oyuncu(i).malzeme = malzemeKodu(this.macYuvalari[i]!);
     for (let i = 0; i < 2; i++) {
       const p = this.oyuncu(i);
       p.ack = 0;
@@ -444,6 +481,7 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
         bot: this.botMaci, ozet: this.ozet.ozet(y.dunya, kalan),
         sahayaCikan: [[...this.ozet.sahayaCikan[0]], [...this.ozet.sahayaCikan[1]]],
         turlar: this.ozet.turlar, yetenekSayisi: [[...y.dunya.yetenekSayisi[0]], [...y.dunya.yetenekSayisi[1]]],
+        ...(this.haritaDugum ? { harita: { dugum: this.haritaDugum.id } } : {}),
       }, Date.now());
       for (let i = 0; i < 2; i++) {
         const c = this.istemciler[i];
@@ -453,6 +491,7 @@ export class MacOdasi extends Room<{ state: OdaS; input: GirdiS }> {
           v: PROTOKOL_SURUMU, tur: "odul", cekirdekler: o.cekirdekler.map(({ cekirdekId: _c, ...x }) => x),
           ...(ms.neden === "iptal" ? { sayilmadi: "iptal" } : {}),
           altin: o.altin, basarimlar: o.basarimlar, basarimAltini: o.basarimAltini, basarimSayilmadi: o.sayilmadi, mod: o.mod,
+          ...(o.harita ? { harita: o.harita } : {}),
         });
       }
       console.log(`[mac ${this.roomId}] kayıt ${this.macId}: ${odul.map((o) => o ? `${o.cekirdekler.map((x) => `${x.tanimId}+${x.kazanc}`).join(",")} altın+${o.altin.toplam} başarım ${o.basarimlar.map((b) => `${b.id}:${b.ilerleme}/${b.sayi}${b.tamamlandi ? "✓" : ""}`).join(",")}` : "-").join(" | ")}`);
