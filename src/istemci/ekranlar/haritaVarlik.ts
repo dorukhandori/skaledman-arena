@@ -1,7 +1,7 @@
 import { MADENLER } from "../../paylasilan/veri/harita.ts";
 
-// Harita / Maden / Ocak 2B varlık yolları (public/harita/**, `npm run harita:asset`; veri/manifest-gorsel.json `harita`).
-// Kodla çizilmiş pixel art; sanat hattı (Mac) daha iyisini aynı yollara koyabilir. Görüntüler `image-rendering: pixelated`.
+// Harita / Maden / Ocak 2B varlık yolları (public/harita/**, araclar/sanat/harita_*.py; veri/manifest-gorsel.json `harita`).
+// Sanat hattı (Mac: Gemini + Tripo + Blender, docs/production/raporlar/HARITA-SANAT.md). Görüntüler `image-rendering: pixelated`.
 
 const taban = (): string => (import.meta.env?.BASE_URL ?? "/") + "harita/";
 export const DUGUM_IKON = (tur: string, bos = false): string => `${taban()}dugum/${tur === "sandik" && bos ? "sandik-bos" : tur}.png`;
@@ -9,6 +9,8 @@ export const KILIT_IKON = (): string => `${taban()}dugum/kilit.png`;
 const kid = (k: number) => MADENLER.find((x) => x.kademe === k)?.id ?? "demir";
 export const CEVHER_IKON = (k: number): string => `${taban()}maden/cevher-${kid(k)}.png`;
 export const KULCE_IKON = (k: number): string => `${taban()}maden/kulce-${kid(k)}.png`;
+/** Maden ekranının damar kayası (96×96, kademe renkli damar; 10 § 3.3 M1). */
+export const DAMAR_KAYA = (k: number): string => `${taban()}maden/damar-${kid(k)}.png`;
 export const USTALIK_IKON = (tur: "madencilik" | "isleme"): string => `${taban()}ustalik/${tur}.png`;
 export const GORUNUM_IKON = (id: string): string => `${taban()}${id.startsWith("cerceve-") ? "cerceve" : "arma"}/${id}.png`;
 export const USTA_PARILTI = (): string => `${taban()}efekt/usta-isi.png`;

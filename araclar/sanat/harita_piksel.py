@@ -247,13 +247,49 @@ def kaliplar() -> None:
             f"Çerçeve: {kid} (perçinli, 9-dilim kenar 6)", kaynak)
     for b, e in BOLGE.items():
         yaz(takas(duz, rampa(*KADEME[e])), f"cerceve/cerceve-{b}", f"Çerçeve: {b} (GÜMÜŞ rozet, oluklu)", kaynak)
-    yaz(takas(krater, rampa(*KADEME["kor"])), "cerceve/cerceve-krater", "Çerçeve: krater", kaynak)
+    yaz(takas(krater, rampa("#1c1412", "#4a3a36", "#ff8a5c")), "cerceve/cerceve-krater", "Çerçeve: krater (bazalt + kor ışığı)", kaynak)
     yaz(kose_yildiz(takas(duz, rampa(*ALTIN)), "#FFFBE0"), "cerceve/cerceve-yildiz", "Çerçeve: yıldız (altın)", kaynak)
     yaz(takas(perci, rampa(*KOLEKSIYON), DEVIR_YANAR), "cerceve/cerceve-koleksiyon", "Çerçeve: koleksiyon", kaynak)
     yaz(kose_yildiz(takas(duz, rampa(*KADEME["demir"])), "#FCD35A"), "cerceve/cerceve-usta-madenci",
         "Çerçeve: usta madenci", kaynak)
     yaz(kose_yildiz(takas(krater, rampa(*KADEME["kor"])), "#FCD35A"), "cerceve/cerceve-usta-ocakci",
         "Çerçeve: usta ocakçı", kaynak)
+
+
+TAS = ["#1c2029", "#2a2f3a", "#3d4452", "#565e6e", "#737c8c", "#98a1b0"]  # ocak ağzıyla uyumlu mavi-gri taş
+
+
+def damarlar() -> None:
+    """M1 damar kayası 96×96: gri taş -> mavi-gri taş rampası, anahtar yeşili damar -> kademe rampası (10 § 3.3)."""
+    kaynak = "Gemini gri kaya + anahtar yeşili damar -> harita_piksel.py (taş ve damar ayrı rampa)"
+    k = ikon("kalip-damar", 96, renk=24, dolgu=0.96)
+    rgb = k[..., :3].astype(np.float32)
+    mx, mn = rgb.max(-1), rgb.min(-1)
+    yesil = (k[..., 3] > 0) & (rgb[..., 1] > rgb[..., 0] + 40) & (rgb[..., 1] > rgb[..., 2] + 40)
+    kontur = np.all(k[..., :3] == KONTUR, axis=-1)
+    tas = (k[..., 3] > 0) & ~yesil & ~kontur & (mx - mn < 30)
+    lum = rgb.mean(-1)
+
+    def esle(maske: np.ndarray, rampa: list[np.ndarray], out: np.ndarray, yanar: list[str] | None = None) -> None:
+        if not maske.any():
+            return
+        lo, hi = np.percentile(lum[maske], 3), np.percentile(lum[maske], 97)
+        t = np.clip((lum - lo) / max(hi - lo, 1), 0, 0.999)
+        d = (t * len(rampa)).astype(int)
+        for i, c in enumerate(rampa):
+            out[maske & (d == i), :3] = c.astype(np.uint8)
+        if yanar:
+            ys, xs = np.nonzero(maske & (d == len(rampa) - 1))
+            for y, x in zip(ys, xs):
+                out[y, x, :3] = hx(yanar[(x + y) % len(yanar)]).astype(np.uint8)
+
+    taban = k.copy()
+    esle(tas, [hx(c) for c in TAS], taban)
+    for i, (kid, r) in enumerate(KADEME.items(), 1):
+        out = taban.copy()
+        ko, an, vu = (hx(c) for c in r)
+        esle(yesil, [an, (an + vu) / 2, vu, vu + (255 - vu) * 0.6], out, DEVIR_YANAR if kid == "devir" else None)
+        yaz(out, f"maden/damar-{kid}", f"Damar kayası K{i} {kid} (96×96; taş + kademe renkli damar)", kaynak)
 
 
 def zeminler() -> None:
@@ -285,6 +321,8 @@ if __name__ == "__main__":
         ikonlar()
     if s & {"kalip", "hepsi"}:
         kaliplar()
+    if s & {"damar", "hepsi"}:
+        damarlar()
     if s & {"zemin", "hepsi"}:
         zeminler()
     os.makedirs(os.path.join(DEPO, "art-source", "harita"), exist_ok=True)

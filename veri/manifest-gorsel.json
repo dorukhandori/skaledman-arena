@@ -868,12 +868,12 @@
   "lisans": "bizim (yapay zekâ çıktısı; hizmet koşulları: çıktı kullanıcıya ait, sahip doğrulayacak)",
   "tarih": "2026-11-06",
   "uretim": {
-   "geminiCagri": 41,
-   "geminiTahminiUSD": 1.845,
+   "geminiCagri": 43,
+   "geminiTahminiUSD": 1.935,
    "tripoGorev": 5,
    "tripoKredi": 170
   },
-  "toplamBayt": 374950,
+  "toplamBayt": 387834,
   "karakterKareleri": {
    "bekle": [
     0,
@@ -1154,7 +1154,7 @@
     "dosya": "harita/cerceve/cerceve-krater.png",
     "bayt": 246,
     "lisans": "bizim (yapay zekâ çıktısı)",
-    "olay": "Çerçeve: krater",
+    "olay": "Çerçeve: krater (bazalt + kor ışığı)",
     "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
     "renk": 5
    },
@@ -1538,6 +1538,78 @@
     "olay": "Cevher K6 simsek (gri kalıp + palet takası)",
     "kaynak": "Gemini gri kalıp -> harita_piksel.py palet takası",
     "renk": 7
+   },
+   {
+    "ad": "maden/damar-demir",
+    "dosya": "harita/maden/damar-demir.png",
+    "bayt": 1603,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Damar kayası K1 demir (96×96; taş + kademe renkli damar)",
+    "kaynak": "Gemini gri kaya + anahtar yeşili damar -> harita_piksel.py (taş ve damar ayrı rampa)",
+    "renk": 10
+   },
+   {
+    "ad": "maden/damar-devir",
+    "dosya": "harita/maden/damar-devir.png",
+    "bayt": 1646,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Damar kayası K8 devir (96×96; taş + kademe renkli damar)",
+    "kaynak": "Gemini gri kaya + anahtar yeşili damar -> harita_piksel.py (taş ve damar ayrı rampa)",
+    "renk": 15
+   },
+   {
+    "ad": "maden/damar-don",
+    "dosya": "harita/maden/damar-don.png",
+    "bayt": 1572,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Damar kayası K3 don (96×96; taş + kademe renkli damar)",
+    "kaynak": "Gemini gri kaya + anahtar yeşili damar -> harita_piksel.py (taş ve damar ayrı rampa)",
+    "renk": 10
+   },
+   {
+    "ad": "maden/damar-girdap",
+    "dosya": "harita/maden/damar-girdap.png",
+    "bayt": 1685,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Damar kayası K7 girdap (96×96; taş + kademe renkli damar)",
+    "kaynak": "Gemini gri kaya + anahtar yeşili damar -> harita_piksel.py (taş ve damar ayrı rampa)",
+    "renk": 10
+   },
+   {
+    "ad": "maden/damar-kasirga",
+    "dosya": "harita/maden/damar-kasirga.png",
+    "bayt": 1662,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Damar kayası K5 kasirga (96×96; taş + kademe renkli damar)",
+    "kaynak": "Gemini gri kaya + anahtar yeşili damar -> harita_piksel.py (taş ve damar ayrı rampa)",
+    "renk": 10
+   },
+   {
+    "ad": "maden/damar-kaya",
+    "dosya": "harita/maden/damar-kaya.png",
+    "bayt": 1572,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Damar kayası K2 kaya (96×96; taş + kademe renkli damar)",
+    "kaynak": "Gemini gri kaya + anahtar yeşili damar -> harita_piksel.py (taş ve damar ayrı rampa)",
+    "renk": 10
+   },
+   {
+    "ad": "maden/damar-kor",
+    "dosya": "harita/maden/damar-kor.png",
+    "bayt": 1572,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Damar kayası K4 kor (96×96; taş + kademe renkli damar)",
+    "kaynak": "Gemini gri kaya + anahtar yeşili damar -> harita_piksel.py (taş ve damar ayrı rampa)",
+    "renk": 10
+   },
+   {
+    "ad": "maden/damar-simsek",
+    "dosya": "harita/maden/damar-simsek.png",
+    "bayt": 1572,
+    "lisans": "bizim (yapay zekâ çıktısı)",
+    "olay": "Damar kayası K6 simsek (96×96; taş + kademe renkli damar)",
+    "kaynak": "Gemini gri kaya + anahtar yeşili damar -> harita_piksel.py (taş ve damar ayrı rampa)",
+    "renk": 10
    },
    {
     "ad": "maden/kulce-demir",

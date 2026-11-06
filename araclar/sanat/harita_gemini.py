@@ -142,7 +142,15 @@ HP_B = {
                         "light grey face." + GRI,
 }
 
-GRUPLAR = {"hp1": HP1, "hp2": HP2, "hpk": HPK, "hp3": HP3, "hpb": HP_B}
+# M1 damar kayası (10 § 3.3): gri kaya + anahtar yeşili damar → damar pikselleri kademe rampasına (harita_piksel.py damar)
+DAMAR = (IKON.replace("16 by 16 pixel grid", "48 by 48 pixel grid").replace("still reads at 16 pixels", "reads at 96 pixels")
+         + "a single big rough rock boulder seen from the front, chunky faceted stone, a few cracks, with three or four thick "
+         "ore veins running diagonally across its face. The stone is ONLY neutral grey (light grey top-left, dark grey "
+         "lower-right). The veins are flat pure bright green (#00FF00) with a few lighter green highlight pixels, clearly "
+         "separated from the grey stone.")
+HP_M = {"kalip-damar": DAMAR}
+
+GRUPLAR = {"hp1": HP1, "hp2": HP2, "hpk": HPK, "hp3": HP3, "hpb": HP_B, "hpm": HP_M}
 ORAN = {"zemin": "21:9", "ocak-agzi": "16:9"}
 
 

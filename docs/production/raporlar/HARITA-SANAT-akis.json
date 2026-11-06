@@ -1,6 +1,6 @@
 {
  "not": "Otomatik oynanış (oyuncu topacı paylaşılan bot ?oto=dolas). İnsan play pass değil.",
- "hesap": "Harita 40pgh",
+ "hesap": "Harita 5s9pa",
  "hazirlik": [
   201,
   200,
@@ -32,7 +32,7 @@
    81
   ],
   "karakter": [
-   214,
+   244,
    354,
    270,
    156
@@ -54,16 +54,16 @@
    "ISKA +5",
    "ISKA +5",
    "+3 ◆1 | MADENCİLİK 1 | AÇILDI: İlk Kazı",
-   "+4 ◆1 İSABET",
+   "ISKA +5",
    "ISKA +5"
   ],
   "kalan": "0",
   "dinc": "6"
  },
- "erit": "3 KÜLÇE · 3 CÜRUF · AÇILDI: İlk Külçe",
+ "erit": "3 KÜLÇE · 2 CÜRUF · AÇILDI: İlk Külçe",
  "ilkParca": {
-  "metin": "DEMİR DÜZ UÇ · YAPAN: HARİTA 40PGH · NO. 0001 · 06.11.2026",
-  "sureSn": 176
+  "metin": "DEMİR DÜZ UÇ · YAPAN: HARİTA 5S9PA · NO. 0002 · 06.11.2026",
+  "sureSn": 113
  },
  "atolyeBicim": [
   "K1"
@@ -73,7 +73,7 @@
  },
  "profil": 2,
  "vitrin": [
-  "p20"
+  "p24"
  ],
  "telefonHarita": {
   "kayma": false,

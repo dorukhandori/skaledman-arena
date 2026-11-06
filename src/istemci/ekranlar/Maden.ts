@@ -5,7 +5,7 @@ import { ipucuBas, ipucuSec } from "../bilgic/haritaIpucu.ts";
 import type { EkranBaglami } from "../main.ts";
 import { apiGet, apiPost, git, oku, sakla } from "../hesap.ts";
 import { ekranKok, el } from "./arayuz.ts";
-import { CEVHER_IKON, KARAKTER_KARE, OCAK_AGZI, karakterSayfasi, kareKonumu } from "./haritaVarlik.ts";
+import { DAMAR_KAYA, KARAKTER_KARE, OCAK_AGZI, karakterSayfasi, kareKonumu } from "./haritaVarlik.ts";
 import { efektStili, halkaDalga, kirintiPatlat, merkez, parilti, sarsinti } from "./haritaEfekt.ts";
 import { Ses } from "../ses/Ses.ts";
 
@@ -51,7 +51,7 @@ const STIL = `
 .mdn .md-satir.nadir { color:#fcd35a; }
 .mdn .md-seans span { display:block; }
 .mdn .md-mini { position:absolute; left:calc(4 * var(--p)); bottom:calc(4 * var(--p)); }
-.mdn .md-sprite { width:32px; height:48px; background-size:288px 144px; image-rendering:pixelated; }
+.mdn .md-sprite { width:48px; height:72px; background-size:432px 216px; image-rendering:pixelated; filter:drop-shadow(0 2px 0 rgba(0,0,0,.5)); }
 html[data-telefon] .mdn .md-govde { grid-template-columns:calc(118 * var(--p)) 1fr calc(100 * var(--p)); min-height:0; }
 html[data-telefon] .mdn .md-orta svg { width:calc(110 * var(--p)); height:calc(110 * var(--p)); }
 @media (prefers-reduced-motion: reduce) { .mdn .md-ucus { animation:none; opacity:1; } }
@@ -193,18 +193,16 @@ class MadenEkrani {
     };
     const tam = Math.PI * 2;
     // damar kayası (kademe renginde) + nadir çatlak
-    // damar ışıması (kademe rengi, nabız) + düzensiz kaya (sekizgen)
+    // damar ışıması (kademe rengi, nabız)
     const isik = document.createElementNS("http://www.w3.org/2000/svg", "circle");
     for (const [a, v] of Object.entries({ r: 30, fill: kademe(s.kademe).renk.ana, opacity: 0.35, class: "ef-isima" })) isik.setAttribute(a, String(v));
     svg.appendChild(isik);
-    const kaya = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-    for (const [a, v] of Object.entries({ points: "-14,-25 12,-24 25,-11 24,13 13,25 -12,24 -25,12 -24,-13", fill: kademe(s.kademe).renk.koyu, stroke: kademe(s.kademe).renk.ana, "stroke-width": 3, "stroke-linejoin": "bevel" })) kaya.setAttribute(a, String(v));
+    // damar kayası (Gemini kalıbı, damar kademe renginde; 10 § 3.3 M1), kademe numarası rozetle
+    const kaya = document.createElementNS("http://www.w3.org/2000/svg", "image");
+    for (const [a, v] of Object.entries({ href: DAMAR_KAYA(s.kademe), x: -34, y: -34, width: 68, height: 68, style: "image-rendering:pixelated" })) kaya.setAttribute(a, String(v));
+    kaya.dataset["damar"] = String(s.kademe);
     svg.appendChild(kaya);
     this.damarSvg = svg;
-    // damar: kodla çizilmiş cevher ikonu (A3), kademe numarası rozetle
-    const cv = document.createElementNS("http://www.w3.org/2000/svg", "image");
-    for (const [a, v] of Object.entries({ href: CEVHER_IKON(s.kademe), x: -16, y: -16, width: 32, height: 32, style: "image-rendering:pixelated" })) cv.setAttribute(a, String(v));
-    svg.appendChild(cv);
     const rz = document.createElementNS("http://www.w3.org/2000/svg", "text");
     rz.setAttribute("text-anchor", "middle"); rz.setAttribute("x", "16"); rz.setAttribute("y", "-12"); rz.setAttribute("font-size", "11"); rz.setAttribute("fill", "#fff");
     rz.textContent = String(s.kademe);
@@ -314,10 +312,10 @@ class MadenEkrani {
   }
 
   private spriteEl: HTMLElement | null = null;
-  /** Mini karakter karesi (sayfa 9×3, hücre 16×24; ×2 gösterim). */
+  /** Mini karakter karesi (sayfa 9×3, hücre 16×24; ×3 gösterim). */
   private spriteKare(k: number): void {
     const [x, y] = kareKonumu(k);
-    if (this.spriteEl) this.spriteEl.style.backgroundPosition = `${-x * 2}px ${-y * 2}px`;
+    if (this.spriteEl) this.spriteEl.style.backgroundPosition = `${-x * 3}px ${-y * 3}px`;
   }
   /** KAZ animasyonu (6 kare, ~0,5 sn), sonra BEKLE. */
   private kazAnim(): void {
