@@ -620,5 +620,11 @@
    "ilkSurum": false,
    "bayrak": "dovmeParcalari"
   }
- ]
+ ],
+ "yenidenDov": {
+  "kulceOran": 0.5,
+  "altinOran": 0.5,
+  "tecrube": 0,
+  "not": "Yalnız Usta işi zarı; aşağı yuvarla, en az 1 külçe"
+ }
 }

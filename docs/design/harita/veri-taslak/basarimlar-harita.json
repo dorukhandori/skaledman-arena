@@ -1,0 +1,422 @@
+{
+ "surum": 1,
+ "not": "Taslak: H1'de veri/basarimlar.json'a eklenir (46 + 23 = 69).",
+ "basarimlar": [
+  {
+   "id": "ilk-adim",
+   "ad": "İlk Adım",
+   "kategori": "yol",
+   "sart": {
+    "olay": "dugumTamam",
+    "sayi": 1,
+    "kosul": {}
+   },
+   "odulAltin": 100,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "ilk-kazi",
+   "ad": "İlk Kazı",
+   "kategori": "yol",
+   "sart": {
+    "olay": "cevherKazildi",
+    "sayi": 1,
+    "kosul": {}
+   },
+   "odulAltin": 100,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [
+    "atolye-ocak"
+   ],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "ilk-kulce",
+   "ad": "İlk Külçe",
+   "kategori": "yol",
+   "sart": {
+    "olay": "eritme",
+    "sayi": 1,
+    "kosul": {}
+   },
+   "odulAltin": 100,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "ocak-yamaci",
+   "ad": "Ocak Yamacı",
+   "kategori": "yol",
+   "sart": {
+    "olay": "bolgeTamam",
+    "sayi": 1,
+    "kosul": {
+     "bolge": "ocak-yamaci"
+    }
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [],
+   "acilanGorunum": [
+    "arma-kazma"
+   ],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "ayaz-gecidi",
+   "ad": "Ayaz Geçidi",
+   "kategori": "yol",
+   "sart": {
+    "olay": "bolgeTamam",
+    "sayi": 1,
+    "kosul": {
+     "bolge": "ayaz-gecidi"
+    }
+   },
+   "odulAltin": 500,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "kor-kraterleri",
+   "ad": "Kor Kraterleri",
+   "kategori": "yol",
+   "sart": {
+    "olay": "bolgeTamam",
+    "sayi": 1,
+    "kosul": {
+     "bolge": "kor-kraterleri"
+    }
+   },
+   "odulAltin": 800,
+   "acilanParcalar": [],
+   "acilanGorunum": [
+    "cerceve-krater"
+   ],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "madenci",
+   "ad": "Madenci",
+   "kategori": "yol",
+   "sart": {
+    "olay": "ustalikSeviye",
+    "sayi": 1,
+    "kosul": {
+     "ustalik": "madencilik",
+     "seviye": 25
+    }
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "usta-madenci",
+   "ad": "Usta Madenci",
+   "kategori": "yol",
+   "sart": {
+    "olay": "ustalikSeviye",
+    "sayi": 1,
+    "kosul": {
+     "ustalik": "madencilik",
+     "seviye": 50
+    }
+   },
+   "odulAltin": 800,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "ocakci",
+   "ad": "Ocakçı",
+   "kategori": "yol",
+   "sart": {
+    "olay": "ustalikSeviye",
+    "sayi": 1,
+    "kosul": {
+     "ustalik": "isleme",
+     "seviye": 25
+    }
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "usta-ocakci",
+   "ad": "Usta Ocakçı",
+   "kategori": "yol",
+   "sart": {
+    "olay": "ustalikSeviye",
+    "sayi": 1,
+    "kosul": {
+     "ustalik": "isleme",
+     "seviye": 50
+    }
+   },
+   "odulAltin": 800,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "cevher-defteri",
+   "ad": "Cevher Defteri",
+   "kategori": "yol",
+   "sart": {
+    "olay": "cevherCesidi",
+    "sayi": 4,
+    "kosul": {}
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "otuz-yildiz",
+   "ad": "Otuz Yıldız",
+   "kategori": "gosteri",
+   "sart": {
+    "olay": "yildizToplam",
+    "sayi": 30,
+    "kosul": {}
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "tam-yildiz",
+   "ad": "Tam Yıldız",
+   "kategori": "gosteri",
+   "sart": {
+    "olay": "bolgeYildizTam",
+    "sayi": 1,
+    "kosul": {}
+   },
+   "odulAltin": 800,
+   "acilanParcalar": [],
+   "acilanGorunum": [
+    "cerceve-yildiz"
+   ],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "usta-isi",
+   "ad": "Usta İşi",
+   "kategori": "gosteri",
+   "sart": {
+    "olay": "ustaIsi",
+    "sayi": 1,
+    "kosul": {}
+   },
+   "odulAltin": 500,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": true
+  },
+  {
+   "id": "nadir-damar",
+   "ad": "Nadir Damar",
+   "kategori": "gizli",
+   "sart": {
+    "olay": "nadirDamar",
+    "sayi": 1,
+    "kosul": {}
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": true,
+   "ilkSurum": true
+  },
+  {
+   "id": "tam-isabet",
+   "ad": "Tam İsabet",
+   "kategori": "gizli",
+   "sart": {
+    "olay": "isabetSerisi",
+    "sayi": 10,
+    "kosul": {
+     "tekSeans": false
+    }
+   },
+   "odulAltin": 300,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": true,
+   "ilkSurum": true
+  },
+  {
+   "id": "yel-sirti",
+   "ad": "Yel Sırtı",
+   "kategori": "yol",
+   "sart": {
+    "olay": "bolgeTamam",
+    "sayi": 1,
+    "kosul": {
+     "bolge": "yel-sirti"
+    }
+   },
+   "odulAltin": 800,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": false
+  },
+  {
+   "id": "cakim-yaylasi",
+   "ad": "Çakım Yaylası",
+   "kategori": "yol",
+   "sart": {
+    "olay": "bolgeTamam",
+    "sayi": 1,
+    "kosul": {
+     "bolge": "cakim-yaylasi"
+    }
+   },
+   "odulAltin": 800,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": false
+  },
+  {
+   "id": "dip-magaralari",
+   "ad": "Dip Mağaraları",
+   "kategori": "yol",
+   "sart": {
+    "olay": "bolgeTamam",
+    "sayi": 1,
+    "kosul": {
+     "bolge": "dip-magaralari"
+    }
+   },
+   "odulAltin": 1500,
+   "acilanParcalar": [],
+   "acilanGorunum": [
+    "arma-dip"
+   ],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": false
+  },
+  {
+   "id": "buyuk-madenci",
+   "ad": "Büyük Madenci",
+   "kategori": "yol",
+   "sart": {
+    "olay": "ustalikSeviye",
+    "sayi": 1,
+    "kosul": {
+     "ustalik": "madencilik",
+     "seviye": 100
+    }
+   },
+   "odulAltin": 1500,
+   "acilanParcalar": [],
+   "acilanGorunum": [
+    "cerceve-usta-madenci"
+   ],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": false
+  },
+  {
+   "id": "buyuk-ocakci",
+   "ad": "Büyük Ocakçı",
+   "kategori": "yol",
+   "sart": {
+    "olay": "ustalikSeviye",
+    "sayi": 1,
+    "kosul": {
+     "ustalik": "isleme",
+     "seviye": 100
+    }
+   },
+   "odulAltin": 1500,
+   "acilanParcalar": [],
+   "acilanGorunum": [
+    "cerceve-usta-ocakci"
+   ],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": false
+  },
+  {
+   "id": "devir-tasi",
+   "ad": "Devir Taşı",
+   "kategori": "gizli",
+   "sart": {
+    "olay": "cevherKazildi",
+    "sayi": 1,
+    "kosul": {
+     "kademe": 8
+    }
+   },
+   "odulAltin": 1500,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": true,
+   "ilkSurum": false
+  },
+  {
+   "id": "tam-defter",
+   "ad": "Tam Defter",
+   "kategori": "yol",
+   "sart": {
+    "olay": "cevherCesidi",
+    "sayi": 8,
+    "kosul": {}
+   },
+   "odulAltin": 800,
+   "acilanParcalar": [],
+   "acilanGorunum": [],
+   "acilanOzellik": [],
+   "gizli": false,
+   "ilkSurum": false
+  }
+ ]
+}

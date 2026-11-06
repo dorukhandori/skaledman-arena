@@ -103,7 +103,7 @@ Sim sonucu (06 Tablo E): bu kural setiyle bot çiftliği tutkulu oyuncunun **1,0
 |---|---|---|
 | A1 | Sonuç, kademe, nadir yuva, tecrübe **yalnız sunucuda**; istemci yalnız "vuruyorum" ve isabet zamanını yollar | Sahte verim |
 | A2 | Vuruşlar arası en az **700 ms** (sunucu saati); hızlısı 429 `erken` | Makro hızlandırma |
-| A3 | İsabet doğrulama: sunucu her vuruşun başlangıç anını kendi saatiyle tutar; istemcinin bildirdiği `isabetMs` sunucu geçen süresiyle **±150 ms** (+ ölçülen RTT/2, en çok 250 ms) içinde değilse isabet sayılmaz (vuruş yine işler) | Zaman uydurma |
+| A3 | İsabet doğrulama: sunucu her vuruşun başlangıç anını kendi saatiyle tutar; istemcinin bildirdiği `isabetMs` sunucu geçen süresiyle **±150 ms** içinde (H-H6 ölçümüne göre en çok 250 ms'ye genişletilebilir) değilse isabet sayılmaz (vuruş yine işler) | Zaman uydurma |
 | A4 | Halka fazı her vuruşta sunucu rastgelesiyle kayar (`fazMs`) | Sabit ritimli makro |
 | A5 | Günlük 60 vuruş tavanı, 41+ yarım (§ 6) | Çiftlik ölçeği |
 | A6 | Seans 5 dk hareketsizlikte kapanır; aynı anda tek açık seans | Çoklu sekme |
