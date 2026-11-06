@@ -99,3 +99,30 @@ html[data-telefon] .at .pergel .p-dugmeler .k-dugme { min-height: 44px; }
 /* ================= ortak ================= */
 /* lento içindeki açılır menü maddeleri (lento düğmeleri 26 px şeritte küçük kalır; menü maddeleri tam hedef) */
 html[data-dokunmatik] .k-lento .k-menu-liste .k-dugme { min-height: 44px; }
+
+/* ================= Karşılama · Kayıt · Giriş ================= */
+/* illüstrasyon gizli; kart geniş ve iki sütunlu: form alanları yan yana, buton aynı ekranda (klavye açıkken alan az) */
+html[data-telefon] .kml .kml-sol { display: none; }
+html[data-telefon] .kml .k-govde { padding-top: calc(8 * var(--p)); }
+html[data-telefon] .kml .kart.dar { flex: 0 1 min(100%, calc(600 * var(--p))); width: min(100%, calc(600 * var(--p))); display: grid; grid-template-columns: 1fr 1fr; column-gap: calc(12 * var(--p)); align-content: start; }
+html[data-telefon] .kml .kart.dar > h2, html[data-telefon] .kml .kart.dar > .alt { grid-column: 1 / -1; margin-bottom: calc(2 * var(--p)); }
+html[data-telefon] .kml .kart.dar > .alan { min-width: 0; }
+html[data-telefon] .kml .kart.dar > .alan label { margin-top: 0; }
+html[data-telefon] .kml .kart.dar > .satir { grid-column: 2; order: 1; align-self: end; margin-top: calc(4 * var(--p)); }
+html[data-telefon] .kml .kart.dar > .hata { grid-column: 1 / -1; order: 2; min-height: 0; }
+/* giriş (iki alan): buton tam satır */
+html[data-telefon] .kml .kart.dar > .alan:nth-of-type(2):last-of-type ~ .satir { grid-column: 1 / -1; }
+/* Karşılama: sol metin, sağ üç düğme */
+html[data-telefon] .kml .kart.kars { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); align-items: start; }
+html[data-telefon] .kml .kart.kars > h2 { grid-column: 1; }
+html[data-telefon] .kml .kart.kars > div:not(.satir):not(.hata) { grid-column: 1; }
+html[data-telefon] .kml .kart.kars > p { grid-column: 1; }
+html[data-telefon] .kml .kart.kars > .satir { grid-column: 2; grid-row: 1 / span 3; order: 0; align-self: center; flex-direction: column; align-items: stretch; justify-content: center !important; margin: 0; }
+html[data-telefon] .kml .kart.kars > .satir .k-dugme { width: 100%; margin: 0; }
+html[data-telefon] .kml .kart.kars > .yt { grid-column: 1 / -1; order: 3; }
+
+/* tam ekran teklifi: lentonun boş orta kısmına sığar (içeriğin başlığını örtmez); yalnız düğmeler, isabet payı lento gibi */
+html[data-telefon] .tam-teklif { left: calc(190px + env(safe-area-inset-left, 0px)); top: 2px; transform: none; padding: 0 0 0 calc(2 * var(--p)); gap: 4px; height: calc(22 * var(--p)); align-items: center; box-shadow: none; background: none; }
+html[data-telefon] .tam-teklif:has(button[data-eylem=tam-ekran]) > span { display: none; }
+html[data-telefon] .tam-teklif .k-dugme { min-height: 0; min-width: 0; position: relative; }
+html[data-telefon] .tam-teklif .k-dugme::after { content: ""; position: absolute; left: 50%; top: -4px; width: max(100%, 48px); height: 48px; transform: translateX(-50%); }

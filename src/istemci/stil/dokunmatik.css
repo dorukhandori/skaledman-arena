@@ -57,9 +57,6 @@ html[data-telefon] .lobi .lb-govde { grid-template-columns: 170px 1fr; }
 /* Takım seçimi: oyuncu adları ×1,5 yazıda yan sütuna sığsın */
 html[data-telefon] .lobi .lb-secim { grid-template-columns: 124px minmax(0, 1fr) 124px; }
 html[data-telefon] .lobi .lb-secim > * { min-width: 0; overflow-wrap: anywhere; }
-/* Karşılama / Kayıt / Giriş: süs illüstrasyonu gizli, form tam yükseklik (mobil klavye açıkken alan az) */
-html[data-telefon] .kml .kml-sol { display: none; }
-html[data-telefon] .kml .kart { flex-basis: 440px; }
 /* Profil: arma adları ×1,5 yazıda 6 sütuna sığmaz → 3 sütun (renkler 6 sütun kalır) */
 html[data-telefon] .pf .izgara:has(.sec .k-el, .sec svg) { grid-template-columns: repeat(3, 1fr); }
 /* İlk Çekirdek: üç kart görünüme sığar (ad kırılır) */
