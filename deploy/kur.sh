@@ -36,7 +36,9 @@ test -f dist/server/server.mjs
 
 install -m 644 "$HEDEF/deploy/devran.service" /etc/systemd/system/devran.service
 systemctl daemon-reload
-systemctl enable --now devran
+systemctl enable devran
+# güncellemede çalışan süreç eski kodu tutar: her kurulumda yeniden başlat (2026-11-06 CANLI-2)
+systemctl restart devran
 sleep 2
 systemctl --no-pager status devran | head -n 12
 curl -fsS "http://127.0.0.1:$SUNUCU_PORT/api/saglik" && echo
