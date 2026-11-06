@@ -47,9 +47,9 @@ export function halkaFazi(tMs: number, fazMs: number): number {
  * İsabet doğrulama (A3): istemcinin bildirdiği `isabetMs` (vuruş penceresi başından geçen süre) sunucunun ölçtüğü
  * `gecenMs` ile ±tolerans içinde olmalı ve o andaki halka fazı isabet yayında olmalı. Gecikme yalnız +1 bonusu etkiler.
  */
-export function isabetGecerli(isabetMs: number | null, gecenMs: number, fazMs: number, toleransMs: number = I.toleransMs): boolean {
+export function isabetGecerli(isabetMs: number | null, gecenMs: number, fazMs: number, toleransMs: number = I.toleransMs, gecikmeMs = 0): boolean {
   if (isabetMs === null) return false;
-  if (Math.abs(isabetMs - gecenMs) > toleransMs) return false;
+  if (Math.abs(isabetMs + Math.max(0, Math.min(1000, gecikmeMs)) - gecenMs) > toleransMs) return false;
   const [bas, bit] = isabetPenceresi();
   const f = halkaFazi(isabetMs, fazMs);
   return f >= bas && f <= bit;

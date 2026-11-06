@@ -127,7 +127,14 @@ export function kademeBul(k: number): MadenKademesi {
 export const GitSema = z.object({ dugum: DugumKimlik });
 export const SandikAcSema = z.object({ dugum: DugumKimlik });
 export const MadenBaslaSema = z.object({ dugum: DugumKimlik });
-export const KazSema = z.object({ seans: z.string().uuid(), sira: z.number().int().min(0).max(8), isabetMs: z.number().int().min(0).max(5000).nullable() });
+/**
+ * Kazı vuruşu. `isabetMs`: istemcinin vuruş penceresi başından (yanıtı aldığı andan) kendi ölçtüğü süre (halka fazı
+ * bundan okunur); `gecikmeMs`: istemcinin son 3 istek RTT'sinin ortancası (sunucu geçen süresi = isabetMs + RTT).
+ */
+export const KazSema = z.object({
+  seans: z.string().uuid(), sira: z.number().int().min(0).max(8), isabetMs: z.number().int().min(0).max(5000).nullable(),
+  gecikmeMs: z.number().int().min(0).max(1000).optional(),
+});
 export const MadenBitirSema = z.object({ seans: z.string().uuid() });
 export const EritSema = z.object({ kademe: Kademe, parti: z.number().int().min(1).max(20), ref: z.string().uuid() });
 export const DovSema = z.object({ tarif: z.string().regex(/^[a-z0-9-]{3,40}$/), ref: z.string().uuid(), yeniden: z.boolean().optional() });

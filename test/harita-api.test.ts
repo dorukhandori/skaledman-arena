@@ -269,4 +269,25 @@ describe("H2 HTTP uçları ve harita odası", () => {
     expect(s.faz).toBe(2);
     await oda.leave(true);
   }, 30000);
+
+  it("maden uçları: başla 201 → hemen kaz 429 erken → 800 ms sonra 200; bitir 200; uzak 409", async () => {
+    const { depo } = await import("../src/sunucu/db/depo.ts");
+    const id = depo().oyuncuAdla("harita ayla")!.id;
+    expect((await istek("POST", "/api/maden/basla", A, { dugum: "b1-02" })).durum).toBe(409);
+    depo().dugumYaz(id, "b1-01", { durum: DURUM.temizle });
+    depo().dugumYaz(id, "b1-02", { durum: DURUM.acik });
+    expect((await istek("POST", "/api/harita/git", A, { dugum: "b1-02" })).veri.acilan).toStrictEqual(["b1-04"]);
+    const b = await istek("POST", "/api/maden/basla", A, { dugum: "b1-02" });
+    expect(b.durum).toBe(201);
+    expect(b.veri).toMatchObject({ kademe: 1, kalan: 6 });
+    expect((await istek("POST", "/api/maden/kaz", A, { seans: b.veri.seans, sira: 0, isabetMs: null })).durum).toBe(429);
+    await new Promise((r) => setTimeout(r, 750));
+    const k = await istek("POST", "/api/maden/kaz", A, { seans: b.veri.seans, sira: 0, isabetMs: 700, gecikmeMs: 20 });
+    expect(k.durum).toBe(200);
+    expect(k.veri).toMatchObject({ sira: 1, kalan: 5 });
+    expect(Array.isArray(k.veri.yeniBasarimlar)).toBe(true);
+    expect((await istek("POST", "/api/maden/bitir", A, { seans: b.veri.seans })).durum).toBe(200);
+    expect((await istek("POST", "/api/maden/kaz", A, { seans: "x", sira: 0, isabetMs: null })).durum).toBe(400);
+    expect((await istek("GET", "/api/ben", A)).veri.ocakAcik).toBe(k.veri.basari);
+  });
 });

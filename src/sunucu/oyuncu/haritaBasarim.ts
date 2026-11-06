@@ -10,3 +10,8 @@ export function basarimHaritaOlaylari(d: Depo, id: number, o: HaritaOlaylari, si
   const s = basarimOlayiIsle(d, id, {}, simdi);
   return s.degisimler.map(bildirim).filter((x): x is BasarimBildirimi => x !== null && x.tamamlandi);
 }
+
+/** Kazı olayları (H5'te olay sözlüğü: cevherKazildi, nadirDamar, isabetSerisi, cevherCesidi, ustalikSeviye). */
+export function basarimMadenOlaylari(d: Depo, id: number, o: HaritaOlaylari, simdi: number): BasarimBildirimi[] {
+  return basarimHaritaOlaylari(d, id, o, simdi);
+}

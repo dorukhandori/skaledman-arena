@@ -9,7 +9,9 @@ import { type Istek, type Uygulama, type Yanit, govdeOku, ip, kokenTamam, oturum
 import { atolyeRotalariKur } from "./atolye.ts";
 import { marketRotalariKur } from "./market.ts";
 import { haritaRotalariKur } from "./harita.ts";
-import { haritaAcikMi } from "../oyuncu/harita.ts";
+import { madenRotalariKur } from "./maden.ts";
+import { haritaAcikMi, ocakAcikMi } from "../oyuncu/harita.ts";
+import { seviye as ustalikSeviye } from "../../paylasilan/kurallar/ustalik.ts";
 import { basarimOlayiIsle } from "../oyuncu/basarimYaz.ts";
 import { sonMacOzeti } from "../oyuncu/sonMac.ts";
 
@@ -75,6 +77,9 @@ export function benGorunumu(d: Depo, oyuncuId: number) {
     harita: { acik: haritaAcikMi(d, oyuncuId), konum: o.harita_konum ?? null },
     karakter: o.karakter ?? 0,
     cerceve: o.cerceve ?? null,
+    /** Ustalık seviyeleri (profil rozeti ⛏/⚒; maç ekranlarında GÖSTERİLMEZ, G-0) ve Ocak görünürlüğü (İlk Kazı) */
+    ustalik: { madencilik: ustalikSeviye(d.ustaliklar(oyuncuId).madencilik), isleme: ustalikSeviye(d.ustaliklar(oyuncuId).isleme) },
+    ocakAcik: ocakAcikMi(d, oyuncuId),
   };
 }
 
@@ -231,4 +236,5 @@ export function rotalariKur(app: Uygulama): void {
   atolyeRotalariKur(app);
   marketRotalariKur(app);
   haritaRotalariKur(app);
+  madenRotalariKur(app);
 }

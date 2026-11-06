@@ -11,12 +11,17 @@ import { olcumler } from "./olcum.ts";
 import { kimlikAyarlariniDenetle } from "./kimlik.ts";
 import { type Uygulama, rotalariKur } from "./api/rotalar.ts";
 import { depo } from "./db/depo.ts";
+import { TELEMETRI_GUN } from "./oyuncu/maden.ts";
 
 // Devran sunucusu: yetkili maç odası + HTTP uçları (D5: kayıt/giriş, oturum çerezi, oda bileti, profil, ilk Çekirdek,
 // SQLite). Üretimde 127.0.0.1:2567 (Cloudflare Tunnel arkası), geliştirmede Vite'ın HTTP sunucusuna bağlı.
 // Eksik ortamda açılışta açık hata (kimlikAyarlariniDenetle); SQLite göçleri açılışta uygulanır.
 kimlikAyarlariniDenetle();
 depo();
+// harita A7: kazı telemetrisi 30 gün tutulur (açılışta ve günde bir temizlik)
+const telemetriTemizle = () => { try { depo().madenTelemetriTemizle(Date.now() - TELEMETRI_GUN * 86_400_000); } catch (e) { console.error("[maden] telemetri temizliği", e); } };
+telemetriTemizle();
+setInterval(telemetriTemizle, 86_400_000).unref();
 
 export const server = defineServer({
   rooms: {
