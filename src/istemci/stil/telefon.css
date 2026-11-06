@@ -126,3 +126,56 @@ html[data-telefon] .tam-teklif { left: calc(190px + env(safe-area-inset-left, 0p
 html[data-telefon] .tam-teklif:has(button[data-eylem=tam-ekran]) > span { display: none; }
 html[data-telefon] .tam-teklif .k-dugme { min-height: 0; min-width: 0; position: relative; }
 html[data-telefon] .tam-teklif .k-dugme::after { content: ""; position: absolute; left: 50%; top: -4px; width: max(100%, 48px); height: 48px; transform: translateX(-50%); }
+
+/* ================= İlk Çekirdek ================= */
+/* üç kart yan yana: yalnız simge + ad + dört çubuk; seçili kartta açıklama (köken pasifi, yetenek) açılır, 5 sn önizleme gizli;
+   SEÇ ve not tek satırda altta (kartlar daha çok yer bulur) */
+html[data-telefon] .ic .k-govde { padding-top: calc(6 * var(--p)); }
+html[data-telefon] .ic .kart.ic-kart { max-width: 100%; overflow-y: auto; }
+html[data-telefon] .ic .kartlar { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: calc(10 * var(--p)); align-items: start; }
+html[data-telefon] .ic .ck { padding: calc(4 * var(--p)) calc(4 * var(--p)); }
+html[data-telefon] .ic canvas.onz { display: none; }
+html[data-telefon] .ic .kure-yer .k-kaide { width: calc(48 * var(--p)); }
+html[data-telefon] .ic .ck h3 { white-space: normal; width: auto; min-width: 0; text-align: center; padding-inline: calc(4 * var(--p)); font-size: var(--y-16); font-family: var(--font-etiket); }
+html[data-telefon] .ic .ck:not(.secili) :is(.ps, .yet, .not) { display: none; }
+html[data-telefon] .ic .ck .cb { padding: calc(2 * var(--p)) calc(4 * var(--p)); gap: 0 calc(4 * var(--p)); }
+html[data-telefon] .ic .ck.secili :is(.ps, .yet) { line-height: .75; }
+html[data-telefon] .ic .sec-satir { flex-direction: row; justify-content: space-between; align-items: center; gap: calc(10 * var(--p)); padding: calc(2 * var(--p)) var(--kenar) calc(4 * var(--p)); }
+html[data-telefon] .ic .sec-satir .alt-yazi { margin: 0; text-align: left; }
+
+/* ================= Oyna / Lobi ================= */
+html[data-telefon] .lobi .lb-govde { grid-template-columns: 170px 1fr; }
+html[data-telefon] .lobi .lb-secim { grid-template-columns: 124px minmax(0, 1fr) 124px; }
+html[data-telefon] .lobi .lb-secim > * { min-width: 0; overflow-wrap: anywhere; }
+html[data-telefon] .pf .izgara:has(.sec .k-el, .sec svg) { grid-template-columns: repeat(3, 1fr); }
+html[data-telefon] .lobi .lb-govde { padding: calc(10 * var(--p)) max(16px, var(--kenar)) calc(12 * var(--p)); }
+html[data-telefon] .lobi .lb-sahne { min-height: 0; }
+html[data-dokunmatik] .ic .ck:focus-visible { outline: none; }
+
+/* arama: bot teklifi kartı geniş (düğme metni taşmasın), rakip kaidesi kartın altında */
+html[data-telefon] .lobi .lb-oneri { width: calc(190 * var(--p)); }
+html[data-telefon] .lobi .lb-oneri .k-dugme { width: 100%; white-space: normal; }
+/* VS: oyuncu adı plakası geniş (ad kesilmez) */
+html[data-telefon] .lobi .lb-vs .k-vs-plaka { width: calc(280 * var(--p)); }
+html[data-telefon] .lobi .lb-vs .k-vs-plaka > span:nth-child(2) { max-width: calc(170 * var(--p)); }
+/* oda açıldı: QR yer tutucusu telefonda yok (MENU-DENETIM S-2: kaldırılacak; bağlantı kopyalama yeterli) */
+html[data-telefon] .lobi .lb-qr { display: none; }
+html[data-telefon] .lobi .lb-ara:has(.lb-oneri) .lb-bos-rakip { display: none; }
+
+/* ================= Market ================= */
+/* dört raf yerine tek raf + sekme çubuğu; seçili parça adı ve SATIN AL altta her zaman görünür */
+html[data-telefon] .mk .ic { gap: calc(4 * var(--p)); padding-top: calc(4 * var(--p)); min-height: 0; }
+html[data-telefon] .mk .gunun { height: auto; min-height: 44px; }
+html[data-telefon] .mk .mk-sekmeler { display: flex; gap: calc(3 * var(--p)); }
+html[data-telefon] .mk .mk-sekme { flex: 1 1 0; min-height: 44px; padding: 0 calc(3 * var(--p)); cursor: pointer; border: 0; border-radius: 0; background: #151a28; color: var(--soluk);
+  font: 400 var(--y-16)/.75 var(--font-etiket); text-transform: uppercase; box-shadow: inset 0 0 0 var(--p) #4a4f66; }
+html[data-telefon] .mk .mk-sekme[aria-selected=true] { color: var(--ink); background: var(--secili); box-shadow: inset 0 0 0 var(--p) var(--gold); }
+html[data-telefon] .mk .raflar { display: block; flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+html[data-telefon] .mk .raf:not(.akt) { display: none; }
+html[data-telefon] .mk .raf { margin-top: 0; padding: calc(6 * var(--p)); }
+html[data-telefon] .mk .raf .tabela { display: none; }
+html[data-telefon] .mk .izg { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: calc(6 * var(--p)) calc(8 * var(--p)); }
+html[data-telefon] .mk .hucre { min-height: 44px; }
+html[data-telefon] .mk .hucre .ik { width: calc(56 * var(--p)); height: calc(36 * var(--p)); }
+html[data-telefon] .mk .alt-serit { flex: none; align-items: center; }
+html[data-telefon] .mk .alt-serit .k-dugme.ana { min-height: 48px; }

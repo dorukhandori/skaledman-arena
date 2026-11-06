@@ -42,7 +42,7 @@ html[data-dokunmatik] .g3-etiket::after, html[data-dokunmatik] .dk-pay::after {
 }
 /* lento ekranın üst kenarında: pay yalnız aşağı uzar (üst kenar zaten sonsuz hedef) */
 html[data-dokunmatik] .k-geri::after, html[data-dokunmatik] .k-lento .k-dugme::after, html[data-dokunmatik] .k-cuzdan::after {
-  content: ""; position: absolute; left: 50%; top: calc(-1 * var(--p) - 3px); width: max(100%, 48px); height: 48px; transform: translateX(-50%);
+  content: ""; position: absolute; left: 50%; top: -9px; width: max(100%, 48px); height: 40px; transform: translateX(-50%);
   background: none; display: block;
 }
 html[data-dokunmatik] .k-zemin [role=tab] { min-width: 44px; }
@@ -53,16 +53,8 @@ html[data-dokunmatik] .k-tus { display: none !important; }
 
 /* ---- telefon (o = 1) ekran düzeltmeleri: mantıksal alan 667–932 × 375–430 ---- */
 /* Oyna / Lobi: mod sütunu yazı ×1,5'e göre */
-html[data-telefon] .lobi .lb-govde { grid-template-columns: 170px 1fr; }
 /* Takım seçimi: oyuncu adları ×1,5 yazıda yan sütuna sığsın */
-html[data-telefon] .lobi .lb-secim { grid-template-columns: 124px minmax(0, 1fr) 124px; }
-html[data-telefon] .lobi .lb-secim > * { min-width: 0; overflow-wrap: anywhere; }
 /* Profil: arma adları ×1,5 yazıda 6 sütuna sığmaz → 3 sütun (renkler 6 sütun kalır) */
-html[data-telefon] .pf .izgara:has(.sec .k-el, .sec svg) { grid-template-columns: repeat(3, 1fr); }
-/* İlk Çekirdek: üç kart görünüme sığar (ad kırılır) */
-html[data-telefon] .ic .kart.ic-kart { max-width: 100%; overflow-y: auto; }
-html[data-telefon] .ic .kartlar { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-html[data-telefon] .ic .ck h3 { white-space: normal; width: auto; min-width: 0; text-align: center; }
 /* lento isabet payı (aşağı uzar) gövdenin altında kalmasın */
 html[data-dokunmatik] .k-lento { z-index: 3; }
 html[data-dokunmatik] .g3-etiket { z-index: 2; min-height: 44px; display: flex; flex-direction: column; justify-content: center; }

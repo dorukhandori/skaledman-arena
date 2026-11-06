@@ -37,7 +37,7 @@ const denetle = () => {
   const metin = (e) => (e.innerText || e.value || e.getAttribute("aria-label") || "").replace(/\s+/g, " ").trim().slice(0, 40);
   // açık açılır menü / modal varsa yalnız onun içi denetlenir (altındaki ekranın örtülmesi beklenen davranış)
   const ustKatman = document.querySelector(".takim-menu:not([hidden]), .k-menu-liste:not([hidden]), .tam-katman, .modal");
-  const tum = [...document.querySelectorAll("body *")].filter((e) => (!ustKatman || ustKatman.contains(e)) && gorunur(e) && !e.closest("[aria-hidden=true]") && !["CANVAS", "svg", "SVG", "IMG", "STYLE", "SCRIPT"].includes(e.tagName));
+  const tum = [...document.querySelectorAll("body *")].filter((e) => (!ustKatman || ustKatman.contains(e)) && gorunur(e) && !e.matches("button[title^='select to enable accessibility']") && !e.closest("[aria-hidden=true]") && !["CANVAS", "svg", "SVG", "IMG", "STYLE", "SCRIPT"].includes(e.tagName));
   const etkilesimli = tum.filter((e) => e.matches("button, a[href], [role=button], [role=tab], [role=radio], [role=option], [data-eylem], input:not([type=hidden]), select, [tabindex='0']") && getComputedStyle(e).pointerEvents !== "none" && !e.disabled);
   const yaprak = tum.filter((e) => e.children.length === 0 && (e.innerText || e.value || "").trim());
   const etkilesimliMi = (e) => e.matches("button, a[href], [role=button], [role=tab], [role=radio], [role=option], [data-eylem], input:not([type=hidden]), select, [tabindex='0']");
@@ -81,7 +81,7 @@ const denetle = () => {
     const gecerli = g.toplam - g.kayar;
     if (gecerli <= 0) return;
     // kısmen görünen kaydırılabilir öğe sayılmaz; dışarıda/kesik oranı > %12 → hata
-    if ((g.dis + g.kesik) / gecerli > 0.12) kesik.push(`${tur} ${ad(e)} "${metin(e)}" görünür ${g.gor}/${gecerli}`);
+    if ((g.dis + g.kesik) / gecerli > 0.12) kesik.push(`${tur} ${ad(e)} "${metin(e) || e.outerHTML.slice(0, 90)}" görünür ${g.gor}/${gecerli}`);
     else if (g.ortulu / gecerli > 0.12) ortulu.push(`${tur} ${ad(e)} "${metin(e)}" ← ${g.ortuAdi}`);
   };
   const pergelAcik = !!document.querySelector(".pergel.acik");
@@ -166,12 +166,54 @@ const EKRANLAR = [
     ["13-atolye-daha-fazla", async (s, cek, ad) => { await s.goto(`${TABAN}?ekran=atolye`); await bekle(3500); await s.tap("[data-eylem=daha-fazla]").catch(() => {}); await cek(ad, 600); }],
     ["14-atolye-filtre", async (s, cek, ad) => { await s.goto(`${TABAN}?ekran=atolye`); await bekle(3500); await s.tap("[data-eylem=filtre]").catch(() => {}); await cek(ad, 600); }],
     ["15-market", git("market", 3500)],
+    ["15b-market-secili", async (s, cek, ad) => { await s.goto(`${TABAN}?ekran=market`); await bekle(3000); await s.tap(".hucre[data-durum=market]").catch(() => {}); await cek(ad, 700); }],
+    ["15c-market-alt", async (s, cek, ad) => { await s.evaluate(() => { for (const e of document.querySelectorAll(".mk *")) if (e.scrollHeight > e.clientHeight + 4 && /(auto|scroll)/.test(getComputedStyle(e).overflowY)) e.scrollTop = 9999; }); await cek(ad, 500); }],
     ["16-basarimlar", git("basarimlar", 2500)],
     ["17-lobi", git("lobi", 3000)],
     ["18-lobi-oda", async (s, cek, ad) => { await s.goto(`${TABAN}?ekran=lobi`); await bekle(2500); await s.tap("[data-mod=oda]").catch(() => {}); await cek(ad, 1200); }],
     ["19-profil", git("profil", 2000)],
+    ["19b-profil-yeni-alan", async (s, cek, ad) => { await s.goto(`${TABAN}?ekran=profil`); await bekle(1800); await s.tap("[data-eylem=kanal]").catch(() => {}); await cek(ad, 500); }],
     ["20-ayarlar", git("ayarlar", 2000)],
     ["21-gunluk", git("gunluk", 2500)],
+  ]],
+  // lobi akışları (yerel sunucuda bot): oda açık, arama, bot teklifi, takım seçimi, VS (uzun sürer: EKRAN=lobiakis)
+  ["lobiakis", [
+    ["30-oda-acik", async (s, cek, ad) => {
+      await s.goto(`${TABAN}?ekran=lobi`); await bekle(2500);
+      await s.tap("[data-mod=oda]").catch(() => {}); await bekle(500);
+      await s.tap("[data-eylem=oda-ac]").catch(() => {});
+      await s.waitForSelector("[data-kod]", { timeout: 15000 }).catch(() => {});
+      await cek(ad, 1500);
+    }],
+    ["31-arama", async (s, cek, ad) => {
+      await s.goto(`${TABAN}?ekran=lobi&oto=dolas`); await s.waitForFunction(() => !!window.__lobi, null, { timeout: 20000 });
+      await s.tap("[data-mod=hizli]").catch(() => {}); await s.tap("[data-eylem=hizli]");
+      await cek(ad, 3000);
+    }],
+    ["32-bot-teklif", async (s, cek, ad) => {
+      await s.waitForFunction(() => document.querySelector("[data-oneri]")?.dataset.asama === "botTeklif", null, { timeout: 80000 });
+      await cek(ad, 800);
+    }],
+    ["33-takim-secimi", async (s, cek, ad) => {
+      await s.tap("[data-eylem=bot]");
+      await s.waitForSelector("[data-eylem=hazir]", { timeout: 30000 }).catch(() => {});
+      await s.waitForFunction(() => !document.querySelector(".lb-vs"), null, { timeout: 10000 }).catch(() => {});
+      await cek(ad, 900);
+    }],
+    ["34-mac-esc-menu", async (s, cek, ad) => {
+      await s.tap("[data-eylem=hazir]").catch(() => {});
+      await s.waitForFunction(() => !!(window.__lobi && window.__lobi.macEkrani), null, { timeout: 60000 });
+      await bekle(5000);
+      await s.keyboard.press("Escape");
+      await cek(ad, 800);
+      await s.keyboard.press("Escape");
+    }],
+    ["35-sonuc", async (s, cek, ad) => {
+      const t0 = Date.now();
+      while (!(await s.evaluate(() => !!(window.__lobi?.macEkrani?.sonucAcik))) && Date.now() - t0 < 300000) await bekle(1000);
+      await cek(ad, 1500);
+      await cek("36-sonuc-sonra", 4000);
+    }],
   ]],
 ];
 

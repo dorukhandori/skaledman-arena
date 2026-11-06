@@ -10,6 +10,7 @@ import { el, lentoKur, stilEkle } from "./arayuz.ts";
 import { refStilEkle } from "./referansStil.ts";
 import { parca3bIkonHtml } from "./pikselTopac.ts";
 import { ikonGozle } from "../atolye3d/ikonOnbellek.ts";
+import { telefonMu } from "../mobil/cihaz.ts";
 
 // GU-11 menü dili v2: pixel ikon (SVG yerine), sikke ve kilit sprite (stil/doku)
 const COIN_SVG = (_b = 0): string => `<span class="k-sikke" aria-hidden="true"></span>`;
@@ -195,6 +196,10 @@ class MarketEkrani {
       g.addEventListener("click", () => { if (u) this.ac(u); });
     }
     // raflar
+    // MOBIL-2 telefon: 4 raf yerine tek raf + sekme çubuğu (hepsi DOM'da kalır; CSS yalnız `.akt` rafı gösterir)
+    const tel = telefonMu();
+    const sekmeler = tel ? el("div", "mk-sekmeler", ic) : null;
+    sekmeler?.setAttribute("role", "tablist");
     const rf = el("div", "raflar", ic);
     const hucreler: HTMLButtonElement[] = [];
     for (const r of this.v.raflar) {
@@ -202,6 +207,13 @@ class MarketEkrani {
       raf.dataset["raf"] = r.tur;
       raf.setAttribute("aria-label", r.ad);
       el("div", "tabela", raf, r.ad);
+      if (sekmeler) {
+        const t = el("button", "mk-sekme", sekmeler, r.ad);
+        t.type = "button";
+        t.setAttribute("role", "tab");
+        t.dataset["raf"] = r.tur;
+        t.addEventListener("click", () => this.rafGoster(r.tur));
+      }
       const izg = el("div", "izg", raf);
       izg.setAttribute("role", "list");
       for (const u of r.urunler) {
@@ -275,7 +287,14 @@ class MarketEkrani {
     const vurguId = new URLSearchParams(location.search).get("vurgu");
     const ilk = (vurguId ? hucreler.find((x) => x.dataset["urun"] === vurguId) : undefined) ?? hucreler.find((x) => x.dataset["durum"] === "acik") ?? hucreler[0];
     if (ilk) { const u = this.urun(ilk.dataset["urun"]!); if (u) this.sec(u, ilk); }
+    if (tel) this.rafGoster(ilk?.closest<HTMLElement>(".raf")?.dataset["raf"] ?? this.v.raflar[0]?.tur ?? "");
     queueMicrotask(() => ilk?.focus());
+  }
+
+  /** telefon: görünen rafı değiştirir (sekme çubuğu + `.akt` sınıfı) */
+  private rafGoster(tur: string): void {
+    for (const r of this.kok.querySelectorAll<HTMLElement>(".raf")) r.classList.toggle("akt", r.dataset["raf"] === tur);
+    for (const t of this.kok.querySelectorAll<HTMLElement>(".mk-sekme")) { const on = t.dataset["raf"] === tur; t.setAttribute("aria-selected", String(on)); t.tabIndex = on ? 0 : -1; }
   }
 
   private seciliUrun: MarketUrunu | null = null;
@@ -287,6 +306,7 @@ class MarketEkrani {
     const h = this.kok.querySelector<HTMLElement>(`.hucre[data-urun="${CSS.escape(id)}"]`);
     const u = this.urun(id);
     if (!h || !u) return;
+    if (telefonMu()) this.rafGoster(h.closest<HTMLElement>(".raf")?.dataset["raf"] ?? "");
     h.scrollIntoView({ block: "center", behavior: "auto" });
     this.ilkOdak = false;
     h.focus({ preventScroll: true });
