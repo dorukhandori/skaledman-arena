@@ -116,3 +116,16 @@ Emülasyon gerçek dokunma donanımını, tarayıcı arayüzünü, sanal klavyey
 - [ ] Safari adres çubuğu yataydayken görünüp kaybolurken yerleşim zıplıyor mu (`100dvh`).
 - [ ] Metin ölçeği %125/%150.
 - [ ] Tam ekran teklifi (Android) ve "Ana Ekrana Ekle" ipucu (iOS) başlıkları örtmüyor mu.
+
+## 8. Canlıya çıkış (2026-11-06, sahibin isteğiyle)
+
+Sahip işin sonunda "canlıya çık" dedi; `devran.ovarlak.games` güncellendi. Sırayla:
+
+1. `devran-kod` ucundaki marka logosu commit'leri (`1624384`, `cb6301a`) bu dala birleştirildi (VPS kaynağı o commit'lerin gerisinde olmamalıydı; yoksa logo ve `kur.sh` yedek düzeltmesi geri alınırdı).
+2. Typecheck, lint, 523/523 test, build yeşil. Maç yoktu (`odalar: 0`).
+3. VPS'te elle yedek (`deploy/yedek.sh`, "bütünlük ok") ve önceki kaynağın kopyası: `/root/devran-kaynak-onceki-mobil2-20261106.tgz` (geri dönüş için).
+4. Kaynak `rsync -a` ile `/root/devran-kaynak/` altına **`--delete` olmadan** gitti (orada depoda olmayan `art-source` vb. var), ardından `bash deploy/kur.sh` (npm ci, build, port 2568 doğrulaması).
+5. `kur.sh` `enable --now` kullandığı için çalışan servisi yeniden başlatmaz: `systemctl restart devran` ayrıca yapıldı.
+6. Doğrulama: `/api/saglik` → `{"ok":true,"protokol":6,"katalog":"934bcfd25effd463","kimlik":"sifre","odalar":0}`; ana sayfa ve `/gizlilik` 200; geliştirme ucu (`/api/gelistirme/altin-ver`) **404**; telefon emülasyonuyla canlı Karşılama ve Kayıt açıldı (`data-telefon=1`, iki sütunlu düzen, konsol hatası 0). Canlı sitede hesap açılmadı.
+
+**Not:** Bu dal (`claude/mobil-menu-1b6ca9`) `devran-kod`'a ya da `main`'e **birleştirilmedi** ve itilmedi; canlıdaki kod şu an `devran-kod`'un MOBIL-2 kadar ilerisinde. Birleştirme (PR) sahibin kararı.
