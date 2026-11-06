@@ -46,3 +46,8 @@ H1 veri + saf kurallar → H2 harita maçı (sunucu/oda) → H3 kazı → H4 Oca
 
 ## 8. Paralel oturumlar
 Bu oturum yalnız `docs/design/harita/**`, sözlük, sütunlar notu, roadmap satırı, ACTIVE_WORK satırı ve tek araç betiği yazdı; başka oturumların dosyalarına dokunmadı.
+
+## 9. Ek (2026-11-06, ikinci ve üçüncü tur)
+- **İkinci tur (sahip):** madenden parça üretimi + malzeme kademesi (kıymet = prestij, güç eşit) + pahalı Market (SAPMA: kilitsiz 15 parça ücretsiz; Standart ×5, Nadir ×6, Hizip ×8, Karanlık ×8) → `12-parca-uretimi-ve-market.md`; internet araştırması (31 kaynak, 18'i arama özeti) → `11-arastirma-craft-market-ilerleme.md`; sim yeniden koşuldu (Tablo G: Nadir/Hizip'te craft Market'ten ×6,5–×11 hızlı); başarımlar 29.
+- **Üçüncü tur (sahip, soru-cevap):** dolaşma = açık düğüme yürüme; oyuncu = yeni karakter avatarı; hareket bedelsiz; düğüm aşamaları KEŞFET → TEMİZLE → USTALAŞ + bölge rozetleri → `13-dolasma-karakter-dugum-gelisimi.md`.
+- **Kodlama:** sahip kararıyla mekanikler netleşince **alt oturumlarda**; brief `docs/production/harita-kod-brief.md`. Bu oturumda başlatılan H1 ajanı dosyaya yazmadan durduruldu.

@@ -44,6 +44,8 @@ Atölye alt şerit: MARKET · BAŞARIMLAR · OCAK** · GÜNLÜK · PROFİL
 **Bilgi hiyerarşisi (0,5 sn testi):** 1) bölge adı plakası, 2) ana düğme (seçili düğümün eylemi), 3) seçili düğüm, 4) açık düğümler, 5) günlük sayaçlar.
 **Küme sayımı:** başlık bandı · harita alanı · alt şerit (düğüm detayı + ana düğme) · günlük sayaç rozeti = **4** (≤ 7).
 
+> **Güncelleme (13):** haritada oyuncu **karakteri** durur (16×24, taşıdığı aktif topaçla); açık düğüme dokununca yol boyunca yürür (≤ 1,2 sn, dokunuşla atlanır), varınca şerit o düğümün eylemini gösterir; eylem için karakterin düğümde olması gerekir. Düğüm çevresinde 3 çentikli halka (KEŞFET/TEMİZLE/USTALAŞ), keşfedilmemiş açık düğümde "!"; bölge plakasında ilerleme yüzdesi ve rozet. Karaktere dokunmak mini profil şeridi açar. Profil ekranında KARAKTER seçimi (4 gövde).
+
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
 │[◄] ╔══ ◄  OCAK YAMACI  1/3  ► ══╗                         ┌──────────────┐  │

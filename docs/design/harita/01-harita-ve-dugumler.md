@@ -2,6 +2,8 @@
 
 **Bağlı:** [`00`](00-genel-bakis.md) (döngü, G-0, video varsayımı), [`02`](02-maden-sistemi.md) (maden düğümü), [`05`](05-basarim-entegrasyonu.md) (başarım sayımı), [`06`](06-ekonomi-ve-denge.md) (ödül sayıları), [`07`](07-ux-ekranlar.md) § 2–3 (ekran), [`08`](08-teknik-tasarim.md) § 3–6 (kayıt, uçlar). Sayılar: [`veri-taslak/harita.json`](veri-taslak/harita.json).
 
+> **Güncelleme (2026-11-06, sahip kararları):** dolaşma, oyuncu karakteri ve düğüm aşamaları (KEŞFET → TEMİZLE → USTALAŞ) [`13`](13-dolasma-karakter-dugum-gelisimi.md)'te; aşağıdaki "TAMAM" = 13'teki **TEMİZLE** (maden ve sandık için KEŞFET). Çelişen yerde 13 kazanır.
+
 ## 1. Harita yapısı
 
 - **Dünya = 6 bölge**, her bölge bir element (çark sırası, Kaya'dan başlar; 02 § 2 "neden bu sıra"). **İlk sürüm: Bölge 1–3**; 4–6 sezon 2 (`ilkSurum:false`).

@@ -60,6 +60,17 @@ K3–K7 orta tonları `renkler.ts` `ELEMENT_RENK` ile aynı (tek kaynak); K2 keh
 | M3 | Ocak ağzı çerçevesi (kaya yüzü) | 1 | 480×270 kenar, orta boş | Gemini konsept + temizlik |
 | M4 | Kuşak halkası + isabet yayı | — | kod | mevcut halka bileşeni (menü § 5.1/3 ışık kuralı) |
 
+### 3.6 Oyuncu karakteri (13 § 2; sahip kararı: yeni avatar)
+
+| # | Ne | Adet | Boyut / biçim | Yöntem |
+|---|---|---|---|---|
+| K1 | Karakter gövdesi (4 biçim) | 4 | 16×24 hücre, 27 kare/biçim (BEKLE 4, YÜRÜ 6 + ayna, KAZ 6, DÖVÜŞE GİR 5, KUTLA 6), sayfa 9×3 | Gemini konsept (her biçim 1 ön + 1 yan) → **Tripo + Blender** (karakter rig'i, `render_ata.py` deseni, 1 yön + ayna) → `sayfala.py` 16×24, ≤ 24 renk |
+| K2 | Giysi paleti (6 profil rengi) | 6 palet | palet takası | gri kalıp + `palet-takasi.ts` → 4 × 6 = 24 sayfa, tek çizim |
+| K3 | Göğüs arması yeri | — | 5×5 | kod (arma ikonunun küçültülmüşü) |
+| K4 | Taşınan topaç | — | 10×10 | mevcut ikon önbelleği küçültülür |
+
+Maliyet eki: ≈ 8 Gemini çağrısı (≈ $0,4) + 4 Tripo modeli (160 kredi) — tasarımdaki tek 3B asset. Yer tutucu kodda (Pixi figür) sanat gelene kadar.
+
 ### 3.4 Cila (Gövde/Disk metal paleti)
 
 | # | Ne | Yöntem |
@@ -90,13 +101,14 @@ Hepsi `veri/manifest-ses.json` satırı + krediler (`npm run krediler:uret` kap�
 
 ## 5. Mac hattı üretim listesi (Gemini + Tripo + Blender)
 
-**3B (Tripo) gerekmez.** Bütün yeni varlıklar 2B: hat adım 1 (Gemini) + adım 2 (`anahtarla.py`) + palet takası. Bu, maliyeti küçük tutar ve Tripo kredisi harcamaz.
+**3B (Tripo) yalnız oyuncu karakteri için** (§ 3.6, 4 model ≈ 160 kredi). Diğer bütün yeni varlıklar 2B: hat adım 1 (Gemini) + adım 2 (`anahtarla.py`) + palet takası.
 
 | Parti | İçerik | Gemini çağrısı (tahmin, yeniden üretimler dahil) |
 |---|---|---|
 | HP-1 | A1 (5) + A5 (3) + A8 (1) | ≈ 15 |
 | HP-2 | Kalıplar: cevher, külçe, damar kayası, arma ×2, çerçeve ×3 (= 8 kalıp; palet takasıyla 50+ çıktı) | ≈ 16 |
 | HP-3 | Z1 bölge zeminleri ×3 (ilk sürüm) + M3 ocak ağzı | ≈ 12 |
+| HP-K | Karakter: 4 gövde konsepti + Tripo + Blender kareleri + palet takası (§ 3.6) | ≈ 8 + 160 Tripo kredisi |
 | HP-4 (sezon 2) | Z1 ×3 | ≈ 9 |
 
 ## 6. Boyut / biçim sözleşmesi ve maliyet

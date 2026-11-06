@@ -186,6 +186,8 @@ Kilit 8. günde açılır, birikimler sıfırlanır; Market tarafı o günden so
 
 **Okuma:** Nadir ve Hizip'te craft hedef bandında (×5–×11). Standart'ta iki yol da kısa (≤ 4 gün): fark önemsiz. Karanlık'ta craft, K4 (Kor) ve İşleme 60 eşiğine bağlı olduğundan ilerleme sınırlı (ilk sürümde Karanlık zaten K-10'a bağlı kapalı). Gündelik oyuncu için Hizip Market'i ≈ 64 gün (≤ 75 gün tavanı, 11 § 3). **Sınama (H-H8):** sim'de Nadir/Hizip için `T_market / T_craft ≥ 5` (aktif, tutkulu); hiçbir ilk sürüm parçasında aktif `T_market > 75 gün` olmaz.
 
+**Bölge rozetleri (13 § 3.3):** bronz 300 / gümüş 500 / altın 800 Altın; ilk sürüm 3 bölge = 4 800 Altın tek seferlik kaynak (kozmetik + parça işçiliği ve pahalı Market kısayolu bunu emer). USTA DAMAR (+1 kapasite) günlük 60 tavanının altında kalır; Tablo E değişmez.
+
 ### 7.6 Ek hipotez
 | # | Hipotez | Kabul | Durum |
 |---|---|---|---|

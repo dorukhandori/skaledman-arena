@@ -3,6 +3,8 @@
 **Şapka:** `@nile` · **Bağlı:** [`08`](08-teknik-tasarim.md) (sözleşmeler), [`07`](07-ux-ekranlar.md) (ekranlar), [`10`](10-stil-ve-asset-plani.md) (sanat, en son).
 **Kurallar (her dilim):** `devran-kod`; `npm test`, `npm run lint`, `npm run typecheck` yeşil; altın hash'ler aynı (`npm run test:tarayici`); dilim sonunda `docs/production/raporlar/H<n>.md` (ne oynanabilir, test çıktısı, ekran görüntüsü, açık riskler); İngilizce commit; Kick OAuth'a dokunma; main'e yazma.
 
+> **Sahip kararı (2026-11-06):** Kodlama, harita mekanikleri (dolaşma, oyuncu profili/karakteri, hareket, düğüm gelişimi) netleştikten sonra **alt oturumlarda** başlar; bunlar 13'te netleşti. Alt oturum brief'i: `docs/production/harita-kod-brief.md`. Dilim eki: H1 → 13 § 4.1 şeması ve `enKisaYol/asamaHesapla/bolgeIlerlemesi/rozetHesapla`; H2 → `POST /api/harita/git`, konum şartı, aşama yazımı, rozet; H3 → maden USTALAŞ sayacı ve USTA DAMAR (+1 kapasite, +5 nadir); H6 → karakter yer tutucusu, yürüme, halka çentikleri, mini profil; H7 → Profil KARAKTER seçimi.
+
 ## 1. Sıra ve gerekçe
 
 ```

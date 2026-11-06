@@ -21,6 +21,7 @@
 | 09 | [`09-uygulama-dilimleri.md`](09-uygulama-dilimleri.md) | H1…H8 kod dilimleri, kabul ölçütleri, sıra |
 | 10 | [`10-stil-ve-asset-plani.md`](10-stil-ve-asset-plani.md) | EN SONA bırakılan sanat ve ses planı (yalnız plan) |
 | 11 | [`11-arastirma-craft-market-ilerleme.md`](11-arastirma-craft-market-ilerleme.md) | İnternet araştırması: UO, OSRS, Albion, PoE, Warframe…; bulgu → karar tablosu |
+| 13 | [`13-dolasma-karakter-dugum-gelisimi.md`](13-dolasma-karakter-dugum-gelisimi.md) | **Sahip kararları:** haritada dolaşma (açık düğüme yürüme), oyuncu karakteri, bedelsiz hareket, düğüm aşamaları KEŞFET → TEMİZLE → USTALAŞ, bölge rozetleri |
 | 12 | [`12-parca-uretimi-ve-market.md`](12-parca-uretimi-ve-market.md) | **Madenden parça üretimi**, malzeme kademesi (kıymet = prestij), **pahalı Market** (SAPMA), arbitraj kanıtı |
 | 99 | [`99-acik-sorular.md`](99-acik-sorular.md) | Sahibe kalan kararlar, her birinin varsayılanı |
 | veri | [`veri-taslak/`](veri-taslak/) | `madenler.json`, `ustalik.json`, `tarifler.json`, `harita.json`: tek sayı kaynağı (H1'de `veri/`'ye taşınır) |

@@ -132,6 +132,8 @@ CREATE INDEX mac_dugum ON mac(dugum_id);
 **Hesap silme (`Depo.hesapSil`, backend § 9):** aynı işlemde `harita_dugum`, `maden_gunluk`, `maden_seans` (+ `maden_vurus` cascade), `cevher`, `ustalik`, `isleme_defteri`, `gorunum_sahip` silinir; `mac.dugum_id` kalır (kişisel veri değil). `oyuncu` silinince `ON DELETE CASCADE` zaten keser ama mevcut düzen açık `DELETE` yazdığı için aynı desen sürdürülür.
 **Gizlilik (`docs/gizlilik.md`):** "toplanan veriler" listesine bir satır: "Harita ilerlemesi, kazı ve işleme kayıtları (oyun içi; kazı zamanlama telemetrisi 30 gün sonra silinir)". Yeni kişisel veri türü yok.
 
+> **Ek (13 § 4):** `oyuncu.karakter`, `oyuncu.harita_konum`, `harita_dugum.durum` 0–4 (kilitli/açık/KEŞFET/TEMİZLE/USTALAŞ), `harita_dugum.basarili_vurus`, tablo `bolge_rozet`; uç `POST /api/harita/git`; eylem uçları karakter konumu şartı (409 `uzak`).
+
 ## 4. REST uçları (hepsi çerez; yazımlar + Origin; gövde ≤ 16 KB; zod)
 
 | Uç | Girdi | Çıktı / hata |

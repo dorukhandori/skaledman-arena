@@ -24,7 +24,7 @@ Sekme sayısı **6'da kalır** (referans 05, sadelik § 2.4): yeni başarımlar 
 | 10 | `usta-ocakci` | Usta Ocakçı | Yol | `ustalikSeviye` | `{isleme, 50}` | 800 | — | | ✔ |
 | 11 | `cevher-defteri` | Cevher Defteri | Yol | `cevherCesidi` | 4 farklı kademe | 300 | — | | ✔ |
 | 12 | `otuz-yildiz` | Otuz Yıldız | Gösteri | `yildizToplam` | 30 | 300 | — | | ✔ |
-| 13 | `tam-yildiz` | Tam Yıldız | Gösteri | `bolgeYildizTam` | bir bölgenin 18 yıldızı | 800 | görünüm `cerceve-yildiz` | | ✔ |
+| 13 | `bolge-altin` | Altın Bölge | Gösteri | `bolgeRozet` | bir bölgede ALTIN rozet (34/34 aşama, 13 § 3.3) | 800 | görünüm `cerceve-yildiz` | | ✔ |
 | 14 | `usta-isi` | Usta İşi | Gösteri | `ustaIsi` | 1 | 500 | — | | ✔ |
 | 15 | `nadir-damar` | Nadir Damar | (gizli) | `nadirDamar` | 1 | 300 | — | ✔ | ✔ |
 | 16 | `tam-isabet` | Tam İsabet | (gizli) | `isabetSerisi` | 10 ardışık (seanslar arası sürer, gün içinde) | 300 | — | ✔ | ✔ |

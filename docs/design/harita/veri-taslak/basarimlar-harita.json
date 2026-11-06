@@ -219,13 +219,15 @@
    "ilkSurum": true
   },
   {
-   "id": "tam-yildiz",
-   "ad": "Tam Yıldız",
+   "id": "bolge-altin",
+   "ad": "Altın Bölge",
    "kategori": "gosteri",
    "sart": {
-    "olay": "bolgeYildizTam",
+    "olay": "bolgeRozet",
     "sayi": 1,
-    "kosul": {}
+    "kosul": {
+     "rozet": 3
+    }
    },
    "odulAltin": 800,
    "acilanParcalar": [],

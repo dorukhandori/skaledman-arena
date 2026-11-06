@@ -29,3 +29,7 @@
 | S-23 | Craft süresi / günlük sınır | Gerçek zamanlı bekleme yok; sınır yalnız günlük 40 dinç + 20 yarım vuruş; 61+ kilit değil, verimsiz | 02 § 6, 11 § 5.1 |
 | S-24 | Kullanılmayan dinç vuruş ertesi güne taşınsın mı (en çok 80)? | **Hayır** (S2 sadelik); araştırma "seyrek oyuncuyu korur" diyor | 02 § 6, 11 § 5.1 |
 | S-25 | Usta damgası çerçevesi Ustalık 82+, "USTA" mührü 100 (araştırma önerisi) | Evet, yalnız görünüm | 12 § 3, 10 |
+| S-26 | Haritada başka oyuncular (arkadaşın konumu) görünsün mü? | Hayır (tek oyunculu ilerleme) | 13 § 2.4 |
+| S-27 | Karakter gövde biçimi sayısı | 4 (ilk sürüm), adlar yok | 13 § 2.1, 10 § 3.6 |
+| S-28 | Karakter maçta/lobide görünsün mü? | Hayır; yalnız harita ve Maden ekranı (maçta oyuncu topaçtır) | 13 § 2.3 |
+| S-29 | Maden USTALAŞ ölçütü (30 başarılı vuruş) ve ödülü (USTA DAMAR: +1 kapasite, +5 nadir) | Evet | 13 § 3.1–3.2 |
