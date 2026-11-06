@@ -33,10 +33,13 @@ function yay(g: CanvasRenderingContext2D, cx: number, cy: number, rx: number, ry
   }
 }
 
-/** Oyna sahnesi: takımın arkasında Kuşak yayı (üst yarı ışıklı, alt yarı sönük taş çizgi). */
-export function oynaYayi(w: number, h: number): HTMLCanvasElement {
+/**
+ * Oyna sahnesi: takımın arkasında Kuşak yayı (üst yarı ışıklı, alt yarı sönük taş çizgi). `cyOran`/`ryOran` elipsin
+ * merkezini ve dikey yarıçapını tuval yüksekliğine göre verir (K-8: alt yay kaidelerin hemen altından geçer).
+ */
+export function oynaYayi(w: number, h: number, cyOran = 0.52, ryOran = 0.42): HTMLCanvasElement {
   const { c, g } = tuval(w, h, "k-yay");
-  const cx = w / 2, cy = h * 0.52, rx = w / 2 - 6, ry = h * 0.42;
+  const cx = w / 2, cy = h * cyOran, rx = w / 2 - 6, ry = h * ryOran;
   yay(g, cx, cy, rx, ry, Math.PI * 1.04, Math.PI * 1.96, "isik");
   yay(g, cx, cy, rx, ry, Math.PI * 0.08, Math.PI * 0.92, "sonuk");
   return c;

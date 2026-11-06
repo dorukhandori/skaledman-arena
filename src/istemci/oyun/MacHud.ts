@@ -7,6 +7,7 @@ import { AYAR as AYAR_ } from "../../paylasilan/kurallar/ayar.ts";
 import { RUHLAR } from "../../paylasilan/veri/katalog.ts";
 import { YETENEK_SIM } from "../../paylasilan/veri/yetenekSablon.ts";
 import { elementSvg } from "./elementSimge.ts";
+import { heceliAd } from "./heceliAd.ts";
 import { ELEMENT_RENK, KOKEN_RENK } from "./renkler.ts";
 import { metinOlcegiOku } from "../ekranlar/arayuz.ts";
 import { ayarlariOku } from "./Ayarlar.ts";
@@ -113,8 +114,11 @@ const STIL = `
 .mh .yv.etkin { border-color:#7fd3ff; box-shadow:0 0 8px #7fd3ff; }
 .mh .yv.kullanildi { border-color:#4a5a60; color:#8d989e; background:rgba(5,13,16,.85); }
 .mh .yv .ys { display:block; margin:0 auto; }
-.mh .ya { position:absolute; top:481px; width:48px; margin-left:-2px; font-size:8px; line-height:10px; text-align:center; color:#a3b2b6; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-shadow:0 1px 0 #000; }
-.mh .ya.on { color:#f3f1e8; }
+/* H-12 (MENU-P1A): yetenek adı pixel yazıda (m5x7 16 px, jeton boyutu), kesilmeden; gerekirse iki satır (Türkçe hece
+   yerinde yumuşak tire), yuvanın hemen üstüne alttan hizalı; tam ad yuvanın ve etiketin title'ında */
+.mh .ya { position:absolute; bottom:47px; width:54px; margin-left:-5px; font:400 16px/9px "m5x7",ui-monospace,monospace; letter-spacing:0; text-align:center; color:#a49c8c; white-space:normal; overflow:visible; hyphens:manual; text-shadow:1px 1px 0 #05050a; }
+.mh .ya.on { color:#fbf2c3; }
+.mh:not(.dokunmatik) .ya, .mh:not(.dokunmatik) .yv { pointer-events:auto; }
 .mh .en span.parilti { box-shadow:0 0 0 1px #fff, 0 0 10px #cfeeff; }
 .mh .en span.parilti i { background:#e6f8ff; }
 .mh .en em.ulti { color:#ffb347; text-shadow:0 0 4px #ff8a3d; }
@@ -198,7 +202,7 @@ const STIL = `
 .mh.o125 .bant { font-size:20px; height:40px; line-height:36px; top:90px; } .mh.o150 .bant { font-size:24px; height:46px; line-height:42px; top:100px; width:560px; left:200px; }
 .mh.o125 .yv .tus, .mh.o125 .yv .ic { font-size:12.5px; } .mh.o150 .yv .tus, .mh.o150 .yv .ic { font-size:15px; line-height:15px; }
 .mh.o125 .yv .n { font-size:15px; } .mh.o150 .yv .n { font-size:18px; }
-.mh.o125 .ya { font-size:10px; top:479px; line-height:12px; } .mh.o150 .ya { font-size:12px; top:476px; line-height:14px; }
+.mh.o125 .ya { font-size:20px; line-height:11px; width:60px; margin-left:-8px; } .mh.o150 .ya { font-size:24px; line-height:13px; width:66px; margin-left:-11px; }
 .mh.o125 .tk .tab, .mh.o125 .tk .ok { font-size:12.5px; } .mh.o150 .tk .tab, .mh.o150 .tk .ok { font-size:15px; top:-18px; }
 .mh.o125 .ds { height:110px; top:368px; } .mh.o150 .ds { height:124px; top:356px; }
 .mh.o125 .ds h4 { font-size:13.5px; line-height:17px; } .mh.o150 .ds h4 { font-size:16.5px; line-height:20px; }
@@ -663,7 +667,8 @@ export class MacHud {
       const toplam = bilgi?.beklemeAdim ?? 1;
       sweep.style.height = `${bekleme > 0 && !etkin ? (bekleme / toplam) * 100 : 0}%`;
       y.title = bilgi ? (k === TAKIM_YUVA ? "Takım Ultisi · Takım Enerjisi (4. dilim)" : `${["Yetenek", "Özel Yetenek", "Ulti"][k]}: ${bilgi.ad} · ${bilgi.enerjiBedel / 100} dilim`) : "Boş";
-      this.yaz(this.yuvaAdlari[k]!, bilgi ? bilgi.ad : "");
+      this.yaz(this.yuvaAdlari[k]!, bilgi ? heceliAd(bilgi.ad) : "");
+      if (this.yuvaAdlari[k]!.title !== (bilgi?.ad ?? "")) this.yuvaAdlari[k]!.title = bilgi?.ad ?? "";
       this.yuvaAdlari[k]!.classList.toggle("on", hazir || basiliYuva === k);
       const ic = y.lastElementChild as HTMLElement;
       const simge = bilgi ? elementSvg(bp.element, 18).replace('class="els"', 'class="els ys"') : "";

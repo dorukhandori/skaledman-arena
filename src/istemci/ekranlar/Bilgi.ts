@@ -1,5 +1,5 @@
 import gizlilikMetni from "../../../docs/gizlilik.md?raw";
-import { type Krediler, kredilerDerle } from "../../paylasilan/krediler.ts";
+import { type Krediler, kredilerDerle, oyuncuKredileri } from "../../paylasilan/krediler.ts";
 import type { EkranBaglami } from "../main.ts";
 import { el, ekranKok, geriDugmesi } from "./arayuz.ts";
 
@@ -45,6 +45,13 @@ const STIL = `
 .ekr .bilgi th { color:var(--gold); text-transform:uppercase; font-weight:400; }
 .ekr .bilgi pre { white-space:pre-wrap; overflow-wrap:anywhere; font:400 var(--y-16)/.875 var(--font-etiket); background:#100e16; padding:calc(4 * var(--p)); color:var(--soluk); }
 .ekr .bilgi .bos { color:var(--soluk); }
+.ekr .bilgi.kredi table { margin-bottom:calc(4 * var(--p)); }
+.ekr .bilgi.kredi th:nth-child(1), .ekr .bilgi.kredi td:nth-child(1) { width:34%; }
+.ekr .bilgi.kredi th:nth-child(3), .ekr .bilgi.kredi td:nth-child(3) { width:18%; }
+.ekr .bilgi.kredi td { overflow-wrap:break-word; }
+.ekr .bilgi.kredi td:nth-child(3) { color:var(--soluk); }
+.ekr .bilgi details { margin-top:calc(8 * var(--p)); }
+.ekr .bilgi summary { cursor:pointer; color:var(--gold); text-transform:uppercase; }
 `;
 function stil(): void { const s = document.createElement("style"); s.textContent = STIL; document.head.appendChild(s); }
 
@@ -67,38 +74,40 @@ export function kredileriOku(): Krediler {
   return kredilerDerle(md, bul("gorsel"), bul("ses"));
 }
 
+/**
+ * H-2 (MENU-P1A, sahip kararı S-3): oyuncu sürümü. Yalnız oyunda kullanılan varlıklar, sütunlar Varlık · Atıf · Lisans;
+ * aday satırları, Durum/Not sütunları, dosya yolları ve manifest denetimi gösterilmez (tam iç kayıt docs/art/krediler.md,
+ * denetim `npm run krediler:uret`). MIT bildirimi açılır kutuda.
+ */
 export function krediler(b: EkranBaglami): void {
   stil();
   const { kart } = ekranKok(b.ustYazi, "Krediler");
+  kart.classList.add("genis");
   geriDugmesi(kart, "ayarlar");
-  const ic = el("div", "bilgi", kart);
+  const ic = el("div", "bilgi kredi", kart);
   ic.dataset["sayfa"] = "krediler";
-  el("h2", "", ic, "Krediler");
-  el("p", "alt", ic, "Devran: özgün dönen topaç dövüşü. Kâr amaçsız. Kullandığımız her şeyin sahibi ve lisansı:");
+  el("p", "alt", ic, "Devran: özgün dönen topaç dövüşü. Kâr amaçsız. Oyunda kullandığımız her şeyin sahibi ve lisansı:");
   const k = kredileriOku();
-  if (!k.bolumler.length) el("p", "bos", ic, "Varlık kredisi kaydı henüz yok.");
-  for (const bl of k.bolumler) {
-    el("h3", "", ic, bl.baslik);
+  const bolumler = oyuncuKredileri(k);
+  if (!bolumler.length) el("p", "bos", ic, "Varlık kredisi kaydı henüz yok.");
+  const tablo = (basliklar: string[], satirlar: string[][]) => {
     const t = el("table", "", ic);
     const tr = el("tr", "", el("thead", "", t));
-    for (const h of bl.basliklar) el("th", "", tr, h);
+    for (const h of basliklar) el("th", "", tr, h);
     const govde = el("tbody", "", t);
-    for (const s of bl.satirlar) { const r = el("tr", "", govde); for (const h of s.hucreler) el("td", "", r, h); }
+    for (const s of satirlar) { const r = el("tr", "", govde); for (const h of s) el("td", "", r, h); }
+  };
+  for (const bl of bolumler) {
+    el("h3", "", ic, bl.baslik);
+    tablo(["Varlık", "Atıf", "Lisans"], bl.satirlar.map((s) => [s.varlik, s.atif, s.lisans]));
   }
-  const eksik = k.kaynaklar.filter((x) => x.eksikAtif);
-  if (eksik.length) {
-    el("h3", "", ic, "Atıfı bekleyen kaynaklar");
-    const ul = el("ul", "", ic);
-    for (const x of eksik) el("li", "", ul, `${x.kaynak || x.dosya} (${x.lisans || "lisans ?"})`);
-  }
+  if (!bolumler.some((x) => x.baslik === "Yazı tipleri")) { el("h3", "", ic, "Yazı tipleri"); el("p", "", ic, k.yaziTipi); }
   el("h3", "", ic, "Yazılım");
-  const t = el("table", "", ic);
-  const tr = el("tr", "", el("thead", "", t));
-  for (const h of ["Yazılım", "Lisans", "Telif", "Kaynak"]) el("th", "", tr, h);
-  const govde = el("tbody", "", t);
-  for (const y of k.yazilim) { const r = el("tr", "", govde); for (const h of [y.ad, y.lisans, y.telif, y.url]) el("td", "", r, h); }
-  el("h3", "", ic, "Yazı tipleri");
-  el("p", "", ic, k.yaziTipi);
-  if (k.bildirim) { el("h3", "", ic, "MIT bildirimi"); el("pre", "", ic, k.bildirim); }
-  el("p", "yt", ic, `Manifest kaynağı: ${k.kaynaklar.length} · atıfı eksik: ${eksik.length}`);
+  tablo(["Yazılım", "Atıf", "Lisans"], k.yazilim.map((y) => [y.ad, `${y.telif.replace(/^docs\/.*$/, "")} ${y.url.replace(/^https?:\/\//, "")}`.trim(), y.lisans]));
+  if (k.bildirim) {
+    const d = el("details", "", ic);
+    el("summary", "", d, "MIT bildirimi");
+    el("pre", "", d, k.bildirim);
+  }
+  el("p", "yt", ic, `${bolumler.reduce((n, x) => n + x.satirlar.length, 0)} varlık · ${k.yazilim.length} yazılım`);
 }

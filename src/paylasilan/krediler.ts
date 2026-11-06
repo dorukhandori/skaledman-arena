@@ -92,3 +92,69 @@ export function kredilerDerle(md: string | null, gorsel: unknown, ses: unknown):
   }
   return { bolumler, bildirim, kaynaklar, yazilim: YAZILIM, yaziTipi: YAZI_TIPI };
 }
+
+// ---- H-2 (MENU-P1A, sahip kararı S-3): oyuncu sürümü ----
+// Oyun içi /krediler yalnız oyunda kullanılan varlıkları gösterir: Varlık · Atıf · Lisans. Aday / yedek / oyunda yüklenmeyen
+// satırlar, "Durum" ve "Not" sütunları, dosya yolları ve iç notlar gösterilmez; tam iç kayıt docs/art/krediler.md'de kalır.
+// Kullanılmıyor sayılan satır: Durum ya da Varlık hücresi aşağıdaki işaretlerden birini taşır. ("aday, entegre değil"
+// notları eski: bu sesler public/ses/kayit/ altında ve Ses.ts tarafından çalınıyor; o yüzden "aday" tek başına dışlamaz.)
+
+export interface OyuncuKredisi { varlik: string; atif: string; lisans: string }
+export interface OyuncuKrediBolumu { baslik: string; satirlar: OyuncuKredisi[] }
+
+/** Oyunda yüklenmeyen varlık işaretleri (krediler.md "Durum" / "Varlık" hücrelerinde). */
+const KULLANILMIYOR = /yedek havuz|atlasa alınmadı|maçta yüklenmez|bayrakla kapalı|çalışma anında kullanılmaz|bağlı değil/i;
+
+/** İç içe parantezleri ve içeriklerini at ("Jersey 10 (public/yazi/…; başlık)" → "Jersey 10"). */
+export function parantezsiz(s: string): string {
+  let o = s;
+  for (let i = 0; i < 5 && /\([^()]*\)/.test(o); i++) o = o.replace(/\s*\([^()]*\)/g, "");
+  return o.replace(/\s+/g, " ").replace(/\s+([,;.])/g, "$1").trim();
+}
+
+/** URL'yi kısa, okunur biçime getir ("https://github.com/x/y" → "github.com/x/y"). */
+const kisaUrl = (s: string): string => s.replace(/https?:\/\/(www\.)?/g, "").replace(/\/$/, "");
+
+const OYUNCU_BASLIK: [RegExp, string][] = [
+  [/dış varlık/i, "Ses ve görsel efektler"],
+  [/görsel yazılım/i, "3B görüntüleyici"],
+  [/yazı tip/i, "Yazı tipleri"],
+  [/pişirilmiş|kod kaynaklı/i, "Efekt kodu"],
+  [/kendi/i, "Kendi üretimimiz"],
+];
+const oyuncuBasligi = (b: string): string => OYUNCU_BASLIK.find(([r]) => r.test(b))?.[1] ?? parantezsiz(b);
+
+function hucre(b: KrediBolumu, s: KrediSatiri, ad: RegExp): string {
+  const i = b.basliklar.findIndex((h) => ad.test(h));
+  return i >= 0 ? (s.hucreler[i] ?? "").trim() : "";
+}
+
+function oyuncuSatiri(b: KrediBolumu, s: KrediSatiri): OyuncuKredisi | null {
+  const varlikHam = hucre(b, s, /^(varlık|kaynak)$/i);
+  if (KULLANILMIYOR.test(hucre(b, s, /^durum$/i)) || KULLANILMIYOR.test(varlikHam)) return null;
+  const kendi = /kendi/i.test(b.baslik);
+  // "pixelfx — https://…" → "pixelfx"; yol/parantez notları atılır
+  // "A (…) ve B (…, dağıtılmaz)" → yalnız dağıtılan parça kalır
+  const dagitilan = varlikHam.split(/\s+ve\s+(?=[^()]*\([^()]*dağıtılmaz)/i)[0] ?? varlikHam;
+  const varlik = parantezsiz(dagitilan.split(/\s+—\s+/)[0] ?? dagitilan).replace(/;.*$/, "").trim();
+  const atifHam = hucre(b, s, /^atıf/i).replace(/^"|"$/g, "").replace(/"\s*\+.*$/, "").trim();
+  const yazar = parantezsiz(hucre(b, s, /yazar|telif/i));
+  const yzUretim = /yapay zekâ/i.test(hucre(b, s, /^araç$/i));
+  const atif = atifHam && atifHam !== "—" ? atifHam
+    : kendi || /^kendi/i.test(yazar) ? (yzUretim ? "Devran (yapay zekâ destekli üretim)" : "Devran")
+    : kisaUrl(yazar);
+  const lisansHam = parantezsiz(hucre(b, s, /^lisans$/i));
+  const lisans = /^bizim$/i.test(lisansHam) ? "Devran" : lisansHam.replace(/\s*\(bizim\)/i, "");
+  if (!varlik) return null;
+  return { varlik, atif: kisaUrl(atif), lisans: lisans || "—" };
+}
+
+/** Oyuncu sürümü: yalnız kullanılan varlıklar, Varlık · Atıf · Lisans (boş bölüm atlanır). */
+export function oyuncuKredileri(k: Krediler): OyuncuKrediBolumu[] {
+  const out: OyuncuKrediBolumu[] = [];
+  for (const b of k.bolumler) {
+    const satirlar = b.satirlar.map((s) => oyuncuSatiri(b, s)).filter((x): x is OyuncuKredisi => x !== null);
+    if (satirlar.length) out.push({ baslik: oyuncuBasligi(b.baslik), satirlar });
+  }
+  return out;
+}

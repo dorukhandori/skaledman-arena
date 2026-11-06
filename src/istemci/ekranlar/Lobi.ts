@@ -1,5 +1,6 @@
 import { type OdaGorunumu } from "../../ag/durum.ts";
 import { dugumBul } from "../../paylasilan/kurallar/harita.ts";
+import { cekirdekBul } from "../../paylasilan/veri/katalog.ts";
 import { MADENLER } from "../../paylasilan/veri/harita.ts";
 import { MESAJ, ODA_FAZI, odaKoduBicimle, odaKoduCoz } from "../../ag/protokol.ts";
 import { takimKoduYaz, takimProfilleriKimlikten } from "../../paylasilan/veri/takimlar.ts";
@@ -17,8 +18,8 @@ import { aramaCanagi, oynaYayi, sureHalkasi, vsZemini } from "./lobiCizim.ts";
 import { dokunmatikMi } from "../mobil/cihaz.ts";
 
 // Lobi (D4, ux § 3.3) · GU-08 + GU-14 menü dili v2 "Kuşak Taşı" (maketler docs/art/maketler/menu-v2/b-oyna, b-lobi,
-// b-ara0..2, b-vs, b-takim, b-oda). İşlev aynı: Oda aç (kod + Kodu kopyala + Bağlantıyı kopyala `#oda=ABCDEFGH`, QR yer
-// tutucu, seyirci bağlantısı), Odaya katıl (tek gizli alan + 8 taş karo; yapıştır çalışır; bağlantıyla gelince dolu),
+// b-ara0..2, b-vs, b-takim, b-oda). İşlev aynı: Oda aç (kod + Kodu kopyala + Bağlantıyı kopyala `#oda=ABCDEFGH`,
+// seyirci bağlantısı; QR yok, sahip kararı S-2), Odaya katıl (tek gizli alan + 8 taş karo; yapıştır çalışır; bağlantıyla gelince dolu),
 // Hızlı maç (D7: kuyruk, arama çanağı 12 dilim = 60 sn; 20 sn "Beklerken Antrenman"; 30 sn "Bot ile oyna"; 60 sn
 // "Şu an rakip bulamadık"; Tekrar = yeni eşleşme `?ekran=lobi&hizli=1`), Antrenman (sunucu botu). Eşleşince VS anı
 // (≤ 1,6 sn; `[data-duyuru]` "Rakip bulundu: <ad>" 3 sn), takım seçimi 20 sn (süre dolunca son takım; 1/2/3 kısayol).
@@ -32,9 +33,9 @@ const STIL = `
 .lobi.ust { background:rgba(8,7,12,.82); }
 .lobi .lb { position:relative; min-height:100%; display:flex; flex-direction:column; }
 .lobi .lb-govde { flex:1; position:relative; display:grid; grid-template-columns:calc(146 * var(--p)) 1fr; grid-template-rows:1fr auto; gap:var(--aralik) calc(12 * var(--p)); padding:calc(10 * var(--p)) var(--kenar) var(--kenar); }
-.lobi .lb-sol { display:flex; flex-direction:column; gap:calc(8 * var(--p)); }
+.lobi .lb-sol { align-self:start; display:flex; flex-direction:column; gap:calc(8 * var(--p)); }
 .lobi .lb-sol .k-dugme.mod { width:100%; }
-.lobi .lb-bilgi { margin-top:auto; padding-top:calc(6 * var(--p)); border-top:var(--p) solid #2a3146; text-align:center; color:var(--soluk); text-transform:uppercase; line-height:1; }
+.lobi .lb-bilgi { padding-top:calc(6 * var(--p)); border-top:var(--p) solid #2a3146; text-align:center; color:var(--soluk); text-transform:uppercase; line-height:1; white-space:nowrap; }
 .lobi .lb-sag { position:relative; display:flex; flex-direction:column; gap:var(--aralik); min-width:0; }
 .lobi .lb-alt { grid-column:1 / -1; display:flex; align-items:flex-end; justify-content:flex-end; gap:calc(8 * var(--p)); }
 .lobi .lb-alt .sol { margin-right:auto; display:flex; gap:calc(6 * var(--p)); align-items:flex-end; }
@@ -48,8 +49,12 @@ const STIL = `
 .lobi .lb-uye .k-kaide { width:calc(56 * var(--p)); }
 .lobi .lb-uye { display:flex; flex-direction:column; align-items:center; gap:calc(2 * var(--p)); }
 .lobi .lb-uye .k-kaide { margin-top:calc(-6 * var(--p)); }
-.lobi .lb-uye .lv { display:flex; align-items:center; gap:calc(3 * var(--p)); margin-top:calc(6 * var(--p)); text-transform:uppercase; }
-.lobi .lb-uye .lv.odunc { color:var(--soluk); }
+.lobi .lb-uye .etiket { display:flex; flex-direction:column; align-items:center; gap:calc(2 * var(--p)); margin-top:calc(18 * var(--p)); padding:calc(3 * var(--p)) calc(5 * var(--p)); background:#161c2c; box-shadow:inset 0 0 0 var(--p) #59607a; text-transform:uppercase; white-space:nowrap; }
+.lobi .lb-uye .etiket b { font-weight:400; color:var(--ink); }
+.lobi .lb-uye .lv { display:flex; align-items:center; gap:calc(3 * var(--p)); }
+.lobi .lb-uye.odunc .etiket { box-shadow:inset 0 0 0 var(--p) #6a7088; }
+.lobi .lb-uye.odunc .lv { color:var(--soluk); }
+.lobi .lb-uye.odunc canvas, .lobi .lb-uye.odunc img { filter:grayscale(1); opacity:.7; }
 /* Oda kodu */
 .lobi .lb-kodla { display:flex; flex-direction:column; gap:calc(6 * var(--p)); padding:calc(8 * var(--p)) calc(12 * var(--p)); }
 .lobi .lb-karo-alan { position:relative; align-self:flex-start; margin:calc(6 * var(--p)) 0; }
@@ -59,14 +64,19 @@ const STIL = `
 .lobi .lb-not { align-self:flex-start; padding:calc(4 * var(--p)) calc(8 * var(--p)); text-transform:uppercase; color:var(--soluk); }
 /* Aranıyor */
 .lobi .lb-ara { flex:1; position:relative; padding:calc(10 * var(--p)) var(--kenar) var(--kenar); display:flex; flex-direction:column; }
+/* K-17 (MENU-P1A): sayaç + öneri tek blokta, çanağın üstünde ortada */
+.lobi .lb-ara-blok { align-self:center; display:flex; flex-direction:column; align-items:center; gap:calc(6 * var(--p)); }
 .lobi .lb-ara-ust { display:flex; align-items:center; gap:calc(10 * var(--p)); }
+.lobi .lb-ara-blok > [data-oneri] { min-height:calc(48 * var(--p)); display:flex; align-items:flex-start; justify-content:center; }
 .lobi .lb-sure { color:var(--gold); font:400 var(--y-40)/1 var(--font-baslik); letter-spacing:calc(2 * var(--yp)); }
 .lobi .lb-canak-yer { position:relative; flex:1; display:flex; align-items:center; justify-content:center; min-height:calc(150 * var(--p)); }
 .lobi .lb-canak { position:relative; }
 .lobi .lb-canak .k-topac { position:absolute; left:50%; top:50%; transform:translate(-50%, -62%); }
 .lobi .lb-bos-rakip { position:absolute; right:calc(40 * var(--p)); top:50%; transform:translateY(-30%); display:flex; flex-direction:column; align-items:center; gap:calc(2 * var(--p)); color:var(--soluk); text-transform:uppercase; }
+.lobi .lb-canak .lb-bos-rakip { right:calc(36 * var(--p)); transform:translateY(-62%); }
 .lobi .lb-bos-rakip .k-kaide { opacity:.6; }
-.lobi .lb-oneri { position:absolute; right:var(--kenar); top:calc(10 * var(--p)); width:calc(140 * var(--p)); display:flex; flex-direction:column; gap:calc(4 * var(--p)); text-transform:uppercase; }
+.lobi .lb-oneri { display:flex; flex-direction:row; align-items:center; gap:calc(8 * var(--p)); padding:calc(4 * var(--p)) calc(8 * var(--p)); text-transform:uppercase; }
+.lobi .lb-oneri .yazi { display:flex; flex-direction:column; gap:calc(2 * var(--p)); }
 .lobi .lb-oneri b { color:var(--soluk); font-weight:400; }
 .lobi .lb-oneri.bot-kart b { color:var(--gold); }
 .lobi .lb-oneri span { color:var(--soluk); text-transform:none; }
@@ -79,8 +89,9 @@ const STIL = `
 .lobi .lb-vs .taraf { position:absolute; top:calc(26 * var(--p)); bottom:calc(40 * var(--p)); width:50%; display:flex; flex-direction:column; align-items:center; gap:0; }
 .lobi .lb-vs .taraf .k-vs-plaka { margin-bottom:auto; }
 .lobi .lb-vs .taraf .k-kaide { margin-top:calc(-10 * var(--p)); margin-bottom:auto; }
-.lobi .lb-vs .k-vs-plaka { width:calc(200 * var(--p)); white-space:nowrap; }
-.lobi .lb-vs .k-vs-plaka > span:nth-child(2) { overflow:hidden; text-overflow:ellipsis; max-width:calc(110 * var(--p)); }
+/* H-11 (MENU-P1A): plaka içeriğe göre; ad yalnız taraf genişliğini aşınca kesilir */
+.lobi .lb-vs .k-vs-plaka { width:auto; min-width:calc(200 * var(--p)); max-width:calc(100% - 16 * var(--p)); padding:0 calc(20 * var(--p)); white-space:nowrap; }
+.lobi .lb-vs .k-vs-plaka > span:nth-child(2) { flex:0 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; }
 .lobi .lb-vs .taraf.sol { left:0; } .lobi .lb-vs .taraf.sag { right:0; }
 .lobi .lb-vs .k-vs-plaka { animation:lb-kay-sol calc(4 * var(--kare)) steps(4) both; }
 .lobi .lb-vs .sag .k-vs-plaka { animation-name:lb-kay-sag; }
@@ -131,9 +142,7 @@ const STIL = `
 .lobi .lb-oda-sol .satir { display:flex; gap:calc(8 * var(--p)); align-items:center; flex-wrap:wrap; }
 .lobi .lb-oda-sol .kopyalandi { color:var(--yesil); text-transform:uppercase; }
 .lobi .lb-oda-sol .sayac { margin-top:auto; padding-top:calc(6 * var(--p)); border-top:var(--p) solid #2a3146; display:flex; align-items:center; justify-content:space-between; gap:var(--aralik); text-transform:uppercase; color:var(--soluk); }
-.lobi .lb-oda-sag { display:flex; flex-direction:column; gap:calc(14 * var(--p)); align-items:center; }
-.lobi .lb-qr { width:100%; display:flex; flex-direction:column; align-items:center; gap:calc(6 * var(--p)); color:var(--soluk); text-transform:uppercase; }
-.lobi .lb-qr i { display:block; width:calc(64 * var(--p)); height:calc(64 * var(--p)); background:repeating-conic-gradient(#fbf2c3 0 25%, #1b2131 0 50%) 0 0 / calc(8 * var(--p)) calc(8 * var(--p)); opacity:.85; }
+.lobi .lb-oda-sag { display:flex; flex-direction:column; gap:calc(14 * var(--p)); align-items:center; justify-content:center; }
 .lobi .lb-oda-alt { grid-column:1 / -1; display:flex; justify-content:space-between; align-items:flex-end; }
 html[data-yazi-buyuk] .lobi .lb-govde { grid-template-columns:1fr; }
 html[data-yazi-buyuk] .lobi .lb-secim { grid-template-columns:1fr; }
@@ -161,10 +170,13 @@ function elRozet(ust: HTMLElement, element: string, sinif = ""): HTMLElement {
 }
 
 const TAKIM_ANAHTAR = SON_TAKIM;
-/** takım üyeleri: element + ödünç + seviye (sunucu takım kodundan) */
-function uyeler(t: TakimGorunumu): { element: string; odunc: boolean; seviye: number; profil: TopacProfili }[] {
+/** takım üyeleri: element + ödünç + seviye + Çekirdek adı (sunucu takım kodundan) */
+function uyeler(t: TakimGorunumu): { element: string; odunc: boolean; seviye: number; profil: TopacProfili; ad: string }[] {
   const p = takimProfilleriKimlikten(takimKoduYaz(t.uyeler));
-  return p.map((x, j) => ({ element: x.element, odunc: !!t.uyeler[j]?.odunc, seviye: t.uyeler[j]?.seviye ?? 1, profil: x }));
+  return p.map((x, j) => ({ element: x.element, odunc: !!t.uyeler[j]?.odunc, seviye: t.uyeler[j]?.seviye ?? 1, profil: x, ad: cekirdekAdi(t.uyeler[j]?.cekirdek) }));
+}
+function cekirdekAdi(id: string | undefined): string {
+  try { return id ? cekirdekBul(id).ad : "Topaç"; } catch { return "Topaç"; }
 }
 
 export function baslat(b: EkranBaglami): void {
@@ -314,7 +326,8 @@ class LobiEkrani {
       d.setAttribute("aria-pressed", String(this.modSecimi === m));
       d.addEventListener("click", () => { this.modSecimi = m; this.giris(); });
     }
-    el("div", "lb-bilgi k-e16", sol, this.modSecimi === "hizli" ? "1v1 · ilk 3\npuan · 90 sn" : this.modSecimi === "oda" ? "Arkadaşınla\noyna" : "Altın ve\nbaşarım yok").style.whiteSpace = "pre-line";
+    // K-8 (MENU-P1A): mod notu panelin içinde, düğmelerin hemen altında tek satır
+    el("div", "lb-bilgi k-e16", sol, this.modSecimi === "hizli" ? "İlk 3 puan · 90 sn" : this.modSecimi === "oda" ? "Arkadaşınla oyna" : "Altın, başarım yok");
     if (this.modSecimi === "hizli") this.hizliPaneli(sag, alt, hata, hizliHata);
     else if (this.modSecimi === "oda") this.odaPaneli(sag, alt);
     else this.antrenmanPaneli(sag, alt);
@@ -338,15 +351,21 @@ class LobiEkrani {
         this.giris();
       });
     }
-    s.appendChild(oynaYayi(380, 150));
+    // K-8 (MENU-P1A): halka takımı çevreler: üst yay topaçların üstünde, alt yay kaidelerin hemen altında, etiketler halkanın altında
+    s.appendChild(oynaYayi(380, 110, 0.627, 0.295));
     const ekip = el("div", "lb-ekip", s);
+    // K-7 (MENU-P1A): Atölye ile aynı temsil: ödünç = gri çerçeve + gri ikon + Çekirdek adı
     for (const u of uyeler(t)) {
-      const k = el("div", "lb-uye", ekip);
-      k.appendChild(topac3bIkonu(u.profil, 22, u.odunc)); // TEMIZLIK #4: 3B birleşik topaç (ortak önbellek)
+      const k = el("div", `lb-uye${u.odunc ? " odunc" : ""}`, ekip);
+      k.dataset["odunc"] = u.odunc ? "1" : "0";
+      k.appendChild(topac3bIkonu(u.profil, 22)); // TEMIZLIK #4: 3B birleşik topaç (ortak önbellek); ödünçte CSS ile gri
       el("div", "k-kaide", k);
-      const lv = el("div", `lv k-e16${u.odunc ? " odunc" : ""}`, k);
+      const et = el("div", "etiket k-e16", k);
+      el("b", "", et, u.ad);
+      const lv = el("div", "lv", et);
       elRozet(lv, u.element, u.odunc ? "odunc" : "");
-      el("span", "", lv, u.odunc ? "Ödünç" : `Lv.${u.seviye}`);
+      el("span", "", lv, u.odunc ? "Ödünç · Lv.1" : `Lv.${u.seviye}`);
+      k.title = u.odunc ? `${u.ad} (ödünç): Lv.1, tecrübe ve başarım almaz` : `${u.ad} · Lv.${u.seviye}`;
     }
   }
 
@@ -491,7 +510,7 @@ class LobiEkrani {
     else if (s.faz === ODA_FAZI.mac) this.macaGec();
   }
 
-  /** Oda açıldı (b-oda): 8 taş karo kod, BAĞLANTI, seyirci, 20 dilim sayaç, QR yer tutucu, boş rakip kaidesi. */
+  /** Oda açıldı (b-oda): 8 taş karo kod, BAĞLANTI, seyirci, 20 dilim sayaç, boş rakip kaidesi (QR yok: sahip kararı S-2, MENU-P1A H-1). */
   private bekleme(s: OdaGorunumu): void {
     this.asama = "bekliyor";
     if (s.mod === "hizli") { this.kuyrukEkrani(); return; }
@@ -531,8 +550,6 @@ class LobiEkrani {
     bekle.dataset["sayac"] = "1";
     el("span", "k-segment genis", sy).dataset["odaSegment"] = "1";
     const sag = el("div", "lb-oda-sag", g);
-    const qr = el("div", "k-panel lb-qr k-e16", sag, "QR · yer tutucu");
-    el("i", "", qr);
     const bos = el("div", "lb-bos-rakip", sag);
     bos.style.position = "static"; bos.style.transform = "none";
     el("span", "k-soru", bos, "?");
@@ -551,7 +568,8 @@ class LobiEkrani {
   /** Aranıyor (b-ara0..2): çanakta dönen topaç, 12 dilim halka (5 sn/dilim), boş rakip kaidesi, İptal; 20 sn öneri, 30 sn bot. */
   private kuyrukEkrani(): void {
     const g = this.iskelet("Hızlı maç", this.iptal, "lb-ara");
-    const ust = el("div", "lb-ara-ust", g);
+    const blok = el("div", "lb-ara-blok", g);
+    const ust = el("div", "lb-ara-ust", blok);
     el("span", "k-plaka genis", ust, "Rakip aranıyor");
     const ar = el("span", "lb-sure", ust);
     ar.dataset["arama"] = "1";
@@ -568,11 +586,11 @@ class LobiEkrani {
     const ilk = uyeler(t)[0];
     const topac = pikselTopac(ilk?.element, { r: 16, donsun: true });
     canak.appendChild(topac);
-    const bos = el("div", "lb-bos-rakip k-e16", yer);
+    const bos = el("div", "lb-bos-rakip k-e16", canak);
     el("span", "k-soru", bos, "?");
     el("div", "k-kaide", bos);
     el("span", "", bos, "Rakip");
-    const oneri = el("div", "", g);
+    const oneri = el("div", "", blok);
     oneri.dataset["oneri"] = "1";
     const s = el("div", "lb-ara-alt", g);
     const iptal = dugme(s, "orta", "İptal", "iptal");
@@ -619,13 +637,14 @@ class LobiEkrani {
       o.className = "oneri k-panel lb-oneri k-e16 k-giris";
       o.dataset["asama"] = a;
       el("b", "", o, "Beklerken");
-      const d = dugme(o, "orta", "Antrenman");
+      const d = dugme(o, "kucuk", "Antrenman");
       d.addEventListener("click", () => { void this.baglanti?.ayril(); git("antrenman"); });
     } else if (a === "botTeklif") {
       o.className = "oneri bot-kart k-panel lb-oneri k-e16 k-giris";
       o.dataset["asama"] = a;
-      el("b", "", o, "Rakip bulunamadı. Bot ile oyna?");
-      el("span", "", o, "Altın yarı · başarımda yalnız Yol");
+      const yz = el("div", "yazi", o);
+      el("b", "", yz, "Rakip bulunamadı. Bot ile oyna?");
+      el("span", "", yz, "Altın yarı · başarımda yalnız Yol");
       const d = dugme(o, "ana kisa yazi20", "Bot ile oyna", "bot");
       d.addEventListener("click", () => { this.botIstendi = true; this.ag?.gonder(MESAJ.botIste); d.disabled = true; d.textContent = "Bot hazırlanıyor…"; });
       this.ana = d;
@@ -670,7 +689,8 @@ class LobiEkrani {
     taraf("sol", this.ben.oyuncu.ad, "▲", ben?.takimId, false);
     taraf("sag", rk?.ad ?? "Rakip", "◆", rk?.takimId, true);
     el("div", "damga", v, "VS");
-    el("div", "alt-yazi k-e16", v, "Takım seçimi");
+    // K-18 (MENU-P1A): etiket yalnız gerçekten seçim varken (birden çok takım + seçim fazı)
+    if (this.ben.takimlar.length > 1 && ag.durum.faz === ODA_FAZI.secim) el("div", "alt-yazi k-e16", v, "Takım seçimi");
     const vsAd = el("span", "", v);
     vsAd.style.position = "absolute"; vsAd.style.width = "1px"; vsAd.style.height = "1px"; vsAd.style.overflow = "hidden";
     vsAd.textContent = `Rakip bulundu: ${rk?.ad ?? ""}`;

@@ -12,6 +12,7 @@ import { aktifMi } from "../../paylasilan/sim/topac.ts";
 import { takimProfilleriKimlikten } from "../../paylasilan/veri/takimlar.ts";
 import type { AgOdasi, Baglanti } from "./Baglanti.ts";
 import { kaydiOynat } from "../../ag/kayit.ts";
+import { type RozetKarari, baglantiRozetiKarari } from "./baglantiRozeti.ts";
 
 // Çevrimiçi maç kaynağı (tahmin modeli A, ADR-005, docs/tech/netcode.md § 5):
 // - Kendi topacım: girdi tamponu + sunucu ack'inden yeniden oynatma (paylasilan/sim/tahmin.ts `kendiAdimi`).
@@ -81,6 +82,9 @@ export class AgMaci {
   sonYamaMs = 0;
   /** son 5 sn'de yama boşluğu > 250 ms (kayıp belirtisi; WebSocket'te kayıp = gecikme) */
   private takilmaMs = -1e9;
+  /** önceki yama maç fazında mıydı; maç fazındaki yama sayısı (H10 rozeti için yeterli ölçüm) */
+  private oncekiMacta = false;
+  private macYamasi = 0;
   readonly bilgiler: BilgiMesaji[] = [];
   private rttZamanlayici = 0;
   /**
@@ -121,7 +125,11 @@ export class AgMaci {
   private yamaGeldi(s: OdaGorunumu): void {
     if (!s || !s.oyuncular) return; // ilk tam durum henüz gelmedi
     const simdi = performance.now();
-    if (this.sonYamaMs && simdi - this.sonYamaMs > 250) this.takilmaMs = simdi;
+    // H-10 (MENU-P1A): takılma yalnız maç fazında ölçülür (seçim/bekleme fazında yama seyrek gelir: yanlış "kayıp")
+    const macta = s.faz === ODA_FAZI.mac;
+    if (macta && this.oncekiMacta && this.sonYamaMs && simdi - this.sonYamaMs > 250) this.takilmaMs = simdi;
+    this.oncekiMacta = macta;
+    if (macta) this.macYamasi++;
     this.sonYamaMs = simdi;
     this.olcum.yamalar++;
     this.yerel = this.indeksBul(s);
@@ -345,11 +353,15 @@ export class AgMaci {
     return Math.round(Math.max(c, this.baglanti.ortalamaRtt));
   }
 
-  /** H10: gecikme > 150 ms ya da son 5 sn'de takılma (kayıp belirtisi). */
-  baglantiRozeti(): { goster: boolean; ms: number; kayip: boolean } {
-    const ms = this.rtt();
-    const kayip = performance.now() - this.takilmaMs < 5000;
-    return { goster: ms > 150 || kayip, ms, kayip };
+  /** H10: gecikme > 150 ms ya da son 5 sn'de maç içi takılma (kayıp belirtisi); bot maçında ve ölçüm azken gizli. */
+  baglantiRozeti(): RozetKarari {
+    return baglantiRozetiKarari({
+      ms: this.rtt(),
+      rakipBot: !!this.oyuncu(1 - this.yerel)?.bot,
+      rttOrnek: this.olcum.rttOrnek.length,
+      macYamasi: this.macYamasi,
+      takilmadanBeri: performance.now() - this.takilmaMs,
+    });
   }
 
   /**

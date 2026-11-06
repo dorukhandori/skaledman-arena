@@ -55,9 +55,18 @@ const CANVASSIZ = new Set<EkranAdi>(["karsilama", "kayit", "giris", "profil", "a
 /** D8: hesap ve gezinti istemeyen ekranlar (seyirci/OBS: giriş yok, kontrol yok) */
 const HESAPSIZ = new Set<EkranAdi>(["mac", "topac-lab", "seyirci", "ruhlar"]);
 
+/**
+ * H-14 (MENU-P1A): yalnız geliştirici bayrağıyla (`?gelistir=1`, Atölye'deki Topaç Lab girişi gibi) yönlendirilen ekranlar.
+ * Bayraksız istek varsayılan ekrana düşer (oyuncu URL'den kontakt sayfasına gelmesin).
+ */
+const GELISTIRICI_EKRANLARI = new Set<EkranAdi>(["ruhlar"]);
+export function ekranIzinli(ad: EkranAdi, arama: string): boolean {
+  return !GELISTIRICI_EKRANLARI.has(ad) || new URLSearchParams(arama).get("gelistir") === "1";
+}
+
 function ekranAdi(): EkranAdi {
   const istenen = new URLSearchParams(location.search).get("ekran");
-  if (istenen && istenen in EKRANLAR) return istenen as EkranAdi;
+  if (istenen && istenen in EKRANLAR && ekranIzinli(istenen as EkranAdi, location.search)) return istenen as EkranAdi;
   if (location.hash.startsWith("#izle=")) return "seyirci";
   // D8: /gizlilik ve /krediler yolları (tek sayfa; sunucu bilinmeyen yolda index.html verir)
   const yol = location.pathname.replace(/\/+$/, "");

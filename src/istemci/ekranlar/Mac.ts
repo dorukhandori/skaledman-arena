@@ -58,7 +58,10 @@ const STIL = `
 .ms { --q:2px; position:absolute; left:0; top:0; width:960px; height:540px; transform-origin:0 0; pointer-events:none; font:400 32px/1 var(--font-etiket); color:var(--ink); image-rendering:pixelated; }
 .ms .ort { position:absolute; inset:0; display:none; pointer-events:auto; overflow:hidden; background-color:#07070d; background-size:256px 256px; }
 .ms .ort.acik { display:block; }
-.ms .kutu { position:absolute; left:144px; top:8px; width:672px; height:524px; }
+/* H-4 (MENU-P1A): sonuç kutusu dikey akış; düğme sırası panellerin altında (üstüne binmez), bitiş tablosu kalan yeri alır
+   ve gerekirse kayar (1–3 skorunda üç satır sığar) */
+.ms .kutu { position:absolute; left:144px; top:8px; width:672px; height:524px; display:flex; flex-direction:column; }
+.ms .kutu > * { flex:none; }
 .ms .pah { clip-path:none; }
 .ms .rpanel { position:relative; border:10px solid transparent; border-image:var(--k-tas-cerceve) 5 fill / 10px / 0 round; }
 .ms .plaka { position:relative; z-index:2; width:380px; margin:0 auto; height:64px; display:flex; align-items:center; justify-content:center; gap:16px;
@@ -76,19 +79,24 @@ const STIL = `
 .ms h2.zafer svg { display:none; }
 .ms h2.zafer::before, .ms h2.zafer::after { content:""; width:14px; height:14px; background:var(--halka-cekirdek); clip-path:polygon(50% 0, 64% 36%, 100% 50%, 64% 64%, 50% 100%, 36% 64%, 0 50%, 36% 36%); }
 .ms h2.zafer::before { order:-1; }
-.ms .alt { text-align:center; margin:2px 0 0; color:var(--soluk); min-height:0; line-height:28px; text-transform:uppercase; }
+.ms .alt { text-align:center; margin:2px 0 0; color:var(--soluk); min-height:0; line-height:24px; text-transform:uppercase; }
 .ms .skr { display:inline-block; margin-right:12px; font:400 40px/1 var(--font-baslik); letter-spacing:2px; color:var(--ink); vertical-align:middle; }
-.ms .ndn { text-align:center; color:var(--ink); margin:0 0 6px; text-transform:uppercase; line-height:40px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.ms .tablo { padding:2px 14px; max-height:118px; overflow-y:auto; scrollbar-width:thin; scrollbar-color:var(--bronz-1) var(--panel-0); }
+.ms .ndn { text-align:center; color:var(--ink); margin:0 0 4px; text-transform:uppercase; line-height:32px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ms .kutu > .tablo { flex:0 1 auto; min-height:84px; }
+.ms .tablo { padding:0 14px; overflow-y:auto; scrollbar-width:thin; scrollbar-color:var(--bronz-1) var(--panel-0); }
 .ms table { width:100%; border-collapse:collapse; }
-.ms th { text-align:left; font:400 32px/28px var(--font-etiket); color:var(--gold); padding:0 4px 4px; text-transform:uppercase; border-bottom:2px solid #2a3146; }
-.ms td { padding:0 4px; height:30px; line-height:28px; color:var(--ink); text-transform:uppercase; } .ms td:last-child, .ms th:last-child { text-align:right; width:80px; }
-.ms td:last-child { font:400 40px/28px var(--font-baslik); }
+.ms th { text-align:left; font:400 32px/24px var(--font-etiket); color:var(--gold); padding:0 4px; text-transform:uppercase; border-bottom:2px solid #2a3146; }
+.ms td { padding:0 4px; height:26px; line-height:24px; color:var(--ink); text-transform:uppercase; } .ms td:last-child, .ms th:last-child { text-align:right; width:80px; }
+.ms td:last-child { font:400 40px/24px var(--font-baslik); }
+/* H-5 (MENU-P1A): rakibin puanı rakip renginde +N (eksi değil) */
+.ms tr.rakip td:last-child, .ms tr.rakip td small { color:var(--rakip-yazi); }
+.ms tr.sen td small { color:var(--sen); }
 .ms td .bk { display:inline-flex; vertical-align:middle; margin-right:10px; }
 .ms td small { color:var(--soluk); margin-left:10px; font-size:32px; }
 .ms .tablo .yk { margin-top:3px; color:var(--soluk); text-align:right; }
 .ms .satir { opacity:0; transition:opacity 83ms steps(1); } .ms .satir.gor { opacity:1; }
-.ms .oduller { display:grid; grid-template-columns:170px 180px 1fr; gap:12px; margin-top:6px; padding:4px 12px; height:180px; overflow:visible; align-items:start; line-height:28px; }
+.ms .oduller { display:grid; grid-template-columns:170px 180px 1fr; gap:12px; margin-top:6px; padding:4px 12px; height:150px; box-sizing:content-box; overflow:visible; align-items:start; line-height:28px; }
+.ms .ac[data-altin] > svg { width:44px; height:35px; }
 .ms .oduller .yt { color:var(--soluk); font-size:32px; line-height:26px; }
 .ms .ac { position:relative; display:flex; flex-direction:column; align-items:center; text-align:center; gap:2px; }
 .ms .ac b.bas { font:400 32px/1 var(--font-etiket); color:var(--gold); text-transform:uppercase; font-weight:400; }
@@ -101,7 +109,7 @@ const STIL = `
 .ms .ac[data-altin] .dokum { color:var(--soluk); font-size:32px; text-transform:uppercase; }
 .ms .ac ul li { display:flex; justify-content:space-between; gap:12px; } .ms .ac ul li.c { color:#ffb070; }
 .ms .ck0 { padding:8px 8px; background:var(--panel-0); box-shadow:inset 0 0 0 2px var(--bronz), inset 0 0 0 4px var(--harc); }
-.ms .bsr { display:flex; flex-direction:column; gap:4px; max-height:164px; overflow-y:auto; scrollbar-width:thin; scrollbar-color:var(--bronz-1) var(--panel-0); }
+.ms .bsr { display:flex; flex-direction:column; gap:4px; max-height:150px; overflow-y:auto; scrollbar-width:thin; scrollbar-color:var(--bronz-1) var(--panel-0); }
 .ms .bsk { display:grid; grid-template-columns:30px 1fr; gap:0 8px; align-items:center; padding:4px 8px; line-height:26px; background:var(--panel-0); box-shadow:inset 0 0 0 2px var(--bronz-1); }
 .ms .bsk.tamam { box-shadow:inset 0 0 0 2px var(--turuncu); background:#2a1610; }
 .ms .bsk .ad { font:400 32px/1.05 var(--font-etiket); color:var(--ink); text-transform:uppercase; }
@@ -111,7 +119,9 @@ const STIL = `
 .ms .bsk.tamam .cb i { background:repeating-linear-gradient(90deg, var(--gold) 0 6px, transparent 6px 8px); }
 .ms .bsk .acl { grid-column:1 / -1; color:var(--gold); display:flex; align-items:center; justify-content:space-between; gap:8px; text-transform:uppercase; }
 .ms .bsk .acl button { flex:none; min-height:28px; padding:2px 10px; font:400 32px/1 var(--font-etiket); }
-.ms .dg { position:absolute; left:96px; right:96px; bottom:4px; display:flex; gap:40px; justify-content:center; }
+.ms .dg { display:flex; gap:40px; justify-content:center; }
+.ms .kutu > .dg { margin-top:auto; padding:8px 96px 4px; }
+.ms .kutu > .dg button.bir { font-size:48px; min-height:56px; }
 .ms button { flex:0 1 224px; min-height:56px; padding:6px 16px; margin:0; cursor:pointer; pointer-events:auto; border:2px solid var(--harc); border-radius:0;
   background-color:var(--panel-2); color:var(--ink); font:400 40px/1 var(--font-baslik); letter-spacing:2px; text-transform:uppercase;
   box-shadow:inset 0 0 0 2px var(--bronz), inset 0 4px 0 0 #3a4258, 0 4px 0 0 var(--golge); }
@@ -136,6 +146,8 @@ const STIL = `
 .ms .menu .tut { position:relative; overflow:hidden; }
 .ms .menu .tut i { position:absolute; left:0; top:0; bottom:0; width:0; background:rgba(200,38,37,.5); }
 .ms .menu .not { margin-top:10px; color:var(--soluk); line-height:1.05; }
+/* C-3 (MENU-P1A): ana menü alt notu tek satır, sıkı satır aralığı */
+.ms .menu .not.tek { margin-top:8px; line-height:20px; white-space:nowrap; text-align:center; }
 .ms .menu.genis { left:240px; top:40px; width:480px; }
 .ms .ay { display:grid; grid-template-columns:1fr 170px; gap:6px 10px; align-items:center; margin-bottom:10px; text-transform:uppercase; }
 .ms .ay button { flex:none; min-height:32px; padding:2px 8px; font:400 32px/1 var(--font-etiket); }
@@ -153,7 +165,7 @@ html[data-dokunmatik] .ms .ay button, html[data-dokunmatik] .ms .bsk .acl button
 html[data-dokunmatik] .ms .menu { top:50%; transform:translateY(-50%); max-height:532px; overflow-y:auto; overscroll-behavior:contain; }
 html[data-dokunmatik] .ms .menu .dg { gap:6px; }
 html[data-dokunmatik] .ms .ipc { display:none; }
-html[data-dokunmatik] .ms .oduller { height:164px; }
+html[data-dokunmatik] .ms .oduller { height:150px; }
 .ms .hrt { line-height:24px; text-align:left; font-size:28px; }
 .ms .hrt .yildizlar { display:flex; gap:10px; flex-wrap:wrap; }
 .ms .hrt .yz { color:var(--soluk); }
@@ -607,7 +619,7 @@ export class MacEkrani {
         const teslim = el("button", "", dg, "Teslim ol");
         teslim.addEventListener("click", () => { this.menuGoster("teslim"); });
       }
-      el("div", "not", m, this.dokun ? "Maç durmaz." : "Maç durmaz. Esc ile kapat.");
+      el("div", "not tek", m, this.dokun ? "Maç durmaz" : "Maç durmaz · Esc: kapat");
       queueMicrotask(() => devam.focus());
     } else if (adim === "ayarlar") {
       // ux § 6.2 erişilebilirlik + § 1.3 nişan + ses: düğmeye bas = sıradaki seçenek (klavye: Tab + Enter)
@@ -958,7 +970,8 @@ export class MacEkrani {
     turlar.forEach((t) => {
       const tr = el("tr", "satir", govde);
       const kim = t.kazanan < 0 ? "puan yok" : t.kazanan === this.yerel ? "sen" : "rakip";
-      tr.innerHTML = `<td><span class="bk">${BITIS_IKON[t.tur]}</span>${BITIS_AD[t.tur]}<small>${kim}</small></td><td>${t.puan > 0 ? `${t.kazanan === this.yerel ? "+" : "−"}${t.puan}` : "0"}</td>`;
+      if (t.kazanan >= 0) tr.classList.add(t.kazanan === this.yerel ? "sen" : "rakip");
+      tr.innerHTML = `<td><span class="bk">${BITIS_IKON[t.tur]}</span>${BITIS_AD[t.tur]}<small>${kim}</small></td><td>${t.puan > 0 ? `+${t.puan}` : "0"}</td>`;
       tr.dataset["bitis"] = t.tur;
       this.sonucSatirlari.push(tr);
     });
@@ -1052,7 +1065,7 @@ export class MacEkrani {
     this.odulYazildi = true;
     // Altın
     const a = o.altin;
-    altin.innerHTML = `<b class="bas">Altın</b><span class="say" data-sayi="0">+0</span>${YIGIN_SVG(64)}`;
+    altin.innerHTML = `<b class="bas">Altın</b><span class="say" data-sayi="0">+0</span>${YIGIN_SVG(44)}`;
     el("span", "dokum", altin, "Döküm");
     const ul = el("ul", "", altin);
     if (a) {
@@ -1160,7 +1173,9 @@ export class MacEkrani {
     this.rovansRed = true;
     const d = this.sonucKutu.querySelector<HTMLButtonElement>("[data-rovans]");
     if (d) { d.textContent = "Rakip ayrıldı"; d.disabled = true; d.dataset["red"] = "1"; }
-    const alt = el("div", "alt", this.sonucKutu, "Rakip rövanş istemedi. Atölye'ye dönebilirsin.");
+    const alt = el("div", "alt", undefined, "Rakip rövanş istemedi. Atölye'ye dönebilirsin.");
+    // H-4: bilgi satırı düğme sırasının üstünde (akışta; tablo gerekirse kısalır)
+    this.sonucKutu.insertBefore(alt, this.sonucKutu.querySelector(":scope > .dg"));
     alt.dataset["rovansRed"] = "1";
     alt.setAttribute("role", "status");
     this.sonucKutu.querySelector<HTMLButtonElement>("[data-eylem=atolye]")?.focus();
