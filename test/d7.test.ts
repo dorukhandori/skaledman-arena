@@ -79,7 +79,10 @@ describe("Altın kuralları (tuning § 15, satır satır)", () => {
   });
   it("başarım ödül rozeti ve toplam (46 başarım = 22 100 Altın)", () => {
     expect([100, 200, 300, 500, 800, 1500].map(zorluk)).toStrictEqual(["kolay", "orta", "orta", "zor", "zor", "efsane"]);
-    expect(BASARIMLAR.reduce((a, b) => a + b.odulAltin, 0)).toBe(22100);
+    expect(BASARIMLAR.slice(0, 46).reduce((a, b) => a + b.odulAltin, 0)).toBe(22100);
+    // harita (05 § 2): ilk sürüm 22 başarım 9 100 Altın, sezon 2 7 başarım 8 400
+    expect(BASARIMLAR.slice(46).filter((b) => b.ilkSurum).reduce((a, b) => a + b.odulAltin, 0)).toBe(9100);
+    expect(BASARIMLAR.slice(46).filter((b) => !b.ilkSurum).reduce((a, b) => a + b.odulAltin, 0)).toBe(8400);
   });
   it("Yapay yenileme: fiyatın %40'ı, Aşınmış ile %50 indirim; yalnız ömrü tam olmayan Yapay", () => {
     const kasirga = parcaBul("kasirga-yapay");
@@ -213,7 +216,7 @@ const bul = (id: string, g: BasarimGirdisi, mevcut: Record<string, BasarimKaydi>
 
 describe("başarım değerlendirmesi: 46 başarımın her biri (tablo güdümlü)", () => {
   it("tablo 46 başarımı kapsar; her olay sözlükte; her başarımın şart metni var", () => {
-    expect(DURUMLAR.map((x) => x[0]).sort()).toStrictEqual(BASARIMLAR.map((b) => b.id).sort());
+    expect(DURUMLAR.map((x) => x[0]).sort()).toStrictEqual(BASARIMLAR.slice(0, 46).map((b) => b.id).sort()); // harita 29'u: harita-basarim.test
     for (const b of BASARIMLAR) {
       expect(OLAY_SOZLUGU, b.id).toContain(b.sart.olay);
       expect(basarimAciklama(b).length, b.id).toBeGreaterThan(8);

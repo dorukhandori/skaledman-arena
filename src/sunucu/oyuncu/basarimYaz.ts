@@ -20,6 +20,8 @@ export interface BasarimBildirimi {
   /** tamamlandıysa Market'te açılan parçalar */
   acilanParcalar: { id: string; ad: string }[];
   acilanOzellik: string[];
+  /** harita (05 § 4): açılan görünümler (arma/çerçeve; "AÇILDI" kartı) */
+  acilanGorunum: string[];
 }
 
 export function bildirim(d: BasarimDegisimi): BasarimBildirimi | null {
@@ -31,6 +33,7 @@ export function bildirim(d: BasarimDegisimi): BasarimBildirimi | null {
     odulAltin: d.tamamlandi ? b.odulAltin : 0,
     acilanParcalar: d.tamamlandi ? b.acilanParcalar.map((id) => ({ id, ad: parcaBul(id).ad })) : [],
     acilanOzellik: d.tamamlandi ? [...b.acilanOzellik] : [],
+    acilanGorunum: d.tamamlandi ? [...b.acilanGorunum] : [],
   };
 }
 
@@ -44,6 +47,7 @@ export function basarimOlayiIsle(depo: Depo, oyuncuId: number, g: BasarimGirdisi
       if (yeni) {
         const b = basarimBul(x.id)!;
         if (b.odulAltin > 0 && depo.altinYaz(oyuncuId, b.odulAltin, "basarim", `basarim:${b.id}:${oyuncuId}`, simdi)) odul += b.odulAltin;
+        for (const gr of b.acilanGorunum) depo.gorunumVer(oyuncuId, gr, false, simdi);
       }
     }
     return { degisimler, odul };

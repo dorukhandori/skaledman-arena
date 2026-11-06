@@ -15,7 +15,7 @@ describe("veri dosyaları", () => {
     expect(CEKIRDEKLER.length).toBe(8);
     expect(RUHLAR.length).toBe(21);
     expect(YETENEKLER.length).toBe(29);
-    expect(BASARIMLAR.length).toBe(46);
+    expect(BASARIMLAR.length).toBe(75); // 46 + harita/maden/Ocak 29 (docs/design/harita/05)
   });
 
   it("parça kimlikleri tekil; başlangıç setleri ve çekirdek ruhları geçerli", () => {

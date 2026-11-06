@@ -217,7 +217,7 @@ export interface AltinBilgisi {
 /** D7 sonuç ekranı başarım satırı ("+1 Kor Ustası 4/10"; tamamlanınca "Market'te açıldı: <parça>"). */
 export interface BasarimBilgisi {
   id: string; ad: string; gizli: boolean; onceki: number; ilerleme: number; sayi: number; tamamlandi: boolean; odulAltin: number;
-  acilanParcalar: { id: string; ad: string }[]; acilanOzellik: string[];
+  acilanParcalar: { id: string; ad: string }[]; acilanOzellik: string[]; acilanGorunum?: string[];
 }
 
 /** Sonuç ekranı Çekirdek kartı satırı (sunucunun OdulSatiri'nin ağ biçimi). */

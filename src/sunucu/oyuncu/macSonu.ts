@@ -7,6 +7,7 @@ import type { Depo, TakimYuvasi, XpYazimi } from "../db/depo.ts";
 import { type BasarimBildirimi, basarimOlayiIsle, bildirim } from "./basarimYaz.ts";
 import type { OzetHam } from "./ozetSayaci.ts";
 import type { HaritaOdulBilgisi } from "../../ag/protokol.ts";
+import { haritaDurumu } from "./haritaBasarim.ts";
 import { HARITA_MAC_TAVANI, HARITA_MIN_SN, haritaMacSonu, sayilanHaritaMaci, type HaritaOlaylari } from "./harita.ts";
 
 // Maç sonu (D5): `mac` satırı + Çekirdek XP (tuning § 14) + Yapay ömrü (§ 17), tek işlemde ve maç kimliğiyle
@@ -226,6 +227,8 @@ export function macSonuKaydet(depo: Depo, g0: MacSonuGirdisi, simdi = Date.now()
       const omurBitti = xp.yazim.filter((x) => x.omur === 0 && (yuvalar.find((y) => y?.cekirdekId === x.cekirdekId)?.omur ?? 0) > 0).length;
       const ba = basarimOlayiIsle(depo, id, {
         ...(ozet ? { mac: ozet } : {}),
+        // harita maçı: düğüm/bölge olayları + kalıcı harita durumu (yıldız toplamı, rozet) aynı işlemde (05 § 4)
+        ...(hr ? { harita: { ...haritaDurumu(depo, id), dugumTamam: hr.olaylar.dugumTamam, bolgeTamam: hr.olaylar.bolgeTamam } } : {}),
         durum: { enYuksekSeviye: Math.max(0, ...seviyeler), yapayOmurBitti: omurBitti, parcaCesidi: depo.parcaCesidi(id) },
       }, simdi);
       sonuc[i] = {

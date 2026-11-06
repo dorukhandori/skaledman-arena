@@ -288,6 +288,6 @@ describe("H2 HTTP uçları ve harita odası", () => {
     expect(Array.isArray(k.veri.yeniBasarimlar)).toBe(true);
     expect((await istek("POST", "/api/maden/bitir", A, { seans: b.veri.seans })).durum).toBe(200);
     expect((await istek("POST", "/api/maden/kaz", A, { seans: "x", sira: 0, isabetMs: null })).durum).toBe(400);
-    expect((await istek("GET", "/api/ben", A)).veri.ocakAcik).toBe(true); // ilk vuruş tecrübe verir
+    expect((await istek("GET", "/api/ben", A)).veri.ocakAcik).toBe(k.veri.basari); // İlk Kazı (başarılı vuruş) Ocak'ı açar
   });
 });

@@ -36,10 +36,10 @@ export function haritaAcikMi(d: Depo, id: number): boolean {
 
 /** Ocak görünür mü (03 § 1): "İlk Kazı" başarımı ya da elde cevher/külçe (başarım H5'ten önce de çalışsın). */
 export function ocakAcikMi(d: Depo, id: number): boolean {
+  // "İlk Kazı" başarımı (özellik `atolye-ocak`) birincil; eski hesapta başarımdan önce kalan cevher/külçe de açar
   if (tamamlananlar(d, id).has("ilk-kazi")) return true;
   const c = d.cevherler(id);
-  const u = d.ustaliklar(id);
-  return u.madencilik > 0 || u.isleme > 0 || c.cevher.some((x) => x > 0) || c.kulce.some((x) => x > 0);
+  return d.ustaliklar(id).isleme > 0 || c.cevher.some((x) => x > 0) || c.kulce.some((x) => x > 0);
 }
 
 /** İlk Devir'i olan oyuncu için b1-01 AÇIK satırını yaz (08 § 10). Dönen: harita açık mı. */

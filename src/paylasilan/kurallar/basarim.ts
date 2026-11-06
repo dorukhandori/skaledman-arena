@@ -72,6 +72,17 @@ export interface BasarimGirdisi {
   durum?: { enYuksekSeviye?: number; yapayOmurBitti?: number; parcaCesidi?: number; kararmaDoldu?: number };
   /** maç dışı olaylar */
   olay?: { antrenmanBitti?: boolean; yapayYenileme?: number; karanlikGeriDonus?: number };
+  /**
+   * Harita / maden / Ocak (docs/design/harita/05 § 2.2): uçlar ve maç sonu kendi işlemlerinde verir. Artış olayları
+   * (bu işlemde olan) ve durum değerleri (kalıcı durumdan, sunucu hesaplar) ayrı; hepsi maç kapısından bağımsız.
+   */
+  harita?: {
+    dugumTamam?: number; bolgeTamam?: readonly string[]; yildizToplam?: number; enYuksekRozet?: number;
+    cevherKazildi?: readonly { kademe: number; adet: number }[]; nadirDamar?: number; isabetSerisi?: number;
+    eritme?: number; ustaIsi?: readonly { tur: string }[]; parcaUret?: number;
+    ustalik?: { madencilik: number; isleme: number };
+    vitrinDolu?: number; malzemeTopac?: boolean; tanimKademeCesidi?: number; koleksiyonDegeri?: number;
+  };
 }
 
 export interface BasarimKaydi { ilerleme: number; tamam: boolean; kume?: readonly string[] }
@@ -89,7 +100,12 @@ export interface BasarimDegisimi {
 
 /** Durum sayaçları: moddan ve maçın sayılmasından bağımsız (kalıcı durumdan). */
 const DURUM_OLAYLARI = new Set(["cekirdekSeviye", "yapayOmurBitti", "parcaSahip", "kararmaSayaciDoldu"]);
-const OLAY_OLAYLARI = new Set(["antrenmanBitti", "yapayYenileme", "karanlikModdanGeriDonus"]);
+const OLAY_OLAYLARI = new Set([
+  "antrenmanBitti", "yapayYenileme", "karanlikModdanGeriDonus",
+  // harita (05 § 2.2): maç dışı (REST) ya da maç sonunda harita durumundan; maç kapısına takılmaz
+  "dugumTamam", "bolgeTamam", "yildizToplam", "bolgeRozet", "cevherKazildi", "nadirDamar", "isabetSerisi", "cevherCesidi",
+  "eritme", "ustaIsi", "ustalikSeviye", "parcaUret", "vitrinDolu", "malzemeTopac", "tanimKademeCesidi", "koleksiyonDegeri",
+]);
 /** Bot maçı (nile B-19) hızlı maç kuyruğundan gelir: `mod` koşulunda "hizli" sayılır. */
 const modUyar = (m: OzetModu, liste: unknown): boolean => {
   if (!Array.isArray(liste)) return true;
@@ -152,6 +168,37 @@ function olayPayi(b: Basarim, g: BasarimGirdisi): Sonuc {
     case "parcaSahip": return d.parcaCesidi !== undefined ? { tur: "deger", n: d.parcaCesidi } : null;
     case "kararmaSayaciDoldu": return d.kararmaDoldu ? { tur: "artis", n: d.kararmaDoldu } : null;
   }
+  const h = g.harita;
+  if (h) {
+    switch (b.sart.olay) {
+      case "dugumTamam": return h.dugumTamam ? { tur: "artis", n: h.dugumTamam } : null;
+      case "bolgeTamam": return h.bolgeTamam?.includes(String(k["bolge"])) ? { tur: "artis", n: 1 } : null;
+      case "yildizToplam": return h.yildizToplam !== undefined ? { tur: "deger", n: h.yildizToplam } : null;
+      case "bolgeRozet": return h.enYuksekRozet !== undefined && h.enYuksekRozet >= Number(k["rozet"] ?? 1) ? { tur: "deger", n: 1 } : null;
+      case "cevherKazildi": {
+        const kd = k["kademe"] as number | undefined;
+        const n = (h.cevherKazildi ?? []).filter((x) => kd === undefined || x.kademe === kd).length;
+        return n ? { tur: "artis", n } : null;
+      }
+      case "nadirDamar": return h.nadirDamar ? { tur: "artis", n: h.nadirDamar } : null;
+      case "isabetSerisi": return h.isabetSerisi ? { tur: "deger", n: h.isabetSerisi } : null;
+      case "cevherCesidi": return h.cevherKazildi?.length ? { tur: "kume", anahtarlar: h.cevherKazildi.map((x) => String(x.kademe)) } : null;
+      case "eritme": return h.eritme ? { tur: "artis", n: h.eritme } : null;
+      case "ustaIsi": {
+        const n = (h.ustaIsi ?? []).filter((x) => k["tur"] === undefined || x.tur === k["tur"]).length;
+        return n ? { tur: "artis", n } : null;
+      }
+      case "ustalikSeviye": {
+        const u = h.ustalik?.[k["ustalik"] === "isleme" ? "isleme" : "madencilik"];
+        return u !== undefined && u >= Number(k["seviye"] ?? 0) ? { tur: "deger", n: 1 } : null;
+      }
+      case "parcaUret": return h.parcaUret ? { tur: "artis", n: h.parcaUret } : null;
+      case "vitrinDolu": return h.vitrinDolu !== undefined ? { tur: "deger", n: h.vitrinDolu } : null;
+      case "malzemeTopac": return h.malzemeTopac ? { tur: "deger", n: 1 } : null;
+      case "tanimKademeCesidi": return h.tanimKademeCesidi !== undefined ? { tur: "deger", n: h.tanimKademeCesidi } : null;
+      case "koleksiyonDegeri": return h.koleksiyonDegeri !== undefined ? { tur: "deger", n: h.koleksiyonDegeri } : null;
+    }
+  }
   if (!m) return null;
   switch (b.sart.olay) {
     case "macKazanildi": return m.kazandi && kazanmaKosulu(k, m) ? { tur: "artis", n: 1 } : null;
@@ -208,6 +255,9 @@ export const OLAY_SOZLUGU = [
   "tekMacBitisCesidi", "galibiyetSerisi", "zitElementCarpisma", "kusakSuresi", "takimUltisi", "alanYetenegiyleBitis",
   "yetenegiyleBitis", "dashCarpismasiylaBitis", "zincirCarpisma", "kararmaSayaciDoldu", "karanlikModdanGeriDonus",
   "destekKanaliMaci", "odaMaci", "odaAc", "yapayOmurBitti", "yapayYenileme", "puanKazan", "aniOlumKazan", "parcaSahip",
+  // harita (05 § 2.2)
+  "dugumTamam", "bolgeTamam", "yildizToplam", "bolgeRozet", "cevherKazildi", "nadirDamar", "isabetSerisi", "cevherCesidi",
+  "eritme", "ustaIsi", "ustalikSeviye", "parcaUret", "vitrinDolu", "malzemeTopac", "tanimKademeCesidi", "koleksiyonDegeri",
 ] as const;
 
 /** Değerlendir: değişen başarımlar (dosya sırası). `mevcut`: oyuncunun kaydı (yoksa 0). */
@@ -259,6 +309,7 @@ export const KATEGORI_SIRASI = ["yol", "bitis", "element", "risk", "gosteri", "k
 
 const BITIS_ADI: Record<string, string> = { ringOut: "Ring Out", parcalanma: "Parçalanma", durma: "Durma" };
 const ELEMENT_ADI: Record<string, string> = { kor: "Kor", kasirga: "Kasırga", simsek: "Şimşek", girdap: "Girdap", kaya: "Kaya", don: "Don" };
+const BOLGE_ADI: Record<string, string> = { "ocak-yamaci": "Ocak Yamacı", "ayaz-gecidi": "Ayaz Geçidi", "kor-kraterleri": "Kor Kraterleri", "yel-sirti": "Yel Sırtı", "cakim-yaylasi": "Çakım Yaylası", "dip-magaralari": "Dip Mağaraları" };
 const KOKEN_ADI: Record<string, string> = { goktasi: "Göktaşı", maden: "Maden", yapay: "Yapay", karanlik: "Karanlık" };
 
 /** Oyuncuya şart metni (veriden türetilir; "sen" dili, ux § 7). */
@@ -304,6 +355,22 @@ export function basarimAciklama(b: Basarim): string {
     case "puanKazan": return "Maçı bitiren puanı son iki saniyede al.";
     case "aniOlumKazan": return `Ani ölümde ${n} maç kazan.`;
     case "parcaSahip": return `${n} parçanın hepsine sahip ol.`;
+    case "dugumTamam": return "Haritada bir düğümü geç.";
+    case "bolgeTamam": return `${BOLGE_ADI[String(k["bolge"])] ?? k["bolge"]} patronunu yen.`;
+    case "yildizToplam": return `Haritada toplam ${n} yıldız topla.`;
+    case "bolgeRozet": return "Bir bölgede bütün düğümleri ustalaştır (ALTIN rozet).";
+    case "cevherKazildi": return k["kademe"] !== undefined ? "Devir Taşı kaz." : n > 1 ? `${n} kez cevher kaz.` : "İlk cevherini kaz.";
+    case "nadirDamar": return "Nadir bir damardan cevher kaz.";
+    case "isabetSerisi": return `Üst üste ${n} isabetli vuruş yap.`;
+    case "cevherCesidi": return `${n} farklı kademeden cevher kaz.`;
+    case "eritme": return n > 1 ? `Ocak'ta ${n} külçe erit.` : "Ocak'ta ilk külçeni erit.";
+    case "ustaIsi": return k["tur"] === "parca" ? "Usta işi bir parça döv." : "Usta işi bir ürün döv.";
+    case "ustalikSeviye": return `${k["ustalik"] === "isleme" ? "İşleme" : "Madencilik"} Ustalığını ${k["seviye"]} yap.`;
+    case "parcaUret": return n > 1 ? `Ocak'ta ${n} parça üret.` : "Ocak'ta ilk parçanı üret.";
+    case "vitrinDolu": return "Profil vitrinindeki 3 yuvayı doldur.";
+    case "malzemeTopac": return "Dört parçası aynı kademeden üretilmiş bir topaç kur.";
+    case "tanimKademeCesidi": return `Aynı parçanın ${n} farklı kademede biçimini üret.`;
+    case "koleksiyonDegeri": return `Koleksiyon değerini ${n} yap.`;
   }
   return "";
 }

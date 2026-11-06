@@ -333,9 +333,9 @@ describe("D7 HTTP uçları", () => {
   });
   it("GET /api/basarimlar: 46; gizli başarım ??? (ipucu yok); İlk Devir tamam + tarih", async () => {
     const v = (await istek("GET", "/api/basarimlar", A)).veri;
-    expect(v.basarimlar).toHaveLength(46);
+    expect(v.basarimlar).toHaveLength(75);
     const gizli = v.basarimlar.filter((b: V) => !b.gorunur);
-    expect(gizli.length).toBe(9);
+    expect(gizli.length).toBe(12); // 9 + Nadir Damar, Tam İsabet, Devir Taşı
     for (const g of gizli) expect(g).toMatchObject({ ad: "???", aciklama: "Gizli başarım.", sayi: 0, acilanParcalar: [] });
     expect(JSON.stringify(gizli)).not.toContain("kriz");
     expect(v.basarimlar.find((b: V) => b.id === "ilk-devir")).toMatchObject({ tamam: true, zorluk: "kolay", odulAltin: 100 });
