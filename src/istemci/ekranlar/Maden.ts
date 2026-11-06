@@ -3,6 +3,7 @@ import { BANT_METNI, type BantEtiketi } from "../../paylasilan/kurallar/ustalik.
 import type { EkranBaglami } from "../main.ts";
 import { apiGet, apiPost, git, oku, sakla } from "../hesap.ts";
 import { ekranKok, el } from "./arayuz.ts";
+import { Ses } from "../ses/Ses.ts";
 
 // Maden ekranı (docs/design/harita/07 § 4, 02 § 3): ortada damar + Kuşak halkası (1,4 sn tur, bronz isabet yayı %22),
 // alt ortada KAZ (≥ 64 CSS px; ekranın boş alanı / Boşluk / Enter da kazar; 700 ms kilit), uçuşan sonuç ("+3 ◆" /
@@ -113,6 +114,7 @@ class MadenEkrani {
     this.alinma = performance.now();
     if (s.durum !== 201) { this.hataCiz(s.veri.hata ?? "", (s.veri as { gerekli?: number }).gerekli); return; }
     this.s = s.veri;
+    Ses.yukle();
     this.ciz();
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape" || e.key === "Backspace") { e.preventDefault(); this.cik(); return; }
@@ -255,6 +257,7 @@ class MadenEkrani {
       return;
     }
     const v = r.veri;
+    Ses.cal(v.isabet ? "isabet" : "kazi-tik");
     if (v.verim > 0) this.seansCevher.set(v.kademe, (this.seansCevher.get(v.kademe) ?? 0) + v.verim);
     s.sira = v.sira;
     s.kalan = v.kalan;

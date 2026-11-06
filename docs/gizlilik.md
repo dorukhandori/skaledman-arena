@@ -7,6 +7,9 @@ Devran kâr amaçsız, reklamsız bir hobi projesidir. Para almıyoruz, verini s
 - **Şifren değil, şifrenin özeti (hash).** Şifrenin kendisini hiçbir yerde tutmuyoruz; biz de göremeyiz.
 - **Oyun kayıtların:** Çekirdeklerin, parçaların, takımların, Altın hareketlerin, başarımların ve maçların
   (tarih, rakip, skor, süre, kullanılan takım).
+- **Harita, kazı ve işleme kayıtların:** haritadaki ilerlemen ve konumun, cevherlerin, Ustalığın, Ocak'ta yaptıkların
+  ve ürettiğin parçalar (yapan adı ve seri numarasıyla). Kazı zamanlama kayıtları hileyi önlemek için tutulur ve
+  30 gün sonra silinir.
 - **Oturum kaydı:** giriş yaptığında oluşan rastgele bir oturum kimliği.
 
 IP adresini kayıt defterine yazmıyoruz. Kaba kuvvet denemelerini durdurmak için kısa süre (bir dakika) bellekte tutulur.

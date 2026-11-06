@@ -1,7 +1,7 @@
 // Ses efektlerini SENTEZLER (jsfxr tarzı: osilatör + gürültü + zarf + perde kayması + tek kutuplu süzgeç), WAV yazar.
 // İndirme ya da ücretli kaynak yok; çıktı kendi üretimimiz, CC0 (veri/manifest-ses.json). Tohumlu gürültü: aynı
 // komut aynı baytları üretir. Çalıştır: npm run ses:uret   → public/ses/*.wav (toplam ≤ 500 KB, axiom § 3)
-import { mkdirSync, statSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 
 const HZ = 22050;
 const KLASOR = "public/ses";
@@ -144,6 +144,19 @@ const EFEKTLER: Efekt[] = [
     { dalga: "sinus", f0: 1980, f1: 1980, a: 0.002, h: 0.02, s: 0.15, hacim: 0.2 }] },
   { ad: "kenar-uyari", olay: "kenar uyarısı tık (≤ 2 Hz)", katmanlar: [
     { dalga: "kare", f0: 2400, f1: 2000, a: 0.001, h: 0.008, s: 0.02, hacim: 0.3, gorev: 0.25 }] },
+  // Harita H8 yer tutucuları (docs/design/harita/10 § 4): kazı tıkı, isabet çınlaması, eritme cızırtısı, dövme çekici
+  { ad: "kazi-tik", olay: "kazı vuruşu: taşa kazma tıkı", katmanlar: [
+    { dalga: "gurultu", f0: 5000, f1: 1500, a: 0.001, h: 0.01, s: 0.07, hacim: 0.55 },
+    { dalga: "ucgen", f0: 520, f1: 260, a: 0.001, h: 0.015, s: 0.08, hacim: 0.5 }] },
+  { ad: "isabet", olay: "kazı isabeti: parlak çınlama", katmanlar: [
+    { dalga: "sinus", f0: 1760, f1: 1760, a: 0.002, h: 0.03, s: 0.22, hacim: 0.4 },
+    { dalga: "sinus", f0: 2640, f1: 2640, a: 0.002, h: 0.02, s: 0.18, hacim: 0.2, gec: 0.03 }] },
+  { ad: "eritme", olay: "Ocak eritme: cızırtı", katmanlar: [
+    { dalga: "gurultu", f0: 3000, f1: 1200, a: 0.05, h: 0.25, s: 0.3, hacim: 0.35, suz: 0.3 }] },
+  { ad: "dovme", olay: "Ocak dövme: çekiç (iki vuruş)", katmanlar: [
+    { dalga: "kare", f0: 1000, f1: 600, a: 0.001, h: 0.015, s: 0.12, hacim: 0.4, gorev: 0.3 },
+    { dalga: "sinus", f0: 140, f1: 70, a: 0.002, h: 0.02, s: 0.1, hacim: 0.6 },
+    { dalga: "kare", f0: 950, f1: 550, a: 0.001, h: 0.015, s: 0.12, hacim: 0.35, gorev: 0.3, gec: 0.22 }] },
 ];
 
 mkdirSync(KLASOR, { recursive: true });
@@ -166,6 +179,9 @@ for (const e of EFEKTLER) {
   manifest.dosyalar.push({ ad: e.ad, dosya: `ses/${e.ad}.wav`, olay: e.olay, sureSn: Math.round((ornek.length / HZ) * 1000) / 1000, bayt, kaynak: "sentez (araclar/ses-uret.ts)", lisans: "CC0-1.0" });
   console.log(e.ad.padEnd(16), String(bayt).padStart(7), "bayt", (ornek.length / HZ).toFixed(3), "s");
 }
-writeFileSync("veri/manifest-ses.json", JSON.stringify({ ...manifest, toplamBayt: toplam }, null, 1) + "\n");
+// mevcut dosyadaki elle yazılmış bloklar (ör. `kayitAdaylari`, GU-B) korunur; yalnız sentez alanları yenilenir
+let eski: Record<string, unknown> = {};
+try { eski = JSON.parse(readFileSync("veri/manifest-ses.json", "utf8")) as Record<string, unknown>; } catch { eski = {}; }
+writeFileSync("veri/manifest-ses.json", JSON.stringify({ ...eski, ...manifest, toplamBayt: toplam }, null, 1) + "\n");
 console.log(`toplam ${toplam} bayt (${(toplam / 1024).toFixed(1)} KB) · ${EFEKTLER.length} efekt`);
 if (toplam > 500 * 1024) { console.error("Ses bütçesi aşıldı (> 500 KB)"); process.exit(1); }

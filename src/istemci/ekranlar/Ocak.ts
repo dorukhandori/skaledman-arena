@@ -3,6 +3,7 @@ import { BANT_METNI, type BantEtiketi } from "../../paylasilan/kurallar/ustalik.
 import type { EkranBaglami } from "../main.ts";
 import { apiGet, apiPost, git, oku, sakla } from "../hesap.ts";
 import { cuzdanYaz, ekranKok, el } from "./arayuz.ts";
+import { Ses } from "../ses/Ses.ts";
 
 // Ocak ekranı (docs/design/harita/07 § 5, 03, 12): Atölye'nin masası. Üst bant iki Ustalık çubuğu; solda cevher listesi
 // (K1–K4; kilitli kademe "USTALIK n"), sağda seçili kademe paneli: ERİT (parti −/+ 1–20, önizleme, başarı %, oran, bant),
@@ -80,6 +81,7 @@ class OcakEkrani {
     const ilk = o.kademeler.find((k) => k.cevher > 0 || k.kulce > 0) ?? o.kademeler[0]!;
     this.kademe = ilk.kademe;
     this.parti = this.enCokParti();
+    Ses.yukle();
     this.ciz();
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape") { e.preventDefault(); git("atolye"); return; }
@@ -217,6 +219,7 @@ class OcakEkrani {
     this.mesgul = true;
     const r = await apiPost<{ sonuc: { kulce: number; curuf: number; parti: number }; yeniBasarimlar: { ad: string }[] }>("/api/ocak/erit", { kademe: this.kademe, parti: this.parti, ref: yeniRef() });
     if (r.durum === 200) {
+      Ses.cal("eritme");
       const x = r.veri.sonuc;
       this.sonuc = { metin: `${x.kulce} KÜLÇE${x.curuf ? ` · ${x.curuf} CÜRUF` : ""}${r.veri.yeniBasarimlar?.length ? ` · AÇILDI: ${r.veri.yeniBasarimlar.map((y) => y.ad).join(", ")}` : ""}`, usta: false };
       this.mesaj = "";
@@ -232,6 +235,7 @@ class OcakEkrani {
     this.mesgul = true;
     const r = await apiPost<{ cikti: string; usta: boolean; yeniBasarimlar: { ad: string }[] }>("/api/ocak/dov", { tarif: id, ref: yeniRef(), ...(yeniden ? { yeniden: true } : {}) });
     if (r.durum === 201) {
+      Ses.cal("dovme");
       this.sonuc = { metin: `${r.veri.cikti.startsWith("arma") ? "ARMA" : "ÇERÇEVE"} AÇILDI · PROFİLDE KULLAN${r.veri.usta ? " · USTA İŞİ" : ""}`, usta: r.veri.usta };
       this.mesaj = r.veri.yeniBasarimlar?.length ? `AÇILDI: ${r.veri.yeniBasarimlar.map((y) => y.ad).join(", ")}` : "";
     } else this.mesaj = r.veri.hata === "altin" ? "ALTIN YETMİYOR" : r.veri.hata === "eksik" ? "KÜLÇE EKSİK" : r.veri.hata === "ustalik" ? "İŞLEME YETMİYOR" : "DÖVÜLEMEDİ";
@@ -242,6 +246,7 @@ class OcakEkrani {
     this.mesgul = true;
     const r = await apiPost<{ parca: UretilenG; yeniBasarimlar: { ad: string }[] }>("/api/ocak/parca", { tanim: id, kademe: this.kademe, ref: yeniRef() });
     if (r.durum === 201) {
+      Ses.cal("dovme");
       const p = r.veri.parca;
       this.sonuc = { metin: `${p.ad} · YAPAN: ${p.yapimciAd.toLocaleUpperCase("tr")} · NO. ${String(p.seri).padStart(4, "0")} · ${new Date(p.uretim).toLocaleDateString("tr-TR")}${p.usta ? " · USTA İŞİ" : ""}`, usta: p.usta, parca: p };
       this.mesaj = r.veri.yeniBasarimlar?.length ? `AÇILDI: ${r.veri.yeniBasarimlar.map((y) => y.ad).join(", ")}` : "";

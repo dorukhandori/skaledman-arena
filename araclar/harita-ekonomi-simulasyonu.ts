@@ -1,7 +1,7 @@
 /**
  * Harita / Maden / İşleme ekonomi simülasyonu (TASARIM PROTOTİPİ, üretim kodu değil).
  *
- * Kaynak sayılar: docs/design/harita/veri-taslak/{madenler,ustalik,tarifler,harita}.json
+ * Kaynak sayılar: veri/{madenler,ustalik,tarifler,harita,market-fiyat}.json (H8: otorite veri/; taslak klasörü tarihçe)
  * Çıktı: Markdown tablolar (stdout); docs/design/harita/06-ekonomi-ve-denge.md § 7'ye işlenir.
  * Çalıştırma: npx tsx araclar/harita-ekonomi-simulasyonu.ts [--gun 14] [--kosu 500] [--senaryo v1|tam]
  *
@@ -38,11 +38,12 @@ interface Dugum {
 }
 interface Bolge { id: string; no: number; ilkSurum: boolean; dugumler: Dugum[] }
 
-const KOK = join(import.meta.dirname, "..", "docs", "design", "harita", "veri-taslak");
+const KOK = join(import.meta.dirname, "..", "veri");
 const oku = <T>(ad: string): T => JSON.parse(readFileSync(join(KOK, ad), "utf8")) as T;
 const MADEN = oku<{ kademeler: Kademe[] }>("madenler.json").kademeler;
 const UST = oku<Ustalik>("ustalik.json");
-const TAR = oku<Tarifler>("tarifler.json");
+const MF = oku<{ katman: Record<string, number>; eski: Record<string, number> }>("market-fiyat.json");
+const TAR = { ...oku<Omit<Tarifler, "marketFiyat">>("tarifler.json"), marketFiyat: { yeni: MF.katman, eski: MF.eski } } as Tarifler;
 const HARITA = oku<{ bolgeler: Bolge[] }>("harita.json").bolgeler;
 
 // ---------- argümanlar ----------

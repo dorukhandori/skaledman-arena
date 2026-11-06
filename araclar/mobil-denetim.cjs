@@ -126,6 +126,19 @@ async function git(s, ekran, ad, ms) { await s.goto(`${TABAN}?ekran=${ekran}`); 
     await git(s, "ayarlar", "15-ayarlar", 2000);
     await git(s, "gunluk", "16-gunluk", 2500);
   }
+  if (ister("harita")) {
+    // Harita / Maden / Ocak (docs/design/harita/09 H8): İlk Devir + b1-01'e yürü, sonra ekranlar
+    await s.evaluate(async () => {
+      const p = (y, g) => fetch(y, { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify(g) });
+      await p("/api/egitim-bitti", {});
+      await p("/api/harita/git", { dugum: "b1-01" });
+      await p("/api/gelistirme/cevher", { kademe: 1, cevher: 12, kulce: 0 });
+    });
+    await git(s, "harita", "20-harita", 2500);
+    await git(s, "ocak", "21-ocak", 2500);
+    await git(s, "maden&dugum=b1-02", "22-maden-uzak", 2000);
+    await git(s, "lobi", "23-lobi-harita-modu", 2500);
+  }
   if (ister("dokunma")) {
     // gerçek dokunuş olayları (CDP Input.dispatchTouchEvent): Atölye 3B döndürme, liste kaydırma, oda kodu klavyesi
     const cdp = await b.newCDPSession(s);

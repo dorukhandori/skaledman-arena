@@ -1,5 +1,5 @@
 import type { EkranBaglami } from "../main.ts";
-import { apiIstek, git } from "../hesap.ts";
+import { apiIstek, git, oku, sakla } from "../hesap.ts";
 import { AYAR_SECENEKLERI, type OyunAyarlari, ayarlariOku, ayarlariYaz } from "../oyun/Ayarlar.ts";
 import { DUZ_YAZI, OLCEKLER, METIN_OLCEGI, duzYaziOku, duzYaziUygula, ekranKok, el, geriDugmesi, metinOlcegiOku, metinOlcegiUygula } from "./arayuz.ts";
 
@@ -56,6 +56,13 @@ export function ayarlar(b: EkranBaglami): void {
       goster();
     });
   }
+  // Harita (07 § 9): kazıda isabet halkası; kapalıysa halka gizli, her vuruş isabetsiz (ceza yok, yalnız +1 bonus yok)
+  el("span", "", iz, "Kazı: isabet halkası");
+  const ih = el("button", "", iz);
+  ih.dataset["isabetHalkasi"] = "1";
+  const ihGoster = () => { ih.textContent = oku("devran.isabetHalkasi") === "0" ? "Kapalı" : "Açık"; };
+  ihGoster();
+  ih.addEventListener("click", () => { sakla("devran.isabetHalkasi", oku("devran.isabetHalkasi") === "0" ? "1" : "0"); ihGoster(); });
   el("p", "yt", kart, "Bu tarayıcıda saklanır. Maçta: Esc › Ayarlar.");
   // D8: bilgi bağlantıları + hesap silme (iki adım, şifre onayı; misafirde yok)
   const bilgi = el("div", "satir", kart);

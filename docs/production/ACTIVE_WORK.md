@@ -4,7 +4,6 @@ Her oturum işe başlamadan önce `git pull`, bu dosyayı oku, satırını ekle,
 
 ## Devam eden
 
-- 2026-11-06 · Harita kod alt oturumu (bulut, `devran-kod`) · `veri/{madenler,ustalik,tarifler,harita,market-fiyat}.json`, `src/paylasilan/{veri/harita.ts,kurallar/{harita,maden,ustalik,ocak}.ts}`, `src/sunucu/{api/{harita,maden,ocak}.ts,oyuncu/haritaMac.ts,db}`, `src/istemci/ekranlar/{Harita,Maden,Ocak}.ts`, `test/harita*` · H1→H8 (brief `docs/production/harita-kod-brief.md`); raporlar `raporlar/HARITA-H<n>.md`
 - 2026-11-05 · baş geliştirici (bulut kodlama oturumu, `devran-kod`) · `src/**`, `veri/`, `test/` · dilimler ve cila; haber yalnız `docs/production/devran-kod-brief.md` ile
 - 2026-11-05 · yerel oturum "Oyun menüsü UI hataları" · `docs/production/raporlar/MENU-DENETIM.md`, `araclar/menu-denetim-*.cjs` · denetim bitti; düzeltmeler (P1-P5) başlarsa `src/istemci/ekranlar/**`, `src/istemci/stil/**` (S-1 kararı bekliyor)
 - 2026-11-05 · yerel oturum "Mac oturum başlat dokümantasyonu" · `araclar/sanat/**`, `public/topac/**` · parça hattı Parti 1-3 işlendi; Disk/Uç parametrik
@@ -16,6 +15,7 @@ Her oturum işe başlamadan önce `git pull`, bu dosyayı oku, satırını ekle,
 
 ## Son kapanan işler
 
+- 2026-11-06 · Harita kod alt oturumu (bulut, `devran-kod`) · H1–H8 bitti (veri, sunucu, oda, kazı, Ocak, başarımlar, Harita/Maden/Ocak ekranları, ses, mobil) · rapor `docs/production/raporlar/HARITA-KOD.md`
 - 2026-11-06 · tasarım oturumu "Harita/Maden/İşleme" (bulut, `devran-kod`) · `docs/design/harita/**`, `araclar/harita-ekonomi-simulasyonu.ts`, `docs/design/beyblade/04-sozluk.md`, `roadmap.md`, `raporlar/HARITA-TASARIM.md` · tasarım bitti (H1–H8 kod dilimleri hazır); rapor `docs/production/raporlar/HARITA-TASARIM.md`
 - (2026-11-01 satırı, Skaledman çağı, iptal ve tarihçe) 2026-11-01 20:00 · @glyph (Claude Code yan oturum) · `index.html`, `src/istemci/stil/`, `Hud.ts`, `KartPanosu.ts`, Arena üst satırı, Lab DOM kabuğu · arayüzü skaledman.com görsel diline benzetiyor
 - (2026-11-01 satırı, Skaledman çağı, iptal ve tarihçe) 2026-11-01 19:15 · @nile (Claude Code, Opus 5.5 oturumu) · `src/paylasilan/sim`, `src/istemci/oyun`, `docs/` · F0 sonrası: zıplama/takım/dinlenme/kademe (bitti), İskeletler Diyarı + arenada kart panosu (bitti), alt ajanları topluyor

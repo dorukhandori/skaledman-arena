@@ -194,5 +194,8 @@ Kilit 8. günde açılır, birikimler sıfırlanır; Market tarafı o günden so
 | **H-H8** | Craft ana yol, Market dürüst kısayol | Tablo G oranları; ilk craft ≤ 15 dk (e2e) | sim kısmı **geçti**; e2e açık (H7) |
 | **H-H9** | Prestij yeterli itki (araştırma § 9 riski) | 2. haftada aktif oyuncuların ≥ %30'u en az bir parça üretir (telemetri) | açık (insan) |
 
+### 7.6 H8 yeniden ölçüm (2026-11-06, `veri/`'den)
+Sim artık `veri/{madenler,ustalik,tarifler,harita,market-fiyat}.json` okur (otorite `veri/`). `v1`, 60 gün, 500 koşu: [`sim-cikti-veri.md`](sim-cikti-veri.md). Önceki çıktıyla ([`sim-cikti-craft.md`](sim-cikti-craft.md), 300 koşu) fark yalnız koşu sayısından: bütün hücreler **≤ %10** içinde (örn. gündelik K4 p90 24 → 23 gün, aktif K4 p50 7 → 6 gün; Tablo E bot ÷ tutkulu 1,07; Tablo G aynı). Tablolarda güncelleme gerekmedi.
+
 ## 8. G-0 sınaması (bu belge)
 Ekonomide hiçbir akış maç gücüne çıkmaz. Altın'ın yeni kaynağı (harita, başarım) yeni gideriyle (dövme işçiliği) dengeli; Market parça fiyatları değişmez; Market kilitleri maden ürünüyle açılmaz.

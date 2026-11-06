@@ -7,6 +7,8 @@ import { sound } from "@pixi/sound";
 export const SES_ADLARI = [
   "carpisma-hafif", "carpisma-agir", "carpisma-kritik", "duvar", "dash", "sekme", "ring-out", "parcalanma", "durma",
   "telegraf", "ulti", "geri-sayim", "mac-sonu", "ui-tik", "enerji-doldu", "kenar-uyari",
+  // harita H8 yer tutucuları (10 § 4)
+  "kazi-tik", "isabet", "eritme", "dovme",
 ] as const;
 export type SesAdi = (typeof SES_ADLARI)[number];
 

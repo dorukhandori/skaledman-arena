@@ -149,13 +149,49 @@
    "bayt": 1326,
    "kaynak": "sentez (araclar/ses-uret.ts)",
    "lisans": "CC0-1.0"
+  },
+  {
+   "ad": "kazi-tik",
+   "dosya": "ses/kazi-tik.wav",
+   "olay": "kazı vuruşu: taşa kazma tıkı",
+   "sureSn": 0.096,
+   "bayt": 4280,
+   "kaynak": "sentez (araclar/ses-uret.ts)",
+   "lisans": "CC0-1.0"
+  },
+  {
+   "ad": "isabet",
+   "dosya": "ses/isabet.wav",
+   "olay": "kazı isabeti: parlak çınlama",
+   "sureSn": 0.252,
+   "bayt": 11160,
+   "kaynak": "sentez (araclar/ses-uret.ts)",
+   "lisans": "CC0-1.0"
+  },
+  {
+   "ad": "eritme",
+   "dosya": "ses/eritme.wav",
+   "olay": "Ocak eritme: cızırtı",
+   "sureSn": 0.6,
+   "bayt": 26506,
+   "kaynak": "sentez (araclar/ses-uret.ts)",
+   "lisans": "CC0-1.0"
+  },
+  {
+   "ad": "dovme",
+   "dosya": "ses/dovme.wav",
+   "olay": "Ocak dövme: çekiç (iki vuruş)",
+   "sureSn": 0.356,
+   "bayt": 15746,
+   "kaynak": "sentez (araclar/ses-uret.ts)",
+   "lisans": "CC0-1.0"
   }
  ],
- "toplamBayt": 204716,
+ "toplamBayt": 262408,
  "kayitAdaylari": {
   "aciklama": "Dış kaynaklı kayıt ses adayları (kaynak/efekt/). GU-B (2026-11-05): public/ses/kayit/ altına kopyalandı ve Ses.ts sentez tabanın üstüne katman olarak çalıyor (sentez yedeği korunur). UYARI: araclar/ses-uret.ts bu dosyayı baştan yazar; çalıştırmadan önce bu blok korunmalı (ya da ayrı dosyaya taşınmalı).",
   "toplamBayt": 194841,
-  "genelToplamBayt": 399557,
+  "genelToplamBayt": 457249,
   "butceBayt": 512000,
   "dosyalar": [
    {
@@ -493,7 +529,7 @@
     "dosya": "kaynak/efekt/muzik-sentez/atari-dongu.ogg",
     "hedef": "muzik-arena",
     "olay": "arka plan müziği: basit atari döngüsü (menü + arena, ses düğmesiyle kapatılabilir)",
-    "sureSn": 16.0,
+    "sureSn": 16,
     "bayt": 60053,
     "bicim": "Ogg Vorbis 22,05 kHz mono q0",
     "kaynak": "kendi sentezimiz (kaynak/efekt/muzik-sentez/atari-dongu.py)",
